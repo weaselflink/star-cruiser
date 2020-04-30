@@ -1,26 +1,32 @@
 package de.bissell.starcruiser
 
-import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.application.Application
+import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.application.log
 import io.ktor.auth.*
 import io.ktor.html.respondHtml
-import io.ktor.websocket.*
-import io.ktor.http.cio.websocket.*
+import io.ktor.http.cio.websocket.Frame
+import io.ktor.http.cio.websocket.pingPeriod
+import io.ktor.http.cio.websocket.timeout
 import io.ktor.http.content.files
 import io.ktor.http.content.static
+import io.ktor.response.respondText
+import io.ktor.routing.get
+import io.ktor.routing.routing
+import io.ktor.websocket.WebSockets
+import io.ktor.websocket.webSocket
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.html.*
-import java.time.*
+import java.time.Duration
 import java.util.concurrent.atomic.AtomicLong
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @Suppress("unused") // Referenced in application.conf
-@kotlin.jvm.JvmOverloads
-fun Application.module(testing: Boolean = false) {
+fun Application.module() {
     install(Authentication) {
         basic("myBasicAuth") {
             realm = "Star Cruiser"
@@ -77,12 +83,13 @@ fun Application.module(testing: Boolean = false) {
 
         webSocket("/ws/command") {
             for (frame in incoming) {
-                val keyCode = String(frame.data)
-                when (keyCode) {
-                    "37" -> GameState.addXSpeed(-5)
-                    "39" -> GameState.addXSpeed(5)
-                    "38" -> GameState.addYSpeed(5)
-                    "40" -> GameState.addYSpeed(-5)
+                val code = String(frame.data)
+                log.warn("code: $code")
+                when (code) {
+                    "KeyA" -> GameState.addXSpeed(-5)
+                    "KeyD" -> GameState.addXSpeed(5)
+                    "KeyW" -> GameState.addYSpeed(5)
+                    "KeyS" -> GameState.addYSpeed(-5)
                 }
             }
         }

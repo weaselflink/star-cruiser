@@ -41,6 +41,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 document.addEventListener("keydown", function(event) {
     if (commandSocket) {
-        commandSocket.send(event.keyCode)
+        commandSocket.send(event.code)
     }
 });
