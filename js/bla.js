@@ -32,7 +32,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (updateSocket) {
         updateSocket.onmessage = function (event) {
-            document.getElementById("pos").innerHTML = event.data
+            var state = JSON.parse(event.data);
+            var ship = state.ships[0];
+
+            document.getElementById("pos").innerHTML = event.data;
+
+            var canvas = document.getElementById("canvas")
+            var ctx = canvas.getContext("2d");
+            ctx.resetTransform();
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.beginPath();
+            ctx.translate(parseFloat(ship.position.x) + 400.0, parseFloat(ship.position.y) + 400.0);
+            ctx.rotate(parseFloat(ship.rotation));
+            ctx.moveTo(-5, -5);
+            ctx.lineTo(10, 0);
+            ctx.lineTo(-5, 5);
+            ctx.lineTo(-2, 0);
+            ctx.lineTo(-5, -5);
+            ctx.stroke();
         }
     }
 

@@ -32,7 +32,6 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicReference
-import kotlin.math.PI
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -85,6 +84,11 @@ fun Application.module() {
                             +"unknown"
                         }
                     }
+                    canvas {
+                        id = "canvas"
+                        width = "800px"
+                        height = "800px"
+                    }
                 }
             }
         }
@@ -106,7 +110,7 @@ fun Application.module() {
         webSocket("/ws/command") {
             for (frame in incoming) {
                 val code = String(frame.data)
-                log.warn("code: $code")
+                // log.warn("code: $code")
                 when (code) {
                     "KeyW" -> gameState.ships.first().changeThrottle(BigDecimal(10))
                     "KeyS" -> gameState.ships.first().changeThrottle(BigDecimal(-10))
@@ -119,37 +123,6 @@ fun Application.module() {
 }
 
 private suspend fun SendChannel<Frame>.sendText(value: String) = send(Frame.Text(value))
-
-@Serializable
-data class Vector2(
-    val x: BigDecimal = BigDecimal.ZERO,
-    val y: BigDecimal = BigDecimal.ZERO
-) {
-
-    operator fun plus(other: Vector2): Vector2 =
-        Vector2(x + other.x, y + other.y)
-
-    operator fun times(other: BigDecimal): Vector2 =
-        Vector2(x * other, y * other)
-
-    fun setScale(scale: Int): Vector2 =
-        Vector2(x.setScale(scale, RoundingMode.FLOOR), y.setScale(scale, RoundingMode.FLOOR))
-}
-
-@Serializer(forClass = BigDecimal::class)
-object BigDecimalSerializer : KSerializer<BigDecimal> {
-
-    override val descriptor: SerialDescriptor =
-        PrimitiveDescriptor("WithCustomDefault", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: BigDecimal) {
-        encoder.encodeString(value.toPlainString())
-    }
-
-    override fun deserialize(decoder: Decoder): BigDecimal {
-        return BigDecimal(decoder.decodeString())
-    }
-}
 
 @Serializable
 data class GameStateMessage(
@@ -194,18 +167,22 @@ class GameState {
 class Ship {
     private var position = AtomicReference(Vector2())
     private var speed = AtomicReference(Vector2())
-    private var rotation = AtomicReference(BigDecimal.ZERO)
+    private var rotation = AtomicReference(BigDecimal(90).toRadians())
 
     private var throttle = AtomicReference(BigDecimal.ZERO)
+    private var thrust = AtomicReference(BigDecimal.ZERO)
     private var rudder = AtomicReference(BigDecimal.ZERO)
 
     fun update(delta: BigDecimal) {
-        rotation.updateAndGet { it + (rudder.get() * BigDecimal.valueOf(PI) / BigDecimal(180) * delta) }
+        val diff = if (throttle.get() > thrust.get()) 10 else if (throttle.get() < thrust.get()) -10 else 0
+        thrust.updateAndGet { it + diff.toBigDecimal() * delta }
+
+        rotation.updateAndGet { (it + (rudder.get().toRadians() * PI * delta)).setScale(9, RoundingMode.FLOOR) }
+
         speed.updateAndGet {
-            val diff = if (throttle.get() > it.y) 10 else if (throttle.get() < it.y) -10 else 0
-            Vector2(BigDecimal.ZERO, it.y + diff.toBigDecimal() * delta)
+            Vector2(thrust.get(), BigDecimal.ZERO).rotate(rotation.get()).setScale(9)
         }
-        position.updateAndGet { (it + speed.get() * delta).setScale(6) }
+        position.updateAndGet { (it + speed.get() * delta).setScale(9) }
     }
 
     fun changeThrottle(diff: BigDecimal): BigDecimal = throttle.updateAndGet {
@@ -225,16 +202,3 @@ class Ship {
             rudder = rudder.get()
         )
 }
-
-private fun BigDecimal.constrain(min: BigDecimal, max: BigDecimal) =
-    min(max, max(min, this))
-
-private fun BigDecimal.isZero() =
-    this.compareTo(BigDecimal.ZERO) == 0
-
-private fun min(a: BigDecimal, b: BigDecimal) =
-    if (a > b) b else a
-
-private fun max(a: BigDecimal, b: BigDecimal) =
-    if (a > b) a else b
-
