@@ -10,7 +10,7 @@ fun BigDecimal.constrain(min: BigDecimal, max: BigDecimal) =
 val PI: BigDecimal = BigDecimal.valueOf(kotlin.math.PI)
 
 fun BigDecimal.toRadians(): BigDecimal =
-    this.divide(BigDecimal(180), 9, RoundingMode.FLOOR) * PI
+    this.divide(BigDecimal(180), 9, RoundingMode.HALF_UP) * PI
 
 operator fun BigDecimal.times(value: Long): BigDecimal =
     this * BigDecimal(value)

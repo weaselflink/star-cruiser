@@ -22,7 +22,7 @@ data class Vector2(
         Vector2(x * other, y * other)
 
     fun setScale(scale: Int): Vector2 =
-        Vector2(x.setScale(scale, RoundingMode.FLOOR), y.setScale(scale, RoundingMode.FLOOR))
+        Vector2(x.setScale(scale, RoundingMode.FLOOR), y.setScale(scale, RoundingMode.HALF_UP))
 
     fun isZero() = x.isZero() && y.isZero()
 
