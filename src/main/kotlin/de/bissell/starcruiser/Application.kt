@@ -5,7 +5,6 @@ package de.bissell.starcruiser
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
-import io.ktor.application.log
 import io.ktor.auth.*
 import io.ktor.features.ContentNegotiation
 import io.ktor.html.respondHtml
@@ -24,6 +23,7 @@ import io.ktor.websocket.webSocket
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.html.*
 import kotlinx.serialization.*
@@ -101,7 +101,7 @@ fun Application.module() {
         }
 
         webSocket("/ws/updates") {
-            while (true) {
+            while (isActive) {
                 outgoing.sendText(gameState.toMessage().toJson())
                 delay(100)
             }
@@ -109,9 +109,7 @@ fun Application.module() {
 
         webSocket("/ws/command") {
             for (frame in incoming) {
-                val code = String(frame.data)
-                // log.warn("code: $code")
-                when (code) {
+                when (String(frame.data)) {
                     "KeyW" -> gameState.ships.first().changeThrottle(BigDecimal(10))
                     "KeyS" -> gameState.ships.first().changeThrottle(BigDecimal(-10))
                     "KeyA" -> gameState.ships.first().changeRudder(BigDecimal(-10))
