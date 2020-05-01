@@ -16,9 +16,10 @@ function createSocket(uri) {
 
     if (socket) {
         socket.onopen = function() {
-            console.log("Connected");
+            document.getElementById("conn").innerHTML = "connected"
         }
         socket.onclose = function(e) {
+            document.getElementById("conn").innerHTML = "disconnected"
             console.log("Connection closed (wasClean = " + e.wasClean + ", code = " + e.code + ", reason = '" + e.reason + "')");
             socket = null;
         }

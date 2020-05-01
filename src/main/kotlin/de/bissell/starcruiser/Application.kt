@@ -78,6 +78,12 @@ fun Application.module() {
                 body {
                     h1 { +"Star Cruiser" }
                     p {
+                        span {
+                            id = "conn"
+                            +"disconnected"
+                        }
+                    }
+                    p {
                         +"Position: "
                         span {
                             id = "pos"
@@ -110,6 +116,8 @@ fun Application.module() {
         webSocket("/ws/command") {
             for (frame in incoming) {
                 when (String(frame.data)) {
+                    "KeyP" -> gameState.paused = !gameState.paused
+
                     "KeyW" -> gameState.ships.first().changeThrottle(BigDecimal(10))
                     "KeyS" -> gameState.ships.first().changeThrottle(BigDecimal(-10))
                     "KeyA" -> gameState.ships.first().changeRudder(BigDecimal(-10))
@@ -124,6 +132,7 @@ private suspend fun SendChannel<Frame>.sendText(value: String) = send(Frame.Text
 
 @Serializable
 data class GameStateMessage(
+    val paused: Boolean,
     val ships: List<ShipMessage>
 ) {
     @UnstableDefault
@@ -141,23 +150,27 @@ data class ShipMessage(
 
 class GameState {
 
+    var paused = true
     val ships = mutableListOf(Ship())
 
     init {
         GlobalScope.launch {
             while (true) {
                 update()
-                delay(10)
+                delay(20)
             }
         }
     }
 
     fun toMessage() =
         GameStateMessage(
+            paused = paused,
             ships = ships.map { it.toMessage() }
         )
 
-    private fun update(delta: BigDecimal = BigDecimal("0.01")) {
+    private fun update(delta: BigDecimal = BigDecimal("0.02")) {
+        if (paused) return
+
         ships.forEach { it.update(delta) }
     }
 }
