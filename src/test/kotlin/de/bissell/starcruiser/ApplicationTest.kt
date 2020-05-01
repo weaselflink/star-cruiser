@@ -3,11 +3,13 @@ package de.bissell.starcruiser
 import io.ktor.http.*
 import kotlin.test.*
 import io.ktor.server.testing.*
+import kotlinx.serialization.UnstableDefault
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotNull
 import strikt.assertions.startsWith
 
+@UnstableDefault
 class ApplicationTest {
     @Test
     fun testRoot() {
