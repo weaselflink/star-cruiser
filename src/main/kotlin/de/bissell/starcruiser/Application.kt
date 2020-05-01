@@ -28,18 +28,18 @@ import kotlinx.coroutines.launch
 import kotlinx.html.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
-import org.slf4j.Logger
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.PI
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @UnstableDefault
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
-    val gameState = GameState(log)
+    val gameState = GameState()
 
     install(Authentication) {
         basic("myBasicAuth") {
@@ -98,7 +98,7 @@ fun Application.module() {
 
         webSocket("/ws/updates") {
             while (true) {
-                outgoing.sendText(gameState.createGameStateMessage().toJson())
+                outgoing.sendText(gameState.toMessage().toJson())
                 delay(100)
             }
         }
@@ -108,8 +108,10 @@ fun Application.module() {
                 val code = String(frame.data)
                 log.warn("code: $code")
                 when (code) {
-                    "KeyW" -> gameState.changeThrottle(BigDecimal(10))
-                    "KeyS" -> gameState.changeThrottle(BigDecimal(-10))
+                    "KeyW" -> gameState.ships.first().changeThrottle(BigDecimal(10))
+                    "KeyS" -> gameState.ships.first().changeThrottle(BigDecimal(-10))
+                    "KeyA" -> gameState.ships.first().changeRudder(BigDecimal(-10))
+                    "KeyD" -> gameState.ships.first().changeRudder(BigDecimal(10))
                 }
             }
         }
@@ -119,12 +121,19 @@ fun Application.module() {
 private suspend fun SendChannel<Frame>.sendText(value: String) = send(Frame.Text(value))
 
 @Serializable
-data class Vector(
+data class Vector2(
     val x: BigDecimal = BigDecimal.ZERO,
     val y: BigDecimal = BigDecimal.ZERO
 ) {
-    @UnstableDefault
-    fun toJson(): String = Json.stringify(serializer(), this)
+
+    operator fun plus(other: Vector2): Vector2 =
+        Vector2(x + other.x, y + other.y)
+
+    operator fun times(other: BigDecimal): Vector2 =
+        Vector2(x * other, y * other)
+
+    fun setScale(scale: Int): Vector2 =
+        Vector2(x.setScale(scale, RoundingMode.FLOOR), y.setScale(scale, RoundingMode.FLOOR))
 }
 
 @Serializer(forClass = BigDecimal::class)
@@ -147,32 +156,21 @@ data class GameStateMessage(
     val ships: List<ShipMessage>
 ) {
     @UnstableDefault
-    fun toJson(): String = Json.stringify(GameStateMessage.serializer(), this)
+    fun toJson(): String = Json.stringify(serializer(), this)
 }
 
 @Serializable
 data class ShipMessage(
-    val position: Vector,
-    val speed: Vector
+    val position: Vector2,
+    val speed: Vector2,
+    val rotation: BigDecimal,
+    val throttle: BigDecimal,
+    val rudder: BigDecimal
 )
 
-class GameState(
-    val log: Logger
-) {
+class GameState {
 
-    private val dragFactor = BigDecimal("10")
-    private val thrust = BigDecimal(1000)
-    private val weight = BigDecimal(10)
-    private var throttle = AtomicReference(BigDecimal.ZERO)
-    private var x = AtomicReference(BigDecimal.ZERO)
-    private var y = AtomicReference(BigDecimal.ZERO)
-    private var vx = AtomicReference(BigDecimal.ZERO)
-    private var vy = AtomicReference(BigDecimal.ZERO)
-
-    val position: Vector
-        get() = Vector(x.get(), y.get())
-    val speed: Vector
-        get() = Vector(vx.get(), vy.get())
+    val ships = mutableListOf(Ship())
 
     init {
         GlobalScope.launch {
@@ -183,35 +181,60 @@ class GameState(
         }
     }
 
-    fun createGameStateMessage() =
+    fun toMessage() =
         GameStateMessage(
-            ships = listOf(
-                ShipMessage(
-                    speed = speed,
-                    position = position
-                )
-            )
+            ships = ships.map { it.toMessage() }
         )
+
+    private fun update(delta: BigDecimal = BigDecimal("0.01")) {
+        ships.forEach { it.update(delta) }
+    }
+}
+
+class Ship {
+    private var position = AtomicReference(Vector2())
+    private var speed = AtomicReference(Vector2())
+    private var rotation = AtomicReference(BigDecimal.ZERO)
+
+    private var throttle = AtomicReference(BigDecimal.ZERO)
+    private var rudder = AtomicReference(BigDecimal.ZERO)
+
+    fun update(delta: BigDecimal) {
+        rotation.updateAndGet { it + (rudder.get() * BigDecimal.valueOf(PI) / BigDecimal(180) * delta) }
+        speed.updateAndGet {
+            val diff = if (throttle.get() > it.y) 10 else if (throttle.get() < it.y) -10 else 0
+            Vector2(BigDecimal.ZERO, it.y + diff.toBigDecimal() * delta)
+        }
+        position.updateAndGet { (it + speed.get() * delta).setScale(6) }
+    }
 
     fun changeThrottle(diff: BigDecimal): BigDecimal = throttle.updateAndGet {
         (it + diff).constrain(BigDecimal(-100), BigDecimal(100))
     }
 
-    private fun update() {
-        val delta = BigDecimal("0.01")
-        val avy = vy.updateAndGet {
-            val thrustForce = throttle.get().divide(BigDecimal(100), 6, RoundingMode.FLOOR) * thrust
-            val dragForce = (it.signum().toBigDecimal()) * it * it * dragFactor
-            val acceleration =
-                thrustForce.divide(weight, 6, RoundingMode.FLOOR) - dragForce.divide(weight, 6, RoundingMode.FLOOR)
-            log.warn("$throttle $thrustForce $dragForce $acceleration")
-            (it + acceleration * delta).setScale(6, RoundingMode.FLOOR)
-        }
-        x.updateAndGet { (it + vx.get() * delta).setScale(6, RoundingMode.FLOOR) }
-        y.updateAndGet { (it + avy * delta).setScale(6, RoundingMode.FLOOR) }
+    fun changeRudder(diff: BigDecimal): BigDecimal = rudder.updateAndGet {
+        (it + diff).constrain(BigDecimal(-100), BigDecimal(100))
     }
 
-    private fun BigDecimal.constrain(min: BigDecimal, max: BigDecimal) =
-        if (this > max) max else if (this < min) min else this
+    fun toMessage() =
+        ShipMessage(
+            speed = speed.get(),
+            position = position.get(),
+            rotation = rotation.get(),
+            throttle = throttle.get(),
+            rudder = rudder.get()
+        )
 }
+
+private fun BigDecimal.constrain(min: BigDecimal, max: BigDecimal) =
+    min(max, max(min, this))
+
+private fun BigDecimal.isZero() =
+    this.compareTo(BigDecimal.ZERO) == 0
+
+private fun min(a: BigDecimal, b: BigDecimal) =
+    if (a > b) b else a
+
+private fun max(a: BigDecimal, b: BigDecimal) =
+    if (a > b) a else b
 
