@@ -36,7 +36,6 @@ import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
-import java.math.RoundingMode
 import java.time.Duration
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -118,9 +117,16 @@ fun Application.module() {
                         height = "800px"
                     }
                     p {
-                        +"Game state: "
+                        +"Heading: "
                         span {
-                            id = "pos"
+                            id = "heading"
+                            +"unknown"
+                        }
+                    }
+                    p {
+                        +"Velocity: "
+                        span {
+                            id = "velocity"
                             +"unknown"
                         }
                     }
@@ -175,6 +181,8 @@ data class ShipMessage(
     val position: Vector2,
     val speed: Vector2,
     val rotation: BigDecimal,
+    val heading: BigDecimal,
+    val velocity: BigDecimal,
     val throttle: BigDecimal,
     val rudder: BigDecimal,
     val history: List<Pair<BigDecimal, Vector2>>
@@ -265,7 +273,7 @@ class Ship {
     }
 
     private fun updateRotation(time: GameTime) {
-        val diff = rudder.toRadians() * rudderFactor * PI
+        val diff = (rudder.toRadians() * rudderFactor * PI).negate()
         rotation = (rotation + diff * time.delta)
         if (rotation >= PI * 2) {
             rotation = rotation.remainder(PI * 2)
@@ -302,6 +310,8 @@ class Ship {
             speed = speed,
             position = position,
             rotation = rotation,
+            heading = rotation.toHeading(),
+            velocity = speed.length(),
             throttle = throttle,
             rudder = rudder,
             history = mutableListOf<Pair<BigDecimal, Vector2>>().apply { addAll(history) }

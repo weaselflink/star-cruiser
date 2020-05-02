@@ -20,7 +20,10 @@ fun BigDecimal.clip(min: Long, max: Long) =
 val PI: BigDecimal = BigDecimal.valueOf(kotlin.math.PI)
 
 fun BigDecimal.toRadians(): BigDecimal =
-    this.divide(BigDecimal(180), 9, MathDefaults.roundingMode) * PI
+    this.divide(180.toBigDecimal(), 9, MathDefaults.roundingMode) * PI
+
+fun BigDecimal.toDegrees(): BigDecimal =
+    this.divide(PI, 9, MathDefaults.roundingMode) * 180
 
 operator fun BigDecimal.times(value: Long): BigDecimal =
     this * BigDecimal(value)
@@ -36,6 +39,9 @@ fun min(a: BigDecimal, b: BigDecimal) =
 
 fun max(a: BigDecimal, b: BigDecimal) =
     if (a > b) a else b
+
+fun BigDecimal.toHeading(): BigDecimal =
+    this.toDegrees().negate().setScale(2, RoundingMode.HALF_EVEN) + 90.toBigDecimal()
 
 @Serializer(forClass = BigDecimal::class)
 object BigDecimalSerializer : KSerializer<BigDecimal> {

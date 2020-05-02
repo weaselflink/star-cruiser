@@ -5,7 +5,7 @@ package de.bissell.starcruiser
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import java.math.BigDecimal
-import java.math.RoundingMode
+import java.math.MathContext
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -36,5 +36,7 @@ data class Vector2(
             )
         }
 
+    fun length(): BigDecimal =
+        (x * x + y * y).sqrt(MathContext.DECIMAL32)
 }
 

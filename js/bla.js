@@ -36,14 +36,14 @@ function clearCanvas(ctx) {
 
 function drawShip(ctx, ship) {
     var xPos = parseFloat(ship.position.x) + 400.0;
-    var yPos = parseFloat(ship.position.y) + 400.0;
+    var yPos = -parseFloat(ship.position.y) + 400.0;
     var rot = parseFloat(ship.rotation);
 
     ctx.resetTransform();
     ctx.strokeStyle = "#fff"
     ctx.beginPath();
     ctx.translate(xPos, yPos);
-    ctx.rotate(rot);
+    ctx.rotate(-rot);
     ctx.moveTo(-5, -5);
     ctx.lineTo(10, 0);
     ctx.lineTo(-5, 5);
@@ -54,13 +54,13 @@ function drawShip(ctx, ship) {
 
 function drawHistory(ctx, ship) {
     var xPos = parseFloat(ship.position.x) + 400.0;
-    var yPos = parseFloat(ship.position.y) + 400.0;
+    var yPos = -parseFloat(ship.position.y) + 400.0;
     var rot = parseFloat(ship.rotation);
 
     ctx.resetTransform();
     for (point of ship.history) {
         var xp = parseFloat(point.second.x)
-        var yp = parseFloat(point.second.y)
+        var yp = -parseFloat(point.second.y)
         ctx.fillStyle = "#fff";
         ctx.beginPath();
         ctx.fillRect(xp + 400, yp + 400, 1, 1)
@@ -75,7 +75,8 @@ document.addEventListener("DOMContentLoaded", function() {
             var state = JSON.parse(event.data);
             var ship = state.ships[0];
 
-            document.getElementById("pos").innerHTML = event.data;
+            document.getElementById("heading").innerHTML = ship.heading;
+            document.getElementById("velocity").innerHTML = ship.velocity;
 
             var canvas = document.getElementById("canvas")
             var ctx = canvas.getContext("2d");
