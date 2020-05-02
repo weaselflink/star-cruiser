@@ -273,7 +273,7 @@ class Ship {
         if (rotation < ZERO) {
             rotation = PI * 2 + rotation.remainder(PI * 2)
         }
-        rotation = rotation.setScale(9, RoundingMode.FLOOR)
+        rotation = rotation.defaultScale()
     }
 
     private fun updateHistory(time: GameTime) {
@@ -290,11 +290,11 @@ class Ship {
     }
 
     fun changeThrottle(diff: BigDecimal) {
-        throttle = (throttle + diff).constrain((-100).toBigDecimal(), 100.toBigDecimal())
+        throttle = (throttle + diff).clip(-100, 100)
     }
 
     fun changeRudder(diff: BigDecimal) {
-        rudder = (rudder + diff).constrain((-100).toBigDecimal(), 100.toBigDecimal())
+        rudder = (rudder + diff).clip(-100, 100)
     }
 
     fun toMessage() =

@@ -4,13 +4,23 @@ import kotlinx.serialization.*
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-fun BigDecimal.constrain(min: BigDecimal, max: BigDecimal) =
+object MathDefaults {
+    val roundingMode: RoundingMode = RoundingMode.HALF_EVEN
+}
+
+fun BigDecimal.defaultScale(): BigDecimal =
+    setScale(9, MathDefaults.roundingMode)
+
+fun BigDecimal.clip(min: BigDecimal, max: BigDecimal) =
     min(max, max(min, this))
+
+fun BigDecimal.clip(min: Long, max: Long) =
+    min(max.toBigDecimal(), max(min.toBigDecimal(), this))
 
 val PI: BigDecimal = BigDecimal.valueOf(kotlin.math.PI)
 
 fun BigDecimal.toRadians(): BigDecimal =
-    this.divide(BigDecimal(180), 9, RoundingMode.HALF_UP) * PI
+    this.divide(BigDecimal(180), 9, MathDefaults.roundingMode) * PI
 
 operator fun BigDecimal.times(value: Long): BigDecimal =
     this * BigDecimal(value)

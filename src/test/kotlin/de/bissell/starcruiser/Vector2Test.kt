@@ -40,7 +40,7 @@ class Vector2Test {
         expectThat(
             Vector2(BigDecimal("12"), BigDecimal("0.2050000")).setScale(2)
         ).isEqualTo(
-            Vector2(BigDecimal("12.00"), BigDecimal("0.21"))
+            Vector2(BigDecimal("12.00"), BigDecimal("0.20"))
         )
     }
 
