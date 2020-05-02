@@ -28,6 +28,45 @@ function createSocket(uri) {
     return socket;
 }
 
+function clearCanvas(ctx) {
+    ctx.resetTransform();
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function drawShip(ctx, ship) {
+    var xPos = parseFloat(ship.position.x) + 400.0;
+    var yPos = parseFloat(ship.position.y) + 400.0;
+    var rot = parseFloat(ship.rotation);
+
+    ctx.resetTransform();
+    ctx.strokeStyle = "#fff"
+    ctx.beginPath();
+    ctx.translate(xPos, yPos);
+    ctx.rotate(rot);
+    ctx.moveTo(-5, -5);
+    ctx.lineTo(10, 0);
+    ctx.lineTo(-5, 5);
+    ctx.lineTo(-2, 0);
+    ctx.lineTo(-5, -5);
+    ctx.stroke();
+}
+
+function drawHistory(ctx, ship) {
+    var xPos = parseFloat(ship.position.x) + 400.0;
+    var yPos = parseFloat(ship.position.y) + 400.0;
+    var rot = parseFloat(ship.rotation);
+
+    ctx.resetTransform();
+    for (point of ship.history) {
+        var xp = parseFloat(point.second.x)
+        var yp = parseFloat(point.second.y)
+        ctx.fillStyle = "#fff";
+        ctx.beginPath();
+        ctx.fillRect(xp + 400, yp + 400, 1, 1)
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     updateSocket = createSocket("/updates");
 
@@ -42,32 +81,10 @@ document.addEventListener("DOMContentLoaded", function() {
             var ctx = canvas.getContext("2d");
             ctx.resetTransform();
 
-            var xPos = parseFloat(ship.position.x) + 400.0;
-            var yPos = parseFloat(ship.position.y) + 400.0;
-            var rot = parseFloat(ship.rotation);
+            clearCanvas();
 
-            ctx.fillStyle = "#000";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.strokeStyle = "#fff"
-            ctx.beginPath();
-            ctx.translate(xPos, yPos);
-            ctx.rotate(rot);
-            ctx.moveTo(-5, -5);
-            ctx.lineTo(10, 0);
-            ctx.lineTo(-5, 5);
-            ctx.lineTo(-2, 0);
-            ctx.lineTo(-5, -5);
-            ctx.stroke();
-
-            ctx.resetTransform();
-            for (point of ship.history) {
-                var xp = parseFloat(point.second.x)
-                var yp = parseFloat(point.second.y)
-                ctx.fillStyle = "#fff";
-                ctx.beginPath();
-                ctx.fillRect(xp + 400, yp + 400, 1, 1)
-            }
+            drawShip(ctx, ship);
+            drawHistory(ctx, ship);
         }
     }
 
