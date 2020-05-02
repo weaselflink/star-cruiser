@@ -2,12 +2,18 @@
 
 package de.bissell.starcruiser
 
+import azadev.kotlin.css.Stylesheet
+import azadev.kotlin.css.backgroundColor
+import azadev.kotlin.css.color
+import azadev.kotlin.css.colors.hex
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.*
 import io.ktor.features.ContentNegotiation
 import io.ktor.html.respondHtml
+import io.ktor.http.ContentType
+import io.ktor.http.LinkHeader
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.pingPeriod
 import io.ktor.http.cio.websocket.timeout
@@ -74,12 +80,27 @@ fun Application.module() {
             files("js")
         }
 
+        get("/css/bla.css") {
+            call.respondText(contentType = ContentType.Text.CSS) {
+                Stylesheet {
+                    body {
+                        backgroundColor = hex(0x000000)
+                        color = hex(0xffffff)
+                    }
+                }.render()
+            }
+        }
+
         get("/") {
             call.respondHtml {
                 head {
                     script {
                         type = ScriptType.textJavaScript
                         src = "/static/bla.js"
+                    }
+                    link {
+                        rel = LinkHeader.Rel.Stylesheet
+                        href = "/css/bla.css"
                     }
                 }
                 body {
@@ -172,7 +193,7 @@ fun CoroutineScope.gameStateActor() = actor<GameStateCommand> {
     for (command in channel) {
         when (command) {
             is Update -> gameState.update()
-            is Pause -> gameState.paused = !gameState.paused
+            is Pause -> gameState.togglePaused()
             is ChangeThrottle -> gameState.ships.first().changeThrottle(command.diff)
             is ChangeRudder -> gameState.ships.first().changeRudder(command.diff)
             is GetGameStateMessage -> command.response.complete(gameState.toMessage())
@@ -182,8 +203,8 @@ fun CoroutineScope.gameStateActor() = actor<GameStateCommand> {
 
 class GameState {
 
-    var time = GameTime()
-    var paused = true
+    private var time = GameTime()
+    private var paused = true
     val ships = mutableListOf(Ship())
 
     fun toMessage() =
@@ -191,6 +212,10 @@ class GameState {
             paused = paused,
             ships = ships.map { it.toMessage() }
         )
+
+    fun togglePaused() {
+        paused = !paused
+    }
 
     fun update() {
         if (paused) return
@@ -220,15 +245,30 @@ class Ship {
 
     private val history = mutableListOf<Pair<BigDecimal, Vector2>>()
 
+    private val thrustFactor = BigDecimal("0.2")
+    private val rudderFactor = BigDecimal("0.2")
+
     fun update(time: GameTime) {
-        val diff = if (throttle > thrust) 10 else if (throttle < thrust) -10 else 0
-        thrust += diff.toBigDecimal() * time.delta
+        updateThrust(time)
+        updateRotation(time)
 
-        rotation = (rotation + (rudder.toRadians() * PI * time.delta)).setScale(9, RoundingMode.FLOOR)
-
-        speed = Vector2(thrust, BigDecimal.ZERO).rotate(rotation).setScale(9)
+        speed = Vector2(thrust * thrustFactor, BigDecimal.ZERO).rotate(rotation).setScale(9)
         position = (position + speed * time.delta).setScale(9)
 
+        updateHistory(time)
+    }
+
+    private fun updateThrust(time: GameTime) {
+        val diff = if (throttle > thrust) 10 else if (throttle < thrust) -10 else 0
+        thrust += diff.toBigDecimal() * time.delta
+    }
+
+    private fun updateRotation(time: GameTime) {
+        val diff = rudder.toRadians() * rudderFactor * PI
+        rotation = (rotation + diff * time.delta).setScale(9, RoundingMode.FLOOR)
+    }
+
+    private fun updateHistory(time: GameTime) {
         if (history.isEmpty()) {
             history.add(Pair(time.current, position))
         } else {

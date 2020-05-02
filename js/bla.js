@@ -46,8 +46,10 @@ document.addEventListener("DOMContentLoaded", function() {
             var yPos = parseFloat(ship.position.y) + 400.0;
             var rot = parseFloat(ship.rotation);
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            ctx.strokeStyle = "#fff"
             ctx.beginPath();
             ctx.translate(xPos, yPos);
             ctx.rotate(rot);
@@ -62,6 +64,7 @@ document.addEventListener("DOMContentLoaded", function() {
             for (point of ship.history) {
                 var xp = parseFloat(point.second.x)
                 var yp = parseFloat(point.second.y)
+                ctx.fillStyle = "#fff";
                 ctx.beginPath();
                 ctx.fillRect(xp + 400, yp + 400, 1, 1)
             }
