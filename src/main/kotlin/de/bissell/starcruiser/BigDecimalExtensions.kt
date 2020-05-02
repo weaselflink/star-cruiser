@@ -2,6 +2,7 @@ package de.bissell.starcruiser
 
 import kotlinx.serialization.*
 import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 import java.math.RoundingMode
 
 object MathDefaults {
@@ -32,7 +33,7 @@ operator fun BigDecimal.times(value: Double): BigDecimal =
     this * BigDecimal(value)
 
 fun BigDecimal.isZero() =
-    this.compareTo(BigDecimal.ZERO) == 0
+    this.compareTo(ZERO) == 0
 
 fun min(a: BigDecimal, b: BigDecimal) =
     if (a > b) b else a
@@ -41,7 +42,13 @@ fun max(a: BigDecimal, b: BigDecimal) =
     if (a > b) a else b
 
 fun BigDecimal.toHeading(): BigDecimal =
-    this.toDegrees().negate().setScale(2, RoundingMode.HALF_EVEN) + 90.toBigDecimal()
+    (90.toBigDecimal() - this.toDegrees()).setScale(2, RoundingMode.HALF_EVEN).let {
+        if (it < ZERO) {
+            it + 360.toBigDecimal()
+        } else {
+            it
+        }
+    }
 
 @Serializer(forClass = BigDecimal::class)
 object BigDecimalSerializer : KSerializer<BigDecimal> {
