@@ -170,7 +170,7 @@ class GameState {
             ships = ships.map { it.toMessage() }
         )
 
-    private fun update(delta: BigDecimal = BigDecimal("0.02")) {
+    private fun update() {
         if (paused) return
 
         time = time.update()
