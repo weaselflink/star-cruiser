@@ -35,8 +35,8 @@ function clearCanvas(ctx) {
 }
 
 function drawShip(ctx, ship) {
-    var xPos = parseFloat(ship.position.x) + 400.0;
-    var yPos = -parseFloat(ship.position.y) + 400.0;
+    var xPos = parseFloat(ship.position.x) + ctx.canvas.width / 2;
+    var yPos = -parseFloat(ship.position.y) + ctx.canvas.height / 2;
     var rot = parseFloat(ship.rotation);
 
     ctx.resetTransform();
@@ -53,8 +53,8 @@ function drawShip(ctx, ship) {
 }
 
 function drawHistory(ctx, ship) {
-    var xPos = parseFloat(ship.position.x) + 400.0;
-    var yPos = -parseFloat(ship.position.y) + 400.0;
+    var xPos = parseFloat(ship.position.x) + ctx.canvas.width / 2;
+    var yPos = -parseFloat(ship.position.y) + ctx.canvas.height / 2;
     var rot = parseFloat(ship.rotation);
 
     ctx.resetTransform();
@@ -63,7 +63,7 @@ function drawHistory(ctx, ship) {
         var yp = -parseFloat(point.second.y)
         ctx.fillStyle = "#fff";
         ctx.beginPath();
-        ctx.fillRect(xp + 400, yp + 400, 1, 1)
+        ctx.fillRect(xp + ctx.canvas.width / 2, yp + ctx.canvas.height / 2, 1, 1)
     }
 }
 

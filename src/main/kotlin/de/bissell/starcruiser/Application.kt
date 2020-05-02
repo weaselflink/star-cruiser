@@ -113,8 +113,8 @@ fun Application.module() {
                     }
                     canvas {
                         id = "canvas"
-                        width = "800px"
-                        height = "800px"
+                        width = "400px"
+                        height = "400px"
                     }
                     p {
                         +"Heading: "
@@ -122,9 +122,7 @@ fun Application.module() {
                             id = "heading"
                             +"unknown"
                         }
-                    }
-                    p {
-                        +"Velocity: "
+                        +"\tVelocity: "
                         span {
                             id = "velocity"
                             +"unknown"
