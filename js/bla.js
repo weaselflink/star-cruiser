@@ -34,6 +34,25 @@ function clearCanvas(ctx) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+function drawCompass(ctx) {
+    ctx.resetTransform();
+    ctx.strokeStyle = "#fff"
+    var r = ctx.canvas.width / 2  - 20;
+    var mx = canvas.width / 2;
+    var my = canvas.width / 2;
+    for (var i = 0; i < 36; i++) {
+        var a = i * Math.PI * 2 / 36;
+        var inner = r - 10;
+        if (i % 3 == 0) {
+            inner = r - 20;
+        }
+        ctx.beginPath()
+        ctx.moveTo(mx + Math.sin(a) * inner, my + Math.cos(a) * inner);
+        ctx.lineTo(mx + Math.sin(a) * r, my + Math.cos(a) * r);
+        ctx.stroke();
+    }
+}
+
 function drawShip(ctx, ship) {
     var xPos = parseFloat(ship.position.x) + ctx.canvas.width / 2;
     var yPos = -parseFloat(ship.position.y) + ctx.canvas.height / 2;
@@ -83,6 +102,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ctx.resetTransform();
 
             clearCanvas(ctx);
+            drawCompass(ctx);
 
             drawShip(ctx, ship);
             drawHistory(ctx, ship);
