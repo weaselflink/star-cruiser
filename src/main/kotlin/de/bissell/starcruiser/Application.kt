@@ -35,6 +35,7 @@ import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
 import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 import java.math.RoundingMode
 import java.time.Duration
 
@@ -227,8 +228,8 @@ class GameState {
 }
 
 data class GameTime(
-    val current: BigDecimal = BigDecimal(0),
-    val delta: BigDecimal = BigDecimal("0.02")
+    val current: BigDecimal = ZERO,
+    val delta: BigDecimal = "0.02".toBigDecimal()
 ) {
 
     fun update() = GameTime(current + delta, delta)
@@ -237,11 +238,11 @@ data class GameTime(
 class Ship {
     private var position = Vector2()
     private var speed = Vector2()
-    private var rotation = BigDecimal(90).toRadians()
+    private var rotation = 90.toBigDecimal().toRadians()
 
-    private var throttle = BigDecimal.ZERO
-    private var thrust = BigDecimal.ZERO
-    private var rudder = BigDecimal.ZERO
+    private var throttle = ZERO
+    private var thrust = ZERO
+    private var rudder = ZERO
 
     private val history = mutableListOf<Pair<BigDecimal, Vector2>>()
 
@@ -252,7 +253,7 @@ class Ship {
         updateThrust(time)
         updateRotation(time)
 
-        speed = Vector2(thrust * thrustFactor, BigDecimal.ZERO).rotate(rotation).setScale(9)
+        speed = Vector2(thrust * thrustFactor, ZERO).rotate(rotation).setScale(9)
         position = (position + speed * time.delta).setScale(9)
 
         updateHistory(time)
@@ -265,14 +266,21 @@ class Ship {
 
     private fun updateRotation(time: GameTime) {
         val diff = rudder.toRadians() * rudderFactor * PI
-        rotation = (rotation + diff * time.delta).setScale(9, RoundingMode.FLOOR)
+        rotation = (rotation + diff * time.delta)
+        if (rotation >= PI * 2) {
+            rotation = rotation.remainder(PI * 2)
+        }
+        if (rotation < ZERO) {
+            rotation = PI * 2 + rotation.remainder(PI * 2)
+        }
+        rotation = rotation.setScale(9, RoundingMode.FLOOR)
     }
 
     private fun updateHistory(time: GameTime) {
         if (history.isEmpty()) {
             history.add(Pair(time.current, position))
         } else {
-            if ((history.last().first - time.current).abs() > BigDecimal(1)) {
+            if ((history.last().first - time.current).abs() > 1.toBigDecimal()) {
                 history.add(Pair(time.current, position))
             }
             if (history.size > 10) {
@@ -282,11 +290,11 @@ class Ship {
     }
 
     fun changeThrottle(diff: BigDecimal) {
-        throttle = (throttle + diff).constrain(BigDecimal(-100), BigDecimal(100))
+        throttle = (throttle + diff).constrain((-100).toBigDecimal(), 100.toBigDecimal())
     }
 
     fun changeRudder(diff: BigDecimal) {
-        rudder = (rudder + diff).constrain(BigDecimal(-100), BigDecimal(100))
+        rudder = (rudder + diff).constrain((-100).toBigDecimal(), 100.toBigDecimal())
     }
 
     fun toMessage() =

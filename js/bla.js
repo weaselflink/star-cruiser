@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
             var ctx = canvas.getContext("2d");
             ctx.resetTransform();
 
-            clearCanvas();
+            clearCanvas(ctx);
 
             drawShip(ctx, ship);
             drawHistory(ctx, ship);
