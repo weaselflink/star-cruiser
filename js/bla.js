@@ -42,17 +42,29 @@ document.addEventListener("DOMContentLoaded", function() {
             var ctx = canvas.getContext("2d");
             ctx.resetTransform();
 
+            var xPos = parseFloat(ship.position.x) + 400.0;
+            var yPos = parseFloat(ship.position.y) + 400.0;
+            var rot = parseFloat(ship.rotation);
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             ctx.beginPath();
-            ctx.translate(parseFloat(ship.position.x) + 400.0, parseFloat(ship.position.y) + 400.0);
-            ctx.rotate(parseFloat(ship.rotation));
+            ctx.translate(xPos, yPos);
+            ctx.rotate(rot);
             ctx.moveTo(-5, -5);
             ctx.lineTo(10, 0);
             ctx.lineTo(-5, 5);
             ctx.lineTo(-2, 0);
             ctx.lineTo(-5, -5);
             ctx.stroke();
+
+            ctx.resetTransform();
+            for (point of ship.history) {
+                var xp = parseFloat(point.second.x)
+                var yp = parseFloat(point.second.y)
+                ctx.beginPath();
+                ctx.fillRect(xp + 400, yp + 400, 1, 1)
+            }
         }
     }
 

@@ -83,17 +83,17 @@ fun Application.module() {
                             +"disconnected"
                         }
                     }
-                    p {
-                        +"Position: "
-                        span {
-                            id = "pos"
-                            +"unknown"
-                        }
-                    }
                     canvas {
                         id = "canvas"
                         width = "800px"
                         height = "800px"
+                    }
+                    p {
+                        +"Game state: "
+                        span {
+                            id = "pos"
+                            +"unknown"
+                        }
                     }
                 }
             }
@@ -145,11 +145,13 @@ data class ShipMessage(
     val speed: Vector2,
     val rotation: BigDecimal,
     val throttle: BigDecimal,
-    val rudder: BigDecimal
+    val rudder: BigDecimal,
+    val history: List<Pair<BigDecimal, Vector2>>
 )
 
 class GameState {
 
+    var time = GameTime()
     var paused = true
     val ships = mutableListOf(Ship())
 
@@ -171,8 +173,18 @@ class GameState {
     private fun update(delta: BigDecimal = BigDecimal("0.02")) {
         if (paused) return
 
-        ships.forEach { it.update(delta) }
+        time = time.update()
+
+        ships.forEach { it.update(time) }
     }
+}
+
+data class GameTime(
+    val current: BigDecimal = BigDecimal(0),
+    val delta: BigDecimal = BigDecimal("0.02")
+) {
+
+    fun update() = GameTime(current + delta, delta)
 }
 
 class Ship {
@@ -184,16 +196,29 @@ class Ship {
     private var thrust = AtomicReference(BigDecimal.ZERO)
     private var rudder = AtomicReference(BigDecimal.ZERO)
 
-    fun update(delta: BigDecimal) {
-        val diff = if (throttle.get() > thrust.get()) 10 else if (throttle.get() < thrust.get()) -10 else 0
-        thrust.updateAndGet { it + diff.toBigDecimal() * delta }
+    private val history = mutableListOf<Pair<BigDecimal, Vector2>>()
 
-        rotation.updateAndGet { (it + (rudder.get().toRadians() * PI * delta)).setScale(9, RoundingMode.FLOOR) }
+    fun update(time: GameTime) {
+        val diff = if (throttle.get() > thrust.get()) 10 else if (throttle.get() < thrust.get()) -10 else 0
+        thrust.updateAndGet { it + diff.toBigDecimal() * time.delta }
+
+        rotation.updateAndGet { (it + (rudder.get().toRadians() * PI * time.delta)).setScale(9, RoundingMode.FLOOR) }
 
         speed.updateAndGet {
             Vector2(thrust.get(), BigDecimal.ZERO).rotate(rotation.get()).setScale(9)
         }
-        position.updateAndGet { (it + speed.get() * delta).setScale(9) }
+        position.updateAndGet { (it + speed.get() * time.delta).setScale(9) }
+
+        if (history.isEmpty()) {
+            history.add(Pair(time.current, position.get()))
+        } else {
+            if ((history.last().first - time.current).abs() > BigDecimal(1)) {
+                history.add(Pair(time.current, position.get()))
+            }
+            if (history.size > 10) {
+                history.removeAt(0)
+            }
+        }
     }
 
     fun changeThrottle(diff: BigDecimal): BigDecimal = throttle.updateAndGet {
@@ -210,6 +235,7 @@ class Ship {
             position = position.get(),
             rotation = rotation.get(),
             throttle = throttle.get(),
-            rudder = rudder.get()
+            rudder = rudder.get(),
+            history = mutableListOf<Pair<BigDecimal, Vector2>>().apply { addAll(history) }
         )
 }
