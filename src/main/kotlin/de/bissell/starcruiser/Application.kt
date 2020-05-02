@@ -20,25 +20,32 @@ import io.ktor.serialization.DefaultJsonConfiguration
 import io.ktor.serialization.json
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.channels.actor
 import kotlinx.html.*
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UnstableDefault
+import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.Duration
-import java.util.concurrent.atomic.AtomicReference
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
+@ObsoleteCoroutinesApi
 @UnstableDefault
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
-    val gameState = GameState()
+    val gameStateActor = gameStateActor()
+
+    GlobalScope.launch {
+        while (true) {
+            gameStateActor.send(Update)
+            delay(20)
+        }
+    }
 
     install(Authentication) {
         basic("myBasicAuth") {
@@ -108,7 +115,9 @@ fun Application.module() {
 
         webSocket("/ws/updates") {
             while (isActive) {
-                outgoing.sendText(gameState.toMessage().toJson())
+                val response = CompletableDeferred<GameStateMessage>()
+                gameStateActor.send(GetGameStateMessage(response))
+                outgoing.sendText(response.await().toJson())
                 delay(100)
             }
         }
@@ -116,12 +125,12 @@ fun Application.module() {
         webSocket("/ws/command") {
             for (frame in incoming) {
                 when (String(frame.data)) {
-                    "KeyP" -> gameState.paused = !gameState.paused
+                    "KeyP" -> gameStateActor.send(Pause)
 
-                    "KeyW" -> gameState.ships.first().changeThrottle(BigDecimal(10))
-                    "KeyS" -> gameState.ships.first().changeThrottle(BigDecimal(-10))
-                    "KeyA" -> gameState.ships.first().changeRudder(BigDecimal(-10))
-                    "KeyD" -> gameState.ships.first().changeRudder(BigDecimal(10))
+                    "KeyW" -> gameStateActor.send(ChangeThrottle(BigDecimal(10)))
+                    "KeyS" -> gameStateActor.send(ChangeThrottle(BigDecimal(-10)))
+                    "KeyA" -> gameStateActor.send(ChangeRudder(BigDecimal(-10)))
+                    "KeyD" -> gameStateActor.send(ChangeRudder(BigDecimal(10)))
                 }
             }
         }
@@ -149,20 +158,33 @@ data class ShipMessage(
     val history: List<Pair<BigDecimal, Vector2>>
 )
 
+sealed class GameStateCommand
+
+object Update: GameStateCommand()
+object Pause: GameStateCommand()
+class ChangeThrottle(val diff: BigDecimal): GameStateCommand()
+class ChangeRudder(val diff: BigDecimal): GameStateCommand()
+class GetGameStateMessage(val response: CompletableDeferred<GameStateMessage>) : GameStateCommand()
+
+@ObsoleteCoroutinesApi
+fun CoroutineScope.gameStateActor() = actor<GameStateCommand> {
+    val gameState = GameState()
+    for (command in channel) {
+        when (command) {
+            is Update -> gameState.update()
+            is Pause -> gameState.paused = !gameState.paused
+            is ChangeThrottle -> gameState.ships.first().changeThrottle(command.diff)
+            is ChangeRudder -> gameState.ships.first().changeRudder(command.diff)
+            is GetGameStateMessage -> command.response.complete(gameState.toMessage())
+        }
+    }
+}
+
 class GameState {
 
     var time = GameTime()
     var paused = true
     val ships = mutableListOf(Ship())
-
-    init {
-        GlobalScope.launch {
-            while (true) {
-                update()
-                delay(20)
-            }
-        }
-    }
 
     fun toMessage() =
         GameStateMessage(
@@ -170,7 +192,7 @@ class GameState {
             ships = ships.map { it.toMessage() }
         )
 
-    private fun update() {
+    fun update() {
         if (paused) return
 
         time = time.update()
@@ -188,32 +210,30 @@ data class GameTime(
 }
 
 class Ship {
-    private var position = AtomicReference(Vector2())
-    private var speed = AtomicReference(Vector2())
-    private var rotation = AtomicReference(BigDecimal(90).toRadians())
+    private var position = Vector2()
+    private var speed = Vector2()
+    private var rotation = BigDecimal(90).toRadians()
 
-    private var throttle = AtomicReference(BigDecimal.ZERO)
-    private var thrust = AtomicReference(BigDecimal.ZERO)
-    private var rudder = AtomicReference(BigDecimal.ZERO)
+    private var throttle = BigDecimal.ZERO
+    private var thrust = BigDecimal.ZERO
+    private var rudder = BigDecimal.ZERO
 
     private val history = mutableListOf<Pair<BigDecimal, Vector2>>()
 
     fun update(time: GameTime) {
-        val diff = if (throttle.get() > thrust.get()) 10 else if (throttle.get() < thrust.get()) -10 else 0
-        thrust.updateAndGet { it + diff.toBigDecimal() * time.delta }
+        val diff = if (throttle > thrust) 10 else if (throttle < thrust) -10 else 0
+        thrust += diff.toBigDecimal() * time.delta
 
-        rotation.updateAndGet { (it + (rudder.get().toRadians() * PI * time.delta)).setScale(9, RoundingMode.FLOOR) }
+        rotation = (rotation + (rudder.toRadians() * PI * time.delta)).setScale(9, RoundingMode.FLOOR)
 
-        speed.updateAndGet {
-            Vector2(thrust.get(), BigDecimal.ZERO).rotate(rotation.get()).setScale(9)
-        }
-        position.updateAndGet { (it + speed.get() * time.delta).setScale(9) }
+        speed = Vector2(thrust, BigDecimal.ZERO).rotate(rotation).setScale(9)
+        position = (position + speed * time.delta).setScale(9)
 
         if (history.isEmpty()) {
-            history.add(Pair(time.current, position.get()))
+            history.add(Pair(time.current, position))
         } else {
             if ((history.last().first - time.current).abs() > BigDecimal(1)) {
-                history.add(Pair(time.current, position.get()))
+                history.add(Pair(time.current, position))
             }
             if (history.size > 10) {
                 history.removeAt(0)
@@ -221,21 +241,21 @@ class Ship {
         }
     }
 
-    fun changeThrottle(diff: BigDecimal): BigDecimal = throttle.updateAndGet {
-        (it + diff).constrain(BigDecimal(-100), BigDecimal(100))
+    fun changeThrottle(diff: BigDecimal) {
+        throttle = (throttle + diff).constrain(BigDecimal(-100), BigDecimal(100))
     }
 
-    fun changeRudder(diff: BigDecimal): BigDecimal = rudder.updateAndGet {
-        (it + diff).constrain(BigDecimal(-100), BigDecimal(100))
+    fun changeRudder(diff: BigDecimal) {
+        rudder = (rudder + diff).constrain(BigDecimal(-100), BigDecimal(100))
     }
 
     fun toMessage() =
         ShipMessage(
-            speed = speed.get(),
-            position = position.get(),
-            rotation = rotation.get(),
-            throttle = throttle.get(),
-            rudder = rudder.get(),
+            speed = speed,
+            position = position,
+            rotation = rotation,
+            throttle = throttle,
+            rudder = rudder,
             history = mutableListOf<Pair<BigDecimal, Vector2>>().apply { addAll(history) }
         )
 }
