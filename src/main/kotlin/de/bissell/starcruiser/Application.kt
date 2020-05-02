@@ -144,7 +144,7 @@ fun Application.module() {
                 val response = CompletableDeferred<GameStateMessage>()
                 gameStateActor.send(GetGameStateMessage(response))
                 outgoing.sendText(response.await().toJson())
-                delay(100)
+                delay(200)
             }
         }
 
