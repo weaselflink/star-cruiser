@@ -108,6 +108,42 @@ function drawHistory(ctx, ship) {
     }
 }
 
+function keyHandler(event) {
+    if (clientSocket) {
+        switch(event.code) {
+            case "KeyP":
+                clientSocket.send(JSON.stringify({
+                    type: "de.bissell.starcruiser.Command.CommandTogglePause"
+                }));
+                break;
+            case "KeyW":
+                clientSocket.send(JSON.stringify({
+                    type: "de.bissell.starcruiser.Command.CommandChangeThrottle",
+                    diff: 10
+                }));
+                break;
+            case "KeyS":
+                clientSocket.send(JSON.stringify({
+                    type: "de.bissell.starcruiser.Command.CommandChangeThrottle",
+                    diff: -10
+                }));
+                break;
+            case "KeyA":
+                clientSocket.send(JSON.stringify({
+                    type: "de.bissell.starcruiser.Command.CommandChangeRudder",
+                    diff: -10
+                }));
+                break;
+            case "KeyD":
+                clientSocket.send(JSON.stringify({
+                    type: "de.bissell.starcruiser.Command.CommandChangeRudder",
+                    diff: 10
+                }));
+                break;
+        }
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     clientSocket = createSocket("/client");
 
@@ -142,8 +178,4 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-document.addEventListener("keydown", function(event) {
-    if (clientSocket) {
-        clientSocket.send(event.code)
-    }
-});
+document.addEventListener("keydown", keyHandler);

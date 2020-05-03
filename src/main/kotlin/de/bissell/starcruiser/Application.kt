@@ -20,9 +20,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.UnstableDefault
-import kotlinx.serialization.UseSerializers
+import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
@@ -83,7 +81,7 @@ private suspend fun SendChannel<Frame>.sendText(value: String) = send(Frame.Text
 
 class GameClient(
     private val id: UUID = UUID.randomUUID(),
-    private val gameStateActor: SendChannel<GameStateCommand>,
+    private val gameStateActor: SendChannel<GameStateChange>,
     private val outgoing: SendChannel<Frame>,
     private val incoming: ReceiveChannel<Frame>
 ) {
@@ -92,7 +90,7 @@ class GameClient(
     suspend fun start() {
         gameStateActor.send(NewGameClient(id))
 
-        GlobalScope.launch {
+        val updateJob = GlobalScope.launch {
             while (isActive) {
                 val response = CompletableDeferred<GameStateMessage>()
                 gameStateActor.send(GetGameStateMessage(id, response))
@@ -102,16 +100,30 @@ class GameClient(
         }
 
         for (frame in incoming) {
-            when (String(frame.data)) {
-                "KeyP" -> gameStateActor.send(Pause(id))
+            val input = String(frame.data)
+            when (val command = Json.parse(Command.serializer(), input)) {
+                is Command.CommandTogglePause -> gameStateActor.send(TogglePause(id))
 
-                "KeyW" -> gameStateActor.send(ChangeThrottle(id, BigDecimal(10)))
-                "KeyS" -> gameStateActor.send(ChangeThrottle(id, BigDecimal(-10)))
-                "KeyA" -> gameStateActor.send(ChangeRudder(id, BigDecimal(-10)))
-                "KeyD" -> gameStateActor.send(ChangeRudder(id, BigDecimal(10)))
+                is Command.CommandChangeThrottle -> gameStateActor.send(ChangeThrottle(id, BigDecimal(command.diff)))
+                is Command.CommandChangeRudder -> gameStateActor.send(ChangeRudder(id, BigDecimal(command.diff)))
             }
         }
+
+        updateJob.cancelAndJoin()
+        gameStateActor.send(GameClientDisconnected(id))
     }
+}
+
+@Serializable
+sealed class Command {
+
+    @Serializable
+    object CommandTogglePause : Command()
+    @Serializable
+    class CommandChangeThrottle(val diff: Long) : Command()
+    @Serializable
+    class CommandChangeRudder(val diff: Long) : Command()
+
 }
 
 @Serializable
@@ -136,30 +148,32 @@ data class ShipMessage(
     val history: List<Pair<BigDecimal, Vector2>>
 )
 
-sealed class GameStateCommand
+sealed class GameStateChange
 
-sealed class ClientGameStateCommand(
+sealed class ClientGameStateChange(
     val clientId: UUID
-): GameStateCommand()
+): GameStateChange()
 
-object Update: GameStateCommand()
-class NewGameClient(clientId: UUID): ClientGameStateCommand(clientId)
-class Pause(clientId: UUID): ClientGameStateCommand(clientId)
-class ChangeThrottle(clientId: UUID, val diff: BigDecimal): ClientGameStateCommand(clientId)
-class ChangeRudder(clientId: UUID, val diff: BigDecimal): ClientGameStateCommand(clientId)
-class GetGameStateMessage(clientId: UUID, val response: CompletableDeferred<GameStateMessage>) : ClientGameStateCommand(clientId)
+object Update: GameStateChange()
+class NewGameClient(clientId: UUID): ClientGameStateChange(clientId)
+class GameClientDisconnected(clientId: UUID): ClientGameStateChange(clientId)
+class TogglePause(clientId: UUID): ClientGameStateChange(clientId)
+class ChangeThrottle(clientId: UUID, val diff: BigDecimal): ClientGameStateChange(clientId)
+class ChangeRudder(clientId: UUID, val diff: BigDecimal): ClientGameStateChange(clientId)
+class GetGameStateMessage(clientId: UUID, val response: CompletableDeferred<GameStateMessage>) : ClientGameStateChange(clientId)
 
 @ObsoleteCoroutinesApi
-fun CoroutineScope.gameStateActor() = actor<GameStateCommand> {
+fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
     val gameState = GameState()
-    for (command in channel) {
-        when (command) {
+    for (change in channel) {
+        when (change) {
             is Update -> gameState.update()
-            is NewGameClient -> gameState.createShip(command.clientId)
-            is Pause -> gameState.togglePaused()
-            is ChangeThrottle -> gameState.ships[command.clientId]!!.changeThrottle(command.diff)
-            is ChangeRudder -> gameState.ships[command.clientId]!!.changeRudder(command.diff)
-            is GetGameStateMessage -> command.response.complete(gameState.toMessage(command.clientId))
+            is NewGameClient -> gameState.createShip(change.clientId)
+            is GameClientDisconnected -> gameState.deleteShip(change.clientId)
+            is TogglePause -> gameState.togglePaused()
+            is ChangeThrottle -> gameState.ships[change.clientId]!!.changeThrottle(change.diff)
+            is ChangeRudder -> gameState.ships[change.clientId]!!.changeRudder(change.diff)
+            is GetGameStateMessage -> change.response.complete(gameState.toMessage(change.clientId))
         }
     }
 }
@@ -187,6 +201,10 @@ class GameState {
                 y = BigDecimal(Random().nextInt(200) - 100)
             )
         )
+    }
+
+    fun deleteShip(clientId: UUID) {
+        ships.remove(clientId)
     }
 
     fun togglePaused() {
