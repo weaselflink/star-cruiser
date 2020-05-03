@@ -59,14 +59,30 @@ function drawCompass(ctx) {
 }
 
 function drawShip(ctx, ship) {
-    var xPos = parseFloat(ship.position.x) + ctx.canvas.width / 2;
-    var yPos = -parseFloat(ship.position.y) + ctx.canvas.height / 2;
     var rot = parseFloat(ship.rotation);
 
     ctx.resetTransform();
-    ctx.strokeStyle = "#fff"
+    ctx.strokeStyle = "#00f"
     ctx.beginPath();
     ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
+    ctx.rotate(-rot);
+    ctx.moveTo(-5, -5);
+    ctx.lineTo(10, 0);
+    ctx.lineTo(-5, 5);
+    ctx.lineTo(-2, 0);
+    ctx.lineTo(-5, -5);
+    ctx.stroke();
+}
+
+function drawContact(ctx, ship, contact) {
+    var xPos = parseFloat(contact.position.x) - parseFloat(ship.position.x);
+    var yPos = parseFloat(contact.position.y) - parseFloat(ship.position.y);
+    var rot = parseFloat(contact.rotation);
+
+    ctx.resetTransform();
+    ctx.strokeStyle = "#333"
+    ctx.beginPath();
+    ctx.translate(ctx.canvas.width / 2 + xPos, ctx.canvas.height / 2 - yPos);
     ctx.rotate(-rot);
     ctx.moveTo(-5, -5);
     ctx.lineTo(10, 0);
@@ -98,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (clientSocket) {
         clientSocket.onmessage = function (event) {
             var state = JSON.parse(event.data);
-            var ship = state.ships[0];
+            var ship = state.ship;
 
             document.getElementById("heading").innerHTML = ship.heading;
             document.getElementById("velocity").innerHTML = ship.velocity;
@@ -119,6 +135,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
             drawShip(ctx, ship);
             drawHistory(ctx, ship);
+            for (contact of state.contacts) {
+                drawContact(ctx, ship, contact);
+            }
         }
     }
 });
