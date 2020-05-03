@@ -36,7 +36,7 @@ fun Application.module() {
     val gameStateActor = gameStateActor()
 
     GlobalScope.launch {
-        while (true) {
+        while (isActive) {
             gameStateActor.send(Update)
             delay(20)
         }
@@ -67,16 +67,15 @@ fun Application.module() {
     routing {
         webUi()
 
-        webSocket("/ws/updates") {
-            while (isActive) {
-                val response = CompletableDeferred<GameStateMessage>()
-                gameStateActor.send(GetGameStateMessage(response))
-                outgoing.sendText(response.await().toJson())
-                delay(200)
+        webSocket("/ws/client") {
+            GlobalScope.launch {
+                while (isActive) {
+                    val response = CompletableDeferred<GameStateMessage>()
+                    gameStateActor.send(GetGameStateMessage(response))
+                    outgoing.sendText(response.await().toJson())
+                    delay(200)
+                }
             }
-        }
-
-        webSocket("/ws/command") {
             for (frame in incoming) {
                 when (String(frame.data)) {
                     "KeyP" -> gameStateActor.send(Pause)
@@ -92,6 +91,8 @@ fun Application.module() {
 }
 
 private suspend fun SendChannel<Frame>.sendText(value: String) = send(Frame.Text(value))
+
+
 
 @Serializable
 data class GameStateMessage(

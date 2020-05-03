@@ -1,7 +1,6 @@
 var wsBaseUri = "ws://127.0.0.1:8080/ws";
 
-var updateSocket = null;
-var commandSocket = null;
+var clientSocket = null;
 
 function createSocket(uri) {
     var socket = null;
@@ -94,10 +93,10 @@ function drawHistory(ctx, ship) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    updateSocket = createSocket("/updates");
+    clientSocket = createSocket("/client");
 
-    if (updateSocket) {
-        updateSocket.onmessage = function (event) {
+    if (clientSocket) {
+        clientSocket.onmessage = function (event) {
             var state = JSON.parse(event.data);
             var ship = state.ships[0];
 
@@ -122,12 +121,10 @@ document.addEventListener("DOMContentLoaded", function() {
             drawHistory(ctx, ship);
         }
     }
-
-    commandSocket = createSocket("/command");
 });
 
 document.addEventListener("keydown", function(event) {
-    if (commandSocket) {
-        commandSocket.send(event.code)
+    if (clientSocket) {
+        clientSocket.send(event.code)
     }
 });
