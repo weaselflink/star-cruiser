@@ -17,6 +17,7 @@ import io.ktor.serialization.json
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
 import kotlinx.serialization.Serializable
@@ -26,6 +27,7 @@ import kotlinx.serialization.json.Json
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import java.time.Duration
+import java.util.*
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -68,36 +70,55 @@ fun Application.module() {
         webUi()
 
         webSocket("/ws/client") {
-            GlobalScope.launch {
-                while (isActive) {
-                    val response = CompletableDeferred<GameStateMessage>()
-                    gameStateActor.send(GetGameStateMessage(response))
-                    outgoing.sendText(response.await().toJson())
-                    delay(200)
-                }
-            }
-            for (frame in incoming) {
-                when (String(frame.data)) {
-                    "KeyP" -> gameStateActor.send(Pause)
-
-                    "KeyW" -> gameStateActor.send(ChangeThrottle(BigDecimal(10)))
-                    "KeyS" -> gameStateActor.send(ChangeThrottle(BigDecimal(-10)))
-                    "KeyA" -> gameStateActor.send(ChangeRudder(BigDecimal(-10)))
-                    "KeyD" -> gameStateActor.send(ChangeRudder(BigDecimal(10)))
-                }
-            }
+            GameClient(
+                gameStateActor = gameStateActor,
+                outgoing = outgoing,
+                incoming = incoming
+            ).start()
         }
     }
 }
 
 private suspend fun SendChannel<Frame>.sendText(value: String) = send(Frame.Text(value))
 
+class GameClient(
+    private val id: UUID = UUID.randomUUID(),
+    private val gameStateActor: SendChannel<GameStateCommand>,
+    private val outgoing: SendChannel<Frame>,
+    private val incoming: ReceiveChannel<Frame>
+) {
 
+    @UnstableDefault
+    suspend fun start() {
+        gameStateActor.send(NewGameClient(id))
+
+        GlobalScope.launch {
+            while (isActive) {
+                val response = CompletableDeferred<GameStateMessage>()
+                gameStateActor.send(GetGameStateMessage(id, response))
+                outgoing.sendText(response.await().toJson())
+                delay(200)
+            }
+        }
+
+        for (frame in incoming) {
+            when (String(frame.data)) {
+                "KeyP" -> gameStateActor.send(Pause(id))
+
+                "KeyW" -> gameStateActor.send(ChangeThrottle(id, BigDecimal(10)))
+                "KeyS" -> gameStateActor.send(ChangeThrottle(id, BigDecimal(-10)))
+                "KeyA" -> gameStateActor.send(ChangeRudder(id, BigDecimal(-10)))
+                "KeyD" -> gameStateActor.send(ChangeRudder(id, BigDecimal(10)))
+            }
+        }
+    }
+}
 
 @Serializable
 data class GameStateMessage(
     val paused: Boolean,
-    val ships: List<ShipMessage>
+    val ship: ShipMessage,
+    val contacts: List<ShipMessage>
 ) {
     @UnstableDefault
     fun toJson(): String = Json.stringify(serializer(), this)
@@ -117,11 +138,16 @@ data class ShipMessage(
 
 sealed class GameStateCommand
 
+sealed class ClientGameStateCommand(
+    val clientId: UUID
+): GameStateCommand()
+
 object Update: GameStateCommand()
-object Pause: GameStateCommand()
-class ChangeThrottle(val diff: BigDecimal): GameStateCommand()
-class ChangeRudder(val diff: BigDecimal): GameStateCommand()
-class GetGameStateMessage(val response: CompletableDeferred<GameStateMessage>) : GameStateCommand()
+class NewGameClient(clientId: UUID): ClientGameStateCommand(clientId)
+class Pause(clientId: UUID): ClientGameStateCommand(clientId)
+class ChangeThrottle(clientId: UUID, val diff: BigDecimal): ClientGameStateCommand(clientId)
+class ChangeRudder(clientId: UUID, val diff: BigDecimal): ClientGameStateCommand(clientId)
+class GetGameStateMessage(clientId: UUID, val response: CompletableDeferred<GameStateMessage>) : ClientGameStateCommand(clientId)
 
 @ObsoleteCoroutinesApi
 fun CoroutineScope.gameStateActor() = actor<GameStateCommand> {
@@ -129,10 +155,11 @@ fun CoroutineScope.gameStateActor() = actor<GameStateCommand> {
     for (command in channel) {
         when (command) {
             is Update -> gameState.update()
+            is NewGameClient -> gameState.createShip(command.clientId)
             is Pause -> gameState.togglePaused()
-            is ChangeThrottle -> gameState.ships.first().changeThrottle(command.diff)
-            is ChangeRudder -> gameState.ships.first().changeRudder(command.diff)
-            is GetGameStateMessage -> command.response.complete(gameState.toMessage())
+            is ChangeThrottle -> gameState.ships[command.clientId]!!.changeThrottle(command.diff)
+            is ChangeRudder -> gameState.ships[command.clientId]!!.changeRudder(command.diff)
+            is GetGameStateMessage -> command.response.complete(gameState.toMessage(command.clientId))
         }
     }
 }
@@ -141,13 +168,26 @@ class GameState {
 
     private var time = GameTime()
     private var paused = true
-    val ships = mutableListOf(Ship())
+    val ships = mutableMapOf<UUID, Ship>()
 
-    fun toMessage() =
+    fun toMessage(clientId: UUID) =
         GameStateMessage(
             paused = paused,
-            ships = ships.map { it.toMessage() }
+            ship = ships[clientId]!!.toMessage(),
+            contacts = ships
+                .filter { it.key != clientId }
+                .map { it.value }
+                .map { it.toMessage() }
         )
+
+    fun createShip(clientId: UUID) {
+        ships[clientId] = Ship(
+            position = Vector2(
+                x = BigDecimal(Random().nextInt(200) - 100),
+                y = BigDecimal(Random().nextInt(200) - 100)
+            )
+        )
+    }
 
     fun togglePaused() {
         paused = !paused
@@ -158,7 +198,7 @@ class GameState {
 
         time = time.update()
 
-        ships.forEach { it.update(time) }
+        ships.forEach { it.value.update(time) }
     }
 }
 
@@ -170,10 +210,11 @@ data class GameTime(
     fun update() = GameTime(current + delta, delta)
 }
 
-class Ship {
-    private var position = Vector2()
-    private var speed = Vector2()
-    private var rotation = 90.toBigDecimal().toRadians()
+class Ship(
+    private var position: Vector2 = Vector2(),
+    private var speed: Vector2 = Vector2(),
+    private var rotation: BigDecimal = 90.toBigDecimal().toRadians()
+) {
 
     private var throttle = ZERO
     private var thrust = ZERO
