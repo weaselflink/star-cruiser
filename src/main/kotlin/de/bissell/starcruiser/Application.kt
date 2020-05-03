@@ -2,25 +2,15 @@
 
 package de.bissell.starcruiser
 
-import azadev.kotlin.css.Stylesheet
-import azadev.kotlin.css.backgroundColor
-import azadev.kotlin.css.color
-import azadev.kotlin.css.colors.hex
 import io.ktor.application.Application
-import io.ktor.application.call
 import io.ktor.application.install
-import io.ktor.auth.*
+import io.ktor.auth.Authentication
+import io.ktor.auth.UserIdPrincipal
+import io.ktor.auth.basic
 import io.ktor.features.ContentNegotiation
-import io.ktor.html.respondHtml
-import io.ktor.http.ContentType
-import io.ktor.http.LinkHeader
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.pingPeriod
 import io.ktor.http.cio.websocket.timeout
-import io.ktor.http.content.files
-import io.ktor.http.content.static
-import io.ktor.response.respondText
-import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.serialization.DefaultJsonConfiguration
 import io.ktor.serialization.json
@@ -29,7 +19,6 @@ import io.ktor.websocket.webSocket
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
-import kotlinx.html.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.UseSerializers
@@ -76,68 +65,7 @@ fun Application.module() {
     }
 
     routing {
-        static("static") {
-            files("js")
-        }
-
-        get("/css/bla.css") {
-            call.respondText(contentType = ContentType.Text.CSS) {
-                Stylesheet {
-                    body {
-                        backgroundColor = hex(0x000000)
-                        color = hex(0xffffff)
-                    }
-                }.render()
-            }
-        }
-
-        get("/") {
-            call.respondHtml {
-                head {
-                    script {
-                        type = ScriptType.textJavaScript
-                        src = "/static/bla.js"
-                    }
-                    link {
-                        rel = LinkHeader.Rel.Stylesheet
-                        href = "/css/bla.css"
-                    }
-                }
-                body {
-                    h1 { +"Star Cruiser" }
-                    p {
-                        span {
-                            id = "conn"
-                            +"disconnected"
-                        }
-                    }
-                    canvas {
-                        id = "canvas"
-                        width = "400px"
-                        height = "400px"
-                    }
-                    p {
-                        +"Heading: "
-                        span {
-                            id = "heading"
-                            +"unknown"
-                        }
-                        +"\tVelocity: "
-                        span {
-                            id = "velocity"
-                            +"unknown"
-                        }
-                    }
-                }
-            }
-        }
-
-        authenticate("myBasicAuth") {
-            get("/protected/route/basic") {
-                val principal = call.principal<UserIdPrincipal>()!!
-                call.respondText("Hello ${principal.name}")
-            }
-        }
+        webUi()
 
         webSocket("/ws/updates") {
             while (isActive) {
