@@ -16,21 +16,41 @@ import io.ktor.serialization.DefaultJsonConfiguration
 import io.ktor.serialization.json
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
-import kotlinx.serialization.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import java.time.Duration
-import java.util.*
+import java.util.Random
+import java.util.UUID
+import kotlin.collections.List
+import kotlin.collections.filter
+import kotlin.collections.forEach
+import kotlin.collections.last
+import kotlin.collections.map
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
+val jsonConfiguration = DefaultJsonConfiguration.copy(
+    prettyPrint = true
+)
+
 @ObsoleteCoroutinesApi
-@UnstableDefault
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
     val gameStateActor = gameStateActor()
@@ -57,11 +77,7 @@ fun Application.module() {
     }
 
     install(ContentNegotiation) {
-        json(
-            DefaultJsonConfiguration.copy(
-                prettyPrint = true
-            )
-        )
+        json(jsonConfiguration)
     }
 
     routing {
@@ -86,7 +102,6 @@ class GameClient(
     private val incoming: ReceiveChannel<Frame>
 ) {
 
-    @UnstableDefault
     suspend fun start() {
         gameStateActor.send(NewGameClient(id))
 
@@ -101,7 +116,7 @@ class GameClient(
 
         for (frame in incoming) {
             val input = String(frame.data)
-            when (val command = Json.parse(Command.serializer(), input)) {
+            when (val command = Json(jsonConfiguration).parse(Command.serializer(), input)) {
                 is Command.CommandTogglePause -> gameStateActor.send(TogglePause(id))
 
                 is Command.CommandChangeThrottle -> gameStateActor.send(ChangeThrottle(id, BigDecimal(command.diff)))
@@ -132,8 +147,7 @@ data class GameStateMessage(
     val ship: ShipMessage,
     val contacts: List<ShipMessage>
 ) {
-    @UnstableDefault
-    fun toJson(): String = Json.stringify(serializer(), this)
+    fun toJson(): String = Json(jsonConfiguration).stringify(serializer(), this)
 }
 
 @Serializable

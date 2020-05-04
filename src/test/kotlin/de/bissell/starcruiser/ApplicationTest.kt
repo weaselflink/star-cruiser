@@ -11,7 +11,6 @@ import strikt.assertions.isNotNull
 import strikt.assertions.startsWith
 
 @ObsoleteCoroutinesApi
-@UnstableDefault
 class ApplicationTest {
     @Test
     fun testRoot() {
