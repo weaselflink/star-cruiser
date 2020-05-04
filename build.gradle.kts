@@ -8,6 +8,7 @@ plugins {
     application
     kotlin("jvm") version "1.3.72"
     kotlin("plugin.serialization") version "1.3.72"
+    id("com.github.johnrengelman.shadow") version "5.0.0"
 }
 
 group = "de.bissell"
@@ -49,5 +50,15 @@ tasks {
 
     withType<KotlinCompile>().configureEach {
         kotlinOptions.jvmTarget = "1.8"
+    }
+
+    withType<Jar> {
+        manifest {
+            attributes(
+                mapOf(
+                    "Main-Class" to application.mainClassName
+                )
+            )
+        }
     }
 }
