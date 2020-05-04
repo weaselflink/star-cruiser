@@ -103,37 +103,37 @@ function drawHistory(ctx, ship) {
     }
 }
 
+function CommandTogglePause() {
+    this.type = "de.bissell.starcruiser.Command.CommandTogglePause"
+}
+
+function CommandChangeThrottle(diff) {
+    this.type = "de.bissell.starcruiser.Command.CommandChangeThrottle"
+    this.diff = diff
+}
+
+function CommandChangeRudder(diff) {
+    this.type = "de.bissell.starcruiser.Command.CommandChangeRudder"
+    this.diff = diff
+}
+
 function keyHandler(event) {
     if (clientSocket) {
         switch(event.code) {
             case "KeyP":
-                clientSocket.send(JSON.stringify({
-                    type: "de.bissell.starcruiser.Command.CommandTogglePause"
-                }));
+                clientSocket.send(JSON.stringify(new CommandTogglePause()));
                 break;
             case "KeyW":
-                clientSocket.send(JSON.stringify({
-                    type: "de.bissell.starcruiser.Command.CommandChangeThrottle",
-                    diff: 10
-                }));
+                clientSocket.send(JSON.stringify(new CommandChangeThrottle(10)));
                 break;
             case "KeyS":
-                clientSocket.send(JSON.stringify({
-                    type: "de.bissell.starcruiser.Command.CommandChangeThrottle",
-                    diff: -10
-                }));
+                clientSocket.send(JSON.stringify(new CommandChangeThrottle(-10)));
                 break;
             case "KeyA":
-                clientSocket.send(JSON.stringify({
-                    type: "de.bissell.starcruiser.Command.CommandChangeRudder",
-                    diff: -10
-                }));
+                clientSocket.send(JSON.stringify(new CommandChangeRudder(-10)));
                 break;
             case "KeyD":
-                clientSocket.send(JSON.stringify({
-                    type: "de.bissell.starcruiser.Command.CommandChangeRudder",
-                    diff: 10
-                }));
+                clientSocket.send(JSON.stringify(new CommandChangeRudder(10)));
                 break;
         }
     }
