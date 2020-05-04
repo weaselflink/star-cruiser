@@ -7,8 +7,6 @@ function createSocket(uri) {
     const wsUri = wsBaseUri + uri;
     if ("WebSocket" in window) {
        socket = new WebSocket(wsUri);
-    } else if ("MozWebSocket" in window) {
-       socket = new MozWebSocket(wsUri);
     } else {
        console.log("Browser does not support WebSocket!");
     }
@@ -29,7 +27,7 @@ function createSocket(uri) {
 
 function clearCanvas(ctx) {
     ctx.resetTransform();
-    ctx.fillStyle = "#333";
+    ctx.fillStyle = "#333333";
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
 
