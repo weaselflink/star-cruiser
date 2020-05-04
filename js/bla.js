@@ -1,4 +1,4 @@
-const wsBaseUri = "ws://127.0.0.1:8080/ws";
+const wsBaseUri = "ws://127.0.0.1:35667/ws";
 
 let clientSocket = null;
 
@@ -79,8 +79,8 @@ function drawShip(ctx, ship) {
 }
 
 function drawContact(ctx, ship, contact) {
-    const xPos = parseFloat(contact.position.x) - parseFloat(ship.position.x);
-    const yPos = parseFloat(contact.position.y) - parseFloat(ship.position.y);
+    const xPos = parseFloat(contact.relativePosition.x);
+    const yPos = parseFloat(contact.relativePosition.y);
     const rot = parseFloat(contact.rotation);
 
     ctx.resetTransform();

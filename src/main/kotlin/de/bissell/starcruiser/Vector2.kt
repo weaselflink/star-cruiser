@@ -18,6 +18,9 @@ data class Vector2(
     operator fun plus(other: Vector2): Vector2 =
         Vector2(x + other.x, y + other.y)
 
+    operator fun minus(other: Vector2): Vector2 =
+        Vector2(x - other.x, y - other.y)
+
     operator fun times(other: BigDecimal): Vector2 =
         Vector2(x * other, y * other)
 
