@@ -1,10 +1,10 @@
-var wsBaseUri = "ws://127.0.0.1:8080/ws";
+const wsBaseUri = "ws://127.0.0.1:8080/ws";
 
-var clientSocket = null;
+let clientSocket = null;
 
 function createSocket(uri) {
-    var socket = null;
-    var wsUri = wsBaseUri + uri
+    let socket = null;
+    const wsUri = wsBaseUri + uri;
     if ("WebSocket" in window) {
        socket = new WebSocket(wsUri);
     } else if ("MozWebSocket" in window) {
@@ -30,7 +30,7 @@ function createSocket(uri) {
 function clearCanvas(ctx) {
     ctx.resetTransform();
     ctx.fillStyle = "#333";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
 
 function drawCompass(ctx) {
@@ -43,12 +43,12 @@ function drawCompass(ctx) {
     ctx.fill();
 
     ctx.strokeStyle = "#fff"
-    var r = ctx.canvas.width / 2  - 20;
+    const r = ctx.canvas.width / 2 - 20;
     ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
-    for (var i = 0; i < 36; i++) {
-        var a = i * Math.PI * 2 / 36;
-        var inner = r - 10;
-        if (i % 3 == 0) {
+    for (let i = 0; i < 36; i++) {
+        const a = i * Math.PI * 2 / 36;
+        let inner = r - 10;
+        if (i % 3 === 0) {
             inner = r - 20;
         }
         ctx.beginPath()
@@ -58,13 +58,7 @@ function drawCompass(ctx) {
     }
 }
 
-function drawShip(ctx, ship) {
-    var rot = parseFloat(ship.rotation);
-
-    ctx.resetTransform();
-    ctx.strokeStyle = "#00f"
-    ctx.beginPath();
-    ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
+function drawShipSymbol(ctx, rot) {
     ctx.rotate(-rot);
     ctx.moveTo(-5, -5);
     ctx.lineTo(10, 0);
@@ -74,34 +68,37 @@ function drawShip(ctx, ship) {
     ctx.stroke();
 }
 
+function drawShip(ctx, ship) {
+    const rot = parseFloat(ship.rotation);
+
+    ctx.resetTransform();
+    ctx.strokeStyle = "#1e90ff"
+    ctx.beginPath();
+    ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
+    drawShipSymbol(ctx, rot);
+}
+
 function drawContact(ctx, ship, contact) {
-    var xPos = parseFloat(contact.position.x) - parseFloat(ship.position.x);
-    var yPos = parseFloat(contact.position.y) - parseFloat(ship.position.y);
-    var rot = parseFloat(contact.rotation);
+    const xPos = parseFloat(contact.position.x) - parseFloat(ship.position.x);
+    const yPos = parseFloat(contact.position.y) - parseFloat(ship.position.y);
+    const rot = parseFloat(contact.rotation);
 
     ctx.resetTransform();
     ctx.strokeStyle = "#333"
     ctx.beginPath();
     ctx.translate(ctx.canvas.width / 2 + xPos, ctx.canvas.height / 2 - yPos);
-    ctx.rotate(-rot);
-    ctx.moveTo(-5, -5);
-    ctx.lineTo(10, 0);
-    ctx.lineTo(-5, 5);
-    ctx.lineTo(-2, 0);
-    ctx.lineTo(-5, -5);
-    ctx.stroke();
+    drawShipSymbol(ctx, rot);
 }
 
 function drawHistory(ctx, ship) {
-    var xPos = parseFloat(ship.position.x) + ctx.canvas.width / 2;
-    var yPos = -parseFloat(ship.position.y) + ctx.canvas.height / 2;
-    var rot = parseFloat(ship.rotation);
+    const xPos = parseFloat(ship.position.x) + ctx.canvas.width / 2;
+    const yPos = -parseFloat(ship.position.y) + ctx.canvas.height / 2;
 
     ctx.resetTransform();
     ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
-    for (point of ship.history) {
-        var xp = parseFloat(point.second.x) - xPos;
-        var yp = -parseFloat(point.second.y) - yPos;
+    for (let point of ship.history) {
+        const xp = parseFloat(point.second.x) - xPos;
+        const yp = -parseFloat(point.second.y) - yPos;
         ctx.fillStyle = "#fff";
         ctx.beginPath();
         ctx.fillRect(xp + ctx.canvas.width / 2, yp + ctx.canvas.height / 2, 1, 1)
@@ -149,14 +146,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (clientSocket) {
         clientSocket.onmessage = function (event) {
-            var state = JSON.parse(event.data);
-            var ship = state.ship;
+            const state = JSON.parse(event.data);
+            const ship = state.ship;
 
             document.getElementById("heading").innerHTML = ship.heading;
             document.getElementById("velocity").innerHTML = ship.velocity;
 
-            var canvas = document.getElementById("canvas")
-            var ctx = canvas.getContext("2d");
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
             ctx.resetTransform();
 
             clearCanvas(ctx);
@@ -171,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             drawShip(ctx, ship);
             drawHistory(ctx, ship);
-            for (contact of state.contacts) {
+            for (let contact of state.contacts) {
                 drawContact(ctx, ship, contact);
             }
         }

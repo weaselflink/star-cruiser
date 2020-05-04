@@ -35,19 +35,13 @@ import java.math.BigDecimal.ZERO
 import java.time.Duration
 import java.util.Random
 import java.util.UUID
-import kotlin.collections.List
-import kotlin.collections.filter
-import kotlin.collections.forEach
-import kotlin.collections.last
-import kotlin.collections.map
-import kotlin.collections.mutableListOf
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 val jsonConfiguration = DefaultJsonConfiguration.copy(
-    prettyPrint = true
+    prettyPrint = true,
+    useArrayPolymorphism = false
 )
 
 @ObsoleteCoroutinesApi
@@ -116,7 +110,7 @@ class GameClient(
 
         for (frame in incoming) {
             val input = String(frame.data)
-            when (val command = Json(jsonConfiguration).parse(Command.serializer(), input)) {
+            when (val command = Command.parse(input)) {
                 is Command.CommandTogglePause -> gameStateActor.send(TogglePause(id))
 
                 is Command.CommandChangeThrottle -> gameStateActor.send(ChangeThrottle(id, BigDecimal(command.diff)))
@@ -139,6 +133,9 @@ sealed class Command {
     @Serializable
     class CommandChangeRudder(val diff: Long) : Command()
 
+    companion object {
+        fun parse(input: String): Command = Json(jsonConfiguration).parse(serializer(), input)
+    }
 }
 
 @Serializable
