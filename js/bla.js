@@ -25,6 +25,16 @@ function createSocket(uri) {
     return socket;
 }
 
+function resizeCanvasToDisplaySize(canvas) {
+   const width = canvas.clientWidth;
+   const height = canvas.clientHeight;
+
+   if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+   }
+}
+
 function clearCanvas(ctx) {
     ctx.resetTransform();
     ctx.fillStyle = "#333333";
@@ -32,16 +42,18 @@ function clearCanvas(ctx) {
 }
 
 function drawCompass(ctx) {
+    const dim = Math.min(ctx.canvas.width, ctx.canvas.height);
+
     ctx.resetTransform();
     ctx.fillStyle = "#000";
     ctx.beginPath();
     ctx.ellipse(ctx.canvas.width / 2, ctx.canvas.height / 2,
-            ctx.canvas.width / 2 - 15, ctx.canvas.height / 2 - 15,
+            dim / 2 - 15, dim / 2 - 15,
             0, 0, 2 * Math.PI);
     ctx.fill();
 
     ctx.strokeStyle = "#fff"
-    const r = ctx.canvas.width / 2 - 20;
+    const r = dim / 2 - 20;
     ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
     for (let i = 0; i < 36; i++) {
         const a = i * Math.PI * 2 / 36;
@@ -140,6 +152,8 @@ function keyHandler(event) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+    resizeCanvasToDisplaySize(document.getElementById("canvas"));
+
     clientSocket = createSocket("/client");
 
     if (clientSocket) {
@@ -157,10 +171,12 @@ document.addEventListener("DOMContentLoaded", function() {
             clearCanvas(ctx);
             drawCompass(ctx);
 
+            const dim = Math.min(ctx.canvas.width, ctx.canvas.height);
+
             ctx.resetTransform();
             ctx.beginPath();
             ctx.ellipse(ctx.canvas.width / 2, ctx.canvas.height / 2,
-                    ctx.canvas.width / 2 - 17, ctx.canvas.height / 2 - 17,
+                    dim / 2 - 17, dim / 2 - 17,
                     0, 0, 2 * Math.PI);
             ctx.clip();
 
@@ -174,3 +190,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 document.addEventListener("keydown", keyHandler);
+
+window.addEventListener("resize", function() {
+    resizeCanvasToDisplaySize(document.getElementById("canvas"))
+});
