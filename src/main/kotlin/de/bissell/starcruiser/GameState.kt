@@ -10,13 +10,13 @@ import java.util.UUID
 
 sealed class GameStateChange
 
-object Update: GameStateChange()
+object Update : GameStateChange()
 object TogglePause : GameStateChange()
-class NewGameClient(val clientId: UUID): GameStateChange()
-class GameClientDisconnected(val clientId: UUID): GameStateChange()
-class ChangeThrottle(val clientId: UUID, val diff: BigDecimal): GameStateChange()
-class ChangeRudder(val clientId: UUID, val diff: BigDecimal): GameStateChange()
-class GetGameStateMessage(val clientId: UUID, val response: CompletableDeferred<GameStateMessage>) : GameStateChange()
+class NewGameClient(val clientId: UUID) : GameStateChange()
+class GameClientDisconnected(val clientId: UUID) : GameStateChange()
+class ChangeThrottle(val clientId: UUID, val diff: BigDecimal) : GameStateChange()
+class ChangeRudder(val clientId: UUID, val diff: BigDecimal) : GameStateChange()
+class GetGameStateSnapshot(val clientId: UUID, val response: CompletableDeferred<GameStateSnapshot>) : GameStateChange()
 
 @ObsoleteCoroutinesApi
 fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
@@ -29,7 +29,7 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
             is TogglePause -> gameState.togglePaused()
             is ChangeThrottle -> gameState.ships[change.clientId]!!.changeThrottle(change.diff)
             is ChangeRudder -> gameState.ships[change.clientId]!!.changeRudder(change.diff)
-            is GetGameStateMessage -> change.response.complete(gameState.toMessage(change.clientId))
+            is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
         }
     }
 }
@@ -40,9 +40,9 @@ class GameState {
     private var paused = true
     val ships = mutableMapOf<UUID, Ship>()
 
-    fun toMessage(clientId: UUID): GameStateMessage {
+    fun toMessage(clientId: UUID): GameStateSnapshot {
         val clientShip = ships[clientId]!!
-        return GameStateMessage(
+        return GameStateSnapshot(
             paused = paused,
             ship = clientShip.toMessage(),
             contacts = ships

@@ -2,12 +2,17 @@
 
 package de.bissell.starcruiser
 
+import de.bissell.starcruiser.ThrottleMessage.AcknowledgeInflightMessage
+import de.bissell.starcruiser.ThrottleMessage.AddInflightMessage
+import de.bissell.starcruiser.ThrottleMessage.GetInflightMessageCount
 import io.ktor.http.cio.websocket.Frame
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -17,6 +22,14 @@ import kotlinx.serialization.json.Json
 import java.math.BigDecimal
 import java.util.UUID
 
+sealed class ThrottleMessage {
+
+    class AddInflightMessage(val response: CompletableDeferred<Long>) : ThrottleMessage()
+    class GetInflightMessageCount(val response: CompletableDeferred<Int>) : ThrottleMessage()
+    class AcknowledgeInflightMessage(val counter: Long) : ThrottleMessage()
+}
+
+@ObsoleteCoroutinesApi
 class GameClient(
     private val id: UUID = UUID.randomUUID(),
     private val gameStateActor: SendChannel<GameStateChange>,
@@ -25,22 +38,34 @@ class GameClient(
 ) {
 
     suspend fun start(coroutineScope: CoroutineScope) {
+        val throttleActor = coroutineScope.updateThrottleActor()
         gameStateActor.send(NewGameClient(id))
 
         val updateJob = coroutineScope.launch {
             while (isActive) {
-                val response = CompletableDeferred<GameStateMessage>()
-                gameStateActor.send(GetGameStateMessage(id, response))
-                outgoing.sendText(response.await().toJson())
-                delay(200)
+                val inflightResponse = CompletableDeferred<Int>()
+                throttleActor.send(GetInflightMessageCount(inflightResponse))
+                if (inflightResponse.await() < 3) {
+                    val response = CompletableDeferred<GameStateSnapshot>()
+                    gameStateActor.send(GetGameStateSnapshot(id, response))
+                    val counterResponse = CompletableDeferred<Long>()
+                    throttleActor.send(AddInflightMessage(counterResponse))
+                    outgoing.sendText(
+                        GameStateMessage(
+                            counterResponse.await(),
+                            response.await()
+                        ).toJson()
+                    )
+                }
+                delay(100)
             }
         }
 
         for (frame in incoming) {
             val input = String(frame.data)
             when (val command = Command.parse(input)) {
+                is Command.UpdateAcknowledge -> throttleActor.send(AcknowledgeInflightMessage(command.counter))
                 is Command.CommandTogglePause -> gameStateActor.send(TogglePause)
-
                 is Command.CommandChangeThrottle -> gameStateActor.send(ChangeThrottle(id, BigDecimal(command.diff)))
                 is Command.CommandChangeRudder -> gameStateActor.send(ChangeRudder(id, BigDecimal(command.diff)))
             }
@@ -48,6 +73,23 @@ class GameClient(
 
         updateJob.cancelAndJoin()
         gameStateActor.send(GameClientDisconnected(id))
+    }
+
+    private fun CoroutineScope.updateThrottleActor() = actor<ThrottleMessage> {
+        var updateCounter: Long = 0
+        val inflightUpdates: MutableList<Long> = mutableListOf()
+
+        for (message in channel) {
+            when (message) {
+                is AddInflightMessage -> {
+                    updateCounter++
+                    inflightUpdates += updateCounter
+                    message.response.complete(updateCounter)
+                }
+                is GetInflightMessageCount -> message.response.complete(inflightUpdates.size)
+                is AcknowledgeInflightMessage -> inflightUpdates -= message.counter
+            }
+        }
     }
 
     companion object {
@@ -68,9 +110,14 @@ class GameClient(
 sealed class Command {
 
     @Serializable
+    class UpdateAcknowledge(val counter: Long) : Command()
+
+    @Serializable
     object CommandTogglePause : Command()
+
     @Serializable
     class CommandChangeThrottle(val diff: Long) : Command()
+
     @Serializable
     class CommandChangeRudder(val diff: Long) : Command()
 
@@ -81,12 +128,18 @@ sealed class Command {
 
 @Serializable
 data class GameStateMessage(
-    val paused: Boolean,
-    val ship: ShipMessage,
-    val contacts: List<ContactMessage>
+    val counter: Long,
+    val snapshot: GameStateSnapshot
 ) {
     fun toJson(): String = Json(jsonConfiguration).stringify(serializer(), this)
 }
+
+@Serializable
+data class GameStateSnapshot(
+    val paused: Boolean,
+    val ship: ShipMessage,
+    val contacts: List<ContactMessage>
+)
 
 @Serializable
 data class ShipMessage(

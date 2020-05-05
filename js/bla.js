@@ -115,6 +115,11 @@ function drawHistory(ctx, ship) {
     }
 }
 
+function UpdateAcknowledge(counter) {
+    this.type = "de.bissell.starcruiser.Command.UpdateAcknowledge"
+    this.counter = counter
+}
+
 function CommandTogglePause() {
     this.type = "de.bissell.starcruiser.Command.CommandTogglePause"
 }
@@ -159,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (clientSocket) {
         clientSocket.onmessage = function (event) {
             const state = JSON.parse(event.data);
-            const ship = state.ship;
+            const ship = state.snapshot.ship;
 
             document.getElementById("heading").innerHTML = ship.heading;
             document.getElementById("velocity").innerHTML = ship.velocity;
@@ -182,9 +187,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
             drawShip(ctx, ship);
             drawHistory(ctx, ship);
-            for (let contact of state.contacts) {
+            for (let contact of state.snapshot.contacts) {
                 drawContact(ctx, ship, contact);
             }
+
+            clientSocket.send(JSON.stringify(new UpdateAcknowledge(state.counter)));
         }
     }
 });
