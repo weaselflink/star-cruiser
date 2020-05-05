@@ -12,7 +12,6 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -22,31 +21,6 @@ import kotlinx.serialization.json.Json
 import java.math.BigDecimal
 import java.util.UUID
 
-sealed class ThrottleMessage {
-
-    class AddInflightMessage(val response: CompletableDeferred<Long>) : ThrottleMessage()
-    class GetInflightMessageCount(val response: CompletableDeferred<Int>) : ThrottleMessage()
-    class AcknowledgeInflightMessage(val counter: Long) : ThrottleMessage()
-}
-
-@ObsoleteCoroutinesApi
-private fun CoroutineScope.updateThrottleActor() = actor<ThrottleMessage> {
-    var updateCounter: Long = 0
-    val inflightUpdates: MutableList<Long> = mutableListOf()
-
-    for (message in channel) {
-        when (message) {
-            is AddInflightMessage -> {
-                updateCounter++
-                inflightUpdates += updateCounter
-                message.response.complete(updateCounter)
-            }
-            is GetInflightMessageCount -> message.response.complete(inflightUpdates.size)
-            is AcknowledgeInflightMessage -> inflightUpdates -= message.counter
-        }
-    }
-}
-
 @ObsoleteCoroutinesApi
 class GameClient(
     private val id: UUID = UUID.randomUUID(),
@@ -55,13 +29,16 @@ class GameClient(
     private val incoming: ReceiveChannel<Frame>
 ) {
 
+    private val maxInflightMessages: Int = 3
+    private val updateIntervalMillis: Long = 100
+
     suspend fun start(coroutineScope: CoroutineScope) {
-        val throttleActor = coroutineScope.updateThrottleActor()
+        val throttleActor = coroutineScope.createThrottleActor()
         gameStateActor.send(NewGameClient(id))
 
         val updateJob = coroutineScope.launch {
             while (isActive) {
-                if (throttleActor.getInflightMessageCount() < 3) {
+                if (throttleActor.getInflightMessageCount() < maxInflightMessages) {
                     val counterResponse = throttleActor.addInflightMessage()
                     val gameStateSnapShot = gameStateActor.getGameStateSnapShot()
                     outgoing.sendText(
@@ -71,7 +48,7 @@ class GameClient(
                         ).toJson()
                     )
                 }
-                delay(100)
+                delay(updateIntervalMillis)
             }
         }
 
