@@ -37,7 +37,7 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
 class GameState {
 
     private var time = GameTime()
-    private var paused = true
+    private var paused = false
     val ships = mutableMapOf<UUID, Ship>()
 
     fun toMessage(clientId: UUID): GameStateSnapshot {
@@ -157,6 +157,7 @@ class Ship(
             heading = rotation.toHeading(),
             velocity = speed.length(),
             throttle = throttle,
+            thrust = thrust,
             rudder = rudder,
             history = mutableListOf<Pair<BigDecimal, Vector2>>().apply { addAll(history) }
         )

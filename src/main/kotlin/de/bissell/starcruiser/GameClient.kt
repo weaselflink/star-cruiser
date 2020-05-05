@@ -30,6 +30,24 @@ sealed class ThrottleMessage {
 }
 
 @ObsoleteCoroutinesApi
+private fun CoroutineScope.updateThrottleActor() = actor<ThrottleMessage> {
+    var updateCounter: Long = 0
+    val inflightUpdates: MutableList<Long> = mutableListOf()
+
+    for (message in channel) {
+        when (message) {
+            is AddInflightMessage -> {
+                updateCounter++
+                inflightUpdates += updateCounter
+                message.response.complete(updateCounter)
+            }
+            is GetInflightMessageCount -> message.response.complete(inflightUpdates.size)
+            is AcknowledgeInflightMessage -> inflightUpdates -= message.counter
+        }
+    }
+}
+
+@ObsoleteCoroutinesApi
 class GameClient(
     private val id: UUID = UUID.randomUUID(),
     private val gameStateActor: SendChannel<GameStateChange>,
@@ -43,17 +61,13 @@ class GameClient(
 
         val updateJob = coroutineScope.launch {
             while (isActive) {
-                val inflightResponse = CompletableDeferred<Int>()
-                throttleActor.send(GetInflightMessageCount(inflightResponse))
-                if (inflightResponse.await() < 3) {
-                    val response = CompletableDeferred<GameStateSnapshot>()
-                    gameStateActor.send(GetGameStateSnapshot(id, response))
-                    val counterResponse = CompletableDeferred<Long>()
-                    throttleActor.send(AddInflightMessage(counterResponse))
+                if (throttleActor.getInflightMessageCount() < 3) {
+                    val counterResponse = throttleActor.addInflightMessage()
+                    val gameStateSnapShot = gameStateActor.getGameStateSnapShot()
                     outgoing.sendText(
                         GameStateMessage(
-                            counterResponse.await(),
-                            response.await()
+                            counterResponse,
+                            gameStateSnapShot
                         ).toJson()
                     )
                 }
@@ -75,21 +89,22 @@ class GameClient(
         gameStateActor.send(GameClientDisconnected(id))
     }
 
-    private fun CoroutineScope.updateThrottleActor() = actor<ThrottleMessage> {
-        var updateCounter: Long = 0
-        val inflightUpdates: MutableList<Long> = mutableListOf()
+    private suspend fun SendChannel<ThrottleMessage>.getInflightMessageCount(): Int {
+        val response = CompletableDeferred<Int>()
+        send(GetInflightMessageCount(response))
+        return response.await()
+    }
 
-        for (message in channel) {
-            when (message) {
-                is AddInflightMessage -> {
-                    updateCounter++
-                    inflightUpdates += updateCounter
-                    message.response.complete(updateCounter)
-                }
-                is GetInflightMessageCount -> message.response.complete(inflightUpdates.size)
-                is AcknowledgeInflightMessage -> inflightUpdates -= message.counter
-            }
-        }
+    private suspend fun SendChannel<ThrottleMessage>.addInflightMessage(): Long {
+        val response = CompletableDeferred<Long>()
+        send(AddInflightMessage(response))
+        return response.await()
+    }
+
+    private suspend fun SendChannel<GameStateChange>.getGameStateSnapShot(): GameStateSnapshot {
+        val response = CompletableDeferred<GameStateSnapshot>()
+        send(GetGameStateSnapshot(id, response))
+        return response.await()
     }
 
     companion object {
@@ -149,6 +164,7 @@ data class ShipMessage(
     val heading: BigDecimal,
     val velocity: BigDecimal,
     val throttle: BigDecimal,
+    val thrust: BigDecimal,
     val rudder: BigDecimal,
     val history: List<Pair<BigDecimal, Vector2>>
 )
