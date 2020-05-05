@@ -1,10 +1,12 @@
-@file:UseSerializers(BigDecimalSerializer::class)
+@file:UseSerializers(BigDecimalSerializer::class, UUIDSerializer::class)
 
 package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ThrottleMessage.AcknowledgeInflightMessage
 import de.bissell.starcruiser.ThrottleMessage.AddInflightMessage
 import de.bissell.starcruiser.ThrottleMessage.GetInflightMessageCount
+import de.bissell.starcruiser.serializers.BigDecimalSerializer
+import de.bissell.starcruiser.serializers.UUIDSerializer
 import io.ktor.http.cio.websocket.Frame
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -57,6 +59,7 @@ class GameClient(
             when (val command = Command.parse(input)) {
                 is Command.UpdateAcknowledge -> throttleActor.send(AcknowledgeInflightMessage(command.counter))
                 is Command.CommandTogglePause -> gameStateActor.send(TogglePause)
+                is Command.CommandSpawnShip -> gameStateActor.send(TogglePause)
                 is Command.CommandChangeThrottle -> gameStateActor.send(ChangeThrottle(id, BigDecimal(command.diff)))
                 is Command.CommandChangeRudder -> gameStateActor.send(ChangeRudder(id, BigDecimal(command.diff)))
             }
@@ -108,6 +111,9 @@ sealed class Command {
     object CommandTogglePause : Command()
 
     @Serializable
+    object CommandSpawnShip: Command()
+
+    @Serializable
     class CommandChangeThrottle(val diff: Long) : Command()
 
     @Serializable
@@ -135,6 +141,7 @@ data class GameStateSnapshot(
 
 @Serializable
 data class ShipMessage(
+    val id: UUID,
     val position: Vector2,
     val speed: Vector2,
     val rotation: BigDecimal,

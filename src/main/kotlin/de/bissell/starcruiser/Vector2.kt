@@ -2,6 +2,7 @@
 
 package de.bissell.starcruiser
 
+import de.bissell.starcruiser.serializers.BigDecimalSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import java.math.BigDecimal

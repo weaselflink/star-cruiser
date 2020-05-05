@@ -12,6 +12,8 @@ sealed class GameStateChange
 
 object Update : GameStateChange()
 object TogglePause : GameStateChange()
+object SpawnShip : GameStateChange()
+class JoinShip(val clientId: UUID, val shipId: UUID) : GameStateChange()
 class NewGameClient(val clientId: UUID) : GameStateChange()
 class GameClientDisconnected(val clientId: UUID) : GameStateChange()
 class ChangeThrottle(val clientId: UUID, val diff: BigDecimal) : GameStateChange()
@@ -22,13 +24,18 @@ class GetGameStateSnapshot(val clientId: UUID, val response: CompletableDeferred
 fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
     val gameState = GameState()
     for (change in channel) {
+        if (change !is Update && change !is GetGameStateSnapshot) {
+            println(change)
+        }
         when (change) {
             is Update -> gameState.update()
-            is NewGameClient -> gameState.createShip(change.clientId)
+            is NewGameClient -> gameState.spawnShip(change.clientId)
             is GameClientDisconnected -> gameState.deleteShip(change.clientId)
             is TogglePause -> gameState.togglePaused()
-            is ChangeThrottle -> gameState.ships[change.clientId]!!.changeThrottle(change.diff)
-            is ChangeRudder -> gameState.ships[change.clientId]!!.changeRudder(change.diff)
+            is SpawnShip -> gameState.spawnShip()
+            is JoinShip -> gameState.joinShip(change.clientId, change.shipId)
+            is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.diff)
+            is ChangeRudder -> gameState.changeRudder(change.clientId, change.diff)
             is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
         }
     }
@@ -38,31 +45,46 @@ class GameState {
 
     private var time = GameTime()
     private var paused = false
-    val ships = mutableMapOf<UUID, Ship>()
+    private val ships = mutableMapOf<UUID, Ship>()
+    private val clientShipMapping = mutableMapOf<UUID, UUID>()
 
     fun toMessage(clientId: UUID): GameStateSnapshot {
-        val clientShip = ships[clientId]!!
+        val clientShip = clientShip(clientId)!!
         return GameStateSnapshot(
             paused = paused,
             ship = clientShip.toMessage(),
             contacts = ships
-                .filter { it.key != clientId }
+                .filter { it.key != clientShip.id }
                 .map { it.value }
                 .map { it.toContactMessage(clientShip) }
         )
     }
 
-    fun createShip(clientId: UUID) {
-        ships[clientId] = Ship(
+    fun joinShip(clientId: UUID, shipId: UUID) {
+        clientShipMapping[clientId] = shipId
+    }
+
+    fun spawnShip(): UUID {
+        return Ship(
             position = Vector2(
                 x = BigDecimal(Random().nextInt(200) - 100),
                 y = BigDecimal(Random().nextInt(200) - 100)
             )
-        )
+        ).also {
+            ships[it.id] = it
+        }.id
+    }
+
+    fun spawnShip(clientId: UUID) {
+        spawnShip().also { shipId ->
+            joinShip(clientId, shipId)
+        }
     }
 
     fun deleteShip(clientId: UUID) {
-        ships.remove(clientId)
+        clientShipMapping[clientId]?.also {
+            ships.remove(it)
+        }
     }
 
     fun togglePaused() {
@@ -76,6 +98,19 @@ class GameState {
 
         ships.forEach { it.value.update(time) }
     }
+
+    fun changeThrottle(clientId: UUID, diff: BigDecimal) {
+        clientShip(clientId)?.changeThrottle(diff)
+    }
+
+    fun changeRudder(clientId: UUID, diff: BigDecimal) {
+        clientShip(clientId)?.changeRudder(diff)
+    }
+
+    private fun clientShip(clientId: UUID): Ship? =
+        clientShipMapping[clientId]?.let {
+            ships[it]
+        }
 }
 
 data class GameTime(
@@ -87,6 +122,7 @@ data class GameTime(
 }
 
 class Ship(
+    val id: UUID = UUID.randomUUID(),
     private var position: Vector2 = Vector2(),
     private var speed: Vector2 = Vector2(),
     private var rotation: BigDecimal = 90.toBigDecimal().toRadians()
@@ -151,6 +187,7 @@ class Ship(
 
     fun toMessage() =
         ShipMessage(
+            id = id,
             speed = speed,
             position = position,
             rotation = rotation,
