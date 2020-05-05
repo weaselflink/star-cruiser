@@ -60,6 +60,7 @@ class GameClient(
                 is Command.UpdateAcknowledge -> throttleActor.send(AcknowledgeInflightMessage(command.counter))
                 is Command.CommandTogglePause -> gameStateActor.send(TogglePause)
                 is Command.CommandSpawnShip -> gameStateActor.send(TogglePause)
+                is Command.CommandJoinShip -> gameStateActor.send(JoinShip(id, command.shipId))
                 is Command.CommandChangeThrottle -> gameStateActor.send(ChangeThrottle(id, BigDecimal(command.diff)))
                 is Command.CommandChangeRudder -> gameStateActor.send(ChangeRudder(id, BigDecimal(command.diff)))
             }
@@ -114,6 +115,9 @@ sealed class Command {
     object CommandSpawnShip: Command()
 
     @Serializable
+    class CommandJoinShip(val shipId: UUID) : Command()
+
+    @Serializable
     class CommandChangeThrottle(val diff: Long) : Command()
 
     @Serializable
@@ -135,13 +139,21 @@ data class GameStateMessage(
 @Serializable
 data class GameStateSnapshot(
     val paused: Boolean,
+    val playerShips: List<PlayerShipMessage>,
     val ship: ShipMessage,
     val contacts: List<ContactMessage>
 )
 
 @Serializable
+data class PlayerShipMessage(
+    val id: UUID,
+    val name: String
+)
+
+@Serializable
 data class ShipMessage(
     val id: UUID,
+    val name: String,
     val position: Vector2,
     val speed: Vector2,
     val rotation: BigDecimal,

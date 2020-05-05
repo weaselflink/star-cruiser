@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.actor
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.Random
 import java.util.UUID
 
@@ -24,9 +25,6 @@ class GetGameStateSnapshot(val clientId: UUID, val response: CompletableDeferred
 fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
     val gameState = GameState()
     for (change in channel) {
-        if (change !is Update && change !is GetGameStateSnapshot) {
-            println(change)
-        }
         when (change) {
             is Update -> gameState.update()
             is NewGameClient -> gameState.spawnShip(change.clientId)
@@ -52,6 +50,7 @@ class GameState {
         val clientShip = clientShip(clientId)!!
         return GameStateSnapshot(
             paused = paused,
+            playerShips = ships.values.map(Ship::toPlayerShipMessage),
             ship = clientShip.toMessage(),
             contacts = ships
                 .filter { it.key != clientShip.id }
@@ -123,6 +122,7 @@ data class GameTime(
 
 class Ship(
     val id: UUID = UUID.randomUUID(),
+    val name: String = randomShipName(),
     private var position: Vector2 = Vector2(),
     private var speed: Vector2 = Vector2(),
     private var rotation: BigDecimal = 90.toBigDecimal().toRadians()
@@ -185,14 +185,21 @@ class Ship(
         rudder = (rudder + diff).clip(-100, 100)
     }
 
+    fun toPlayerShipMessage() =
+        PlayerShipMessage(
+            id = id,
+            name = name
+        )
+
     fun toMessage() =
         ShipMessage(
             id = id,
+            name = name,
             speed = speed,
             position = position,
             rotation = rotation,
             heading = rotation.toHeading(),
-            velocity = speed.length(),
+            velocity = speed.length().setScale(2, RoundingMode.HALF_EVEN),
             throttle = throttle,
             thrust = thrust,
             rudder = rudder,

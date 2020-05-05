@@ -29,6 +29,7 @@ fun Routing.webUi() {
                     padding = 0
                     backgroundColor = hex(0x000000)
                     color = hex(0xffffff)
+                    fontFamily = "Arial, Helvetica, sans-serif"
                 }
                 canvas {
                     position = "fixed"
@@ -36,19 +37,17 @@ fun Routing.webUi() {
                     width = "100%"
                     height = "100%"
                 }
-                id("conn") {
+                id("topInfo") {
                     position = "fixed"
                     top = 0
                     zIndex = 10
                     padding = "20px"
-                    fontFamily = "monospaced"
                 }
                 id("info") {
                     position = "fixed"
                     bottom = 0
                     zIndex = 10
                     padding = "20px"
-                    fontFamily = "monospaced"
                 }
             }.render()
         }
@@ -68,8 +67,17 @@ fun Routing.webUi() {
             }
             body {
                 div {
-                    id = "conn"
-                    +"disconnected"
+                    id = "topInfo"
+                    p {
+                        id = "conn"
+                        +"disconnected"
+                    }
+                    p {
+                        +"Player Ships"
+                    }
+                    ul {
+                        id = "playerShips"
+                    }
                 }
                 canvas {
                     id = "canvas"

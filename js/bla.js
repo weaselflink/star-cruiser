@@ -124,6 +124,11 @@ function CommandTogglePause() {
     this.type = "de.bissell.starcruiser.Command.CommandTogglePause"
 }
 
+function CommandJoinShip(shipId) {
+    this.type = "de.bissell.starcruiser.Command.CommandJoinShip",
+    this.shipId = shipId
+}
+
 function CommandChangeThrottle(diff) {
     this.type = "de.bissell.starcruiser.Command.CommandChangeThrottle"
     this.diff = diff
@@ -156,6 +161,50 @@ function keyHandler(event) {
     }
 }
 
+function drawHelm(state) {
+    const ship = state.snapshot.ship;
+
+    document.getElementById("heading").innerHTML = ship.heading;
+    document.getElementById("velocity").innerHTML = ship.velocity;
+
+    let playerShipsList = document.getElementById("playerShips");
+    playerShipsList.innerHTML = "";
+    for (let playerShip of state.snapshot.playerShips) {
+        let entry = document.createElement("li");
+        entry.setAttribute("id", playerShip.id);
+        entry.innerHTML = playerShip.name;
+        entry.addEventListener("click", function(event) {
+            if (clientSocket) {
+                console.log(event.target.getAttribute("id"));
+                clientSocket.send(JSON.stringify(new CommandJoinShip(event.target.getAttribute("id"))));
+            }
+        });
+        playerShipsList.appendChild(entry);
+    }
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    ctx.resetTransform();
+
+    clearCanvas(ctx);
+    drawCompass(ctx);
+
+    const dim = Math.min(ctx.canvas.width, ctx.canvas.height);
+
+    ctx.resetTransform();
+    ctx.beginPath();
+    ctx.ellipse(ctx.canvas.width / 2, ctx.canvas.height / 2,
+            dim / 2 - 17, dim / 2 - 17,
+            0, 0, 2 * Math.PI);
+    ctx.clip();
+
+    drawShip(ctx, ship);
+    drawHistory(ctx, ship);
+    for (let contact of state.snapshot.contacts) {
+        drawContact(ctx, ship, contact);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     resizeCanvasToDisplaySize(document.getElementById("canvas"));
 
@@ -164,32 +213,8 @@ document.addEventListener("DOMContentLoaded", function() {
     if (clientSocket) {
         clientSocket.onmessage = function (event) {
             const state = JSON.parse(event.data);
-            const ship = state.snapshot.ship;
 
-            document.getElementById("heading").innerHTML = ship.heading;
-            document.getElementById("velocity").innerHTML = ship.velocity;
-
-            const canvas = document.getElementById("canvas");
-            const ctx = canvas.getContext("2d");
-            ctx.resetTransform();
-
-            clearCanvas(ctx);
-            drawCompass(ctx);
-
-            const dim = Math.min(ctx.canvas.width, ctx.canvas.height);
-
-            ctx.resetTransform();
-            ctx.beginPath();
-            ctx.ellipse(ctx.canvas.width / 2, ctx.canvas.height / 2,
-                    dim / 2 - 17, dim / 2 - 17,
-                    0, 0, 2 * Math.PI);
-            ctx.clip();
-
-            drawShip(ctx, ship);
-            drawHistory(ctx, ship);
-            for (let contact of state.snapshot.contacts) {
-                drawContact(ctx, ship, contact);
-            }
+            drawHelm(state);
 
             clientSocket.send(JSON.stringify(new UpdateAcknowledge(state.counter)));
         }
