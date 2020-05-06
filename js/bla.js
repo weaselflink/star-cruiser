@@ -1,6 +1,7 @@
 const wsBaseUri = "ws://127.0.0.1:35667/ws";
 
 let clientSocket = null;
+let state = null;
 
 function createSocket(uri) {
     let socket = null;
@@ -162,10 +163,19 @@ function keyHandler(event) {
 }
 
 function drawHelm(state) {
+    if (!state) {
+        return;
+    }
+
     const ship = state.snapshot.ship;
 
-    document.getElementById("heading").innerHTML = ship.heading;
-    document.getElementById("velocity").innerHTML = ship.velocity;
+    if (ship) {
+        document.getElementById("heading").innerHTML = ship.heading;
+        document.getElementById("velocity").innerHTML = ship.velocity;
+    } else {
+        document.getElementById("heading").innerHTML = "unknown";
+        document.getElementById("velocity").innerHTML = "unknown";
+    }
 
     let playerShipsList = document.getElementById("playerShips");
     playerShipsList.innerHTML = "";
@@ -173,7 +183,7 @@ function drawHelm(state) {
         let entry = document.createElement("li");
         entry.setAttribute("id", playerShip.id);
         entry.innerHTML = playerShip.name;
-        entry.addEventListener("click", function(event) {
+        entry.addEventListener("click", function (event) {
             if (clientSocket) {
                 console.log(event.target.getAttribute("id"));
                 clientSocket.send(JSON.stringify(new CommandJoinShip(event.target.getAttribute("id"))));
@@ -194,12 +204,14 @@ function drawHelm(state) {
     ctx.resetTransform();
     ctx.beginPath();
     ctx.ellipse(ctx.canvas.width / 2, ctx.canvas.height / 2,
-            dim / 2 - 17, dim / 2 - 17,
-            0, 0, 2 * Math.PI);
+        dim / 2 - 17, dim / 2 - 17,
+        0, 0, 2 * Math.PI);
     ctx.clip();
 
-    drawShip(ctx, ship);
-    drawHistory(ctx, ship);
+    if (ship) {
+        drawShip(ctx, ship);
+        drawHistory(ctx, ship);
+    }
     for (let contact of state.snapshot.contacts) {
         drawContact(ctx, ship, contact);
     }
@@ -212,7 +224,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (clientSocket) {
         clientSocket.onmessage = function (event) {
-            const state = JSON.parse(event.data);
+            state = JSON.parse(event.data);
 
             drawHelm(state);
 

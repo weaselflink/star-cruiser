@@ -47,13 +47,13 @@ class GameState {
     private val clientShipMapping = mutableMapOf<UUID, UUID>()
 
     fun toMessage(clientId: UUID): GameStateSnapshot {
-        val clientShip = clientShip(clientId)!!
+        val clientShip = clientShip(clientId)
         return GameStateSnapshot(
             paused = paused,
             playerShips = ships.values.map(Ship::toPlayerShipMessage),
-            ship = clientShip.toMessage(),
+            ship = clientShip?.toMessage(),
             contacts = ships
-                .filter { it.key != clientShip.id }
+                .filter { it.key != clientShip?.id }
                 .map { it.value }
                 .map { it.toContactMessage(clientShip) }
         )
@@ -206,11 +206,11 @@ class Ship(
             history = mutableListOf<Pair<BigDecimal, Vector2>>().apply { addAll(history) }
         )
 
-    fun toContactMessage(relativeTo: Ship) =
+    fun toContactMessage(relativeTo: Ship?) =
         ContactMessage(
             speed = speed,
             position = position,
-            relativePosition = position - relativeTo.position,
+            relativePosition = position - (relativeTo?.position ?: Vector2()),
             rotation = rotation,
             heading = rotation.toHeading(),
             velocity = speed.length(),

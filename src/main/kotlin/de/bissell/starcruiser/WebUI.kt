@@ -1,7 +1,18 @@
 package de.bissell.starcruiser
 
-import azadev.kotlin.css.*
+import azadev.kotlin.css.Stylesheet
+import azadev.kotlin.css.backgroundColor
+import azadev.kotlin.css.bottom
+import azadev.kotlin.css.color
 import azadev.kotlin.css.colors.hex
+import azadev.kotlin.css.fontFamily
+import azadev.kotlin.css.height
+import azadev.kotlin.css.margin
+import azadev.kotlin.css.padding
+import azadev.kotlin.css.position
+import azadev.kotlin.css.top
+import azadev.kotlin.css.width
+import azadev.kotlin.css.zIndex
 import io.ktor.application.call
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
@@ -14,7 +25,17 @@ import io.ktor.http.content.static
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import io.ktor.routing.get
-import kotlinx.html.*
+import kotlinx.html.ScriptType
+import kotlinx.html.body
+import kotlinx.html.canvas
+import kotlinx.html.div
+import kotlinx.html.head
+import kotlinx.html.id
+import kotlinx.html.link
+import kotlinx.html.p
+import kotlinx.html.script
+import kotlinx.html.span
+import kotlinx.html.ul
 
 fun Routing.webUi() {
     static("static") {
@@ -27,7 +48,7 @@ fun Routing.webUi() {
                 body {
                     margin = 0
                     padding = 0
-                    backgroundColor = hex(0x000000)
+                    backgroundColor = hex(0x333333)
                     color = hex(0xffffff)
                     fontFamily = "Arial, Helvetica, sans-serif"
                 }

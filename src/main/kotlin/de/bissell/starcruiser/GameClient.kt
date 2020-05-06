@@ -140,7 +140,7 @@ data class GameStateMessage(
 data class GameStateSnapshot(
     val paused: Boolean,
     val playerShips: List<PlayerShipMessage>,
-    val ship: ShipMessage,
+    val ship: ShipMessage?,
     val contacts: List<ContactMessage>
 )
 
