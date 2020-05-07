@@ -32,7 +32,7 @@ class GameClient(
 ) {
 
     private val maxInflightMessages: Int = 3
-    private val updateIntervalMillis: Long = 100
+    private val updateIntervalMillis: Long = 10
 
     suspend fun start(coroutineScope: CoroutineScope) {
         val throttleActor = coroutineScope.createThrottleActor()

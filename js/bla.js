@@ -217,6 +217,14 @@ function drawHelm(state) {
     }
 }
 
+function step(timestamp) {
+    if (state) {
+        drawHelm(state);
+    }
+
+    window.requestAnimationFrame(step);
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     resizeCanvasToDisplaySize(document.getElementById("canvas"));
 
@@ -226,14 +234,14 @@ document.addEventListener("DOMContentLoaded", function() {
         clientSocket.onmessage = function (event) {
             state = JSON.parse(event.data);
 
-            drawHelm(state);
-
             clientSocket.send(JSON.stringify(new UpdateAcknowledge(state.counter)));
         }
     }
-});
 
-document.addEventListener("keydown", keyHandler);
+    document.addEventListener("keydown", keyHandler);
+
+    window.requestAnimationFrame(step);
+});
 
 window.addEventListener("resize", function() {
     resizeCanvasToDisplaySize(document.getElementById("canvas"))
