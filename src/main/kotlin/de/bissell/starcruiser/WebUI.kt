@@ -2,6 +2,8 @@ package de.bissell.starcruiser
 
 import azadev.kotlin.css.*
 import azadev.kotlin.css.colors.hex
+import azadev.kotlin.css.dimens.percent
+import azadev.kotlin.css.dimens.px
 import io.ktor.application.call
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
@@ -25,6 +27,7 @@ import kotlinx.html.p
 import kotlinx.html.script
 import kotlinx.html.span
 import kotlinx.html.ul
+import java.awt.Color
 
 fun Routing.webUi() {
     static("static") {
@@ -39,26 +42,37 @@ fun Routing.webUi() {
                     padding = 0
                     backgroundColor = hex(0x333333)
                     color = hex(0xffffff)
-                    fontFamily = "Arial, Helvetica, sans-serif"
+                    fontFamily = "\"Courier New\", Courier, monospace"
                 }
                 canvas {
-                    position = "fixed"
+                    position = FIXED
                     top = 0
                     left = 0
-                    width = "100%"
-                    height = "100%"
+                    width = 100.percent
+                    height = 100.percent
                 }
                 id("topInfo") {
-                    position = "fixed"
+                    position = FIXED
                     top = 0
                     zIndex = 10
-                    padding = "20px"
+                    padding = 20.px
                 }
                 id("info") {
-                    position = "fixed"
+                    position = FIXED
                     bottom = 0
                     zIndex = 10
-                    padding = "20px"
+                    padding = 20.px
+                }
+                ul.id("playerShips").li {
+                    listStyleType = NONE
+                    margin = 3.px
+                    paddingLeft = 5.px
+                    paddingRight = 5.px
+                    paddingTop = 3.px
+                    paddingBottom = 3.px
+                    backgroundColor = hex(0x000000)
+                    borderRadius = 5.px
+                    cursor = POINTER
                 }
             }.render()
         }

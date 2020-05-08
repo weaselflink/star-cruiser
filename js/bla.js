@@ -199,13 +199,32 @@ function selectPlayerShip(event) {
 
 function updatePlayerShips(state) {
     let playerShipsList = document.getElementById("playerShips");
-    playerShipsList.innerHTML = "";
-    for (let playerShip of state.snapshot.playerShips) {
-        let entry = document.createElement("li");
-        entry.setAttribute("id", playerShip.id);
-        entry.innerHTML = playerShip.name;
-        entry.addEventListener("click", selectPlayerShip);
-        playerShipsList.appendChild(entry);
+    let listElements = playerShipsList.getElementsByTagName("li");
+
+    let max = Math.max(state.snapshot.playerShips.length, listElements.length);
+
+    for (let index = 0; index < max; index++) {
+        if (index < state.snapshot.playerShips.length) {
+            let playerShip = state.snapshot.playerShips[index];
+            if (index < listElements.length) {
+                let entry = listElements.item(index);
+                if (entry.getAttribute("id") != playerShip.id) {
+                    entry.setAttribute("id", playerShip.id);
+                    entry.innerHTML = playerShip.name;
+                }
+            } else {
+                let entry = document.createElement("li");
+                entry.setAttribute("id", playerShip.id);
+                entry.innerHTML = playerShip.name;
+                entry.addEventListener("click", selectPlayerShip);
+                playerShipsList.appendChild(entry);
+            }
+        } else {
+            if (index < listElements.length) {
+                let entry = listElements.item(index);
+                entry.remove();
+            }
+        }
     }
 }
 
