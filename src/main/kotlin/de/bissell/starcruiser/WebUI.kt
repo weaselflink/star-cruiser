@@ -1,18 +1,7 @@
 package de.bissell.starcruiser
 
-import azadev.kotlin.css.Stylesheet
-import azadev.kotlin.css.backgroundColor
-import azadev.kotlin.css.bottom
-import azadev.kotlin.css.color
+import azadev.kotlin.css.*
 import azadev.kotlin.css.colors.hex
-import azadev.kotlin.css.fontFamily
-import azadev.kotlin.css.height
-import azadev.kotlin.css.margin
-import azadev.kotlin.css.padding
-import azadev.kotlin.css.position
-import azadev.kotlin.css.top
-import azadev.kotlin.css.width
-import azadev.kotlin.css.zIndex
 import io.ktor.application.call
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
@@ -55,6 +44,7 @@ fun Routing.webUi() {
                 canvas {
                     position = "fixed"
                     top = 0
+                    left = 0
                     width = "100%"
                     height = "100%"
                 }

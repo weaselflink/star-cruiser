@@ -2,6 +2,10 @@ const wsBaseUri = "ws://127.0.0.1:35667/ws";
 
 let clientSocket = null;
 let state = null;
+let lastRender = 0;
+let canvas = null;
+let ctx = null;
+let scopeRadius = 0;
 
 function createSocket(uri) {
     let socket = null;
@@ -26,23 +30,29 @@ function createSocket(uri) {
     return socket;
 }
 
-function resizeCanvasToDisplaySize(canvas) {
-   const width = canvas.clientWidth;
-   const height = canvas.clientHeight;
+function resizeCanvasToDisplaySize() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const dim = Math.min(width, height);
 
-   if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width;
-        canvas.height = height;
-   }
+    if (canvas.width !== dim || canvas.height !== dim) {
+         canvas.width = dim;
+         canvas.height = dim;
+    }
+
+    canvas.style.left = ((width - dim) / 2) + "px";
+    canvas.style.top = ((height - dim) / 2) + "px";
+    canvas.style.width = dim + "px";
+    canvas.style.height = dim + "px";
 }
 
-function clearCanvas(ctx) {
+function clearCanvas() {
     ctx.resetTransform();
     ctx.fillStyle = "#333333";
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
 
-function drawCompass(ctx) {
+function drawCompass() {
     const dim = Math.min(ctx.canvas.width, ctx.canvas.height);
 
     ctx.resetTransform();
@@ -54,22 +64,22 @@ function drawCompass(ctx) {
     ctx.fill();
 
     ctx.strokeStyle = "#fff"
-    const r = dim / 2 - 20;
+    scopeRadius = dim / 2 - 20;
     ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
     for (let i = 0; i < 36; i++) {
         const a = i * Math.PI * 2 / 36;
-        let inner = r - 10;
+        let inner = scopeRadius - 10;
         if (i % 3 === 0) {
-            inner = r - 20;
+            inner = scopeRadius - 20;
         }
         ctx.beginPath()
         ctx.moveTo(Math.sin(a) * inner, Math.cos(a) * inner);
-        ctx.lineTo(Math.sin(a) * r, Math.cos(a) * r);
+        ctx.lineTo(Math.sin(a) * scopeRadius, Math.cos(a) * scopeRadius);
         ctx.stroke();
     }
 }
 
-function drawShipSymbol(ctx, rot) {
+function drawShipSymbol(rot) {
     ctx.rotate(-rot);
     ctx.moveTo(-5, -5);
     ctx.lineTo(10, 0);
@@ -79,40 +89,47 @@ function drawShipSymbol(ctx, rot) {
     ctx.stroke();
 }
 
-function drawShip(ctx, ship) {
+function drawShip(ship) {
     const rot = parseFloat(ship.rotation);
 
     ctx.resetTransform();
     ctx.strokeStyle = "#1e90ff"
     ctx.beginPath();
     ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
-    drawShipSymbol(ctx, rot);
+    drawShipSymbol(rot);
 }
 
-function drawContact(ctx, ship, contact) {
+function drawContact(ship, contact) {
     const xPos = parseFloat(contact.relativePosition.x);
     const yPos = parseFloat(contact.relativePosition.y);
     const rot = parseFloat(contact.rotation);
 
-    ctx.resetTransform();
-    ctx.strokeStyle = "#333"
-    ctx.beginPath();
-    ctx.translate(ctx.canvas.width / 2 + xPos, ctx.canvas.height / 2 - yPos);
-    drawShipSymbol(ctx, rot);
+    const dist = Math.sqrt(xPos * xPos + yPos * yPos);
+    if (dist < scopeRadius - 10) {
+        ctx.resetTransform();
+        ctx.strokeStyle = "#333"
+        ctx.beginPath();
+        ctx.translate(ctx.canvas.width / 2 + xPos, ctx.canvas.height / 2 - yPos);
+        drawShipSymbol(rot);
+    }
 }
 
-function drawHistory(ctx, ship) {
-    const xPos = parseFloat(ship.position.x) + ctx.canvas.width / 2;
-    const yPos = -parseFloat(ship.position.y) + ctx.canvas.height / 2;
+function drawHistory(ship) {
+    const xPos = parseFloat(ship.position.x);
+    const yPos = -parseFloat(ship.position.y);
 
     ctx.resetTransform();
     ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
     for (let point of ship.history) {
         const xp = parseFloat(point.second.x) - xPos;
         const yp = -parseFloat(point.second.y) - yPos;
-        ctx.fillStyle = "#fff";
-        ctx.beginPath();
-        ctx.fillRect(xp + ctx.canvas.width / 2, yp + ctx.canvas.height / 2, 1, 1)
+
+        const dist = Math.sqrt(xp * xp + yp * yp);
+        if (dist < scopeRadius - 10) {
+            ctx.fillStyle = "#fff";
+            ctx.beginPath();
+            ctx.fillRect(xp, yp, 1, 1);
+        }
     }
 }
 
@@ -162,6 +179,36 @@ function keyHandler(event) {
     }
 }
 
+function updateInfo(ship) {
+    const headingElement = document.getElementById("heading");
+    const velocityElement = document.getElementById("velocity");
+    if (ship) {
+        headingElement.innerHTML = ship.heading;
+        velocityElement.innerHTML = ship.velocity;
+    } else {
+        headingElement.innerHTML = "unknown";
+        velocityElement.innerHTML = "unknown";
+    }
+}
+
+function selectPlayerShip(event) {
+    if (clientSocket) {
+        clientSocket.send(JSON.stringify(new CommandJoinShip(event.target.getAttribute("id"))));
+    }
+}
+
+function updatePlayerShips(state) {
+    let playerShipsList = document.getElementById("playerShips");
+    playerShipsList.innerHTML = "";
+    for (let playerShip of state.snapshot.playerShips) {
+        let entry = document.createElement("li");
+        entry.setAttribute("id", playerShip.id);
+        entry.innerHTML = playerShip.name;
+        entry.addEventListener("click", selectPlayerShip);
+        playerShipsList.appendChild(entry);
+    }
+}
+
 function drawHelm(state) {
     if (!state) {
         return;
@@ -169,64 +216,39 @@ function drawHelm(state) {
 
     const ship = state.snapshot.ship;
 
-    if (ship) {
-        document.getElementById("heading").innerHTML = ship.heading;
-        document.getElementById("velocity").innerHTML = ship.velocity;
-    } else {
-        document.getElementById("heading").innerHTML = "unknown";
-        document.getElementById("velocity").innerHTML = "unknown";
-    }
-
-    let playerShipsList = document.getElementById("playerShips");
-    playerShipsList.innerHTML = "";
-    for (let playerShip of state.snapshot.playerShips) {
-        let entry = document.createElement("li");
-        entry.setAttribute("id", playerShip.id);
-        entry.innerHTML = playerShip.name;
-        entry.addEventListener("click", function (event) {
-            if (clientSocket) {
-                console.log(event.target.getAttribute("id"));
-                clientSocket.send(JSON.stringify(new CommandJoinShip(event.target.getAttribute("id"))));
-            }
-        });
-        playerShipsList.appendChild(entry);
-    }
-
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    ctx.resetTransform();
-
-    clearCanvas(ctx);
-    drawCompass(ctx);
-
-    const dim = Math.min(ctx.canvas.width, ctx.canvas.height);
+    updateInfo(ship);
+    updatePlayerShips(state);
 
     ctx.resetTransform();
-    ctx.beginPath();
-    ctx.ellipse(ctx.canvas.width / 2, ctx.canvas.height / 2,
-        dim / 2 - 17, dim / 2 - 17,
-        0, 0, 2 * Math.PI);
-    ctx.clip();
+
+    clearCanvas();
+    drawCompass();
 
     if (ship) {
-        drawShip(ctx, ship);
-        drawHistory(ctx, ship);
+        drawShip( ship);
+        drawHistory(ship);
     }
+
     for (let contact of state.snapshot.contacts) {
-        drawContact(ctx, ship, contact);
+        drawContact(ship, contact);
     }
 }
 
-function step(timestamp) {
+function step(time) {
     if (state) {
-        drawHelm(state);
+        const stateCopy = state;
+
+        drawHelm(stateCopy);
     }
 
     window.requestAnimationFrame(step);
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    resizeCanvasToDisplaySize(document.getElementById("canvas"));
+    canvas = document.getElementById("canvas");
+    ctx = canvas.getContext("2d", { alpha: false });
+
+    resizeCanvasToDisplaySize();
 
     clientSocket = createSocket("/client");
 
@@ -243,6 +265,4 @@ document.addEventListener("DOMContentLoaded", function() {
     window.requestAnimationFrame(step);
 });
 
-window.addEventListener("resize", function() {
-    resizeCanvasToDisplaySize(document.getElementById("canvas"))
-});
+window.addEventListener('resize', resizeCanvasToDisplaySize);
