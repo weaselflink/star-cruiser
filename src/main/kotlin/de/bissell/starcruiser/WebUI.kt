@@ -16,18 +16,7 @@ import io.ktor.http.content.static
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import io.ktor.routing.get
-import kotlinx.html.ScriptType
-import kotlinx.html.body
-import kotlinx.html.canvas
-import kotlinx.html.div
-import kotlinx.html.head
-import kotlinx.html.id
-import kotlinx.html.link
-import kotlinx.html.p
-import kotlinx.html.script
-import kotlinx.html.span
-import kotlinx.html.ul
-import java.awt.Color
+import kotlinx.html.*
 
 fun Routing.webUi() {
     static("static") {
