@@ -1,3 +1,4 @@
+import Command.*
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.RenderingContext
@@ -31,8 +32,8 @@ fun init() {
 }
 
 fun createSocket(uri: String) {
-    val wsUri = wsBaseUri + uri;
-    clientSocket = WebSocket(wsUri);
+    val wsUri = wsBaseUri + uri
+    clientSocket = WebSocket(wsUri)
 
     val connectionInfo = document.getElementById("conn")!! as HTMLElement
     val socket = clientSocket
@@ -52,30 +53,29 @@ fun createSocket(uri: String) {
 
 fun keyHandler(event: KeyboardEvent) {
     val socket = clientSocket
-    println(event.code)
     if (socket != null) {
         when(event.code) {
-            "KeyP" -> socket.send(JSON.stringify(Command.CommandTogglePause))
-            "KeyW" -> socket.send(JSON.stringify(Command.CommandChangeThrottle(10)))
-            "KeyS" -> socket.send(JSON.stringify(Command.CommandChangeThrottle(-10)))
-            "KeyA" -> socket.send(JSON.stringify(Command.CommandChangeRudder(-10)))
-            "KeyD" -> socket.send(JSON.stringify(Command.CommandChangeRudder(10)))
+            "KeyP" -> socket.send(CommandTogglePause.toJson())
+            "KeyW" -> socket.send(CommandChangeThrottle(10).toJson())
+            "KeyS" -> socket.send(CommandChangeThrottle(-10).toJson())
+            "KeyA" -> socket.send(CommandChangeRudder(-10).toJson())
+            "KeyD" -> socket.send(CommandChangeRudder(10).toJson())
         }
     }
 }
 
 fun resizeCanvasToDisplaySize() {
-    val width: Int = window.innerWidth;
-    val height: Int = window.innerHeight;
-    val dim: Int = min(width, height);
+    val width: Int = window.innerWidth
+    val height: Int = window.innerHeight
+    val dim: Int = min(width, height)
 
     if (canvas.width != dim || canvas.height != dim) {
-        canvas.width = dim;
-        canvas.height = dim;
+        canvas.width = dim
+        canvas.height = dim
     }
 
-    canvas.style.left = ((width - dim) / 2).px;
-    canvas.style.top = ((height - dim) / 2).px;
+    canvas.style.left = ((width - dim) / 2).px
+    canvas.style.top = ((height - dim) / 2).px
     canvas.style.width = dim.px
     canvas.style.height = dim.px
 }

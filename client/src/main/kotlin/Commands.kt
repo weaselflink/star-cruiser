@@ -1,3 +1,4 @@
+
 sealed class Command {
 
     class UpdateAcknowledge(val counter: Long) : Command()
@@ -12,3 +13,5 @@ sealed class Command {
 
     class CommandChangeRudder(val diff: Long) : Command()
 }
+
+fun Command.toJson() = JSON.stringify(this)
