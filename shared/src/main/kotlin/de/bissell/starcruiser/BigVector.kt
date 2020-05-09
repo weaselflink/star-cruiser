@@ -11,30 +11,30 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 @Serializable
-data class Vector2(
+data class BigVector(
     val x: BigDecimal = BigDecimal.ZERO,
     val y: BigDecimal = BigDecimal.ZERO
 ) {
 
-    operator fun plus(other: Vector2): Vector2 =
-        Vector2(x + other.x, y + other.y)
+    operator fun plus(other: BigVector): BigVector =
+        BigVector(x + other.x, y + other.y)
 
-    operator fun minus(other: Vector2): Vector2 =
-        Vector2(x - other.x, y - other.y)
+    operator fun minus(other: BigVector): BigVector =
+        BigVector(x - other.x, y - other.y)
 
-    operator fun times(other: BigDecimal): Vector2 =
-        Vector2(x * other, y * other)
+    operator fun times(other: BigDecimal): BigVector =
+        BigVector(x * other, y * other)
 
-    fun setScale(scale: Int): Vector2 =
-        Vector2(x.setScale(scale, MathDefaults.roundingMode), y.setScale(scale, MathDefaults.roundingMode))
+    fun setScale(scale: Int): BigVector =
+        BigVector(x.setScale(scale, MathDefaults.roundingMode), y.setScale(scale, MathDefaults.roundingMode))
 
     fun isZero() = x.isZero() && y.isZero()
 
     fun rotate(radians: BigDecimal) =
         if (isZero()) {
-            Vector2()
+            BigVector()
         } else {
-            Vector2(
+            BigVector(
                 x = x * cos(radians.toDouble()) - y * sin(radians.toDouble()),
                 y = x * sin(radians.toDouble()) + y * cos(radians.toDouble())
             )
