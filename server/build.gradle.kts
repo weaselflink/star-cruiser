@@ -70,7 +70,9 @@ tasks {
     withType<ProcessResources> {
         dependsOn(project(":client").tasks["browserProductionWebpack"])
 
-        from(project(":client").buildDir.resolve("distributions"))
+        from(project(":client").buildDir.resolve("distributions")) {
+            into("js")
+        }
     }
 }
 

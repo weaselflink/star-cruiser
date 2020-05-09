@@ -11,7 +11,7 @@ import io.ktor.auth.principal
 import io.ktor.html.respondHtml
 import io.ktor.http.ContentType
 import io.ktor.http.LinkHeader
-import io.ktor.http.content.files
+import io.ktor.http.content.resources
 import io.ktor.http.content.static
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
@@ -19,8 +19,8 @@ import io.ktor.routing.get
 import kotlinx.html.*
 
 fun Routing.webUi() {
-    static("static") {
-        files("js")
+    static("/js") {
+        resources("js")
     }
 
     get("/css/bla.css") {
@@ -72,7 +72,11 @@ fun Routing.webUi() {
             head {
                 script {
                     type = ScriptType.textJavaScript
-                    src = "/static/bla.js"
+                    src = "/js/bla.js"
+                }
+                script {
+                    type = ScriptType.textJavaScript
+                    src = "/js/client.js"
                 }
                 link {
                     rel = LinkHeader.Rel.Stylesheet
