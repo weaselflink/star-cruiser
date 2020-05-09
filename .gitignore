@@ -5,3 +5,6 @@
 *.iml
 *.ipr
 *.iws
+
+server/out
+server/build

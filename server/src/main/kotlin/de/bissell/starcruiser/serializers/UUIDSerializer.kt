@@ -8,7 +8,7 @@ object UUIDSerializer : KSerializer<UUID> {
 
     override val descriptor: SerialDescriptor =
         PrimitiveDescriptor(
-            "de.bissell.starcruiser.serializers.UUIDSerializer",
+            "UUIDSerializer",
             PrimitiveKind.STRING
         )
 

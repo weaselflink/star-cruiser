@@ -9,7 +9,7 @@ object BigDecimalSerializer :
 
     override val descriptor: SerialDescriptor =
         PrimitiveDescriptor(
-            "de.bissell.starcruiser.serializers.BigDecimalSerializer",
+            "BigDecimalSerializer",
             PrimitiveKind.STRING
         )
 
