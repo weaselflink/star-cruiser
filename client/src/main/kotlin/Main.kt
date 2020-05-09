@@ -111,16 +111,16 @@ fun drawHelm(stateCopy: GameStateMessage) {
     updateInfo(ship)
     updatePlayerShips(stateCopy)
 
-    clearCanvas()
-    drawCompass()
+    ctx.clearCanvas()
+    ctx.drawCompass()
 
     if (ship != null) {
-        drawShip(ship)
-        drawHistory(ship)
+        ctx.drawShip(ship)
+        ctx.drawHistory(ship)
     }
 
     stateCopy.snapshot.contacts.forEach {
-        drawContact(it)
+        ctx.drawContact(it)
     }
 }
 
@@ -179,90 +179,90 @@ fun selectPlayerShip(event: MouseEvent) {
     }
 }
 
-fun clearCanvas() {
-    ctx.resetTransform()
-    ctx.fillStyle = "#333333"
-    ctx.fillRect(0.0, 0.0, ctx.canvas.width.toDouble(), ctx.canvas.height.toDouble())
+fun CanvasRenderingContext2D.clearCanvas() {
+    resetTransform()
+    fillStyle = "#202020"
+    fillRect(0.0, 0.0, canvas.width.toDouble(), canvas.height.toDouble())
 }
 
-fun drawCompass() {
-    val dim = min(ctx.canvas.width, ctx.canvas.height)
+fun CanvasRenderingContext2D.drawCompass() {
+    val dim = min(canvas.width, canvas.height)
 
-    ctx.resetTransform()
-    ctx.fillStyle = "#000"
-    ctx.beginPath()
-    ctx.ellipse(ctx.canvas.width / 2.0, ctx.canvas.height / 2.0,
+    resetTransform()
+    fillStyle = "#000"
+    beginPath()
+    ellipse(canvas.width / 2.0, canvas.height / 2.0,
         dim / 2.0 - 15.0, dim / 2.0 - 15.0,
         0.0, 0.0, 2 * PI)
-    ctx.fill()
+    fill()
 
-    ctx.strokeStyle = "#fff"
+    strokeStyle = "#888"
     scopeRadius = dim / 2 - 20
-    ctx.translate(ctx.canvas.width / 2.0, ctx.canvas.height / 2.0)
+    translate(canvas.width / 2.0, canvas.height / 2.0)
     for (i in 0 until 36) {
         val a = i * PI * 2 / 36
         val inner = if (i % 3 == 0) {
-            scopeRadius - 20
+            scopeRadius - scopeRadius / 10
         } else {
-            scopeRadius - 10
+            scopeRadius - scopeRadius / 20
         }
-        ctx.beginPath()
-        ctx.moveTo(sin(a) * inner, cos(a) * inner)
-        ctx.lineTo(sin(a) * scopeRadius, cos(a) * scopeRadius)
-        ctx.stroke()
+        beginPath()
+        moveTo(sin(a) * inner, cos(a) * inner)
+        lineTo(sin(a) * scopeRadius, cos(a) * scopeRadius)
+        stroke()
     }
 }
 
-fun drawShipSymbol(rot: Double) {
-    ctx.rotate(-rot)
-    ctx.moveTo(-5.0, -5.0)
-    ctx.lineTo(10.0, 0.0)
-    ctx.lineTo(-5.0, 5.0)
-    ctx.lineTo(-2.0, 0.0)
-    ctx.lineTo(-5.0, -5.0)
-    ctx.stroke()
+fun CanvasRenderingContext2D.drawShipSymbol(rot: Double) {
+    rotate(-rot)
+    moveTo(-5.0, -5.0)
+    lineTo(10.0, 0.0)
+    lineTo(-5.0, 5.0)
+    lineTo(-2.0, 0.0)
+    lineTo(-5.0, -5.0)
+    stroke()
 }
 
-fun drawShip(ship: ShipMessage) {
+fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
     val rot = ship.rotation.toDouble()
 
-    ctx.resetTransform()
-    ctx.strokeStyle = "#1e90ff"
-    ctx.beginPath()
-    ctx.translate(ctx.canvas.width / 2.0, ctx.canvas.height / 2.0)
+    resetTransform()
+    strokeStyle = "#1e90ff"
+    beginPath()
+    translate(canvas.width / 2.0, canvas.height / 2.0)
     drawShipSymbol(rot)
 }
 
-fun drawContact(contact: ContactMessage) {
+fun CanvasRenderingContext2D.drawContact(contact: ContactMessage) {
     val xPos = contact.relativePosition.x.toDouble()
     val yPos = contact.relativePosition.y.toDouble()
     val rot = contact.rotation.toDouble()
 
     val dist = sqrt(xPos * xPos + yPos * yPos)
     if (dist < scopeRadius - 10) {
-        ctx.resetTransform()
-        ctx.strokeStyle = "#333"
-        ctx.beginPath()
-        ctx.translate(ctx.canvas.width / 2 + xPos, ctx.canvas.height / 2 - yPos)
+        resetTransform()
+        strokeStyle = "#333"
+        beginPath()
+        translate(canvas.width / 2 + xPos, canvas.height / 2 - yPos)
         drawShipSymbol(rot)
     }
 }
 
-fun drawHistory(ship: ShipMessage) {
+fun CanvasRenderingContext2D.drawHistory(ship: ShipMessage) {
     val xPos = ship.position.x.toDouble()
     val yPos = -(ship.position.y.toDouble())
 
-    ctx.resetTransform()
-    ctx.translate(ctx.canvas.width / 2.0, ctx.canvas.height / 2.0)
+    resetTransform()
+    translate(canvas.width / 2.0, canvas.height / 2.0)
     for (point in ship.history) {
         val xp = point.second.x.toDouble() - xPos
         val yp = -(point.second.y.toDouble()) - yPos
 
         val dist = sqrt(xp * xp + yp * yp)
         if (dist < scopeRadius - 10) {
-            ctx.fillStyle = "#fff"
-            ctx.beginPath()
-            ctx.fillRect(xp, yp, 1.0, 1.0)
+            fillStyle = "#fff"
+            beginPath()
+            fillRect(xp, yp, 1.0, 1.0)
         }
     }
 }

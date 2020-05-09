@@ -67,7 +67,9 @@ class GameState {
             position = Vector2(
                 x = BigDecimal(Random().nextInt(200) - 100),
                 y = BigDecimal(Random().nextInt(200) - 100)
-            )
+            ),
+            throttle = 100.toBigDecimal(),
+            rudder = 30.toBigDecimal()
         ).also {
             ships[it.id] = it
         }.id
@@ -124,12 +126,12 @@ class Ship(
     val name: String = randomShipName(),
     private var position: Vector2 = Vector2(),
     private var speed: Vector2 = Vector2(),
-    private var rotation: BigDecimal = 90.toBigDecimal().toRadians()
+    private var rotation: BigDecimal = 90.toBigDecimal().toRadians(),
+    private var throttle: BigDecimal = BigDecimal.ZERO,
+    private var rudder: BigDecimal = BigDecimal.ZERO
 ) {
 
-    private var throttle = BigDecimal.ZERO
     private var thrust = BigDecimal.ZERO
-    private var rudder = BigDecimal.ZERO
 
     private val history = mutableListOf<Pair<BigDecimal, Vector2>>()
 
