@@ -1,19 +1,16 @@
-@file:UseSerializers(BigDecimalSerializer::class, UUIDSerializer::class)
-
-package de.bissell.starcruiser
-
-import de.bissell.starcruiser.serializers.BigDecimalSerializer
-import de.bissell.starcruiser.serializers.UUIDSerializer
-import io.ktor.serialization.DefaultJsonConfiguration
+import kotlinx.serialization.ImplicitReflectionSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
-import java.math.BigDecimal
-import java.util.*
+import kotlinx.serialization.json.JsonConfiguration
 
-val jsonConfiguration = DefaultJsonConfiguration.copy(
+val jsonConfiguration = JsonConfiguration.Stable.copy(
+    encodeDefaults = true,
+    isLenient = true,
+    serializeSpecialFloatingPointValues = true,
+    allowStructuredMapKeys = true,
+    unquotedPrint = false,
     prettyPrint = true,
-    useArrayPolymorphism = false
+    useArrayPolymorphism = true
 )
 
 @Serializable
@@ -21,15 +18,19 @@ data class GameStateMessage(
     val counter: Long,
     val snapshot: GameStateSnapshot
 ) {
-    fun toJson(): String = Json(jsonConfiguration).stringify(serializer(), this)
+
+    companion object {
+        @ImplicitReflectionSerializer
+        fun parse(input: String): GameStateMessage = Json(jsonConfiguration).parse(serializer(), input)
+    }
 }
 
 @Serializable
 data class GameStateSnapshot(
     val paused: Boolean,
-    val playerShips: List<PlayerShipMessage>,
+    val playerShips: Array<PlayerShipMessage>,
     val ship: ShipMessage?,
-    val contacts: List<ContactMessage>
+    val contacts: Array<ContactMessage>
 )
 
 @Serializable
@@ -50,7 +51,7 @@ data class ShipMessage(
     val throttle: BigDecimal,
     val thrust: BigDecimal,
     val rudder: BigDecimal,
-    val history: List<Pair<BigDecimal, Vector2>>
+    val history: Array<Pair<BigDecimal, Vector2>>
 )
 
 @Serializable
@@ -61,5 +62,14 @@ data class ContactMessage(
     val rotation: BigDecimal,
     val heading: BigDecimal,
     val velocity: BigDecimal,
-    val history: List<Pair<BigDecimal, Vector2>>
+    val history: Array<Pair<BigDecimal, Vector2>>
 )
+
+@Serializable
+data class Vector2(
+    val x: BigDecimal,
+    val y: BigDecimal
+)
+
+typealias UUID = String
+typealias BigDecimal = String

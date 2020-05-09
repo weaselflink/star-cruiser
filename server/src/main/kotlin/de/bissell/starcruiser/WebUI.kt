@@ -72,10 +72,6 @@ fun Routing.webUi() {
             head {
                 script {
                     type = ScriptType.textJavaScript
-                    src = "/js/bla.js"
-                }
-                script {
-                    type = ScriptType.textJavaScript
                     src = "/js/client.js"
                 }
                 link {

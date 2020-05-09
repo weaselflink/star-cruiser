@@ -3,7 +3,8 @@
 val kotlin_version: String by project
 
 plugins {
-    id("org.jetbrains.kotlin.js") version "1.3.72"
+    kotlin("js") version "1.3.72"
+    kotlin("plugin.serialization") version "1.3.72"
 }
 
 group = "de.bissell.starcruiser"

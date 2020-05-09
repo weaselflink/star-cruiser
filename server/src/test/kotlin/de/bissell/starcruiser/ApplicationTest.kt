@@ -16,9 +16,9 @@ class ApplicationTest {
     @Test
     fun testRoot() {
         withTestApplication({ module() }) {
-            handleRequest(HttpMethod.Get, "/static/bla.js").apply {
+            handleRequest(HttpMethod.Get, "/js/client.js").apply {
                 expectThat(response.status()).isEqualTo(HttpStatusCode.OK)
-                expectThat(response.content).isNotNull().startsWith("var wsBaseUri")
+                expectThat(response.content).isNotNull().startsWith("!function")
             }
         }
     }
