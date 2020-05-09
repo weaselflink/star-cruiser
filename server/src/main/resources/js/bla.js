@@ -30,22 +30,6 @@ function createSocket(uri) {
     return socket;
 }
 
-function resizeCanvasToDisplaySize() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const dim = Math.min(width, height);
-
-    if (canvas.width !== dim || canvas.height !== dim) {
-         canvas.width = dim;
-         canvas.height = dim;
-    }
-
-    canvas.style.left = ((width - dim) / 2) + "px";
-    canvas.style.top = ((height - dim) / 2) + "px";
-    canvas.style.width = dim + "px";
-    canvas.style.height = dim + "px";
-}
-
 function clearCanvas() {
     ctx.resetTransform();
     ctx.fillStyle = "#333333";
@@ -267,8 +251,6 @@ document.addEventListener("DOMContentLoaded", function() {
     canvas = document.getElementById("canvas");
     ctx = canvas.getContext("2d", { alpha: false });
 
-    resizeCanvasToDisplaySize();
-
     clientSocket = createSocket("/client");
 
     if (clientSocket) {
@@ -283,5 +265,3 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.requestAnimationFrame(step);
 });
-
-window.addEventListener('resize', resizeCanvasToDisplaySize);
