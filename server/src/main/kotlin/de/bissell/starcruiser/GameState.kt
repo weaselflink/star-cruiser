@@ -76,7 +76,9 @@ class GameState {
     }
 
     fun spawnShip(clientId: UUID) {
-        spawnShip().also { shipId ->
+        (1..4).map {
+            spawnShip()
+        }.first().also { shipId ->
             joinShip(clientId, shipId)
         }
     }
