@@ -26,28 +26,23 @@ fun init() {
     ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
 
     resizeCanvasToDisplaySize()
-
     window.onresize = { resizeCanvasToDisplaySize() }
+    window.requestAnimationFrame { step() }
 
-    createSocket("/client")
-
-    val socket = clientSocket
-    if (socket != null) {
-        socket.onmessage = { event ->
+    createSocket("/client")?.apply {
+        onmessage = { event ->
             state = GameStateMessage.parse(event.data.toString())
             state?.also {
-                socket.send(UpdateAcknowledge(counter = it.counter.toInt()).toJson())
+                send(UpdateAcknowledge(counter = it.counter.toInt()).toJson())
             }
             Unit
         }
     }
 
     document.onkeydown = { keyHandler(it) }
-
-    window.requestAnimationFrame { step() }
 }
 
-fun createSocket(uri: String) {
+fun createSocket(uri: String): WebSocket? {
     val wsUri = wsBaseUri + uri
     clientSocket = WebSocket(wsUri)
 
@@ -65,6 +60,8 @@ fun createSocket(uri: String) {
             Unit
         }
     }
+
+    return clientSocket
 }
 
 @ImplicitReflectionSerializer
@@ -99,9 +96,8 @@ fun resizeCanvasToDisplaySize() {
 
 @ImplicitReflectionSerializer
 fun step() {
-    val stateCopy = state
-    if (stateCopy != null) {
-        drawHelm(stateCopy)
+    state?.also {
+        drawHelm(it)
     }
 
     window.requestAnimationFrame { step() }
@@ -114,8 +110,6 @@ fun drawHelm(stateCopy: GameStateMessage) {
 
     updateInfo(ship)
     updatePlayerShips(stateCopy)
-
-    ctx.resetTransform()
 
     clearCanvas()
     drawCompass()
