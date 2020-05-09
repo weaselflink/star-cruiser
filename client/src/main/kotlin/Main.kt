@@ -55,11 +55,11 @@ fun keyHandler(event: KeyboardEvent) {
     println(event.code)
     if (socket != null) {
         when(event.code) {
-            //"KeyP" -> socket.send(JSON.stringify(CommandTogglePause()));
-            //"KeyW" -> socket.send(JSON.stringify(CommandChangeThrottle(10)));
-            //"KeyS" -> socket.send(JSON.stringify(CommandChangeThrottle(-10)));
-            //"KeyA" -> socket.send(JSON.stringify(CommandChangeRudder(-10)));
-            //"KeyD" -> socket.send(JSON.stringify(CommandChangeRudder(10)));
+            "KeyP" -> socket.send(JSON.stringify(Command.CommandTogglePause))
+            "KeyW" -> socket.send(JSON.stringify(Command.CommandChangeThrottle(10)))
+            "KeyS" -> socket.send(JSON.stringify(Command.CommandChangeThrottle(-10)))
+            "KeyA" -> socket.send(JSON.stringify(Command.CommandChangeRudder(-10)))
+            "KeyD" -> socket.send(JSON.stringify(Command.CommandChangeRudder(10)))
         }
     }
 }
