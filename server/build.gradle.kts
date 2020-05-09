@@ -13,7 +13,13 @@ plugins {
     id("com.github.johnrengelman.shadow") version "5.0.0"
 }
 
-group = "de.bissell"
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url = uri("https://kotlin.bintray.com/ktor") }
+}
+
+group = "de.bissell.starcruiser"
 version = "0.0.1-SNAPSHOT"
 
 application {
@@ -21,6 +27,9 @@ application {
 }
 
 dependencies {
+
+    implementation(project(":shared"))
+
     implementation(kotlin("stdlib-jdk8"))
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")

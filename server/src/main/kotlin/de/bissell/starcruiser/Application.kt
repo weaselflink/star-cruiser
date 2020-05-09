@@ -11,7 +11,6 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.pingPeriod
 import io.ktor.http.cio.websocket.timeout
 import io.ktor.routing.routing
-import io.ktor.serialization.DefaultJsonConfiguration
 import io.ktor.serialization.json
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
@@ -23,11 +22,6 @@ import kotlinx.coroutines.launch
 import java.time.Duration
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
-
-val jsonConfiguration = DefaultJsonConfiguration.copy(
-    prettyPrint = true,
-    useArrayPolymorphism = false
-)
 
 @ObsoleteCoroutinesApi
 @Suppress("unused") // Referenced in application.conf

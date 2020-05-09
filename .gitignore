@@ -8,3 +8,9 @@
 
 server/out
 server/build
+
+shared/out
+shared/build
+
+client/out
+client/build

@@ -1,17 +1,10 @@
-@file:UseSerializers(BigDecimalSerializer::class, UUIDSerializer::class)
-
 package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ThrottleMessage.*
-import de.bissell.starcruiser.serializers.BigDecimalSerializer
-import de.bissell.starcruiser.serializers.UUIDSerializer
 import io.ktor.http.cio.websocket.Frame
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
-import kotlinx.serialization.json.Json
 import java.math.BigDecimal
 import java.util.*
 
@@ -93,77 +86,3 @@ class GameClient(
             ).start(this)
     }
 }
-
-@Serializable
-sealed class Command {
-
-    @Serializable
-    class UpdateAcknowledge(val counter: Long) : Command()
-
-    @Serializable
-    object CommandTogglePause : Command()
-
-    @Serializable
-    object CommandSpawnShip: Command()
-
-    @Serializable
-    class CommandJoinShip(val shipId: UUID) : Command()
-
-    @Serializable
-    class CommandChangeThrottle(val diff: Long) : Command()
-
-    @Serializable
-    class CommandChangeRudder(val diff: Long) : Command()
-
-    companion object {
-        fun parse(input: String): Command = Json(jsonConfiguration).parse(serializer(), input)
-    }
-}
-
-@Serializable
-data class GameStateMessage(
-    val counter: Long,
-    val snapshot: GameStateSnapshot
-) {
-    fun toJson(): String = Json(jsonConfiguration).stringify(serializer(), this)
-}
-
-@Serializable
-data class GameStateSnapshot(
-    val paused: Boolean,
-    val playerShips: List<PlayerShipMessage>,
-    val ship: ShipMessage?,
-    val contacts: List<ContactMessage>
-)
-
-@Serializable
-data class PlayerShipMessage(
-    val id: UUID,
-    val name: String
-)
-
-@Serializable
-data class ShipMessage(
-    val id: UUID,
-    val name: String,
-    val position: Vector2,
-    val speed: Vector2,
-    val rotation: BigDecimal,
-    val heading: BigDecimal,
-    val velocity: BigDecimal,
-    val throttle: BigDecimal,
-    val thrust: BigDecimal,
-    val rudder: BigDecimal,
-    val history: List<Pair<BigDecimal, Vector2>>
-)
-
-@Serializable
-data class ContactMessage(
-    val position: Vector2,
-    val relativePosition: Vector2,
-    val speed: Vector2,
-    val rotation: BigDecimal,
-    val heading: BigDecimal,
-    val velocity: BigDecimal,
-    val history: List<Pair<BigDecimal, Vector2>>
-)

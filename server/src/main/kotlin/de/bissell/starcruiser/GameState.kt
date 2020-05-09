@@ -64,7 +64,7 @@ class GameState {
 
     fun spawnShip(): UUID {
         return Ship(
-            position = Vector2(
+            position = BigVector(
                 x = BigDecimal(Random().nextInt(200) - 100),
                 y = BigDecimal(Random().nextInt(200) - 100)
             )
@@ -122,8 +122,8 @@ data class GameTime(
 class Ship(
     val id: UUID = UUID.randomUUID(),
     val name: String = randomShipName(),
-    private var position: Vector2 = Vector2(),
-    private var speed: Vector2 = Vector2(),
+    private var position: BigVector = BigVector(),
+    private var speed: BigVector = BigVector(),
     private var rotation: BigDecimal = 90.toBigDecimal().toRadians()
 ) {
 
@@ -131,7 +131,7 @@ class Ship(
     private var thrust = BigDecimal.ZERO
     private var rudder = BigDecimal.ZERO
 
-    private val history = mutableListOf<Pair<BigDecimal, Vector2>>()
+    private val history = mutableListOf<Pair<BigDecimal, BigVector>>()
 
     private val thrustFactor = BigDecimal("0.2")
     private val rudderFactor = BigDecimal("0.2")
@@ -140,7 +140,7 @@ class Ship(
         updateThrust(time)
         updateRotation(time)
 
-        speed = Vector2(thrust * thrustFactor, BigDecimal.ZERO).rotate(rotation).setScale(9)
+        speed = BigVector(thrust * thrustFactor, BigDecimal.ZERO).rotate(rotation).setScale(9)
         position = (position + speed * time.delta).setScale(9)
 
         updateHistory(time)
@@ -202,17 +202,17 @@ class Ship(
             throttle = throttle,
             thrust = thrust,
             rudder = rudder,
-            history = mutableListOf<Pair<BigDecimal, Vector2>>().apply { addAll(history) }
+            history = mutableListOf<Pair<BigDecimal, BigVector>>().apply { addAll(history) }
         )
 
     fun toContactMessage(relativeTo: Ship?) =
         ContactMessage(
             speed = speed,
             position = position,
-            relativePosition = position - (relativeTo?.position ?: Vector2()),
+            relativePosition = position - (relativeTo?.position ?: BigVector()),
             rotation = rotation,
             heading = rotation.toHeading(),
             velocity = speed.length(),
-            history = mutableListOf<Pair<BigDecimal, Vector2>>().apply { addAll(history) }
+            history = mutableListOf<Pair<BigDecimal, BigVector>>().apply { addAll(history) }
         )
 }
