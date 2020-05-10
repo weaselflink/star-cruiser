@@ -7,8 +7,7 @@ import kotlinx.serialization.json.JsonConfiguration
 val jsonConfiguration = JsonConfiguration.Stable.copy(
     encodeDefaults = true,
     isLenient = true,
-    prettyPrint = true,
-    useArrayPolymorphism = false
+    prettyPrint = true
 )
 
 @Serializable
