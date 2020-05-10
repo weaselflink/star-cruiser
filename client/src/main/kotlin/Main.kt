@@ -26,8 +26,8 @@ fun init() {
     canvas = document.getElementById("canvas")!! as HTMLCanvasElement
     ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
 
-    resizeCanvasToDisplaySize()
-    window.onresize = { resizeCanvasToDisplaySize() }
+    canvas.resizeCanvasToDisplaySize()
+    window.onresize = { canvas.resizeCanvasToDisplaySize() }
     window.requestAnimationFrame { step() }
 
     createSocket("/client")?.apply {
@@ -78,20 +78,20 @@ fun keyHandler(event: KeyboardEvent) {
     }
 }
 
-fun resizeCanvasToDisplaySize() {
-    val width: Int = window.innerWidth
-    val height: Int = window.innerHeight
-    val dim: Int = min(width, height)
+fun HTMLCanvasElement.resizeCanvasToDisplaySize() {
+    val windowWidth: Int = window.innerWidth
+    val windowHeight: Int = window.innerHeight
+    val dim: Int = min(window.innerWidth, window.innerHeight)
 
-    if (canvas.width != dim || canvas.height != dim) {
-        canvas.width = dim
-        canvas.height = dim
+    if (width != dim || height != dim) {
+        width = dim
+        height = dim
     }
 
-    canvas.style.left = ((width - dim) / 2).px
-    canvas.style.top = ((height - dim) / 2).px
-    canvas.style.width = dim.px
-    canvas.style.height = dim.px
+    style.left = ((windowWidth - dim) / 2).px
+    style.top = ((windowHeight - dim) / 2).px
+    style.width = dim.px
+    style.height = dim.px
 }
 
 fun step() {
@@ -144,17 +144,24 @@ fun updatePlayerShips(stateCopy: GameStateMessage) {
         if (index < stateCopy.snapshot.playerShips.size) {
             val playerShip = stateCopy.snapshot.playerShips[index]
             if (index < listElements.length) {
-                val entry = listElements.item(index)!! as HTMLElement
-                if (entry.getAttribute("id") != playerShip.id) {
-                    entry.setAttribute("id", playerShip.id)
-                    entry.innerHTML = playerShip.name
+                listElements.item(index)!!.let {
+                    it as HTMLElement
+                }.apply {
+                    if (getAttribute("id") != playerShip.id) {
+                        setAttribute("id", playerShip.id)
+                        innerHTML = playerShip.name
+                    }
                 }
             } else {
-                val entry = document.createElement("li") as HTMLElement
-                entry.setAttribute("id", playerShip.id)
-                entry.innerHTML = playerShip.name
-                entry.onclick = { selectPlayerShip(it) }
-                playerShipsList.appendChild(entry)
+                document.createElement("li").let {
+                    it as HTMLElement
+                }.apply {
+                    setAttribute("id", playerShip.id)
+                    innerHTML = playerShip.name
+                    onclick = { selectPlayerShip(it) }
+                }.also {
+                    playerShipsList.appendChild(it)
+                }
             }
         } else {
             if (index < listElements.length) {
@@ -167,11 +174,10 @@ fun updatePlayerShips(stateCopy: GameStateMessage) {
 }
 
 fun selectPlayerShip(event: MouseEvent) {
-    val socket = clientSocket
-    if (socket != null) {
+    clientSocket?.apply {
         val target = event.target as HTMLElement
         val shipId = target.attributes["id"]!!.value
-        socket.send(Command.CommandJoinShip(shipId = shipId).toJson())
+        send(Command.CommandJoinShip(shipId = shipId).toJson())
     }
 }
 
