@@ -109,6 +109,7 @@ fun drawHelm(stateCopy: GameStateMessage) {
     ctx.drawCompass()
 
     if (ship != null) {
+        ctx.drawThrottle(ship)
         ctx.drawShip(ship)
         ctx.drawHistory(ship)
     }
@@ -194,7 +195,9 @@ fun CanvasRenderingContext2D.drawCompass() {
         0.0, 0.0, 2 * PI)
     fill()
 
-    strokeStyle = "#888"
+    strokeStyle = "#666"
+    lineWidth = 3.0
+    lineCap = CanvasLineCap.ROUND
     scopeRadius = dim / 2 - 20
     translate(canvas.width / 2.0, canvas.height / 2.0)
     for (i in 0 until 36) {
@@ -208,6 +211,48 @@ fun CanvasRenderingContext2D.drawCompass() {
         moveTo(sin(a) * inner, cos(a) * inner)
         lineTo(sin(a) * scopeRadius, cos(a) * scopeRadius)
         stroke()
+    }
+    lineWidth = 1.0
+    lineCap = CanvasLineCap.BUTT
+}
+
+fun CanvasRenderingContext2D.drawThrottle(ship: ShipMessage) {
+    resetTransform()
+
+    fillStyle = "#111"
+    beginPath()
+    drawPill(20.0, canvas.height.toDouble() - 25.0, 30.0, 170.0)
+    fill()
+
+    strokeStyle = "#888"
+    beginPath()
+    drawPill(20.0, canvas.height.toDouble() - 25.0, 30.0, 170.0)
+    moveTo(24.0, canvas.height.toDouble() - 110.0)
+    lineTo(46.0, canvas.height.toDouble() - 110.0)
+    stroke()
+
+    fillStyle = "#999"
+    beginPath()
+    ellipse(35.0, canvas.height.toDouble() - 110.0 - ship.throttle / 100.0 * 70.0,
+        15.0, 15.0, 0.0, 0.0, 2 * PI)
+    fill()
+}
+
+fun CanvasRenderingContext2D.drawPill(x:Double, y: Double, width: Double, height: Double) {
+    if (width > height) {
+        val radius = height / 2.0
+        moveTo(x + radius, y - radius * 2)
+        lineTo(x + width - radius, y - radius * 2)
+        arc(x + width - radius, y - radius, radius, - (PI / 2.0), PI / 2.0)
+        lineTo(x + radius, y)
+        arc(x + radius, y - radius, radius, PI / 2.0, - (PI / 2.0))
+    } else {
+        val radius = width / 2.0
+        moveTo(x, y - radius)
+        lineTo(x, y - height + radius)
+        arc(x + radius, y - height + radius, radius, PI, 0.0)
+        lineTo(x + radius * 2, y - radius)
+        arc(x + radius, y - radius, radius, 0.0, PI)
     }
 }
 
