@@ -5,7 +5,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.actor
 import java.math.BigDecimal
-import java.math.RoundingMode
 import java.util.*
 
 sealed class GameStateChange
@@ -16,8 +15,8 @@ object SpawnShip : GameStateChange()
 class JoinShip(val clientId: UUID, val shipId: UUID) : GameStateChange()
 class NewGameClient(val clientId: UUID) : GameStateChange()
 class GameClientDisconnected(val clientId: UUID) : GameStateChange()
-class ChangeThrottle(val clientId: UUID, val diff: BigDecimal) : GameStateChange()
-class ChangeRudder(val clientId: UUID, val diff: BigDecimal) : GameStateChange()
+class ChangeThrottle(val clientId: UUID, val diff: Long) : GameStateChange()
+class ChangeRudder(val clientId: UUID, val diff: Long) : GameStateChange()
 class GetGameStateSnapshot(val clientId: UUID, val response: CompletableDeferred<GameStateSnapshot>) : GameStateChange()
 
 @ObsoleteCoroutinesApi
@@ -64,7 +63,7 @@ class GameState {
 
     fun spawnShip(): UUID {
         return Ship(
-            position = Vector2(
+            position = BigVector(
                 x = BigDecimal(Random().nextInt(200) - 100),
                 y = BigDecimal(Random().nextInt(200) - 100)
             ),
@@ -101,12 +100,12 @@ class GameState {
         ships.forEach { it.value.update(time) }
     }
 
-    fun changeThrottle(clientId: UUID, diff: BigDecimal) {
-        clientShip(clientId)?.changeThrottle(diff)
+    fun changeThrottle(clientId: UUID, diff: Long) {
+        clientShip(clientId)?.changeThrottle(diff.toBigDecimal())
     }
 
-    fun changeRudder(clientId: UUID, diff: BigDecimal) {
-        clientShip(clientId)?.changeRudder(diff)
+    fun changeRudder(clientId: UUID, diff: Long) {
+        clientShip(clientId)?.changeRudder(diff.toBigDecimal())
     }
 
     private fun clientShip(clientId: UUID): Ship? =
@@ -125,9 +124,9 @@ data class GameTime(
 
 class Ship(
     val id: UUID = UUID.randomUUID(),
-    val name: String = randomShipName(),
-    private var position: Vector2 = Vector2(),
-    private var speed: Vector2 = Vector2(),
+    private val name: String = randomShipName(),
+    private var position: BigVector = BigVector(),
+    private var speed: BigVector = BigVector(),
     private var rotation: BigDecimal = 90.toBigDecimal().toRadians(),
     private var throttle: BigDecimal = BigDecimal.ZERO,
     private var rudder: BigDecimal = BigDecimal.ZERO
@@ -135,7 +134,7 @@ class Ship(
 
     private var thrust = BigDecimal.ZERO
 
-    private val history = mutableListOf<Pair<BigDecimal, Vector2>>()
+    private val history = mutableListOf<Pair<BigDecimal, BigVector>>()
 
     private val thrustFactor = BigDecimal("0.2")
     private val rudderFactor = BigDecimal("0.2")
@@ -144,7 +143,7 @@ class Ship(
         updateThrust(time)
         updateRotation(time)
 
-        speed = Vector2(thrust * thrustFactor, BigDecimal.ZERO).rotate(rotation).setScale(9)
+        speed = BigVector(thrust * thrustFactor, BigDecimal.ZERO).rotate(rotation).setScale(9)
         position = (position + speed * time.delta).setScale(9)
 
         updateHistory(time)
@@ -190,33 +189,37 @@ class Ship(
 
     fun toPlayerShipMessage() =
         PlayerShipMessage(
-            id = id,
+            id = id.toString(),
             name = name
         )
 
     fun toMessage() =
         ShipMessage(
-            id = id,
+            id = id.toString(),
             name = name,
-            speed = speed,
-            position = position,
-            rotation = rotation,
-            heading = rotation.toHeading(),
-            velocity = speed.length().setScale(2, RoundingMode.HALF_EVEN),
-            throttle = throttle,
-            thrust = thrust,
-            rudder = rudder,
-            history = mutableListOf<Pair<BigDecimal, Vector2>>().apply { addAll(history) }
+            speed = speed.toVector2(),
+            position = position.toVector2(),
+            rotation = rotation.toDouble(),
+            heading = rotation.toHeading().toDouble(),
+            velocity = speed.length().toDouble(),
+            throttle = throttle.toDouble(),
+            thrust = thrust.toDouble(),
+            rudder = rudder.toDouble(),
+            history = history.map {
+                Pair(it.first.toDouble(), it.second.toVector2())
+            }
         )
 
     fun toContactMessage(relativeTo: Ship?) =
         ContactMessage(
-            speed = speed,
-            position = position,
-            relativePosition = position - (relativeTo?.position ?: Vector2()),
-            rotation = rotation,
-            heading = rotation.toHeading(),
-            velocity = speed.length(),
-            history = mutableListOf<Pair<BigDecimal, Vector2>>().apply { addAll(history) }
+            speed = speed.toVector2(),
+            position = position.toVector2(),
+            relativePosition = (position - (relativeTo?.position ?: BigVector())).toVector2(),
+            rotation = rotation.toDouble(),
+            heading = rotation.toHeading().toDouble(),
+            velocity = speed.length().toDouble(),
+            history = history.map {
+                Pair(it.first.toDouble(), it.second.toVector2())
+            }
         )
 }

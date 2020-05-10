@@ -5,7 +5,6 @@ import io.ktor.http.cio.websocket.Frame
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
-import java.math.BigDecimal
 import java.util.*
 
 @ObsoleteCoroutinesApi
@@ -46,8 +45,8 @@ class GameClient(
                 is Command.CommandTogglePause -> gameStateActor.send(TogglePause)
                 is Command.CommandSpawnShip -> gameStateActor.send(TogglePause)
                 is Command.CommandJoinShip -> gameStateActor.send(JoinShip(id, command.shipId))
-                is Command.CommandChangeThrottle -> gameStateActor.send(ChangeThrottle(id, BigDecimal(command.diff)))
-                is Command.CommandChangeRudder -> gameStateActor.send(ChangeRudder(id, BigDecimal(command.diff)))
+                is Command.CommandChangeThrottle -> gameStateActor.send(ChangeThrottle(id, command.diff))
+                is Command.CommandChangeRudder -> gameStateActor.send(ChangeRudder(id, command.diff))
             }
         }
 

@@ -128,8 +128,8 @@ fun updateInfo(ship: ShipMessage?) {
     val headingElement = document.getElementById("heading")!!
     val velocityElement = document.getElementById("velocity")!!
     if (ship != null) {
-        headingElement.innerHTML = ship.heading
-        velocityElement.innerHTML = ship.velocity
+        headingElement.innerHTML = ship.heading.toString()
+        velocityElement.innerHTML = ship.velocity.toString()
     } else {
         headingElement.innerHTML = "unknown"
         velocityElement.innerHTML = "unknown"
@@ -224,7 +224,7 @@ fun CanvasRenderingContext2D.drawShipSymbol(rot: Double) {
 }
 
 fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
-    val rot = ship.rotation.toDouble()
+    val rot = ship.rotation
 
     resetTransform()
     strokeStyle = "#1e90ff"
@@ -234,9 +234,9 @@ fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
 }
 
 fun CanvasRenderingContext2D.drawContact(contact: ContactMessage) {
-    val xPos = contact.relativePosition.x.toDouble()
-    val yPos = contact.relativePosition.y.toDouble()
-    val rot = contact.rotation.toDouble()
+    val xPos = contact.relativePosition.x
+    val yPos = contact.relativePosition.y
+    val rot = contact.rotation
 
     val dist = sqrt(xPos * xPos + yPos * yPos)
     if (dist < scopeRadius - 10) {
@@ -249,14 +249,14 @@ fun CanvasRenderingContext2D.drawContact(contact: ContactMessage) {
 }
 
 fun CanvasRenderingContext2D.drawHistory(ship: ShipMessage) {
-    val xPos = ship.position.x.toDouble()
-    val yPos = -(ship.position.y.toDouble())
+    val xPos = ship.position.x
+    val yPos = -(ship.position.y)
 
     resetTransform()
     translate(canvas.width / 2.0, canvas.height / 2.0)
     for (point in ship.history) {
-        val xp = point.second.x.toDouble() - xPos
-        val yp = -(point.second.y.toDouble()) - yPos
+        val xp = point.second.x - xPos
+        val yp = -(point.second.y) - yPos
 
         val dist = sqrt(xp * xp + yp * yp)
         if (dist < scopeRadius - 10) {

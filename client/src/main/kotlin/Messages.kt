@@ -35,23 +35,23 @@ data class GameStateSnapshot(
 
 @Serializable
 data class PlayerShipMessage(
-    val id: UUID,
+    val id: String,
     val name: String
 )
 
 @Serializable
 data class ShipMessage(
-    val id: UUID,
+    val id: String,
     val name: String,
     val position: Vector2,
     val speed: Vector2,
-    val rotation: BigDecimal,
-    val heading: BigDecimal,
-    val velocity: BigDecimal,
-    val throttle: BigDecimal,
-    val thrust: BigDecimal,
-    val rudder: BigDecimal,
-    val history: Array<Pair<BigDecimal, Vector2>>
+    val rotation: Double,
+    val heading: Double,
+    val velocity: Double,
+    val throttle: Double,
+    val thrust: Double,
+    val rudder: Double,
+    val history: Array<Pair<Double, Vector2>>
 )
 
 @Serializable
@@ -59,17 +59,14 @@ data class ContactMessage(
     val position: Vector2,
     val relativePosition: Vector2,
     val speed: Vector2,
-    val rotation: BigDecimal,
-    val heading: BigDecimal,
-    val velocity: BigDecimal,
-    val history: Array<Pair<BigDecimal, Vector2>>
+    val rotation: Double,
+    val heading: Double,
+    val velocity: Double,
+    val history: Array<Pair<Double, Vector2>>
 )
 
 @Serializable
 data class Vector2(
-    val x: BigDecimal,
-    val y: BigDecimal
+    val x: Double,
+    val y: Double
 )
-
-typealias UUID = String
-typealias BigDecimal = String

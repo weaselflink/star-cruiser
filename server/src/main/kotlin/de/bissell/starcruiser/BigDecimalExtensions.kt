@@ -15,15 +15,23 @@ fun BigDecimal.clip(min: BigDecimal, max: BigDecimal) =
     min(max, max(min, this))
 
 fun BigDecimal.clip(min: Long, max: Long) =
-    min(max.toBigDecimal(), max(min.toBigDecimal(), this))
+    min(
+        max.toBigDecimal(),
+        max(min.toBigDecimal(), this)
+    )
 
 val PI: BigDecimal = BigDecimal.valueOf(kotlin.math.PI)
 
 fun BigDecimal.toRadians(): BigDecimal =
-    this.divide(180.toBigDecimal(), 9, MathDefaults.roundingMode) * PI
+    this.divide(180.toBigDecimal(), 9,
+        MathDefaults.roundingMode
+    ) * PI
 
 fun BigDecimal.toDegrees(): BigDecimal =
-    this.divide(PI, 9, MathDefaults.roundingMode) * 180
+    this.divide(
+        PI, 9,
+        MathDefaults.roundingMode
+    ) * 180
 
 operator fun BigDecimal.times(value: Long): BigDecimal =
     this * BigDecimal(value)
