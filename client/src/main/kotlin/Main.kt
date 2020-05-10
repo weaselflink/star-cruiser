@@ -30,23 +30,15 @@ fun init() {
     window.onresize = { canvas.resizeCanvasToDisplaySize() }
     window.requestAnimationFrame { step() }
 
-    createSocket("/client")?.apply {
-        onmessage = { event ->
-            state = GameStateMessage.parse(event.data.toString())
-            state?.also {
-                send(Command.UpdateAcknowledge(counter = it.counter).toJson())
-            }
-            Unit
-        }
-    }
+    createSocket()
 
     document.onkeydown = { keyHandler(it) }
 }
 
-fun createSocket(uri: String): WebSocket? {
+fun createSocket(): WebSocket? {
     val connectionInfo = document.getElementById("conn")!! as HTMLElement
 
-    return WebSocket(wsBaseUri + uri).apply {
+    return WebSocket("$wsBaseUri/client").apply {
         clientSocket = this
 
         onopen = {
@@ -57,6 +49,14 @@ fun createSocket(uri: String): WebSocket? {
             connectionInfo.innerHTML = "disconnected"
             println("Connection closed")
             clientSocket = null
+            Unit
+        }
+        onmessage = { event ->
+            GameStateMessage.parse(event.data.toString()).apply {
+                state = this
+            }.also {
+                send(Command.UpdateAcknowledge(counter = it.counter).toJson())
+            }
             Unit
         }
     }
