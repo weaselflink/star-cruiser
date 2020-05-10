@@ -7,9 +7,6 @@ import kotlinx.serialization.json.JsonConfiguration
 val jsonConfiguration = JsonConfiguration.Stable.copy(
     encodeDefaults = true,
     isLenient = true,
-    serializeSpecialFloatingPointValues = true,
-    allowStructuredMapKeys = true,
-    unquotedPrint = false,
     prettyPrint = true,
     useArrayPolymorphism = false
 )
@@ -20,6 +17,10 @@ data class GameStateMessage(
     val snapshot: GameStateSnapshot
 ) {
     fun toJson(): String = Json(jsonConfiguration).stringify(serializer(), this)
+
+    companion object {
+        fun parse(input: String): GameStateMessage = Json(jsonConfiguration).parse(serializer(), input)
+    }
 }
 
 @Serializable

@@ -15,6 +15,9 @@ repositories {
 }
 
 dependencies {
+
+    implementation(project(":shared"))
+
     implementation(kotlin("stdlib-js"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.20.0")
 }

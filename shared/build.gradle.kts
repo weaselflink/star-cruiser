@@ -43,6 +43,17 @@ kotlin {
             output
         }
     }
+
+    js {
+        browser()
+
+        compilations["main"].defaultSourceSet {
+            dependencies {
+                implementation(kotlin("stdlib-js"))
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.20.0")
+            }
+        }
+    }
 }
 
 group = "de.bissell.starcruiser"

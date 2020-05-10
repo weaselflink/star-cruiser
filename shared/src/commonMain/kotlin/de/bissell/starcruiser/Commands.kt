@@ -24,6 +24,8 @@ sealed class Command {
     @Serializable
     class CommandChangeRudder(val diff: Long) : Command()
 
+    fun toJson() = Json(jsonConfiguration).stringify(serializer(), this)
+
     companion object {
         fun parse(input: String): Command = Json(jsonConfiguration).parse(serializer(), input)
     }

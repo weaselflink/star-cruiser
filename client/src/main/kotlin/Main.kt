@@ -1,5 +1,8 @@
 
-import kotlinx.serialization.ImplicitReflectionSerializer
+import de.bissell.starcruiser.Command
+import de.bissell.starcruiser.ContactMessage
+import de.bissell.starcruiser.GameStateMessage
+import de.bissell.starcruiser.ShipMessage
 import org.w3c.dom.*
 import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
@@ -15,12 +18,10 @@ var clientSocket: WebSocket? = null
 var state: GameStateMessage? = null
 var scopeRadius = 0
 
-@ImplicitReflectionSerializer
 fun main() {
     window.onload = { init() }
 }
 
-@ImplicitReflectionSerializer
 fun init() {
     canvas = document.getElementById("canvas")!! as HTMLCanvasElement
     ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
@@ -33,7 +34,7 @@ fun init() {
         onmessage = { event ->
             state = GameStateMessage.parse(event.data.toString())
             state?.also {
-                send(UpdateAcknowledge(counter = it.counter.toInt()).toJson())
+                send(Command.UpdateAcknowledge(counter = it.counter).toJson())
             }
             Unit
         }
@@ -64,16 +65,15 @@ fun createSocket(uri: String): WebSocket? {
     return clientSocket
 }
 
-@ImplicitReflectionSerializer
 fun keyHandler(event: KeyboardEvent) {
     val socket = clientSocket
     if (socket != null) {
         when(event.code) {
-            "KeyP" -> socket.send(CommandTogglePause.toJson())
-            "KeyW" -> socket.send(CommandChangeThrottle(diff = 10).toJson())
-            "KeyS" -> socket.send(CommandChangeThrottle(diff = -10).toJson())
-            "KeyA" -> socket.send(CommandChangeRudder(diff = -10).toJson())
-            "KeyD" -> socket.send(CommandChangeRudder(diff = 10).toJson())
+            "KeyP" -> socket.send(Command.CommandTogglePause.toJson())
+            "KeyW" -> socket.send(Command.CommandChangeThrottle(diff = 10).toJson())
+            "KeyS" -> socket.send(Command.CommandChangeThrottle(diff = -10).toJson())
+            "KeyA" -> socket.send(Command.CommandChangeRudder(diff = -10).toJson())
+            "KeyD" -> socket.send(Command.CommandChangeRudder(diff = 10).toJson())
         }
     }
 }
@@ -94,7 +94,6 @@ fun resizeCanvasToDisplaySize() {
     canvas.style.height = dim.px
 }
 
-@ImplicitReflectionSerializer
 fun step() {
     state?.also {
         drawHelm(it)
@@ -103,7 +102,6 @@ fun step() {
     window.requestAnimationFrame { step() }
 }
 
-@ImplicitReflectionSerializer
 fun drawHelm(stateCopy: GameStateMessage) {
 
     val ship = stateCopy.snapshot.ship
@@ -136,7 +134,6 @@ fun updateInfo(ship: ShipMessage?) {
     }
 }
 
-@ImplicitReflectionSerializer
 fun updatePlayerShips(stateCopy: GameStateMessage) {
     val playerShipsList = document.getElementById("playerShips")!!
     val listElements = playerShipsList.getElementsByTagName("li")
@@ -169,13 +166,12 @@ fun updatePlayerShips(stateCopy: GameStateMessage) {
     }
 }
 
-@ImplicitReflectionSerializer
 fun selectPlayerShip(event: MouseEvent) {
     val socket = clientSocket
     if (socket != null) {
         val target = event.target as HTMLElement
         val shipId = target.attributes["id"]!!.value
-        socket.send(CommandJoinShip(shipId = shipId).toJson())
+        socket.send(Command.CommandJoinShip(shipId = shipId).toJson())
     }
 }
 
