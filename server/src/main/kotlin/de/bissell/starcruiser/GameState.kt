@@ -15,7 +15,7 @@ object SpawnShip : GameStateChange()
 class JoinShip(val clientId: UUID, val shipId: UUID) : GameStateChange()
 class NewGameClient(val clientId: UUID) : GameStateChange()
 class GameClientDisconnected(val clientId: UUID) : GameStateChange()
-class ChangeThrottle(val clientId: UUID, val diff: Long) : GameStateChange()
+class ChangeThrottle(val clientId: UUID, val value: Long) : GameStateChange()
 class ChangeRudder(val clientId: UUID, val diff: Long) : GameStateChange()
 class GetGameStateSnapshot(val clientId: UUID, val response: CompletableDeferred<GameStateSnapshot>) : GameStateChange()
 
@@ -30,7 +30,7 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
             is TogglePause -> gameState.togglePaused()
             is SpawnShip -> gameState.spawnShip()
             is JoinShip -> gameState.joinShip(change.clientId, change.shipId)
-            is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.diff)
+            is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.value)
             is ChangeRudder -> gameState.changeRudder(change.clientId, change.diff)
             is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
         }
@@ -100,8 +100,8 @@ class GameState {
         ships.forEach { it.value.update(time) }
     }
 
-    fun changeThrottle(clientId: UUID, diff: Long) {
-        clientShip(clientId)?.changeThrottle(diff.toBigDecimal())
+    fun changeThrottle(clientId: UUID, value: Long) {
+        clientShip(clientId)?.changeThrottle(value.toBigDecimal())
     }
 
     fun changeRudder(clientId: UUID, diff: Long) {
@@ -179,8 +179,8 @@ class Ship(
         }
     }
 
-    fun changeThrottle(diff: BigDecimal) {
-        throttle = (throttle + diff).clip(-100, 100)
+    fun changeThrottle(value: BigDecimal) {
+        throttle = value.clip(-100, 100)
     }
 
     fun changeRudder(diff: BigDecimal) {

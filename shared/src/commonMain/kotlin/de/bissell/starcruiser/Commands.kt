@@ -19,7 +19,7 @@ sealed class Command {
     class CommandJoinShip(val shipId: String) : Command()
 
     @Serializable
-    class CommandChangeThrottle(val diff: Long) : Command()
+    class CommandChangeThrottle(val value: Long) : Command()
 
     @Serializable
     class CommandChangeRudder(val diff: Long) : Command()

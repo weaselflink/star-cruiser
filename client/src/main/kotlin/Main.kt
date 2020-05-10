@@ -30,6 +30,8 @@ fun init() {
     window.onresize = { canvas.resizeCanvasToDisplaySize() }
     window.requestAnimationFrame { step() }
 
+    canvas.onclick = { canvasClicked(it) }
+
     createSocket()
 
     document.onkeydown = { keyHandler(it) }
@@ -63,15 +65,27 @@ fun createSocket(): WebSocket? {
 }
 
 fun keyHandler(event: KeyboardEvent) {
+    val throttle: Long = state?.snapshot?.ship?.throttle?.toLong() ?: 0
+
     clientSocket?.apply {
         when(event.code) {
             "KeyP" -> send(Command.CommandTogglePause.toJson())
-            "KeyW", "ArrowUp" -> send(Command.CommandChangeThrottle(diff = 10).toJson())
-            "KeyS", "ArrowDown" -> send(Command.CommandChangeThrottle(diff = -10).toJson())
-            "KeyA", "ArrowLeft" -> send(Command.CommandChangeRudder(diff = -10).toJson())
-            "KeyD", "ArrowRight" -> send(Command.CommandChangeRudder(diff = 10).toJson())
+            "KeyW", "ArrowUp" -> send(Command.CommandChangeThrottle(throttle + 10).toJson())
+            "KeyS", "ArrowDown" -> send(Command.CommandChangeThrottle( throttle - 10).toJson())
+            "KeyA", "ArrowLeft" -> send(Command.CommandChangeRudder(-10).toJson())
+            "KeyD", "ArrowRight" -> send(Command.CommandChangeRudder(10).toJson())
             else -> println("not bound: ${event.code}")
         }
+    }
+}
+
+fun canvasClicked(event: MouseEvent) {
+    val x = event.offsetX
+    val y = event.offsetY
+
+    if (x > 20.0 && x < 50.0 && y > canvas.height.toDouble() - 195.0 && y < canvas.height.toDouble() - 25.0) {
+        val throttle = min(10.0, max(-10.0, -(y - canvas.height.toDouble() + 110.0) / 70.0 * 10.0)).toLong() * 10
+        clientSocket?.send(Command.CommandChangeThrottle(throttle).toJson())
     }
 }
 
