@@ -66,10 +66,11 @@ fun keyHandler(event: KeyboardEvent) {
     clientSocket?.apply {
         when(event.code) {
             "KeyP" -> send(Command.CommandTogglePause.toJson())
-            "KeyW" -> send(Command.CommandChangeThrottle(diff = 10).toJson())
-            "KeyS" -> send(Command.CommandChangeThrottle(diff = -10).toJson())
-            "KeyA" -> send(Command.CommandChangeRudder(diff = -10).toJson())
-            "KeyD" -> send(Command.CommandChangeRudder(diff = 10).toJson())
+            "KeyW", "ArrowUp" -> send(Command.CommandChangeThrottle(diff = 10).toJson())
+            "KeyS", "ArrowDown" -> send(Command.CommandChangeThrottle(diff = -10).toJson())
+            "KeyA", "ArrowLeft" -> send(Command.CommandChangeRudder(diff = -10).toJson())
+            "KeyD", "ArrowRight" -> send(Command.CommandChangeRudder(diff = 10).toJson())
+            else -> println("not bound: ${event.code}")
         }
     }
 }
