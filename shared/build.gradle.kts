@@ -20,20 +20,9 @@ version = "0.0.1-SNAPSHOT"
 dependencies {
     implementation(kotlin("stdlib-common"))
     implementation("io.ktor:ktor-serialization:$ktor_version")
-
-    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
-    testImplementation("io.strikt:strikt-core:0.24.0")
 }
 
-
 tasks {
-    test {
-        useJUnitPlatform()
-        testLogging {
-            events("passed", "skipped", "failed")
-        }
-    }
-
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions.jvmTarget = "1.8"
     }

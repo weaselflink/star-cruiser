@@ -1,10 +1,15 @@
 package de.bissell.starcruiser
 
-import io.ktor.serialization.DefaultJsonConfiguration
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 
-val jsonConfiguration = DefaultJsonConfiguration.copy(
+val jsonConfiguration = JsonConfiguration.Stable.copy(
+    encodeDefaults = true,
+    isLenient = true,
+    serializeSpecialFloatingPointValues = true,
+    allowStructuredMapKeys = true,
+    unquotedPrint = false,
     prettyPrint = true,
     useArrayPolymorphism = false
 )

@@ -2,6 +2,7 @@ package de.bissell.starcruiser
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+
 @Serializable
 sealed class Command {
 
