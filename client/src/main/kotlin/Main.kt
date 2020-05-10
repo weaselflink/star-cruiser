@@ -44,36 +44,32 @@ fun init() {
 }
 
 fun createSocket(uri: String): WebSocket? {
-    val wsUri = wsBaseUri + uri
-    clientSocket = WebSocket(wsUri)
-
     val connectionInfo = document.getElementById("conn")!! as HTMLElement
-    val socket = clientSocket
-    if (socket != null) {
-        socket.onopen = {
+
+    return WebSocket(wsBaseUri + uri).apply {
+        clientSocket = this
+
+        onopen = {
             connectionInfo.innerHTML = "connected"
             Unit
         }
-        socket.onclose = {
+        onclose = {
             connectionInfo.innerHTML = "disconnected"
             println("Connection closed")
             clientSocket = null
             Unit
         }
     }
-
-    return clientSocket
 }
 
 fun keyHandler(event: KeyboardEvent) {
-    val socket = clientSocket
-    if (socket != null) {
+    clientSocket?.apply {
         when(event.code) {
-            "KeyP" -> socket.send(Command.CommandTogglePause.toJson())
-            "KeyW" -> socket.send(Command.CommandChangeThrottle(diff = 10).toJson())
-            "KeyS" -> socket.send(Command.CommandChangeThrottle(diff = -10).toJson())
-            "KeyA" -> socket.send(Command.CommandChangeRudder(diff = -10).toJson())
-            "KeyD" -> socket.send(Command.CommandChangeRudder(diff = 10).toJson())
+            "KeyP" -> send(Command.CommandTogglePause.toJson())
+            "KeyW" -> send(Command.CommandChangeThrottle(diff = 10).toJson())
+            "KeyS" -> send(Command.CommandChangeThrottle(diff = -10).toJson())
+            "KeyA" -> send(Command.CommandChangeRudder(diff = -10).toJson())
+            "KeyD" -> send(Command.CommandChangeRudder(diff = 10).toJson())
         }
     }
 }
