@@ -36,7 +36,6 @@ kotlin {
 
         val main by compilations.getting {
             kotlinOptions {
-                // Setup the Kotlin compiler options for the 'main' compilation:
                 jvmTarget = "1.8"
             }
 
