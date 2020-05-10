@@ -228,8 +228,6 @@ fun CanvasRenderingContext2D.drawThrottle(ship: ShipMessage) {
     strokeStyle = "#888"
     beginPath()
     drawPill(20.0, canvas.height.toDouble() - 25.0, 30.0, 170.0)
-    moveTo(24.0, canvas.height.toDouble() - 110.0)
-    lineTo(46.0, canvas.height.toDouble() - 110.0)
     stroke()
 
     fillStyle = "#999"
@@ -237,6 +235,12 @@ fun CanvasRenderingContext2D.drawThrottle(ship: ShipMessage) {
     ellipse(35.0, canvas.height.toDouble() - 110.0 - ship.throttle / 100.0 * 70.0,
         15.0, 15.0, 0.0, 0.0, 2 * PI)
     fill()
+
+    strokeStyle = "#666"
+    beginPath()
+    moveTo(24.0, canvas.height.toDouble() - 110.0)
+    lineTo(46.0, canvas.height.toDouble() - 110.0)
+    stroke()
 }
 
 fun CanvasRenderingContext2D.drawPill(x:Double, y: Double, width: Double, height: Double) {
