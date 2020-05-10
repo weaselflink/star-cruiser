@@ -44,7 +44,7 @@ class GameClient(
                 is Command.UpdateAcknowledge -> throttleActor.send(AcknowledgeInflightMessage(command.counter))
                 is Command.CommandTogglePause -> gameStateActor.send(TogglePause)
                 is Command.CommandSpawnShip -> gameStateActor.send(TogglePause)
-                is Command.CommandJoinShip -> gameStateActor.send(JoinShip(id, command.shipId))
+                is Command.CommandJoinShip -> gameStateActor.send(JoinShip(id, UUID.fromString(command.shipId)))
                 is Command.CommandChangeThrottle -> gameStateActor.send(ChangeThrottle(id, command.diff))
                 is Command.CommandChangeRudder -> gameStateActor.send(ChangeRudder(id, command.diff))
             }

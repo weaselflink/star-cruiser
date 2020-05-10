@@ -1,14 +1,7 @@
-@file:UseSerializers(BigDecimalSerializer::class, UUIDSerializer::class)
-
 package de.bissell.starcruiser
 
-import de.bissell.starcruiser.serializers.BigDecimalSerializer
-import de.bissell.starcruiser.serializers.UUIDSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
-import java.util.*
-
 @Serializable
 sealed class Command {
 
@@ -22,7 +15,7 @@ sealed class Command {
     object CommandSpawnShip: Command()
 
     @Serializable
-    class CommandJoinShip(val shipId: UUID) : Command()
+    class CommandJoinShip(val shipId: String) : Command()
 
     @Serializable
     class CommandChangeThrottle(val diff: Long) : Command()
