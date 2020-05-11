@@ -3,8 +3,8 @@
 val kotlin_version: String by project
 
 plugins {
-    kotlin("js") version "1.3.72"
-    kotlin("plugin.serialization") version "1.3.72"
+    kotlin("js")
+    kotlin("plugin.serialization")
 }
 
 group = "de.bissell.starcruiser"
