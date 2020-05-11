@@ -1,9 +1,31 @@
 package de.bissell.starcruiser
 
-import azadev.kotlin.css.*
+import azadev.kotlin.css.FIXED
+import azadev.kotlin.css.NONE
+import azadev.kotlin.css.POINTER
+import azadev.kotlin.css.Stylesheet
+import azadev.kotlin.css.backgroundColor
+import azadev.kotlin.css.borderRadius
+import azadev.kotlin.css.bottom
+import azadev.kotlin.css.color
 import azadev.kotlin.css.colors.hex
+import azadev.kotlin.css.cursor
 import azadev.kotlin.css.dimens.percent
 import azadev.kotlin.css.dimens.px
+import azadev.kotlin.css.fontFamily
+import azadev.kotlin.css.height
+import azadev.kotlin.css.left
+import azadev.kotlin.css.listStyleType
+import azadev.kotlin.css.margin
+import azadev.kotlin.css.padding
+import azadev.kotlin.css.paddingBottom
+import azadev.kotlin.css.paddingLeft
+import azadev.kotlin.css.paddingRight
+import azadev.kotlin.css.paddingTop
+import azadev.kotlin.css.position
+import azadev.kotlin.css.top
+import azadev.kotlin.css.width
+import azadev.kotlin.css.zIndex
 import io.ktor.application.call
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
@@ -16,7 +38,17 @@ import io.ktor.http.content.static
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import io.ktor.routing.get
-import kotlinx.html.*
+import kotlinx.html.ScriptType
+import kotlinx.html.body
+import kotlinx.html.canvas
+import kotlinx.html.div
+import kotlinx.html.head
+import kotlinx.html.id
+import kotlinx.html.link
+import kotlinx.html.p
+import kotlinx.html.script
+import kotlinx.html.span
+import kotlinx.html.ul
 
 fun Routing.webUi() {
     static("/js") {
@@ -80,6 +112,9 @@ fun Routing.webUi() {
                 }
             }
             body {
+                div {
+                    id = "welcome"
+                }
                 div {
                     id = "topInfo"
                     p {

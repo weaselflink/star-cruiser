@@ -3,12 +3,30 @@ import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.ContactMessage
 import de.bissell.starcruiser.GameStateMessage
 import de.bissell.starcruiser.ShipMessage
-import org.w3c.dom.*
+import org.w3c.dom.BUTT
+import org.w3c.dom.CanvasLineCap
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.ROUND
+import org.w3c.dom.WebSocket
 import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
+import org.w3c.dom.get
+import react.RBuilder
+import react.RComponent
+import react.RProps
+import react.RState
+import react.dom.div
+import react.dom.render
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 const val wsBaseUri = "ws://127.0.0.1:35667/ws"
 
@@ -18,11 +36,28 @@ var clientSocket: WebSocket? = null
 var state: GameStateMessage? = null
 var scopeRadius = 0
 
+external interface WelcomeProps : RProps {
+    var name: String
+}
+
+class Welcome: RComponent<WelcomeProps, RState>() {
+    override fun RBuilder.render() {
+        div {
+            +"React says \"${props.name}\"."
+        }
+    }
+}
+
 fun main() {
     window.onload = { init() }
 }
 
 fun init() {
+    render(document.getElementById("welcome")) {
+        child(Welcome::class) {
+            attrs.name = "Hello"
+        }
+    }
     canvas = document.getElementById("canvas")!! as HTMLCanvasElement
     ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
 
