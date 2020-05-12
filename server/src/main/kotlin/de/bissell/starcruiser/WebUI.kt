@@ -40,19 +40,19 @@ fun Routing.webUi() {
                     width = 100.percent
                     height = 100.percent
                 }
-                id("topInfo") {
+                c("topInfo") {
                     position = FIXED
                     top = 0
                     zIndex = 10
                     padding = 20.px
                 }
-                id("info") {
+                c("info") {
                     position = FIXED
                     bottom = 0
                     zIndex = 10
                     padding = 20.px
                 }
-                ul.id("playerShips").li {
+                ul.c("playerShips").li {
                     listStyleType = NONE
                     margin = 3.px
                     paddingLeft = 5.px
@@ -80,39 +80,8 @@ fun Routing.webUi() {
                 }
             }
             body {
-                div {
-                    id = "topInfo"
-                    p {
-                        id = "conn"
-                        +"disconnected"
-                    }
-                    p {
-                        +"Player Ships"
-                    }
-                    ul {
-                        id = "playerShips"
-                    }
-                }
-                canvas {
-                    id = "canvas"
-                }
-                div {
-                    id = "info"
-                    p {
-                        +"Heading: "
-                        span {
-                            id = "heading"
-                            +"unknown"
-                        }
-                    }
-                    p {
-                        +"Velocity: "
-                        span {
-                            id = "velocity"
-                            +"unknown"
-                        }
-                    }
-                }
+                joinUi()
+                helmUi()
             }
         }
     }
@@ -121,6 +90,55 @@ fun Routing.webUi() {
         get("/protected/route/basic") {
             val principal = call.principal<UserIdPrincipal>()!!
             call.respondText("Hello ${principal.name}")
+        }
+    }
+}
+
+private fun BODY.joinUi() {
+    div {
+        id = "join"
+        div(classes = "topInfo") {
+            p(classes = "conn") {
+                +"disconnected"
+            }
+            p {
+                +"Player Ships"
+            }
+            ul(classes = "playerShips") {}
+        }
+    }
+}
+
+private fun BODY.helmUi() {
+    div {
+        id = "helm"
+        div(classes = "topInfo") {
+            p(classes = "conn") {
+                +"disconnected"
+            }
+            p {
+                +"Player Ships"
+            }
+            ul(classes = "playerShips") {}
+        }
+        canvas {
+            id = "canvas"
+        }
+        div(classes = "info") {
+            p {
+                +"Heading: "
+                span {
+                    id = "heading"
+                    +"unknown"
+                }
+            }
+            p {
+                +"Velocity: "
+                span {
+                    id = "velocity"
+                    +"unknown"
+                }
+            }
         }
     }
 }

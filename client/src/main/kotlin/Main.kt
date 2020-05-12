@@ -1,14 +1,26 @@
-
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.ContactMessage
 import de.bissell.starcruiser.GameStateMessage
 import de.bissell.starcruiser.ShipMessage
-import org.w3c.dom.*
+import org.w3c.dom.BUTT
+import org.w3c.dom.CanvasLineCap
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.ROUND
+import org.w3c.dom.WebSocket
+import org.w3c.dom.asList
 import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
+import org.w3c.dom.get
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 const val wsBaseUri = "ws://127.0.0.1:35667/ws"
 
@@ -38,17 +50,21 @@ fun init() {
 }
 
 fun createSocket(): WebSocket? {
-    val connectionInfo = document.getElementById("conn")!! as HTMLElement
+    val connectionInfos = document.getElementsByClassName("conn").asList()
 
     return WebSocket("$wsBaseUri/client").apply {
         clientSocket = this
 
         onopen = {
-            connectionInfo.innerHTML = "connected"
+            connectionInfos.forEach {
+                it.innerHTML = "connected"
+            }
             Unit
         }
         onclose = {
-            connectionInfo.innerHTML = "disconnected"
+            connectionInfos.forEach {
+                it.innerHTML = "disconnected"
+            }
             println("Connection closed")
             clientSocket = null
             Unit
@@ -68,10 +84,10 @@ fun keyHandler(event: KeyboardEvent) {
     val throttle: Long = state?.snapshot?.ship?.throttle?.toLong() ?: 0
 
     clientSocket?.apply {
-        when(event.code) {
+        when (event.code) {
             "KeyP" -> send(Command.CommandTogglePause.toJson())
             "KeyW", "ArrowUp" -> send(Command.CommandChangeThrottle(throttle + 10).toJson())
-            "KeyS", "ArrowDown" -> send(Command.CommandChangeThrottle( throttle - 10).toJson())
+            "KeyS", "ArrowDown" -> send(Command.CommandChangeThrottle(throttle - 10).toJson())
             "KeyA", "ArrowLeft" -> send(Command.CommandChangeRudder(-10).toJson())
             "KeyD", "ArrowRight" -> send(Command.CommandChangeRudder(10).toJson())
             else -> println("not bound: ${event.code}")
@@ -107,26 +123,34 @@ fun HTMLCanvasElement.resizeCanvasToDisplaySize() {
 
 fun step() {
     state?.also {
-        drawHelm(it)
+        drawUi(it)
     }
 
     window.requestAnimationFrame { step() }
 }
 
-fun drawHelm(stateCopy: GameStateMessage) {
-
+fun drawUi(stateCopy: GameStateMessage) {
     val ship = stateCopy.snapshot.ship
 
     updateInfo(ship)
     updatePlayerShips(stateCopy)
 
-    ctx.clearCanvas()
-    ctx.drawCompass()
+    val joinUi = document.getElementById("join")!! as HTMLElement
+    val helmUi = document.getElementById("helm")!! as HTMLElement
 
     if (ship != null) {
+        joinUi.style.visibility = "hidden"
+        helmUi.style.visibility = "visible"
+
+        ctx.clearCanvas()
+        ctx.drawCompass()
+
         ctx.drawThrottle(ship)
         ctx.drawShip(ship)
         ctx.drawHistory(ship)
+    } else {
+        joinUi.style.visibility = "visible"
+        helmUi.style.visibility = "hidden"
     }
 
     stateCopy.snapshot.contacts.forEach {
@@ -147,38 +171,39 @@ fun updateInfo(ship: ShipMessage?) {
 }
 
 fun updatePlayerShips(stateCopy: GameStateMessage) {
-    val playerShipsList = document.getElementById("playerShips")!!
-    val listElements = playerShipsList.getElementsByTagName("li")
+    document.getElementsByClassName("playerShips").asList().forEach { playerShipsList ->
+        val listElements = playerShipsList.getElementsByTagName("li")
 
-    val max = max(stateCopy.snapshot.playerShips.size, listElements.length)
+        val max = max(stateCopy.snapshot.playerShips.size, listElements.length)
 
-    for (index in 0 until max) {
-        if (index < stateCopy.snapshot.playerShips.size) {
-            val playerShip = stateCopy.snapshot.playerShips[index]
-            if (index < listElements.length) {
-                listElements.item(index)!!.let {
-                    it as HTMLElement
-                }.apply {
-                    if (getAttribute("id") != playerShip.id) {
+        for (index in 0 until max) {
+            if (index < stateCopy.snapshot.playerShips.size) {
+                val playerShip = stateCopy.snapshot.playerShips[index]
+                if (index < listElements.length) {
+                    listElements.item(index)!!.let {
+                        it as HTMLElement
+                    }.apply {
+                        if (getAttribute("id") != playerShip.id) {
+                            setAttribute("id", playerShip.id)
+                            innerHTML = playerShip.name
+                        }
+                    }
+                } else {
+                    document.createElement("li").let {
+                        it as HTMLElement
+                    }.apply {
                         setAttribute("id", playerShip.id)
                         innerHTML = playerShip.name
+                        onclick = { selectPlayerShip(it) }
+                    }.also {
+                        playerShipsList.appendChild(it)
                     }
                 }
             } else {
-                document.createElement("li").let {
-                    it as HTMLElement
-                }.apply {
-                    setAttribute("id", playerShip.id)
-                    innerHTML = playerShip.name
-                    onclick = { selectPlayerShip(it) }
-                }.also {
-                    playerShipsList.appendChild(it)
-                }
-            }
-        } else {
-            if (index < listElements.length) {
-                listElements.item(index)?.apply {
-                    remove()
+                if (index < listElements.length) {
+                    listElements.item(index)?.apply {
+                        remove()
+                    }
                 }
             }
         }
@@ -205,9 +230,11 @@ fun CanvasRenderingContext2D.drawCompass() {
     resetTransform()
     fillStyle = "#000"
     beginPath()
-    ellipse(canvas.width / 2.0, canvas.height / 2.0,
+    ellipse(
+        canvas.width / 2.0, canvas.height / 2.0,
         dim / 2.0 - 15.0, dim / 2.0 - 15.0,
-        0.0, 0.0, 2 * PI)
+        0.0, 0.0, 2 * PI
+    )
     fill()
 
     strokeStyle = "#666"
@@ -246,8 +273,10 @@ fun CanvasRenderingContext2D.drawThrottle(ship: ShipMessage) {
 
     fillStyle = "#999"
     beginPath()
-    ellipse(35.0, canvas.height.toDouble() - 110.0 - ship.throttle / 100.0 * 70.0,
-        15.0, 15.0, 0.0, 0.0, 2 * PI)
+    ellipse(
+        35.0, canvas.height.toDouble() - 110.0 - ship.throttle / 100.0 * 70.0,
+        15.0, 15.0, 0.0, 0.0, 2 * PI
+    )
     fill()
 
     strokeStyle = "#666"
@@ -257,14 +286,14 @@ fun CanvasRenderingContext2D.drawThrottle(ship: ShipMessage) {
     stroke()
 }
 
-fun CanvasRenderingContext2D.drawPill(x:Double, y: Double, width: Double, height: Double) {
+fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, height: Double) {
     if (width > height) {
         val radius = height / 2.0
         moveTo(x + radius, y - radius * 2)
         lineTo(x + width - radius, y - radius * 2)
-        arc(x + width - radius, y - radius, radius, - (PI / 2.0), PI / 2.0)
+        arc(x + width - radius, y - radius, radius, -(PI / 2.0), PI / 2.0)
         lineTo(x + radius, y)
-        arc(x + radius, y - radius, radius, PI / 2.0, - (PI / 2.0))
+        arc(x + radius, y - radius, radius, PI / 2.0, -(PI / 2.0))
     } else {
         val radius = width / 2.0
         moveTo(x, y - radius)

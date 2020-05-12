@@ -5,7 +5,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.actor
 import java.math.BigDecimal
-import java.util.*
+import java.util.Random
+import java.util.UUID
 
 sealed class GameStateChange
 
@@ -25,7 +26,7 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
     for (change in channel) {
         when (change) {
             is Update -> gameState.update()
-            is NewGameClient -> gameState.spawnShip(change.clientId)
+            is NewGameClient -> gameState.spawnShips()
             is GameClientDisconnected -> gameState.deleteShip(change.clientId)
             is TogglePause -> gameState.togglePaused()
             is SpawnShip -> gameState.spawnShip()
@@ -74,11 +75,9 @@ class GameState {
         }.id
     }
 
-    fun spawnShip(clientId: UUID) {
-        (1..4).map {
+    fun spawnShips(number: Int = 4) {
+        (1..number).map {
             spawnShip()
-        }.first().also { shipId ->
-            joinShip(clientId, shipId)
         }
     }
 
