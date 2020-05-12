@@ -17,4 +17,5 @@ Then open the URL shown in the logs in a browser
 
     http://localhost:35667
 
-You should see a radar like UI, try pressing W,A,S,D,P or clicking stuff.
+After clicking on one of the ship names on the left you should see a radar-like UI.
+Try pressing W,A,S,D,P or clicking stuff.
