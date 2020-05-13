@@ -1,9 +1,5 @@
 package de.bissell.starcruiser
 
-import azadev.kotlin.css.*
-import azadev.kotlin.css.colors.hex
-import azadev.kotlin.css.dimens.percent
-import azadev.kotlin.css.dimens.px
 import io.ktor.application.call
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
@@ -16,54 +12,117 @@ import io.ktor.http.content.static
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import io.ktor.routing.get
-import kotlinx.html.*
+import kotlinx.css.BorderStyle.solid
+import kotlinx.css.CSSBuilder
+import kotlinx.css.Color
+import kotlinx.css.Color.Companion.black
+import kotlinx.css.Color.Companion.grey
+import kotlinx.css.Color.Companion.white
+import kotlinx.css.Cursor.pointer
+import kotlinx.css.Display.block
+import kotlinx.css.Display.grid
+import kotlinx.css.Gap
+import kotlinx.css.Position.fixed
+import kotlinx.css.TextAlign.center
+import kotlinx.css.backgroundColor
+import kotlinx.css.body
+import kotlinx.css.border
+import kotlinx.css.borderRadius
+import kotlinx.css.bottom
+import kotlinx.css.canvas
+import kotlinx.css.color
+import kotlinx.css.cursor
+import kotlinx.css.display
+import kotlinx.css.fontFamily
+import kotlinx.css.gap
+import kotlinx.css.height
+import kotlinx.css.left
+import kotlinx.css.margin
+import kotlinx.css.padding
+import kotlinx.css.pct
+import kotlinx.css.position
+import kotlinx.css.px
+import kotlinx.css.right
+import kotlinx.css.textAlign
+import kotlinx.css.top
+import kotlinx.css.width
+import kotlinx.css.zIndex
+import kotlinx.html.BODY
+import kotlinx.html.ScriptType
+import kotlinx.html.body
+import kotlinx.html.canvas
+import kotlinx.html.div
+import kotlinx.html.head
+import kotlinx.html.id
+import kotlinx.html.link
+import kotlinx.html.p
+import kotlinx.html.script
+import kotlinx.html.span
 
 fun Routing.webUi() {
     static("/js") {
         resources("js")
     }
 
-    get("/css/bla.css") {
+    get("/css/client.css") {
         call.respondText(contentType = ContentType.Text.CSS) {
-            Stylesheet {
+            CSSBuilder(indent = "\t").apply {
                 body {
-                    margin = 0
-                    padding = 0
-                    backgroundColor = hex(0x202020)
-                    color = hex(0xffffff)
+                    margin = 0.px.value
+                    padding = 0.px.value
+                    backgroundColor = Color("#202020")
+                    color = white
                     fontFamily = "\"Courier New\", Courier, monospace"
                 }
                 canvas {
-                    position = FIXED
-                    top = 0
-                    left = 0
-                    width = 100.percent
-                    height = 100.percent
+                    position = fixed
+                    top = 0.px
+                    left = 0.px
+                    width = 100.pct
+                    height = 100.pct
                 }
-                c("topInfo") {
-                    position = FIXED
-                    top = 0
+                ".conn" {
+                    position = fixed
+                    top = 0.px
+                    right = 0.px
                     zIndex = 10
-                    padding = 20.px
+                    padding = 20.px.value
                 }
-                c("info") {
-                    position = FIXED
-                    bottom = 0
+                ".topInfo" {
+                    position = fixed
+                    top = 0.px
                     zIndex = 10
-                    padding = 20.px
+                    padding = 20.px.value
                 }
-                ul.c("playerShips").li {
-                    listStyleType = NONE
-                    margin = 3.px
-                    paddingLeft = 5.px
-                    paddingRight = 5.px
-                    paddingTop = 3.px
-                    paddingBottom = 3.px
-                    backgroundColor = hex(0x000000)
+                ".info" {
+                    position = fixed
+                    bottom = 0.px
+                    zIndex = 10
+                    padding = 20.px.value
+                }
+                ".playerShips" {
+                    display = grid
+                    gap = Gap(10.px.value)
+                }
+                ".playerShips button" {
+                    display = block
+                    color = white
+                    backgroundColor = black
+                    textAlign = center
+                    padding = "10px"
+                    border = "${1.px} $solid $white"
                     borderRadius = 5.px
-                    cursor = POINTER
+                    cursor = pointer
                 }
-            }.render()
+                ".playerShips button:hover" {
+                    color = black
+                    backgroundColor = white
+                }
+                ".playerShips button:active" {
+                    color = black
+                    backgroundColor = grey
+                }
+            }.toString()
         }
     }
 
@@ -76,7 +135,7 @@ fun Routing.webUi() {
                 }
                 link {
                     rel = LinkHeader.Rel.Stylesheet
-                    href = "/css/bla.css"
+                    href = "/css/client.css"
                 }
             }
             body {
@@ -97,14 +156,14 @@ fun Routing.webUi() {
 private fun BODY.joinUi() {
     div {
         id = "join"
+        div(classes = "conn") {
+            +"disconnected"
+        }
         div(classes = "topInfo") {
-            p(classes = "conn") {
-                +"disconnected"
-            }
             p {
                 +"Player Ships"
             }
-            ul(classes = "playerShips") {}
+            div(classes = "playerShips") {}
         }
     }
 }
@@ -112,14 +171,14 @@ private fun BODY.joinUi() {
 private fun BODY.helmUi() {
     div {
         id = "helm"
+        div(classes = "conn") {
+            +"disconnected"
+        }
         div(classes = "topInfo") {
-            p(classes = "conn") {
-                +"disconnected"
-            }
             p {
                 +"Player Ships"
             }
-            ul(classes = "playerShips") {}
+            div(classes = "playerShips") {}
         }
         canvas {
             id = "canvas"

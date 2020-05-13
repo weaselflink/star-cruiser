@@ -31,6 +31,8 @@ dependencies {
     implementation(project(":shared"))
 
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains:kotlin-css:1.0.0-pre.104-kotlin-1.3.72")
+    implementation("org.jetbrains:kotlin-css-jvm:1.0.0-pre.104-kotlin-1.3.72")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-core:$ktor_version")
@@ -38,7 +40,6 @@ dependencies {
     implementation("io.ktor:ktor-websockets:$ktor_version")
     implementation("io.ktor:ktor-html-builder:$ktor_version")
     implementation("io.ktor:ktor-serialization:$ktor_version")
-    implementation("azadev.kotlin:aza-kotlin-css:1.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")

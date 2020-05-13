@@ -159,7 +159,7 @@ fun updateInfo(ship: ShipMessage?) {
 
 fun updatePlayerShips(stateCopy: GameStateMessage) {
     document.getElementsByClassName("playerShips").asList().forEach { playerShipsList ->
-        val listElements = playerShipsList.getElementsByTagName("li")
+        val listElements = playerShipsList.getElementsByTagName("button")
 
         val max = max(stateCopy.snapshot.playerShips.size, listElements.length)
 
@@ -176,7 +176,7 @@ fun updatePlayerShips(stateCopy: GameStateMessage) {
                         }
                     }
                 } else {
-                    document.createElement("li").let {
+                    document.createElement("button").let {
                         it as HTMLElement
                     }.apply {
                         setAttribute("id", playerShip.id)
