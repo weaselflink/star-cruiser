@@ -166,13 +166,14 @@ fun updatePlayerShips(stateCopy: GameStateMessage) {
         for (index in 0 until max) {
             if (index < stateCopy.snapshot.playerShips.size) {
                 val playerShip = stateCopy.snapshot.playerShips[index]
+                val buttonText = playerShip.name + (playerShip.shipClass?.let { " ($it class)" } ?: "")
                 if (index < listElements.length) {
                     listElements.item(index)!!.let {
                         it as HTMLElement
                     }.apply {
                         if (getAttribute("id") != playerShip.id) {
                             setAttribute("id", playerShip.id)
-                            innerHTML = playerShip.name
+                            innerHTML = buttonText
                         }
                     }
                 } else {
@@ -180,7 +181,7 @@ fun updatePlayerShips(stateCopy: GameStateMessage) {
                         it as HTMLElement
                     }.apply {
                         setAttribute("id", playerShip.id)
-                        innerHTML = playerShip.name
+                        innerHTML = buttonText
                         onclick = { selectPlayerShip(it) }
                     }.also {
                         playerShipsList.appendChild(it)

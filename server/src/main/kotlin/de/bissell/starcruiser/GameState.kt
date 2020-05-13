@@ -123,7 +123,8 @@ data class GameTime(
 
 class Ship(
     val id: UUID = UUID.randomUUID(),
-    private val name: String = randomShipName(),
+    private val designation: String = randomShipName(),
+    private val shipClass: String = "Infector",
     private var position: BigVector = BigVector(),
     private var speed: BigVector = BigVector(),
     private var rotation: BigDecimal = 90.toBigDecimal().toRadians(),
@@ -189,13 +190,15 @@ class Ship(
     fun toPlayerShipMessage() =
         PlayerShipMessage(
             id = id.toString(),
-            name = name
+            name = designation,
+            shipClass = shipClass
         )
 
     fun toMessage() =
         ShipMessage(
             id = id.toString(),
-            name = name,
+            designation = designation,
+            shipClass = shipClass,
             speed = speed.toVector2(),
             position = position.toVector2(),
             rotation = rotation.toDouble(),

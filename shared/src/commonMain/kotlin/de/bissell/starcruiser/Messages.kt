@@ -33,13 +33,15 @@ data class GameStateSnapshot(
 @Serializable
 data class PlayerShipMessage(
     val id: String,
-    val name: String
+    val name: String,
+    val shipClass: String?
 )
 
 @Serializable
 data class ShipMessage(
     val id: String,
-    val name: String,
+    val designation: String,
+    val shipClass: String?,
     val position: Vector2,
     val speed: Vector2,
     val rotation: Double,
