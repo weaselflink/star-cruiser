@@ -19,6 +19,9 @@ sealed class Command {
     class CommandJoinShip(val shipId: String) : Command()
 
     @Serializable
+    object CommandExitShip : Command()
+
+    @Serializable
     class CommandChangeThrottle(val value: Long) : Command()
 
     @Serializable

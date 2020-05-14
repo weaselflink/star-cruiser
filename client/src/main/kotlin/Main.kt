@@ -34,6 +34,13 @@ fun init() {
     createSocket()
 
     document.onkeydown = { keyHandler(it) }
+
+    document.getElementsByClassName("exit").asList()
+        .map {
+            it as HTMLButtonElement
+        }.forEach {
+            it.onclick = { clientSocket?.send(Command.CommandExitShip.toJson()) }
+    }
 }
 
 fun createSocket(): WebSocket? {
@@ -120,7 +127,6 @@ fun drawUi(stateCopy: GameStateMessage) {
     val ship = stateCopy.snapshot.ship
 
     updateInfo(ship)
-    updatePlayerShips(stateCopy)
 
     val joinUi = document.getElementById("join")!! as HTMLElement
     val helmUi = document.getElementById("helm")!! as HTMLElement
@@ -142,6 +148,8 @@ fun drawUi(stateCopy: GameStateMessage) {
     } else {
         joinUi.style.visibility = "visible"
         helmUi.style.visibility = "hidden"
+
+        updatePlayerShips(stateCopy)
     }
 }
 

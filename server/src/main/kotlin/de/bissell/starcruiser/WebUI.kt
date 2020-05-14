@@ -21,6 +21,7 @@ import kotlinx.css.Color.Companion.white
 import kotlinx.css.Cursor.pointer
 import kotlinx.css.Display.block
 import kotlinx.css.Display.grid
+import kotlinx.css.FontWeight.Companion.bold
 import kotlinx.css.Gap
 import kotlinx.css.Position.fixed
 import kotlinx.css.TextAlign.center
@@ -34,6 +35,8 @@ import kotlinx.css.color
 import kotlinx.css.cursor
 import kotlinx.css.display
 import kotlinx.css.fontFamily
+import kotlinx.css.fontSize
+import kotlinx.css.fontWeight
 import kotlinx.css.gap
 import kotlinx.css.height
 import kotlinx.css.left
@@ -50,6 +53,7 @@ import kotlinx.css.zIndex
 import kotlinx.html.BODY
 import kotlinx.html.ScriptType
 import kotlinx.html.body
+import kotlinx.html.button
 import kotlinx.html.canvas
 import kotlinx.html.div
 import kotlinx.html.head
@@ -104,7 +108,7 @@ fun Routing.webUi() {
                     display = grid
                     gap = Gap(10.px.value)
                 }
-                ".playerShips button" {
+                "button" {
                     display = block
                     color = white
                     backgroundColor = black
@@ -113,12 +117,14 @@ fun Routing.webUi() {
                     border = "${1.px} $solid $white"
                     borderRadius = 5.px
                     cursor = pointer
+                    fontWeight = bold
+                    fontSize = 16.px
                 }
-                ".playerShips button:hover" {
+                "button:hover" {
                     color = black
                     backgroundColor = white
                 }
-                ".playerShips button:active" {
+                "button:active" {
                     color = black
                     backgroundColor = grey
                 }
@@ -175,10 +181,9 @@ private fun BODY.helmUi() {
             +"disconnected"
         }
         div(classes = "topInfo") {
-            p {
-                +"Player Ships"
+            button(classes = "exit") {
+                +"< Exit ship"
             }
-            div(classes = "playerShips") {}
         }
         canvas {
             id = "canvas"

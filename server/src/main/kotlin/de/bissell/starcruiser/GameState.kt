@@ -14,6 +14,7 @@ object Update : GameStateChange()
 object TogglePause : GameStateChange()
 object SpawnShip : GameStateChange()
 class JoinShip(val clientId: UUID, val shipId: UUID) : GameStateChange()
+class ExitShip(val clientId: UUID) : GameStateChange()
 class NewGameClient(val clientId: UUID) : GameStateChange()
 class GameClientDisconnected(val clientId: UUID) : GameStateChange()
 class ChangeThrottle(val clientId: UUID, val value: Long) : GameStateChange()
@@ -31,6 +32,7 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
             is TogglePause -> gameState.togglePaused()
             is SpawnShip -> gameState.spawnShip()
             is JoinShip -> gameState.joinShip(change.clientId, change.shipId)
+            is ExitShip -> gameState.exitShip(change.clientId)
             is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.value)
             is ChangeRudder -> gameState.changeRudder(change.clientId, change.diff)
             is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
@@ -60,6 +62,10 @@ class GameState {
 
     fun joinShip(clientId: UUID, shipId: UUID) {
         clientShipMapping[clientId] = shipId
+    }
+
+    fun exitShip(clientId: UUID) {
+        clientShipMapping.remove(clientId)
     }
 
     fun spawnShip(): UUID {
