@@ -1,7 +1,4 @@
-import de.bissell.starcruiser.Command
-import de.bissell.starcruiser.ContactMessage
-import de.bissell.starcruiser.GameStateMessage
-import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.*
 import org.w3c.dom.*
 import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
@@ -162,8 +159,8 @@ fun updateInfo(ship: ShipMessage?) {
     val headingElement = document.getElementById("heading")!!
     val velocityElement = document.getElementById("velocity")!!
     if (ship != null) {
-        headingElement.innerHTML = round(ship.heading).toString()
-        velocityElement.innerHTML = round(ship.velocity).toString()
+        headingElement.innerHTML = ship.heading.format(1)
+        velocityElement.innerHTML = ship.velocity.format(1)
     } else {
         headingElement.innerHTML = "unknown"
         velocityElement.innerHTML = "unknown"
