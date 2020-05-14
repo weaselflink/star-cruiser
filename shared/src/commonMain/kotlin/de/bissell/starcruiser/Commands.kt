@@ -22,10 +22,10 @@ sealed class Command {
     object CommandExitShip : Command()
 
     @Serializable
-    class CommandChangeThrottle(val value: Long) : Command()
+    class CommandChangeThrottle(val value: Int) : Command()
 
     @Serializable
-    class CommandChangeRudder(val diff: Long) : Command()
+    class CommandChangeRudder(val diff: Int) : Command()
 
     fun toJson() = Json(jsonConfiguration).stringify(serializer(), this)
 

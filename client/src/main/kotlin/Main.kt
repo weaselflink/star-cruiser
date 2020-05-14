@@ -51,19 +51,17 @@ fun init() {
 }
 
 fun createSocket(): WebSocket? {
-    val connectionInfos = document.getElementsByClassName("conn").asList()
-
     return WebSocket("$wsBaseUri/client").apply {
         clientSocket = this
 
         onopen = {
-            connectionInfos.forEach {
+            document.getElementsByClassName("conn").asList().forEach {
                 it.innerHTML = "connected"
             }
             Unit
         }
         onclose = {
-            connectionInfos.forEach {
+            document.getElementsByClassName("conn").asList().forEach {
                 it.innerHTML = "disconnected"
             }
             println("Connection closed")
@@ -82,7 +80,7 @@ fun createSocket(): WebSocket? {
 }
 
 fun keyHandler(event: KeyboardEvent) {
-    val throttle: Long = state?.snapshot?.ship?.throttle?.toLong() ?: 0
+    val throttle: Int = state?.snapshot?.ship?.throttle ?: 0
 
     clientSocket?.apply {
         when (event.code) {
@@ -101,7 +99,7 @@ fun canvasClicked(event: MouseEvent) {
     val y = event.offsetY
 
     if (x > 20.0 && x < 50.0 && y > canvas.height.toDouble() - 195.0 && y < canvas.height.toDouble() - 25.0) {
-        val throttle = min(10.0, max(-10.0, -(y - canvas.height.toDouble() + 110.0) / 70.0 * 10.0)).toLong() * 10
+        val throttle = min(10, max(-10, (-(y - canvas.height.toDouble() + 110.0) / 70.0 * 10.0).toInt())) * 10
         clientSocket?.send(Command.CommandChangeThrottle(throttle).toJson())
     }
 }
@@ -164,8 +162,8 @@ fun updateInfo(ship: ShipMessage?) {
     val headingElement = document.getElementById("heading")!!
     val velocityElement = document.getElementById("velocity")!!
     if (ship != null) {
-        headingElement.innerHTML = ship.heading.toString()
-        velocityElement.innerHTML = ship.velocity.toString()
+        headingElement.innerHTML = round(ship.heading).toString()
+        velocityElement.innerHTML = round(ship.velocity).toString()
     } else {
         headingElement.innerHTML = "unknown"
         velocityElement.innerHTML = "unknown"

@@ -47,9 +47,9 @@ data class ShipMessage(
     val rotation: Double,
     val heading: Double,
     val velocity: Double,
-    val throttle: Double,
+    val throttle: Int,
     val thrust: Double,
-    val rudder: Double,
+    val rudder: Int,
     val history: List<Pair<Double, Vector2>>
 )
 
