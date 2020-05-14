@@ -27,7 +27,7 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
     for (change in channel) {
         when (change) {
             is Update -> gameState.update()
-            is NewGameClient -> gameState.spawnShips()
+            is NewGameClient -> {}
             is GameClientDisconnected -> gameState.deleteShip(change.clientId)
             is TogglePause -> gameState.togglePaused()
             is SpawnShip -> gameState.spawnShip()
@@ -79,12 +79,6 @@ class GameState {
         ).also {
             ships[it.id] = it
         }.id
-    }
-
-    fun spawnShips(number: Int = 4) {
-        (1..number).map {
-            spawnShip()
-        }
     }
 
     fun deleteShip(clientId: UUID) {

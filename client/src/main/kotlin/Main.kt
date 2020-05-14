@@ -41,6 +41,13 @@ fun init() {
         }.forEach {
             it.onclick = { clientSocket?.send(Command.CommandExitShip.toJson()) }
     }
+
+    document.getElementsByClassName("spawn").asList()
+        .map {
+            it as HTMLButtonElement
+        }.forEach {
+            it.onclick = { clientSocket?.send(Command.CommandSpawnShip.toJson()) }
+    }
 }
 
 fun createSocket(): WebSocket? {

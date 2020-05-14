@@ -43,7 +43,7 @@ class GameClient(
             when (val command = Command.parse(input)) {
                 is Command.UpdateAcknowledge -> throttleActor.send(AcknowledgeInflightMessage(command.counter))
                 is Command.CommandTogglePause -> gameStateActor.send(TogglePause)
-                is Command.CommandSpawnShip -> gameStateActor.send(TogglePause)
+                is Command.CommandSpawnShip -> gameStateActor.send(SpawnShip)
                 is Command.CommandJoinShip -> gameStateActor.send(JoinShip(id, UUID.fromString(command.shipId)))
                 is Command.CommandExitShip -> gameStateActor.send(ExitShip(id))
                 is Command.CommandChangeThrottle -> gameStateActor.send(ChangeThrottle(id, command.value))

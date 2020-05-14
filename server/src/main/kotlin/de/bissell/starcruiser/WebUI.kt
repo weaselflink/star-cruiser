@@ -41,6 +41,7 @@ import kotlinx.css.gap
 import kotlinx.css.height
 import kotlinx.css.left
 import kotlinx.css.margin
+import kotlinx.css.marginTop
 import kotlinx.css.padding
 import kotlinx.css.pct
 import kotlinx.css.position
@@ -107,6 +108,7 @@ fun Routing.webUi() {
                 ".playerShips" {
                     display = grid
                     gap = Gap(10.px.value)
+                    marginTop = 20.px
                 }
                 "button" {
                     display = block
@@ -168,6 +170,9 @@ private fun BODY.joinUi() {
         div(classes = "topInfo") {
             p {
                 +"Player Ships"
+            }
+            button(classes = "spawn") {
+                +"+ Spawn ship"
             }
             div(classes = "playerShips") {}
         }
