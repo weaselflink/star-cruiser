@@ -1,5 +1,5 @@
 
-![](https://github.com/weaselflink/star-cruiser/workflows/.github/workflows/gradle.yml/badge.svg)
+![](https://github.com/weaselflink/star-cruiser/workflows/Java%20CI%20with%20Gradle/badge.svg)
 
 ## Star Cruiser Crew Simulator
 
