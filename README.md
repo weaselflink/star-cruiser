@@ -1,3 +1,6 @@
+
+![](https://github.com/weaselflink/star-cruiser/workflows/.github/workflows/gradle.yml/badge.svg)
+
 ## Star Cruiser Crew Simulator
 
 An experiment with a browser based game.
