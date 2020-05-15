@@ -64,6 +64,8 @@ tasks {
                 )
             )
         }
+        archiveBaseName.set("star-cruiser")
+        archiveVersion.set("")
     }
 
     withType<ProcessResources> {
