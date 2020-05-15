@@ -30,6 +30,10 @@ fun Routing.webUi() {
         resources("js")
     }
 
+    get("/status") {
+        call.respondText("alive")
+    }
+
     get("/css/client.css") {
         call.respondText(contentType = ContentType.Text.CSS) {
             CSSBuilder(indent = "\t").apply {
