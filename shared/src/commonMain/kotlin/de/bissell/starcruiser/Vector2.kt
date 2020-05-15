@@ -20,7 +20,7 @@ data class Vector2(
     operator fun times(other: Double): Vector2 =
         Vector2(x * other, y * other)
 
-    private fun isZero() = x == 0.0 && y == 0.0
+    fun isZero() = x == 0.0 && y == 0.0
 
     fun length(): Double =
         sqrt(x * x + y * y)
@@ -35,3 +35,5 @@ data class Vector2(
             )
         }
 }
+
+operator fun Double.times(other: Vector2) = other * this

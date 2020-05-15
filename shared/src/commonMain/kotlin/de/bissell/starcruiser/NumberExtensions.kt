@@ -14,9 +14,9 @@ fun Double.toDegrees(): Double = this * radiansToDegrees
 fun Double.toHeading() =
     (90.0 - this.toDegrees()).let {
         if (it < 0.0) {
-            it + 360.0
+            it % 360.0 + 360.0
         } else {
-            it
+            it % 360.0
         }
     }
 

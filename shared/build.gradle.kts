@@ -34,7 +34,23 @@ kotlin {
             }
         }
 
+        compilations["test"].defaultSourceSet {
+            dependencies {
+                implementation("org.junit.jupiter:junit-jupiter:5.6.2")
+                implementation("io.strikt:strikt-core:0.24.0")
+            }
+        }
+
         val main by compilations.getting {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+
+            compileKotlinTask
+            output
+        }
+
+        val test by compilations.getting {
             kotlinOptions {
                 jvmTarget = "1.8"
             }
@@ -62,5 +78,12 @@ version = "0.0.1-SNAPSHOT"
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions.jvmTarget = "1.8"
+    }
+
+    withType<Test>().configureEach {
+        useJUnitPlatform()
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
     }
 }
