@@ -37,7 +37,7 @@ kotlin {
         compilations["test"].defaultSourceSet {
             dependencies {
                 implementation("org.junit.jupiter:junit-jupiter:5.6.2")
-                implementation("io.strikt:strikt-core:0.24.0")
+                implementation("io.strikt:strikt-core:0.26.1")
             }
         }
 
@@ -71,9 +71,6 @@ kotlin {
         }
     }
 }
-
-group = "de.bissell.starcruiser"
-version = "0.0.1-SNAPSHOT"
 
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

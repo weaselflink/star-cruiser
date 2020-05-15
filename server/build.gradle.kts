@@ -11,6 +11,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("com.github.johnrengelman.shadow")
+    id("com.github.ben-manes.versions")
 }
 
 repositories {
@@ -18,9 +19,6 @@ repositories {
     jcenter()
     maven { url = uri("https://kotlin.bintray.com/ktor") }
 }
-
-group = "de.bissell.starcruiser"
-version = "0.0.1-SNAPSHOT"
 
 application {
     mainClassName = "io.ktor.server.netty.EngineMain"
@@ -43,7 +41,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
-    testImplementation("io.strikt:strikt-core:0.24.0")
+    testImplementation("io.strikt:strikt-core:0.26.1")
 }
 
 tasks {
