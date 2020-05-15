@@ -46,8 +46,13 @@ fun init() {
 }
 
 fun createSocket(): WebSocket? {
+    val protocol = if (window.location.protocol == "https:") {
+        "wss:"
+    } else {
+        "ws:"
+    }
     val host = window.location.host
-    return WebSocket("ws://$host/ws/client").apply {
+    return WebSocket("$protocol//$host/ws/client").apply {
         clientSocket = this
 
         onopen = {
