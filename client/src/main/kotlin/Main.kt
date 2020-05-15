@@ -141,12 +141,11 @@ fun drawUi(stateCopy: GameStateMessage) {
         ctx.drawCompass()
 
         ctx.drawThrottle(ship)
-        ctx.drawShip(ship)
-        ctx.drawHistory(ship)
-
         stateCopy.snapshot.contacts.forEach {
             ctx.drawContact(it)
         }
+        ctx.drawHistory(ship)
+        ctx.drawShip(ship)
     } else {
         joinUi.style.visibility = "visible"
         helmUi.style.visibility = "hidden"
@@ -236,7 +235,7 @@ fun CanvasRenderingContext2D.drawCompass() {
     fill()
 
     strokeStyle = "#666"
-    lineWidth = 3.0
+    lineWidth = 5.0
     lineCap = CanvasLineCap.ROUND
     scopeRadius = dim / 2 - 20
     translate(canvas.width / 2.0, canvas.height / 2.0)
@@ -303,13 +302,21 @@ fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, heigh
 }
 
 fun CanvasRenderingContext2D.drawShipSymbol(rot: Double) {
+    val dim = min(canvas.width, canvas.height)
+    val baseUnit = dim / 80.0
+
+    lineWidth = 3.0
+    lineJoin = CanvasLineJoin.ROUND
     rotate(-rot)
-    moveTo(-5.0, -5.0)
-    lineTo(10.0, 0.0)
-    lineTo(-5.0, 5.0)
-    lineTo(-2.0, 0.0)
-    lineTo(-5.0, -5.0)
+    beginPath()
+    moveTo(-baseUnit, -baseUnit)
+    lineTo(baseUnit * 2, 0.0)
+    lineTo(-baseUnit, baseUnit)
+    lineTo(-baseUnit / 2, 0.0)
+    closePath()
     stroke()
+    lineWidth = 1.0
+    lineJoin = CanvasLineJoin.MITER
 }
 
 fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
@@ -317,7 +324,6 @@ fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
 
     resetTransform()
     strokeStyle = "#1e90ff"
-    beginPath()
     translate(canvas.width / 2.0, canvas.height / 2.0)
     drawShipSymbol(rot)
 }
@@ -341,6 +347,7 @@ fun CanvasRenderingContext2D.drawHistory(ship: ShipMessage) {
     val xPos = ship.position.x
     val yPos = -(ship.position.y)
 
+    fillStyle = "#666"
     resetTransform()
     translate(canvas.width / 2.0, canvas.height / 2.0)
     for (point in ship.history) {
@@ -349,9 +356,9 @@ fun CanvasRenderingContext2D.drawHistory(ship: ShipMessage) {
 
         val dist = sqrt(xp * xp + yp * yp)
         if (dist < scopeRadius - 10) {
-            fillStyle = "#fff"
             beginPath()
-            fillRect(xp, yp, 1.0, 1.0)
+            ellipse(xp, yp, 2.0, 2.0, 0.0, 0.0, PI * 2)
+            fill()
         }
     }
 }
