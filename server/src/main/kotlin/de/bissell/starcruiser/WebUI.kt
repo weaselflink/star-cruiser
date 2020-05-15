@@ -12,9 +12,8 @@ import io.ktor.http.content.static
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import io.ktor.routing.get
+import kotlinx.css.*
 import kotlinx.css.BorderStyle.solid
-import kotlinx.css.CSSBuilder
-import kotlinx.css.Color
 import kotlinx.css.Color.Companion.black
 import kotlinx.css.Color.Companion.grey
 import kotlinx.css.Color.Companion.white
@@ -22,47 +21,9 @@ import kotlinx.css.Cursor.pointer
 import kotlinx.css.Display.block
 import kotlinx.css.Display.grid
 import kotlinx.css.FontWeight.Companion.bold
-import kotlinx.css.Gap
 import kotlinx.css.Position.fixed
 import kotlinx.css.TextAlign.center
-import kotlinx.css.backgroundColor
-import kotlinx.css.body
-import kotlinx.css.border
-import kotlinx.css.borderRadius
-import kotlinx.css.bottom
-import kotlinx.css.canvas
-import kotlinx.css.color
-import kotlinx.css.cursor
-import kotlinx.css.display
-import kotlinx.css.fontFamily
-import kotlinx.css.fontSize
-import kotlinx.css.fontWeight
-import kotlinx.css.gap
-import kotlinx.css.height
-import kotlinx.css.left
-import kotlinx.css.margin
-import kotlinx.css.marginTop
-import kotlinx.css.padding
-import kotlinx.css.pct
-import kotlinx.css.position
-import kotlinx.css.px
-import kotlinx.css.right
-import kotlinx.css.textAlign
-import kotlinx.css.top
-import kotlinx.css.width
-import kotlinx.css.zIndex
-import kotlinx.html.BODY
-import kotlinx.html.ScriptType
-import kotlinx.html.body
-import kotlinx.html.button
-import kotlinx.html.canvas
-import kotlinx.html.div
-import kotlinx.html.head
-import kotlinx.html.id
-import kotlinx.html.link
-import kotlinx.html.p
-import kotlinx.html.script
-import kotlinx.html.span
+import kotlinx.html.*
 
 fun Routing.webUi() {
     static("/js") {
@@ -137,6 +98,10 @@ fun Routing.webUi() {
     get("/") {
         call.respondHtml {
             head {
+                meta {
+                    name = "viewport"
+                    content = "width=device-width, initial-scale=1"
+                }
                 script {
                     type = ScriptType.textJavaScript
                     src = "/js/client.js"
