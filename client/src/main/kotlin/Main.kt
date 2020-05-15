@@ -6,8 +6,6 @@ import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.math.*
 
-const val wsBaseUri = "ws://127.0.0.1:35667/ws"
-
 lateinit var canvas: HTMLCanvasElement
 lateinit var ctx: CanvasRenderingContext2D
 var clientSocket: WebSocket? = null
@@ -48,7 +46,8 @@ fun init() {
 }
 
 fun createSocket(): WebSocket? {
-    return WebSocket("$wsBaseUri/client").apply {
+    val host = window.location.host
+    return WebSocket("ws://$host/ws/client").apply {
         clientSocket = this
 
         onopen = {
