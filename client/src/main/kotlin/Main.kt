@@ -15,6 +15,7 @@ var clientSocket: WebSocket? = null
 var state: GameStateMessage? = null
 var scopeRadius = 100.0
 var dim = 100.0
+var rotateScope = false
 
 fun main() {
     window.onload = { init() }
@@ -95,6 +96,7 @@ fun keyHandler(event: KeyboardEvent) {
             "KeyS", "ArrowDown" -> send(Command.CommandChangeThrottle(throttle - 10).toJson())
             "KeyA", "ArrowLeft" -> send(Command.CommandChangeRudder(rudder - 10).toJson())
             "KeyD", "ArrowRight" -> send(Command.CommandChangeRudder(rudder + 10).toJson())
+            "KeyR" -> rotateScope = !rotateScope
             else -> println("not bound: ${event.code}")
         }
     }
@@ -244,6 +246,9 @@ fun CanvasRenderingContext2D.clearCanvas() {
 fun CanvasRenderingContext2D.drawScope(stateCopy: GameStateMessage, ship: ShipMessage) {
     resetTransform()
     translateToCanvasCenter()
+    if (rotateScope) {
+        rotate(ship.rotation - PI / 2.0)
+    }
 
     drawCompass(ship)
     drawHistory(ship)
