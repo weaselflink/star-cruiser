@@ -246,10 +246,10 @@ fun CanvasRenderingContext2D.drawScope(stateCopy: GameStateMessage, ship: ShipMe
     translateToCanvasCenter()
 
     drawCompass(ship)
+    drawHistory(ship)
     stateCopy.snapshot.contacts.forEach {
         ctx.drawContact(ship, it)
     }
-    drawHistory(ship)
     drawShip(ship)
 }
 
@@ -278,23 +278,31 @@ fun CanvasRenderingContext2D.drawCompass(ship: ShipMessage) {
     restore()
 
     save()
-    strokeStyle = "#444"
+    val outer = scopeRadius - scopeRadius * 0.05
+    val textPos = scopeRadius - scopeRadius * 0.16
+    val textSize = (scopeRadius * 0.06).toInt()
+    strokeStyle = "#222"
+    fillStyle = "#222"
     lineWidth = 3.0
     lineCap = CanvasLineCap.ROUND
+    textAlign = CanvasTextAlign.CENTER
+    font = "bold ${textSize.px} sans-serif"
     for (i in 0 until 36) {
         save()
         val angle = i * 10
         rotate(angle.toRadians())
-        val outer = scopeRadius - scopeRadius / 20
         val inner = if (i % 3 == 0) {
-            scopeRadius - scopeRadius / 10
+            scopeRadius - scopeRadius * 0.1
         } else {
-            scopeRadius - scopeRadius / 15
+            scopeRadius - scopeRadius * 0.08
         }
         beginPath()
         moveTo(0.0, -inner)
         lineTo(0.0, -outer)
         stroke()
+        if (i % 3 == 0) {
+            fillText(angle.toString(), 0.0, -textPos)
+        }
         restore()
     }
     restore()
@@ -441,7 +449,7 @@ fun CanvasRenderingContext2D.drawContact(ship: ShipMessage, contact: ContactMess
     if (dist < ship.shortRangeScopeRange - 25.0) {
         val posOnScope = rel.adjustForScope(ship)
         save()
-        strokeStyle = "#333"
+        strokeStyle = "#555"
         translate(posOnScope.x, posOnScope.y)
         beginPath()
         drawShipSymbol(rot)
@@ -451,7 +459,7 @@ fun CanvasRenderingContext2D.drawContact(ship: ShipMessage, contact: ContactMess
 
 fun CanvasRenderingContext2D.drawHistory(ship: ShipMessage) {
     save()
-    fillStyle = "#666"
+    fillStyle = "#222"
 
     for (point in ship.history) {
         val rel = (point.second - ship.position)

@@ -148,9 +148,6 @@ private fun BODY.joinUi() {
             +"disconnected"
         }
         div(classes = "topInfo") {
-            p {
-                +"Player Ships"
-            }
             button(classes = "spawn") {
                 +"+ Spawn ship"
             }
