@@ -10,7 +10,9 @@ lateinit var canvas: HTMLCanvasElement
 lateinit var ctx: CanvasRenderingContext2D
 var clientSocket: WebSocket? = null
 var state: GameStateMessage? = null
-var scopeRadius = 0
+const val scopeRange = 200.0
+var scopeRadius = 100.0
+var dim = 100.0
 
 fun main() {
     window.onload = { init() }
@@ -98,9 +100,11 @@ fun keyHandler(event: KeyboardEvent) {
 fun canvasClicked(event: MouseEvent) {
     val x = event.offsetX
     val y = event.offsetY
+    val bottomX = dim / 20.0
+    val bottomY = dim - dim / 20.0
 
-    if (x > 20.0 && x < 50.0 && y > canvas.height.toDouble() - 195.0 && y < canvas.height.toDouble() - 25.0) {
-        val throttle = min(10, max(-10, (-(y - canvas.height.toDouble() + 110.0) / 70.0 * 10.0).toInt())) * 10
+    if (x > bottomX && x < bottomX + 30.0 && y > bottomY - 170.0 && y < bottomY) {
+        val throttle = min(10, max(-10, (-(y - bottomY - 85.0) / 70.0 * 10.0).toInt())) * 10
         clientSocket?.send(Command.CommandChangeThrottle(throttle).toJson())
     }
 }
@@ -226,64 +230,93 @@ fun CanvasRenderingContext2D.clearCanvas() {
 }
 
 fun CanvasRenderingContext2D.drawCompass() {
-    val dim = min(canvas.width, canvas.height)
+    dim = min(canvas.width, canvas.height).toDouble()
+    scopeRadius = dim / 2.0 - dim / 10.0
 
     resetTransform()
+    translateToCanvasCenter()
     fillStyle = "#000"
     beginPath()
     ellipse(
-        canvas.width / 2.0, canvas.height / 2.0,
-        dim / 2.0 - 15.0, dim / 2.0 - 15.0,
+        0.0, 0.0,
+        scopeRadius, scopeRadius,
         0.0, 0.0, 2 * PI
     )
     fill()
 
-    strokeStyle = "#666"
     lineWidth = 5.0
+    strokeStyle = "#666"
+    beginPath()
+    ellipse(
+        0.0, 0.0,
+        scopeRadius, scopeRadius,
+        0.0, 0.0, 2 * PI
+    )
+    stroke()
+
+    strokeStyle = "#666"
+    lineWidth = 3.0
     lineCap = CanvasLineCap.ROUND
-    scopeRadius = dim / 2 - 20
-    translate(canvas.width / 2.0, canvas.height / 2.0)
     for (i in 0 until 36) {
         val a = i * PI * 2 / 36
+        val outer = scopeRadius - scopeRadius / 20
         val inner = if (i % 3 == 0) {
             scopeRadius - scopeRadius / 10
         } else {
-            scopeRadius - scopeRadius / 20
+            scopeRadius - scopeRadius / 15
         }
         beginPath()
         moveTo(sin(a) * inner, cos(a) * inner)
-        lineTo(sin(a) * scopeRadius, cos(a) * scopeRadius)
+        lineTo(sin(a) * outer, cos(a) * outer)
         stroke()
     }
     lineWidth = 1.0
     lineCap = CanvasLineCap.BUTT
+
+    lineWidth = 2.0
+    strokeStyle = "#222"
+    for (i in 1..3) {
+        val radius = (scopeRange / 4.0 * i).adjustForScope()
+        beginPath()
+        ellipse(
+            0.0, 0.0,
+            radius, radius,
+            0.0, 0.0, 2 * PI
+        )
+        stroke()
+    }
+    lineWidth = 1.0
 }
 
 fun CanvasRenderingContext2D.drawThrottle(ship: ShipMessage) {
     resetTransform()
 
+    val bottomX = dim / 20.0
+    val bottomY = dim - dim / 20.0
+
+    lineWidth = 3.0
     fillStyle = "#111"
     beginPath()
-    drawPill(20.0, canvas.height.toDouble() - 25.0, 30.0, 170.0)
+    drawPill(bottomX, bottomY, 30.0, 170.0)
     fill()
 
     strokeStyle = "#888"
     beginPath()
-    drawPill(20.0, canvas.height.toDouble() - 25.0, 30.0, 170.0)
+    drawPill(bottomX, bottomY, 30.0, 170.0)
     stroke()
 
     fillStyle = "#999"
     beginPath()
     ellipse(
-        35.0, canvas.height.toDouble() - 110.0 - ship.throttle / 100.0 * 70.0,
-        15.0, 15.0, 0.0, 0.0, 2 * PI
+        bottomX + 15.0, bottomY - 85.0 - ship.throttle / 100.0 * 70.0,
+        13.0, 13.0, 0.0, 0.0, 2 * PI
     )
     fill()
 
     strokeStyle = "#666"
     beginPath()
-    moveTo(24.0, canvas.height.toDouble() - 110.0)
-    lineTo(46.0, canvas.height.toDouble() - 110.0)
+    moveTo(bottomX + 6.0, bottomY - 85.0)
+    lineTo(bottomX + 24.0, bottomY - 85.0)
     stroke()
 }
 
@@ -306,7 +339,6 @@ fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, heigh
 }
 
 fun CanvasRenderingContext2D.drawShipSymbol(rot: Double) {
-    val dim = min(canvas.width, canvas.height)
     val baseUnit = dim / 80.0
 
     lineWidth = 3.0
@@ -328,44 +360,53 @@ fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
 
     resetTransform()
     strokeStyle = "#1e90ff"
-    translate(canvas.width / 2.0, canvas.height / 2.0)
+    translateToCanvasCenter()
     drawShipSymbol(rot)
 }
 
 fun CanvasRenderingContext2D.drawContact(contact: ContactMessage) {
-    val xPos = contact.relativePosition.x
-    val yPos = contact.relativePosition.y
+    val rel = contact.relativePosition
+    val dist = sqrt(rel.x * rel.x + rel.y * rel.y)
     val rot = contact.rotation
 
-    val dist = sqrt(xPos * xPos + yPos * yPos)
-    if (dist < scopeRadius - 10) {
+    if (dist < scopeRange - 25.0) {
+        val posOnScope = rel.adjustForScope()
         resetTransform()
         strokeStyle = "#333"
+        translateToCanvasCenter()
+        translate(posOnScope.x, posOnScope.y)
         beginPath()
-        translate(canvas.width / 2 + xPos, canvas.height / 2 - yPos)
         drawShipSymbol(rot)
     }
 }
 
 fun CanvasRenderingContext2D.drawHistory(ship: ShipMessage) {
-    val xPos = ship.position.x
-    val yPos = -(ship.position.y)
-
     fillStyle = "#666"
-    resetTransform()
-    translate(canvas.width / 2.0, canvas.height / 2.0)
     for (point in ship.history) {
-        val xp = point.second.x - xPos
-        val yp = -(point.second.y) - yPos
+        val rel = (point.second - ship.position)
+        val dist = sqrt(rel.x * rel.x + rel.y * rel.y)
 
-        val dist = sqrt(xp * xp + yp * yp)
-        if (dist < scopeRadius - 10) {
+        if (dist < scopeRange - 25.0) {
+            val posOnScope = rel.adjustForScope()
+            resetTransform()
+            translateToCanvasCenter()
+            translate(posOnScope.x, posOnScope.y)
             beginPath()
-            ellipse(xp, yp, 2.0, 2.0, 0.0, 0.0, PI * 2)
+            ellipse(0.0, 0.0, 2.0, 2.0, 0.0, 0.0, PI * 2)
             fill()
         }
     }
 }
+
+private fun CanvasRenderingContext2D.translateToCanvasCenter() {
+    translate(canvas.width / 2.0, canvas.height / 2.0)
+}
+
+fun Double.adjustForScope() =
+    (this * (scopeRadius / scopeRange))
+
+fun Vector2.adjustForScope() =
+    (this * (scopeRadius / scopeRange)).let { Vector2(it.x, -it.y) }
 
 val Int.px
     get() = "${this}px"
