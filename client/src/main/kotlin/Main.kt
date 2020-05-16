@@ -4,7 +4,10 @@ import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sqrt
 
 lateinit var canvas: HTMLCanvasElement
 lateinit var ctx: CanvasRenderingContext2D
@@ -158,15 +161,11 @@ fun drawUi(stateCopy: GameStateMessage) {
         helmUi.style.visibility = "visible"
 
         ctx.clearCanvas()
-        ctx.drawCompass(ship)
 
         ctx.drawThrottle(ship)
         ctx.drawRudder(ship)
-        stateCopy.snapshot.contacts.forEach {
-            ctx.drawContact(ship, it)
-        }
-        ctx.drawHistory(ship)
-        ctx.drawShip(ship)
+
+        ctx.drawScope(stateCopy, ship)
     } else {
         joinUi.style.visibility = "visible"
         helmUi.style.visibility = "hidden"
@@ -242,10 +241,19 @@ fun CanvasRenderingContext2D.clearCanvas() {
     fillRect(0.0, 0.0, dim, dim)
 }
 
-fun CanvasRenderingContext2D.drawCompass(ship: ShipMessage) {
+fun CanvasRenderingContext2D.drawScope(stateCopy: GameStateMessage, ship: ShipMessage) {
     resetTransform()
     translateToCanvasCenter()
 
+    drawCompass(ship)
+    stateCopy.snapshot.contacts.forEach {
+        ctx.drawContact(ship, it)
+    }
+    drawHistory(ship)
+    drawShip(ship)
+}
+
+fun CanvasRenderingContext2D.drawCompass(ship: ShipMessage) {
     save()
     fillStyle = "#000"
     beginPath()
@@ -270,11 +278,13 @@ fun CanvasRenderingContext2D.drawCompass(ship: ShipMessage) {
     restore()
 
     save()
-    strokeStyle = "#666"
+    strokeStyle = "#444"
     lineWidth = 3.0
     lineCap = CanvasLineCap.ROUND
     for (i in 0 until 36) {
-        val a = i * PI * 2 / 36
+        save()
+        val angle = i * 10
+        rotate(angle.toRadians())
         val outer = scopeRadius - scopeRadius / 20
         val inner = if (i % 3 == 0) {
             scopeRadius - scopeRadius / 10
@@ -282,9 +292,10 @@ fun CanvasRenderingContext2D.drawCompass(ship: ShipMessage) {
             scopeRadius - scopeRadius / 15
         }
         beginPath()
-        moveTo(sin(a) * inner, cos(a) * inner)
-        lineTo(sin(a) * outer, cos(a) * outer)
+        moveTo(0.0, -inner)
+        lineTo(0.0, -outer)
         stroke()
+        restore()
     }
     restore()
 
@@ -306,6 +317,7 @@ fun CanvasRenderingContext2D.drawCompass(ship: ShipMessage) {
 
 fun CanvasRenderingContext2D.drawThrottle(ship: ShipMessage) {
     resetTransform()
+    save()
 
     val length = dim / 20.0 * 8.0
     val bottomX = dim / 20.0
@@ -336,10 +348,13 @@ fun CanvasRenderingContext2D.drawThrottle(ship: ShipMessage) {
     moveTo(bottomX + radius * 0.4, bottomY - length / 2.0)
     lineTo(bottomX + radius * 1.6, bottomY - length / 2.0)
     stroke()
+
+    restore()
 }
 
 fun CanvasRenderingContext2D.drawRudder(ship: ShipMessage) {
     resetTransform()
+    save()
 
     val length = dim / 20.0 * 8.0
     val bottomX = dim - dim / 20.0 - length
@@ -370,6 +385,8 @@ fun CanvasRenderingContext2D.drawRudder(ship: ShipMessage) {
     moveTo(bottomX + length / 2.0, bottomY - radius * 0.4)
     lineTo(bottomX + length / 2.0, bottomY - radius * 1.6)
     stroke()
+
+    restore()
 }
 
 fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, height: Double) {
@@ -410,10 +427,10 @@ fun CanvasRenderingContext2D.drawShipSymbol(rot: Double) {
 fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
     val rot = ship.rotation
 
-    resetTransform()
+    save()
     strokeStyle = "#1e90ff"
-    translateToCanvasCenter()
     drawShipSymbol(rot)
+    restore()
 }
 
 fun CanvasRenderingContext2D.drawContact(ship: ShipMessage, contact: ContactMessage) {
@@ -423,19 +440,18 @@ fun CanvasRenderingContext2D.drawContact(ship: ShipMessage, contact: ContactMess
 
     if (dist < ship.shortRangeScopeRange - 25.0) {
         val posOnScope = rel.adjustForScope(ship)
-        resetTransform()
+        save()
         strokeStyle = "#333"
-        translateToCanvasCenter()
         translate(posOnScope.x, posOnScope.y)
         beginPath()
         drawShipSymbol(rot)
+        restore()
     }
 }
 
 fun CanvasRenderingContext2D.drawHistory(ship: ShipMessage) {
-    resetTransform()
+    save()
     fillStyle = "#666"
-    translateToCanvasCenter()
 
     for (point in ship.history) {
         val rel = (point.second - ship.position)
@@ -451,6 +467,7 @@ fun CanvasRenderingContext2D.drawHistory(ship: ShipMessage) {
             restore()
         }
     }
+    restore()
 }
 
 private fun CanvasRenderingContext2D.translateToCanvasCenter() {

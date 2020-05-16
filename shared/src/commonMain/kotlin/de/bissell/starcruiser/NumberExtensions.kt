@@ -7,6 +7,8 @@ const val radiansToDegrees = 57.29577951308232
 
 fun Int.clip(lower: Int, upper: Int) = min(upper, max(lower, this))
 
+fun Int.toRadians() = this * degreesToRadians
+
 fun Double.toRadians() = this * degreesToRadians
 
 fun Double.toDegrees(): Double = this * radiansToDegrees
