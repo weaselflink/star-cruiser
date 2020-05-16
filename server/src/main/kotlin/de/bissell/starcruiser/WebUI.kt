@@ -15,7 +15,9 @@ import io.ktor.routing.get
 import kotlinx.css.*
 import kotlinx.css.BorderStyle.solid
 import kotlinx.css.Color.Companion.black
-import kotlinx.css.Color.Companion.grey
+import kotlinx.css.Color.Companion.darkGrey
+import kotlinx.css.Color.Companion.dimGrey
+import kotlinx.css.Color.Companion.lightGrey
 import kotlinx.css.Color.Companion.white
 import kotlinx.css.Cursor.pointer
 import kotlinx.css.Display.block
@@ -62,7 +64,7 @@ fun Routing.webUi() {
                     position = fixed
                     top = 0.px
                     zIndex = 10
-                    padding = 20.px.value
+                    padding(20.px, 0.px)
                 }
                 ".info" {
                     position = fixed
@@ -77,23 +79,32 @@ fun Routing.webUi() {
                 }
                 "button" {
                     display = block
-                    color = white
+                    color = lightGrey
                     backgroundColor = black
                     textAlign = center
-                    padding = "10px"
-                    border = "${1.px} $solid $white"
-                    borderRadius = 5.px
+                    paddingTop = 10.px
+                    paddingRight = 16.px
+                    paddingBottom = 12.px
+                    paddingLeft = 10.px
+                    borderWidth = 3.px
+                    borderStyle = solid
+                    borderColor = darkGrey
+                    borderTopLeftRadius = 0.px
+                    borderTopRightRadius = 21.px
+                    borderBottomRightRadius = 21.px
+                    borderBottomLeftRadius = 0.px
                     cursor = pointer
                     fontWeight = bold
                     fontSize = 16.px
                 }
                 "button:hover" {
                     color = black
-                    backgroundColor = white
+                    backgroundColor = darkGrey
                 }
                 "button:active" {
                     color = black
-                    backgroundColor = grey
+                    backgroundColor = dimGrey
+                    borderColor = dimGrey
                 }
             }.toString()
         }
