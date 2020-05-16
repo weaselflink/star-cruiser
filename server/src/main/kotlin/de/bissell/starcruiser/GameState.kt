@@ -18,7 +18,7 @@ class ExitShip(val clientId: UUID) : GameStateChange()
 class NewGameClient(val clientId: UUID) : GameStateChange()
 class GameClientDisconnected(val clientId: UUID) : GameStateChange()
 class ChangeThrottle(val clientId: UUID, val value: Int) : GameStateChange()
-class ChangeRudder(val clientId: UUID, val diff: Int) : GameStateChange()
+class ChangeRudder(val clientId: UUID, val value: Int) : GameStateChange()
 class GetGameStateSnapshot(val clientId: UUID, val response: CompletableDeferred<GameStateSnapshot>) : GameStateChange()
 
 @ObsoleteCoroutinesApi
@@ -34,7 +34,7 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
             is JoinShip -> gameState.joinShip(change.clientId, change.shipId)
             is ExitShip -> gameState.exitShip(change.clientId)
             is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.value)
-            is ChangeRudder -> gameState.changeRudder(change.clientId, change.diff)
+            is ChangeRudder -> gameState.changeRudder(change.clientId, change.value)
             is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
         }
     }
@@ -103,8 +103,8 @@ class GameState {
         clientShip(clientId)?.changeThrottle(value)
     }
 
-    fun changeRudder(clientId: UUID, diff: Int) {
-        clientShip(clientId)?.changeRudder(diff)
+    fun changeRudder(clientId: UUID, value: Int) {
+        clientShip(clientId)?.changeRudder(value)
     }
 
     private fun clientShip(clientId: UUID): Ship? =
@@ -129,7 +129,8 @@ class Ship(
     private var speed: Vector2 = Vector2(),
     private var rotation: Double = 90.0.toRadians(),
     private var throttle: Int = 0,
-    private var rudder: Int = 0
+    private var rudder: Int = 0,
+    private val shortRangeScopeRange: Double = 400.0
 ) {
 
     private var thrust = 0.0
@@ -182,8 +183,8 @@ class Ship(
         throttle = value.clip(-100, 100)
     }
 
-    fun changeRudder(diff: Int) {
-        rudder = (rudder + diff).clip(-100, 100)
+    fun changeRudder(value: Int) {
+        rudder = value.clip(-100, 100)
     }
 
     fun toPlayerShipMessage() =
@@ -206,7 +207,8 @@ class Ship(
             throttle = throttle,
             thrust = thrust,
             rudder = rudder,
-            history = history.map { it.first to it.second }
+            history = history.map { it.first to it.second },
+            shortRangeScopeRange = shortRangeScopeRange
         )
 
     fun toContactMessage(relativeTo: Ship?) =

@@ -25,7 +25,7 @@ sealed class Command {
     class CommandChangeThrottle(val value: Int) : Command()
 
     @Serializable
-    class CommandChangeRudder(val diff: Int) : Command()
+    class CommandChangeRudder(val value: Int) : Command()
 
     fun toJson() = Json(jsonConfiguration).stringify(serializer(), this)
 

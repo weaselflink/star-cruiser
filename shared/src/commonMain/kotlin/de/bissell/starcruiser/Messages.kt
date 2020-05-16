@@ -50,7 +50,8 @@ data class ShipMessage(
     val throttle: Int,
     val thrust: Double,
     val rudder: Int,
-    val history: List<Pair<Double, Vector2>>
+    val history: List<Pair<Double, Vector2>>,
+    val shortRangeScopeRange: Double
 )
 
 @Serializable

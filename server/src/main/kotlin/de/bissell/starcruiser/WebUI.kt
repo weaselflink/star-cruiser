@@ -40,7 +40,7 @@ fun Routing.webUi() {
                 body {
                     margin = 0.px.value
                     padding = 0.px.value
-                    backgroundColor = Color("#202020")
+                    backgroundColor = Color("#222")
                     color = white
                     fontFamily = "\"Courier New\", Courier, monospace"
                 }

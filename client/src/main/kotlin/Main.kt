@@ -10,7 +10,6 @@ lateinit var canvas: HTMLCanvasElement
 lateinit var ctx: CanvasRenderingContext2D
 var clientSocket: WebSocket? = null
 var state: GameStateMessage? = null
-const val scopeRange = 200.0
 var scopeRadius = 100.0
 var dim = 100.0
 
@@ -84,14 +83,15 @@ fun createSocket(): WebSocket? {
 
 fun keyHandler(event: KeyboardEvent) {
     val throttle: Int = state?.snapshot?.ship?.throttle ?: 0
+    val rudder: Int = state?.snapshot?.ship?.rudder ?: 0
 
     clientSocket?.apply {
         when (event.code) {
             "KeyP" -> send(Command.CommandTogglePause.toJson())
             "KeyW", "ArrowUp" -> send(Command.CommandChangeThrottle(throttle + 10).toJson())
             "KeyS", "ArrowDown" -> send(Command.CommandChangeThrottle(throttle - 10).toJson())
-            "KeyA", "ArrowLeft" -> send(Command.CommandChangeRudder(-10).toJson())
-            "KeyD", "ArrowRight" -> send(Command.CommandChangeRudder(10).toJson())
+            "KeyA", "ArrowLeft" -> send(Command.CommandChangeRudder(rudder - 10).toJson())
+            "KeyD", "ArrowRight" -> send(Command.CommandChangeRudder(rudder + 10).toJson())
             else -> println("not bound: ${event.code}")
         }
     }
@@ -100,12 +100,21 @@ fun keyHandler(event: KeyboardEvent) {
 fun canvasClicked(event: MouseEvent) {
     val x = event.offsetX
     val y = event.offsetY
-    val bottomX = dim / 20.0
-    val bottomY = dim - dim / 20.0
+    val length = dim / 20.0 * 8.0
+    val throttleX = dim / 20.0
+    val throttleY = dim - dim / 20.0
+    val rudderX = dim - dim / 20.0 - length
+    val rudderY = dim - dim / 20.0
+    val radius = dim / 20.0 * 0.4
 
-    if (x > bottomX && x < bottomX + 30.0 && y > bottomY - 170.0 && y < bottomY) {
-        val throttle = min(10, max(-10, (-(y - bottomY - 85.0) / 70.0 * 10.0).toInt())) * 10
+    if (x > throttleX && x < throttleX + radius * 2.0 && y > throttleY - length && y < throttleY) {
+        val throttle = min(10, max(-10, (-(y - throttleY + length / 2.0) / (length / 2.0 - radius) * 10.0).toInt())) * 10
         clientSocket?.send(Command.CommandChangeThrottle(throttle).toJson())
+    }
+
+    if (x > rudderX && x < rudderX + length && y > rudderY - radius * 2.0 && y < rudderY) {
+        val rudder = min(10, max(-10, ((x - rudderX - length / 2.0) / (length / 2.0 - radius) * 10.0).toInt())) * 10
+        clientSocket?.send(Command.CommandChangeRudder(rudder).toJson())
     }
 }
 
@@ -134,6 +143,9 @@ fun step() {
 }
 
 fun drawUi(stateCopy: GameStateMessage) {
+    dim = min(canvas.width, canvas.height).toDouble()
+    scopeRadius = dim / 2.0 - dim / 10.0
+
     val ship = stateCopy.snapshot.ship
 
     updateInfo(ship)
@@ -146,11 +158,12 @@ fun drawUi(stateCopy: GameStateMessage) {
         helmUi.style.visibility = "visible"
 
         ctx.clearCanvas()
-        ctx.drawCompass()
+        ctx.drawCompass(ship)
 
         ctx.drawThrottle(ship)
+        ctx.drawRudder(ship)
         stateCopy.snapshot.contacts.forEach {
-            ctx.drawContact(it)
+            ctx.drawContact(ship, it)
         }
         ctx.drawHistory(ship)
         ctx.drawShip(ship)
@@ -225,16 +238,15 @@ fun selectPlayerShip(event: MouseEvent) {
 
 fun CanvasRenderingContext2D.clearCanvas() {
     resetTransform()
-    fillStyle = "#202020"
-    fillRect(0.0, 0.0, canvas.width.toDouble(), canvas.height.toDouble())
+    fillStyle = "#222"
+    fillRect(0.0, 0.0, dim, dim)
 }
 
-fun CanvasRenderingContext2D.drawCompass() {
-    dim = min(canvas.width, canvas.height).toDouble()
-    scopeRadius = dim / 2.0 - dim / 10.0
-
+fun CanvasRenderingContext2D.drawCompass(ship: ShipMessage) {
     resetTransform()
     translateToCanvasCenter()
+
+    save()
     fillStyle = "#000"
     beginPath()
     ellipse(
@@ -243,7 +255,9 @@ fun CanvasRenderingContext2D.drawCompass() {
         0.0, 0.0, 2 * PI
     )
     fill()
+    restore()
 
+    save()
     lineWidth = 5.0
     strokeStyle = "#666"
     beginPath()
@@ -253,7 +267,9 @@ fun CanvasRenderingContext2D.drawCompass() {
         0.0, 0.0, 2 * PI
     )
     stroke()
+    restore()
 
+    save()
     strokeStyle = "#666"
     lineWidth = 3.0
     lineCap = CanvasLineCap.ROUND
@@ -270,13 +286,13 @@ fun CanvasRenderingContext2D.drawCompass() {
         lineTo(sin(a) * outer, cos(a) * outer)
         stroke()
     }
-    lineWidth = 1.0
-    lineCap = CanvasLineCap.BUTT
+    restore()
 
-    lineWidth = 2.0
+    save()
     strokeStyle = "#222"
+    lineWidth = 2.0
     for (i in 1..3) {
-        val radius = (scopeRange / 4.0 * i).adjustForScope()
+        val radius = (ship.shortRangeScopeRange / 4.0 * i).adjustForScope(ship)
         beginPath()
         ellipse(
             0.0, 0.0,
@@ -285,38 +301,74 @@ fun CanvasRenderingContext2D.drawCompass() {
         )
         stroke()
     }
-    lineWidth = 1.0
+    restore()
 }
 
 fun CanvasRenderingContext2D.drawThrottle(ship: ShipMessage) {
     resetTransform()
 
+    val length = dim / 20.0 * 8.0
     val bottomX = dim / 20.0
     val bottomY = dim - dim / 20.0
+    val radius = dim / 20.0 * 0.4
 
     lineWidth = 3.0
     fillStyle = "#111"
     beginPath()
-    drawPill(bottomX, bottomY, 30.0, 170.0)
+    drawPill(bottomX, bottomY, radius * 2, length)
     fill()
 
     strokeStyle = "#888"
     beginPath()
-    drawPill(bottomX, bottomY, 30.0, 170.0)
+    drawPill(bottomX, bottomY, radius * 2, length)
     stroke()
 
     fillStyle = "#999"
     beginPath()
     ellipse(
-        bottomX + 15.0, bottomY - 85.0 - ship.throttle / 100.0 * 70.0,
-        13.0, 13.0, 0.0, 0.0, 2 * PI
+        bottomX + radius, bottomY - length / 2.0 - ship.throttle / 100.0 * (length / 2.0 - radius),
+        radius * 0.8, radius * 0.8, 0.0, 0.0, 2 * PI
     )
     fill()
 
     strokeStyle = "#666"
     beginPath()
-    moveTo(bottomX + 6.0, bottomY - 85.0)
-    lineTo(bottomX + 24.0, bottomY - 85.0)
+    moveTo(bottomX + radius * 0.4, bottomY - length / 2.0)
+    lineTo(bottomX + radius * 1.6, bottomY - length / 2.0)
+    stroke()
+}
+
+fun CanvasRenderingContext2D.drawRudder(ship: ShipMessage) {
+    resetTransform()
+
+    val length = dim / 20.0 * 8.0
+    val bottomX = dim - dim / 20.0 - length
+    val bottomY = dim - dim / 20.0
+    val radius = dim / 20.0 * 0.4
+
+    lineWidth = 3.0
+    fillStyle = "#111"
+    beginPath()
+    drawPill(bottomX, bottomY, length, radius * 2)
+    fill()
+
+    strokeStyle = "#888"
+    beginPath()
+    drawPill(bottomX, bottomY, length, radius * 2)
+    stroke()
+
+    fillStyle = "#999"
+    beginPath()
+    ellipse(
+        bottomX + length / 2.0 + ship.rudder / 100.0 * (length / 2.0 - radius), bottomY - radius,
+        radius * 0.8, radius * 0.8, 0.0, 0.0, 2 * PI
+    )
+    fill()
+
+    strokeStyle = "#666"
+    beginPath()
+    moveTo(bottomX + length / 2.0, bottomY - radius * 0.4)
+    lineTo(bottomX + length / 2.0, bottomY - radius * 1.6)
     stroke()
 }
 
@@ -341,6 +393,7 @@ fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, heigh
 fun CanvasRenderingContext2D.drawShipSymbol(rot: Double) {
     val baseUnit = dim / 80.0
 
+    save()
     lineWidth = 3.0
     lineJoin = CanvasLineJoin.ROUND
     rotate(-rot)
@@ -351,8 +404,7 @@ fun CanvasRenderingContext2D.drawShipSymbol(rot: Double) {
     lineTo(-baseUnit / 2, 0.0)
     closePath()
     stroke()
-    lineWidth = 1.0
-    lineJoin = CanvasLineJoin.MITER
+    restore()
 }
 
 fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
@@ -364,13 +416,13 @@ fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
     drawShipSymbol(rot)
 }
 
-fun CanvasRenderingContext2D.drawContact(contact: ContactMessage) {
+fun CanvasRenderingContext2D.drawContact(ship: ShipMessage, contact: ContactMessage) {
     val rel = contact.relativePosition
     val dist = sqrt(rel.x * rel.x + rel.y * rel.y)
     val rot = contact.rotation
 
-    if (dist < scopeRange - 25.0) {
-        val posOnScope = rel.adjustForScope()
+    if (dist < ship.shortRangeScopeRange - 25.0) {
+        val posOnScope = rel.adjustForScope(ship)
         resetTransform()
         strokeStyle = "#333"
         translateToCanvasCenter()
@@ -381,19 +433,22 @@ fun CanvasRenderingContext2D.drawContact(contact: ContactMessage) {
 }
 
 fun CanvasRenderingContext2D.drawHistory(ship: ShipMessage) {
+    resetTransform()
     fillStyle = "#666"
+    translateToCanvasCenter()
+
     for (point in ship.history) {
         val rel = (point.second - ship.position)
         val dist = sqrt(rel.x * rel.x + rel.y * rel.y)
 
-        if (dist < scopeRange - 25.0) {
-            val posOnScope = rel.adjustForScope()
-            resetTransform()
-            translateToCanvasCenter()
+        if (dist < ship.shortRangeScopeRange - 25.0) {
+            val posOnScope = rel.adjustForScope(ship)
+            save()
             translate(posOnScope.x, posOnScope.y)
             beginPath()
             ellipse(0.0, 0.0, 2.0, 2.0, 0.0, 0.0, PI * 2)
             fill()
+            restore()
         }
     }
 }
@@ -402,11 +457,11 @@ private fun CanvasRenderingContext2D.translateToCanvasCenter() {
     translate(canvas.width / 2.0, canvas.height / 2.0)
 }
 
-fun Double.adjustForScope() =
-    (this * (scopeRadius / scopeRange))
+fun Double.adjustForScope(ship: ShipMessage) =
+    (this * (scopeRadius / ship.shortRangeScopeRange))
 
-fun Vector2.adjustForScope() =
-    (this * (scopeRadius / scopeRange)).let { Vector2(it.x, -it.y) }
+fun Vector2.adjustForScope(ship: ShipMessage) =
+    (this * (scopeRadius / ship.shortRangeScopeRange)).let { Vector2(it.x, -it.y) }
 
 val Int.px
     get() = "${this}px"
