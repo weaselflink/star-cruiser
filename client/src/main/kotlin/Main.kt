@@ -8,11 +8,10 @@ import kotlin.browser.window
 import kotlin.math.max
 import kotlin.math.min
 
+lateinit var helmUi: HelmUi
 lateinit var canvas: HTMLCanvasElement
-lateinit var ctx: CanvasRenderingContext2D
 var clientSocket: WebSocket? = null
 var state: GameStateMessage? = null
-var scopeRadius = 100.0
 var dim = 100.0
 var rotateScope = false
 
@@ -21,11 +20,9 @@ fun main() {
 }
 
 fun init() {
+    helmUi = HelmUi()
     canvas = document.getElementById("canvas")!! as HTMLCanvasElement
-    ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
 
-    canvas.resizeCanvasToDisplaySize()
-    window.onresize = { canvas.resizeCanvasToDisplaySize() }
     window.requestAnimationFrame { step() }
 
     canvas.onclick = { canvasClicked(it) }
@@ -122,22 +119,6 @@ fun canvasClicked(event: MouseEvent) {
     }
 }
 
-fun HTMLCanvasElement.resizeCanvasToDisplaySize() {
-    val windowWidth: Int = window.innerWidth
-    val windowHeight: Int = window.innerHeight
-    val dim: Int = min(window.innerWidth, window.innerHeight)
-
-    if (width != dim || height != dim) {
-        width = dim
-        height = dim
-    }
-
-    style.left = ((windowWidth - dim) / 2).px
-    style.top = ((windowHeight - dim) / 2).px
-    style.width = dim.px
-    style.height = dim.px
-}
-
 fun step() {
     state?.also {
         drawUi(it)
@@ -148,21 +129,18 @@ fun step() {
 
 fun drawUi(stateCopy: GameStateMessage) {
     dim = min(canvas.width, canvas.height).toDouble()
-    scopeRadius = dim / 2.0 - dim / 10.0
 
     val ship = stateCopy.snapshot.ship
 
     val joinUi = document.getElementById("join")!! as HTMLElement
-    val helmUi = document.getElementById("helm")!! as HTMLElement
 
     if (ship != null) {
         joinUi.style.visibility = "hidden"
-        helmUi.style.visibility = "visible"
-
-        drawHelmUi(ship, stateCopy)
+        helmUi.show()
+        helmUi.draw(ship, stateCopy)
     } else {
         joinUi.style.visibility = "visible"
-        helmUi.style.visibility = "hidden"
+        helmUi.hide()
 
         updatePlayerShips(stateCopy)
     }
