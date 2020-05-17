@@ -56,6 +56,7 @@ data class ShipMessage(
 
 @Serializable
 data class ContactMessage(
+    val designation: String,
     val position: Vector2,
     val relativePosition: Vector2,
     val speed: Vector2,

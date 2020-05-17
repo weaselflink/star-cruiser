@@ -116,12 +116,17 @@ class HelmUi {
         fillRect(0.0, 0.0, dim, dim)
     }
 
+    private fun getScopeRotation(ship: ShipMessage) =
+        if (rotateScope) {
+            ship.rotation - PI / 2.0
+        } else {
+            0.0
+        }
+
     private fun CanvasRenderingContext2D.drawScope(stateCopy: GameStateMessage, ship: ShipMessage) {
         resetTransform()
         translateToCanvasCenter()
-        if (rotateScope) {
-            rotate(ship.rotation - PI / 2.0)
-        }
+        rotate(getScopeRotation(ship))
 
         drawCompass(ship)
         drawHistory(ship)
@@ -284,10 +289,10 @@ class HelmUi {
     }
 
     private fun CanvasRenderingContext2D.drawShipSymbol(rot: Double) {
-        val baseUnit = dim / 80.0
+        val baseUnit = dim * 0.008
 
         save()
-        lineWidth = 3.0
+        lineWidth = 2.0
         lineJoin = CanvasLineJoin.ROUND
         rotate(-rot)
         beginPath()
@@ -313,6 +318,7 @@ class HelmUi {
         val rel = contact.relativePosition
         val dist = sqrt(rel.x * rel.x + rel.y * rel.y)
         val rot = contact.rotation
+        val textSize = (scopeRadius * 0.06).toInt()
 
         if (dist < ship.shortRangeScopeRange - 25.0) {
             val posOnScope = rel.adjustForScope(ship)
@@ -321,6 +327,13 @@ class HelmUi {
             translate(posOnScope.x, posOnScope.y)
             beginPath()
             drawShipSymbol(rot)
+
+            textAlign = CanvasTextAlign.CENTER
+            font = "bold ${textSize.px} sans-serif"
+            fillStyle = "#555"
+            rotate(-getScopeRotation(ship))
+            translate(0.0, (-20.0).adjustForScope(ship))
+            fillText(contact.designation, 0.0, 0.0)
             restore()
         }
     }

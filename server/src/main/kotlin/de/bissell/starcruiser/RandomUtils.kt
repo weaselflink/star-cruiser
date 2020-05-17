@@ -3,8 +3,11 @@ package de.bissell.starcruiser
 import kotlin.random.Random
 
 fun randomShipName(): String {
-    return randomLetter().toString() + randomLetter().toString() + "-" + Random.nextInt(10_000).toString()
+    return "${randomLetter()}${randomLetter()}${randomPaddedNumber()}"
 }
+
+private fun randomPaddedNumber(n: Int = 3) = (0 until n)
+    .joinToString(separator = "") { Random.nextInt(10).toString() }
 
 fun randomLetter(): Char {
     return ('A'.toInt() + Random.nextInt(26)).toChar()

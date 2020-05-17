@@ -71,8 +71,8 @@ class GameState {
     fun spawnShip(): UUID {
         return Ship(
             position = Vector2(
-                x = Random().nextInt(200) - 100.0,
-                y = Random().nextInt(200) - 100.0
+                x = Random().nextInt(500) - 250.0,
+                y = Random().nextInt(500) - 250.0
             ),
             throttle = 100,
             rudder = 30
@@ -213,6 +213,7 @@ class Ship(
 
     fun toContactMessage(relativeTo: Ship?) =
         ContactMessage(
+            designation = designation,
             speed = speed,
             position = position,
             relativePosition = (position - (relativeTo?.position ?: Vector2())),
