@@ -53,10 +53,15 @@ class GameState {
             paused = paused,
             playerShips = ships.values.map(Ship::toPlayerShipMessage),
             ship = clientShip?.toMessage(),
-            contacts = ships
-                .filter { it.key != clientShip?.id }
-                .map { it.value }
-                .map { it.toContactMessage(clientShip) }
+            contacts = if (clientShip == null) {
+                emptyList()
+            } else {
+                ships
+                    .filter { it.key != clientShip.id }
+                    .map { it.value }
+                    .map { it.toContactMessage(clientShip) }
+                    .filter { it.relativePosition.length() < clientShip.shortRangeScopeRange * 1.1 }
+            }
         )
     }
 
@@ -123,14 +128,14 @@ data class GameTime(
 
 class Ship(
     val id: UUID = UUID.randomUUID(),
+    val shortRangeScopeRange: Double = 400.0,
     private val designation: String = randomShipName(),
     private val shipClass: String = "Infector",
     private var position: Vector2 = Vector2(),
     private var speed: Vector2 = Vector2(),
     private var rotation: Double = 90.0.toRadians(),
     private var throttle: Int = 0,
-    private var rudder: Int = 0,
-    private val shortRangeScopeRange: Double = 400.0
+    private var rudder: Int = 0
 ) {
 
     private var thrust = 0.0
@@ -211,12 +216,12 @@ class Ship(
             shortRangeScopeRange = shortRangeScopeRange
         )
 
-    fun toContactMessage(relativeTo: Ship?) =
+    fun toContactMessage(relativeTo: Ship) =
         ContactMessage(
             designation = designation,
             speed = speed,
             position = position,
-            relativePosition = (position - (relativeTo?.position ?: Vector2())),
+            relativePosition = (position - relativeTo.position),
             rotation = rotation,
             heading = rotation.toHeading(),
             velocity = speed.length(),

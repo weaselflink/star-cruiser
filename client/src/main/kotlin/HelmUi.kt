@@ -6,7 +6,6 @@ import kotlin.browser.window
 import kotlin.math.PI
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.sqrt
 
 class HelmUi {
 
@@ -129,11 +128,26 @@ class HelmUi {
         rotate(getScopeRotation(ship))
 
         drawCompass(ship)
+        save()
+        circle(0.0, 0.0, scopeRadius)
+        clip()
         drawHistory(ship)
         stateCopy.snapshot.contacts.forEach {
             ctx.drawContact(ship, it)
         }
+        restore()
+        drawScopeEdge()
         drawShip(ship)
+    }
+
+    private fun CanvasRenderingContext2D.drawScopeEdge() {
+        save()
+        lineWidth = 5.0
+        strokeStyle = "#666"
+        beginPath()
+        circle(0.0, 0.0, scopeRadius)
+        stroke()
+        restore()
     }
 
     private fun CanvasRenderingContext2D.drawCompass(ship: ShipMessage) {
@@ -142,14 +156,6 @@ class HelmUi {
         beginPath()
         circle(0.0, 0.0, scopeRadius)
         fill()
-        restore()
-
-        save()
-        lineWidth = 5.0
-        strokeStyle = "#666"
-        beginPath()
-        circle(0.0, 0.0, scopeRadius)
-        stroke()
         restore()
 
         save()
@@ -316,26 +322,23 @@ class HelmUi {
 
     private fun CanvasRenderingContext2D.drawContact(ship: ShipMessage, contact: ContactMessage) {
         val rel = contact.relativePosition
-        val dist = sqrt(rel.x * rel.x + rel.y * rel.y)
         val rot = contact.rotation
         val textSize = (scopeRadius * 0.06).toInt()
 
-        if (dist < ship.shortRangeScopeRange - 25.0) {
-            val posOnScope = rel.adjustForScope(ship)
-            save()
-            strokeStyle = "#555"
-            translate(posOnScope.x, posOnScope.y)
-            beginPath()
-            drawShipSymbol(rot)
+        val posOnScope = rel.adjustForScope(ship)
+        save()
+        strokeStyle = "#555"
+        translate(posOnScope.x, posOnScope.y)
+        beginPath()
+        drawShipSymbol(rot)
 
-            textAlign = CanvasTextAlign.CENTER
-            font = "bold ${textSize.px} sans-serif"
-            fillStyle = "#555"
-            rotate(-getScopeRotation(ship))
-            translate(0.0, (-20.0).adjustForScope(ship))
-            fillText(contact.designation, 0.0, 0.0)
-            restore()
-        }
+        textAlign = CanvasTextAlign.CENTER
+        font = "bold ${textSize.px} sans-serif"
+        fillStyle = "#555"
+        rotate(-getScopeRotation(ship))
+        translate(0.0, (-20.0).adjustForScope(ship))
+        fillText(contact.designation, 0.0, 0.0)
+        restore()
     }
 
     private fun CanvasRenderingContext2D.drawHistory(ship: ShipMessage) {
@@ -344,17 +347,14 @@ class HelmUi {
 
         for (point in ship.history) {
             val rel = (point.second - ship.position)
-            val dist = sqrt(rel.x * rel.x + rel.y * rel.y)
 
-            if (dist < ship.shortRangeScopeRange - 25.0) {
-                val posOnScope = rel.adjustForScope(ship)
-                save()
-                translate(posOnScope.x, posOnScope.y)
-                beginPath()
-                circle(0.0, 0.0, 2.0)
-                fill()
-                restore()
-            }
+            val posOnScope = rel.adjustForScope(ship)
+            save()
+            translate(posOnScope.x, posOnScope.y)
+            beginPath()
+            circle(0.0, 0.0, 2.0)
+            fill()
+            restore()
         }
         restore()
     }

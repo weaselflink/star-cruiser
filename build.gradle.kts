@@ -10,5 +10,5 @@ plugins {
 
 allprojects {
     group = "de.bissell.starcruiser"
-    version = "1.4.0"
+    version = "0.5.0"
 }
