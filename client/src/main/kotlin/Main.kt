@@ -1,49 +1,29 @@
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.GameStateMessage
-import org.w3c.dom.*
+import org.w3c.dom.WebSocket
+import org.w3c.dom.asList
 import org.w3c.dom.events.KeyboardEvent
-import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.math.max
-import kotlin.math.min
 
+lateinit var joinUi: JoinUi
 lateinit var helmUi: HelmUi
-lateinit var canvas: HTMLCanvasElement
 var clientSocket: WebSocket? = null
 var state: GameStateMessage? = null
-var dim = 100.0
-var rotateScope = false
 
 fun main() {
     window.onload = { init() }
 }
 
 fun init() {
-    helmUi = HelmUi()
-    canvas = document.getElementById("canvas")!! as HTMLCanvasElement
+    joinUi = JoinUi().apply { show() }
+    helmUi = HelmUi().apply { hide() }
 
     window.requestAnimationFrame { step() }
-
-    canvas.onclick = { canvasClicked(it) }
 
     createSocket()
 
     document.onkeydown = { keyHandler(it) }
-
-    document.getElementsByClassName("exit").asList()
-        .map {
-            it as HTMLButtonElement
-        }.forEach {
-            it.onclick = { clientSocket?.send(Command.CommandExitShip.toJson()) }
-    }
-
-    document.getElementsByClassName("spawn").asList()
-        .map {
-            it as HTMLButtonElement
-        }.forEach {
-            it.onclick = { clientSocket?.send(Command.CommandSpawnShip.toJson()) }
-    }
 }
 
 fun createSocket(): WebSocket? {
@@ -92,30 +72,9 @@ fun keyHandler(event: KeyboardEvent) {
             "KeyS", "ArrowDown" -> send(Command.CommandChangeThrottle(throttle - 10).toJson())
             "KeyA", "ArrowLeft" -> send(Command.CommandChangeRudder(rudder - 10).toJson())
             "KeyD", "ArrowRight" -> send(Command.CommandChangeRudder(rudder + 10).toJson())
-            "KeyR" -> rotateScope = !rotateScope
+            "KeyR" -> helmUi.toggleRotateScope()
             else -> println("not bound: ${event.code}")
         }
-    }
-}
-
-fun canvasClicked(event: MouseEvent) {
-    val x = event.offsetX
-    val y = event.offsetY
-    val length = dim / 20.0 * 8.0
-    val throttleX = dim / 20.0
-    val throttleY = dim - dim / 20.0
-    val rudderX = dim - dim / 20.0 - length
-    val rudderY = dim - dim / 20.0
-    val radius = dim / 20.0 * 0.4
-
-    if (x > throttleX && x < throttleX + radius * 2.0 && y > throttleY - length && y < throttleY) {
-        val throttle = min(10, max(-10, (-(y - throttleY + length / 2.0) / (length / 2.0 - radius) * 10.0).toInt())) * 10
-        clientSocket?.send(Command.CommandChangeThrottle(throttle).toJson())
-    }
-
-    if (x > rudderX && x < rudderX + length && y > rudderY - radius * 2.0 && y < rudderY) {
-        val rudder = min(10, max(-10, ((x - rudderX - length / 2.0) / (length / 2.0 - radius) * 10.0).toInt())) * 10
-        clientSocket?.send(Command.CommandChangeRudder(rudder).toJson())
     }
 }
 
@@ -128,72 +87,15 @@ fun step() {
 }
 
 fun drawUi(stateCopy: GameStateMessage) {
-    dim = min(canvas.width, canvas.height).toDouble()
-
     val ship = stateCopy.snapshot.ship
 
-    val joinUi = document.getElementById("join")!! as HTMLElement
-
     if (ship != null) {
-        joinUi.style.visibility = "hidden"
+        joinUi.hide()
         helmUi.show()
         helmUi.draw(ship, stateCopy)
     } else {
-        joinUi.style.visibility = "visible"
         helmUi.hide()
-
-        updatePlayerShips(stateCopy)
+        joinUi.show()
+        joinUi.draw(stateCopy)
     }
 }
-
-fun updatePlayerShips(stateCopy: GameStateMessage) {
-    document.getElementsByClassName("playerShips").asList().forEach { playerShipsList ->
-        val listElements = playerShipsList.getElementsByTagName("button")
-
-        val max = max(stateCopy.snapshot.playerShips.size, listElements.length)
-
-        for (index in 0 until max) {
-            if (index < stateCopy.snapshot.playerShips.size) {
-                val playerShip = stateCopy.snapshot.playerShips[index]
-                val buttonText = playerShip.name + (playerShip.shipClass?.let { " ($it class)" } ?: "")
-                if (index < listElements.length) {
-                    listElements.item(index)!!.let {
-                        it as HTMLElement
-                    }.apply {
-                        if (getAttribute("id") != playerShip.id) {
-                            setAttribute("id", playerShip.id)
-                            innerHTML = buttonText
-                        }
-                    }
-                } else {
-                    document.createElement("button").let {
-                        it as HTMLElement
-                    }.apply {
-                        setAttribute("id", playerShip.id)
-                        innerHTML = buttonText
-                        onclick = { selectPlayerShip(it) }
-                    }.also {
-                        playerShipsList.appendChild(it)
-                    }
-                }
-            } else {
-                if (index < listElements.length) {
-                    listElements.item(index)?.apply {
-                        remove()
-                    }
-                }
-            }
-        }
-    }
-}
-
-fun selectPlayerShip(event: MouseEvent) {
-    clientSocket?.apply {
-        val target = event.target as HTMLElement
-        val shipId = target.attributes["id"]!!.value
-        send(Command.CommandJoinShip(shipId = shipId).toJson())
-    }
-}
-
-val Int.px
-    get() = "${this}px"

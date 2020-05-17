@@ -1,8 +1,10 @@
 import de.bissell.starcruiser.*
 import org.w3c.dom.*
+import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.math.PI
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
@@ -12,11 +14,21 @@ class HelmUi {
     private val canvas = document.getElementById("canvas")!! as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
 
+    private var dim = 100.0
     private var scopeRadius = 100.0
+    private var rotateScope = false
 
     init {
         resize()
         window.onresize = { resize() }
+        canvas.onclick = { handleClick(it) }
+
+        document.getElementsByClassName("exit").asList()
+            .map {
+                it as HTMLButtonElement
+            }.forEach {
+                it.onclick = { clientSocket?.send(Command.CommandExitShip.toJson()) }
+            }
     }
 
     private fun resize() {
@@ -45,7 +57,12 @@ class HelmUi {
         root.style.visibility = "hidden"
     }
 
+    fun toggleRotateScope() {
+        rotateScope = !rotateScope
+    }
+
     fun draw(ship: ShipMessage, stateCopy: GameStateMessage) {
+        dim = min(canvas.width, canvas.height).toDouble()
         scopeRadius = dim / 2.0 - dim / 10.0
 
         updateInfo(ship)
@@ -57,6 +74,27 @@ class HelmUi {
             drawRudder(ship)
 
             drawScope(stateCopy, ship)
+        }
+    }
+
+    private fun handleClick(event: MouseEvent) {
+        val x = event.offsetX
+        val y = event.offsetY
+        val length = dim / 20.0 * 8.0
+        val throttleX = dim / 20.0
+        val throttleY = dim - dim / 20.0
+        val rudderX = dim - dim / 20.0 - length
+        val rudderY = dim - dim / 20.0
+        val radius = dim / 20.0 * 0.4
+
+        if (x > throttleX && x < throttleX + radius * 2.0 && y > throttleY - length && y < throttleY) {
+            val throttle = min(10, max(-10, (-(y - throttleY + length / 2.0) / (length / 2.0 - radius) * 10.0).toInt())) * 10
+            clientSocket?.send(Command.CommandChangeThrottle(throttle).toJson())
+        }
+
+        if (x > rudderX && x < rudderX + length && y > rudderY - radius * 2.0 && y < rudderY) {
+            val rudder = min(10, max(-10, ((x - rudderX - length / 2.0) / (length / 2.0 - radius) * 10.0).toInt())) * 10
+            clientSocket?.send(Command.CommandChangeRudder(rudder).toJson())
         }
     }
 
@@ -321,3 +359,6 @@ class HelmUi {
     private fun Vector2.adjustForScope(ship: ShipMessage) =
         (this * (scopeRadius / ship.shortRangeScopeRange)).let { Vector2(it.x, -it.y) }
 }
+
+val Int.px
+    get() = "${this}px"
