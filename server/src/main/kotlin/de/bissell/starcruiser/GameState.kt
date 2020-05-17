@@ -1,5 +1,7 @@
 package de.bissell.starcruiser
 
+import de.bissell.starcruiser.ClientState.Helm
+import de.bissell.starcruiser.ClientState.ShipSelection
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -27,8 +29,8 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
     for (change in channel) {
         when (change) {
             is Update -> gameState.update()
-            is NewGameClient -> {}
-            is GameClientDisconnected -> gameState.deleteShip(change.clientId)
+            is NewGameClient -> gameState.clientConnected(change.clientId)
+            is GameClientDisconnected -> gameState.clientDisconnected(change.clientId)
             is TogglePause -> gameState.togglePaused()
             is SpawnShip -> gameState.spawnShip()
             is JoinShip -> gameState.joinShip(change.clientId, change.shipId)
@@ -45,11 +47,13 @@ class GameState {
     private var time = GameTime()
     private var paused = false
     private val ships = mutableMapOf<UUID, Ship>()
-    private val clientShipMapping = mutableMapOf<UUID, UUID>()
+    private val clients = mutableMapOf<UUID, Client>()
 
     fun toMessage(clientId: UUID): GameStateSnapshot {
         val clientShip = clientShip(clientId)
+        val client = clients[clientId]!!
         return GameStateSnapshot(
+            clientState = client.state,
             paused = paused,
             playerShips = ships.values.map(Ship::toPlayerShipMessage),
             ship = clientShip?.toMessage(),
@@ -65,12 +69,22 @@ class GameState {
         )
     }
 
+    fun clientConnected(clientId: UUID) {
+        clients[clientId] = Client(clientId)
+    }
+
     fun joinShip(clientId: UUID, shipId: UUID) {
-        clientShipMapping[clientId] = shipId
+        clients[clientId]?.also {
+            it.state = Helm
+            it.shipId = shipId
+        }
     }
 
     fun exitShip(clientId: UUID) {
-        clientShipMapping.remove(clientId)
+        clients[clientId]?.also {
+            it.state = ShipSelection
+            it.shipId = null
+        }
     }
 
     fun spawnShip(): UUID {
@@ -86,11 +100,7 @@ class GameState {
         }.id
     }
 
-    fun deleteShip(clientId: UUID) {
-        clientShipMapping[clientId]?.also {
-            ships.remove(it)
-        }
-    }
+    fun clientDisconnected(clientId: UUID) {}
 
     fun togglePaused() {
         paused = !paused
@@ -113,9 +123,7 @@ class GameState {
     }
 
     private fun clientShip(clientId: UUID): Ship? =
-        clientShipMapping[clientId]?.let {
-            ships[it]
-        }
+        clients[clientId]?.let { ships[it.shipId] }
 }
 
 data class GameTime(
@@ -125,6 +133,12 @@ data class GameTime(
 
     fun update() = GameTime(current + delta, delta)
 }
+
+data class Client(
+    val id: UUID,
+    var state: ClientState = ShipSelection,
+    var shipId: UUID? = null
+)
 
 class Ship(
     val id: UUID = UUID.randomUUID(),

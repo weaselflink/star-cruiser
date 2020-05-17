@@ -129,6 +129,7 @@ fun Routing.webUi() {
             body {
                 joinUi()
                 helmUi()
+                navigationUi()
             }
         }
     }
@@ -167,9 +168,7 @@ private fun BODY.helmUi() {
                 +"< Exit ship"
             }
         }
-        canvas {
-            id = "canvas"
-        }
+        canvas {}
         div(classes = "info") {
             p {
                 +"Heading: "
@@ -186,5 +185,15 @@ private fun BODY.helmUi() {
                 }
             }
         }
+    }
+}
+
+private fun BODY.navigationUi() {
+    div {
+        id = "navigation"
+        div(classes = "conn") {
+            +"disconnected"
+        }
+        canvas {}
     }
 }

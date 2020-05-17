@@ -10,7 +10,7 @@ import kotlin.math.min
 class HelmUi {
 
     private val root = document.getElementById("helm")!! as HTMLElement
-    private val canvas = document.getElementById("canvas")!! as HTMLCanvasElement
+    private val canvas = root.querySelector("#helm canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
 
     private var dim = 100.0

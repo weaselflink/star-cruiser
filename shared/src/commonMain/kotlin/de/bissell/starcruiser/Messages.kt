@@ -24,6 +24,7 @@ data class GameStateMessage(
 
 @Serializable
 data class GameStateSnapshot(
+    val clientState: ClientState,
     val paused: Boolean,
     val playerShips: List<PlayerShipMessage>,
     val ship: ShipMessage?,
@@ -65,3 +66,10 @@ data class ContactMessage(
     val velocity: Double,
     val history: List<Pair<Double, Vector2>>
 )
+
+@Serializable
+enum class ClientState {
+    ShipSelection,
+    Helm,
+    Navigation
+}

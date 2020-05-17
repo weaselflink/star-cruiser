@@ -1,3 +1,4 @@
+import de.bissell.starcruiser.ClientState.*
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.GameStateMessage
 import org.w3c.dom.WebSocket
@@ -8,6 +9,7 @@ import kotlin.browser.window
 
 lateinit var joinUi: JoinUi
 lateinit var helmUi: HelmUi
+lateinit var navigationUi: NavigationUi
 var clientSocket: WebSocket? = null
 var state: GameStateMessage? = null
 
@@ -18,6 +20,7 @@ fun main() {
 fun init() {
     joinUi = JoinUi().apply { show() }
     helmUi = HelmUi().apply { hide() }
+    navigationUi = NavigationUi().apply { hide() }
 
     window.requestAnimationFrame { step() }
 
@@ -87,15 +90,23 @@ fun step() {
 }
 
 fun drawUi(stateCopy: GameStateMessage) {
-    val ship = stateCopy.snapshot.ship
-
-    if (ship != null) {
-        joinUi.hide()
-        helmUi.show()
-        helmUi.draw(ship, stateCopy)
-    } else {
-        helmUi.hide()
-        joinUi.show()
-        joinUi.draw(stateCopy)
+    when (stateCopy.snapshot.clientState) {
+        ShipSelection -> {
+            helmUi.hide()
+            navigationUi.hide()
+            joinUi.show()
+            joinUi.draw(stateCopy)
+        }
+        Helm -> {
+            val ship = stateCopy.snapshot.ship!!
+            joinUi.hide()
+            navigationUi.hide()
+            helmUi.show()
+            helmUi.draw(ship, stateCopy)
+        }
+        Navigation -> {
+            helmUi.hide()
+            joinUi.hide()
+        }
     }
 }
