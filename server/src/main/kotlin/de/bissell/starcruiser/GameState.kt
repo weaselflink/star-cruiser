@@ -160,7 +160,7 @@ class Ship(
     private val history = mutableListOf<Pair<Double, Vector2>>()
 
     private val thrustFactor = 0.2
-    private val rudderFactor = 0.2
+    private val rudderFactor = 10.0
 
     fun update(time: GameTime) {
         updateThrust(time)
@@ -178,7 +178,7 @@ class Ship(
     }
 
     private fun updateRotation(time: GameTime) {
-        val diff = -(rudder.toDouble().toRadians() * rudderFactor * PI)
+        val diff = -(rudder.toDouble().toRadians() * 0.01 * rudderFactor * PI)
         rotation = (rotation + diff * time.delta)
         if (rotation >= PI * 2) {
             rotation %= (PI * 2)
