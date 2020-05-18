@@ -63,7 +63,8 @@ class HelmUi {
         updateInfo(ship)
 
         with(ctx) {
-            clearCanvas()
+            resetTransform()
+            clear("#222")
 
             drawThrottle(ship)
             drawRudder(ship)
@@ -105,12 +106,6 @@ class HelmUi {
         }
     }
 
-    private fun CanvasRenderingContext2D.clearCanvas() {
-        resetTransform()
-        fillStyle = "#222"
-        fillRect(0.0, 0.0, dim, dim)
-    }
-
     private fun getScopeRotation(ship: ShipMessage) =
         if (rotateScope) {
             ship.rotation - PI / 2.0
@@ -120,7 +115,7 @@ class HelmUi {
 
     private fun CanvasRenderingContext2D.drawScope(stateCopy: GameStateMessage, ship: ShipMessage) {
         resetTransform()
-        translateToCanvasCenter()
+        translateToCenter()
         rotate(getScopeRotation(ship))
 
         drawCompass(ship)
@@ -290,29 +285,12 @@ class HelmUi {
         }
     }
 
-    private fun CanvasRenderingContext2D.drawShipSymbol(rot: Double) {
-        val baseUnit = dim * 0.008
-
-        save()
-        lineWidth = 2.0
-        lineJoin = CanvasLineJoin.ROUND
-        rotate(-rot)
-        beginPath()
-        moveTo(-baseUnit, -baseUnit)
-        lineTo(baseUnit * 2, 0.0)
-        lineTo(-baseUnit, baseUnit)
-        lineTo(-baseUnit / 2, 0.0)
-        closePath()
-        stroke()
-        restore()
-    }
-
     private fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
         val rot = ship.rotation
 
         save()
         strokeStyle = "#1e90ff"
-        drawShipSymbol(rot)
+        drawShipSymbol(rot, dim * 0.008)
         restore()
     }
 
@@ -324,9 +302,9 @@ class HelmUi {
         val posOnScope = rel.adjustForScope(ship)
         save()
         strokeStyle = "#555"
-        translate(posOnScope.x, posOnScope.y)
+        translate(posOnScope)
         beginPath()
-        drawShipSymbol(rot)
+        drawShipSymbol(rot, dim * 0.008)
 
         textAlign = CanvasTextAlign.CENTER
         font = "bold ${textSize.px} sans-serif"
@@ -346,7 +324,7 @@ class HelmUi {
 
             val posOnScope = rel.adjustForScope(ship)
             save()
-            translate(posOnScope.x, posOnScope.y)
+            translate(posOnScope)
             beginPath()
             circle(0.0, 0.0, 2.0)
             fill()
@@ -355,19 +333,9 @@ class HelmUi {
         restore()
     }
 
-    private fun CanvasRenderingContext2D.translateToCanvasCenter() {
-        translate(canvas.width / 2.0, canvas.height / 2.0)
-    }
-
-    private fun CanvasRenderingContext2D.circle(x: Double, y: Double, radius: Double) =
-        ellipse(x, y, radius, radius, 0.0, 0.0, PI * 2)
-
     private fun Double.adjustForScope(ship: ShipMessage) =
         (this * (scopeRadius / ship.shortRangeScopeRange))
 
     private fun Vector2.adjustForScope(ship: ShipMessage) =
         (this * (scopeRadius / ship.shortRangeScopeRange)).let { Vector2(it.x, -it.y) }
 }
-
-val Int.px
-    get() = "${this}px"

@@ -75,6 +75,8 @@ fun keyHandler(event: KeyboardEvent) {
             "KeyS", "ArrowDown" -> send(Command.CommandChangeThrottle(throttle - 10).toJson())
             "KeyA", "ArrowLeft" -> send(Command.CommandChangeRudder(rudder - 10).toJson())
             "KeyD", "ArrowRight" -> send(Command.CommandChangeRudder(rudder + 10).toJson())
+            "KeyX" -> navigationUi.zoomIn()
+            "KeyZ" -> navigationUi.zoomOut()
             "KeyR" -> helmUi.toggleRotateScope()
             else -> println("not bound: ${event.code}")
         }
