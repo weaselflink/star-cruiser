@@ -1,6 +1,7 @@
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.GameStateMessage
 import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.Station.Helm
 import de.bissell.starcruiser.Vector2
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
@@ -19,6 +20,7 @@ class NavigationUi {
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
+    private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
 
     private var dim = 100.0
     private var center = Vector2()
@@ -29,6 +31,7 @@ class NavigationUi {
         window.onresize = { resize() }
 
         exitButton.onclick = { clientSocket?.send(Command.CommandExitShip.toJson()) }
+        toHelmButton.onclick = { clientSocket?.send(Command.CommandChangeStation(Helm).toJson()) }
     }
 
     fun show() {

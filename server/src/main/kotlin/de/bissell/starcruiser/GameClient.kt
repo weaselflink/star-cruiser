@@ -44,7 +44,8 @@ class GameClient(
                 is Command.UpdateAcknowledge -> throttleActor.send(AcknowledgeInflightMessage(command.counter))
                 is Command.CommandTogglePause -> gameStateActor.send(TogglePause)
                 is Command.CommandSpawnShip -> gameStateActor.send(SpawnShip)
-                is Command.CommandJoinShip -> gameStateActor.send(JoinShip(id, UUID.fromString(command.shipId)))
+                is Command.CommandJoinShip -> gameStateActor.send(JoinShip(id, command.shipId.toUUID(), command.station))
+                is Command.CommandChangeStation -> gameStateActor.send(ChangeStation(id, command.station))
                 is Command.CommandExitShip -> gameStateActor.send(ExitShip(id))
                 is Command.CommandChangeThrottle -> gameStateActor.send(ChangeThrottle(id, command.value))
                 is Command.CommandChangeRudder -> gameStateActor.send(ChangeRudder(id, command.value))
@@ -72,6 +73,8 @@ class GameClient(
         send(GetGameStateSnapshot(id, response))
         return response.await()
     }
+
+    private fun String.toUUID() = UUID.fromString(this)
 
     companion object {
         suspend fun CoroutineScope.startGameClient(

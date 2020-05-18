@@ -60,9 +60,17 @@ fun Routing.webUi() {
                     zIndex = 10
                     padding = 20.px.value
                 }
-                ".topInfo" {
+                ".topLeftInfo" {
                     position = fixed
                     top = 0.px
+                    left = 0.px
+                    zIndex = 10
+                    padding(20.px, 0.px)
+                }
+                ".topRightInfo" {
+                    position = fixed
+                    top = 0.px
+                    right = 0.px
                     zIndex = 10
                     padding(20.px, 0.px)
                 }
@@ -82,20 +90,32 @@ fun Routing.webUi() {
                     color = lightGrey
                     backgroundColor = black
                     textAlign = center
+                    borderWidth = 3.px
+                    borderStyle = solid
+                    borderColor = darkGrey
+                    cursor = pointer
+                    fontWeight = bold
+                    fontSize = 16.px
+                }
+                "button.leftEdge" {
                     paddingTop = 10.px
                     paddingRight = 16.px
                     paddingBottom = 12.px
                     paddingLeft = 10.px
-                    borderWidth = 3.px
-                    borderStyle = solid
-                    borderColor = darkGrey
                     borderTopLeftRadius = 0.px
                     borderTopRightRadius = 21.px
                     borderBottomRightRadius = 21.px
                     borderBottomLeftRadius = 0.px
-                    cursor = pointer
-                    fontWeight = bold
-                    fontSize = 16.px
+                }
+                "button.rightEdge" {
+                    paddingTop = 10.px
+                    paddingRight = 10.px
+                    paddingBottom = 12.px
+                    paddingLeft = 16.px
+                    borderTopLeftRadius = 21.px
+                    borderTopRightRadius = 0.px
+                    borderBottomRightRadius = 0.px
+                    borderBottomLeftRadius = 21.px
                 }
                 "button:hover" {
                     color = black
@@ -145,11 +165,8 @@ fun Routing.webUi() {
 private fun BODY.joinUi() {
     div {
         id = "join"
-        div(classes = "conn") {
-            +"disconnected"
-        }
-        div(classes = "topInfo") {
-            button(classes = "spawn") {
+        div(classes = "topLeftInfo") {
+            button(classes = "spawn leftEdge") {
                 +"+ Spawn ship"
             }
             div(classes = "playerShips") {}
@@ -160,12 +177,14 @@ private fun BODY.joinUi() {
 private fun BODY.helmUi() {
     div {
         id = "helm"
-        div(classes = "conn") {
-            +"disconnected"
-        }
-        div(classes = "topInfo") {
-            button(classes = "exit") {
+        div(classes = "topLeftInfo") {
+            button(classes = "exit leftEdge") {
                 +"< Exit ship"
+            }
+        }
+        div(classes = "topRightInfo") {
+            button(classes = "switchToNavigation rightEdge") {
+                +"Navigation >"
             }
         }
         canvas {}
@@ -191,12 +210,14 @@ private fun BODY.helmUi() {
 private fun BODY.navigationUi() {
     div {
         id = "navigation"
-        div(classes = "conn") {
-            +"disconnected"
-        }
-        div(classes = "topInfo") {
-            button(classes = "exit") {
+        div(classes = "topLeftInfo") {
+            button(classes = "exit leftEdge") {
                 +"< Exit ship"
+            }
+        }
+        div(classes = "topRightInfo") {
+            button(classes = "switchToHelm rightEdge") {
+                +"Helm >"
             }
         }
         canvas {}

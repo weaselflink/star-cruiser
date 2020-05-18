@@ -2,7 +2,6 @@ import de.bissell.starcruiser.ClientState.*
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.GameStateMessage
 import org.w3c.dom.WebSocket
-import org.w3c.dom.asList
 import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document
 import kotlin.browser.window
@@ -40,16 +39,9 @@ fun createSocket(): WebSocket? {
         clientSocket = this
 
         onopen = {
-            document.getElementsByClassName("conn").asList().forEach {
-                it.innerHTML = "connected"
-            }
             Unit
         }
         onclose = {
-            document.getElementsByClassName("conn").asList().forEach {
-                it.innerHTML = "disconnected"
-            }
-            println("Connection closed")
             clientSocket = null
             Unit
         }

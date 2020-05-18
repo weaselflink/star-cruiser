@@ -1,11 +1,13 @@
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.GameStateMessage
+import de.bissell.starcruiser.Station.Helm
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.asList
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.get
 import kotlin.browser.document
+import kotlin.dom.addClass
 import kotlin.math.max
 
 class JoinUi {
@@ -53,6 +55,7 @@ class JoinUi {
                             it as HTMLElement
                         }.apply {
                             setAttribute("id", playerShip.id)
+                            addClass("leftEdge")
                             innerHTML = buttonText
                             onclick = { selectPlayerShip(it) }
                         }.also {
@@ -74,7 +77,7 @@ class JoinUi {
         clientSocket?.apply {
             val target = event.target as HTMLElement
             val shipId = target.attributes["id"]!!.value
-            send(Command.CommandJoinShip(shipId = shipId).toJson())
+            send(Command.CommandJoinShip(shipId = shipId, station = Helm).toJson())
         }
     }
 }

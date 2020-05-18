@@ -1,13 +1,11 @@
 package de.bissell.starcruiser
 
-import de.bissell.starcruiser.ClientState.Helm
-import de.bissell.starcruiser.ClientState.ShipSelection
+import de.bissell.starcruiser.ClientState.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.actor
-import java.util.Random
-import java.util.UUID
+import java.util.*
 import kotlin.math.PI
 import kotlin.math.abs
 
@@ -16,7 +14,8 @@ sealed class GameStateChange
 object Update : GameStateChange()
 object TogglePause : GameStateChange()
 object SpawnShip : GameStateChange()
-class JoinShip(val clientId: UUID, val shipId: UUID) : GameStateChange()
+class JoinShip(val clientId: UUID, val shipId: UUID, val station: Station) : GameStateChange()
+class ChangeStation(val clientId: UUID, val station: Station) : GameStateChange()
 class ExitShip(val clientId: UUID) : GameStateChange()
 class NewGameClient(val clientId: UUID) : GameStateChange()
 class GameClientDisconnected(val clientId: UUID) : GameStateChange()
@@ -34,7 +33,8 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
             is GameClientDisconnected -> gameState.clientDisconnected(change.clientId)
             is TogglePause -> gameState.togglePaused()
             is SpawnShip -> gameState.spawnShip()
-            is JoinShip -> gameState.joinShip(change.clientId, change.shipId)
+            is JoinShip -> gameState.joinShip(change.clientId, change.shipId, change.station)
+            is ChangeStation -> gameState.changeStation(change.clientId, change.station)
             is ExitShip -> gameState.exitShip(change.clientId)
             is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.value)
             is ChangeRudder -> gameState.changeRudder(change.clientId, change.value)
@@ -74,10 +74,24 @@ class GameState {
         clients[clientId] = Client(clientId)
     }
 
-    fun joinShip(clientId: UUID, shipId: UUID) {
-        clients[clientId]?.also {
-            it.state = Helm
-            it.shipId = shipId
+    fun joinShip(clientId: UUID, shipId: UUID, station: Station) {
+        clients[clientId]?.also { client ->
+            client.state = when (station) {
+                Station.Helm -> Helm
+                Station.Navigation -> Navigation
+            }
+            client.shipId = shipId
+        }
+    }
+
+    fun changeStation(clientId: UUID, station: Station) {
+        clients[clientId]?.also { client ->
+            if (client.shipId != null) {
+                client.state = when (station) {
+                    Station.Helm -> Helm
+                    Station.Navigation -> Navigation
+                }
+            }
         }
     }
 

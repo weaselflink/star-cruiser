@@ -1,4 +1,5 @@
 import de.bissell.starcruiser.*
+import de.bissell.starcruiser.Station.Navigation
 import org.w3c.dom.*
 import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
@@ -13,6 +14,7 @@ class HelmUi {
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
+    private val toNavigationButton = root.querySelector(".switchToNavigation")!! as HTMLButtonElement
 
     private var dim = 100.0
     private var scopeRadius = 100.0
@@ -24,6 +26,7 @@ class HelmUi {
         canvas.onclick = { handleClick(it) }
 
         exitButton.onclick = { clientSocket?.send(Command.CommandExitShip.toJson()) }
+        toNavigationButton.onclick = { clientSocket?.send(Command.CommandChangeStation(Navigation).toJson()) }
     }
 
     private fun resize() {
