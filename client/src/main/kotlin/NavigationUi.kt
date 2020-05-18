@@ -1,16 +1,15 @@
-import de.bissell.starcruiser.Command
-import de.bissell.starcruiser.GameStateMessage
-import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.*
 import de.bissell.starcruiser.Station.Helm
-import de.bissell.starcruiser.Vector2
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 class NavigationUi {
 
@@ -24,11 +23,15 @@ class NavigationUi {
 
     private var dim = 100.0
     private var center = Vector2()
-    private var scale = 1.0 / 4.0
+    private var scaleSetting = 3
+
+    private val scale: Double
+        get() = 4.0 / 2.0.pow(scaleSetting.toDouble())
 
     init {
         resize()
         window.onresize = { resize() }
+        canvas.onclick = { handleClick(it) }
 
         exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
         toHelmButton.onclick = { clientSocket.send(Command.CommandChangeStation(Helm)) }
@@ -43,18 +46,31 @@ class NavigationUi {
     }
 
     fun zoomIn() {
-        scale = min(1.0, scale * 2.0)
+        scaleSetting = (scaleSetting + 1).clip(0, 6)
     }
 
     fun zoomOut() {
-        scale = max(1.0 / 16.0, scale * 0.5)
+        scaleSetting = (scaleSetting - 1).clip(0, 6)
+    }
+
+    private fun handleClick(event: MouseEvent) {
+        val x = event.offsetX
+        val y = event.offsetY
+        val length = dim / 20.0 * 8.0
+        val zoomX = dim / 20.0
+        val zoomY = dim - dim / 20.0
+        val radius = dim / 20.0 * 0.4
+
+        if (x > zoomX && x < zoomX + length && y > zoomY - radius * 2.0 && y < zoomY) {
+            scaleSetting = ((x - zoomX - radius) / (length - radius * 2.0) * 6.0).roundToInt().clip(0, 6)
+        }
     }
 
     private fun resize() {
         val windowWidth: Int = window.innerWidth
         val windowHeight: Int = window.innerHeight
 
-        with (canvas) {
+        with(canvas) {
             if (width != windowWidth || height != windowHeight) {
                 width = windowWidth
                 height = windowHeight
@@ -77,6 +93,7 @@ class NavigationUi {
             drawGrid()
             drawHistory(ship)
             drawShip(ship)
+            drawZoom()
         }
     }
 
@@ -121,6 +138,38 @@ class NavigationUi {
             fill()
             restore()
         }
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawZoom() {
+        resetTransform()
+        save()
+
+        val length = dim / 20.0 * 8.0
+        val bottomX = dim / 20.0
+        val bottomY = dim - dim / 20.0
+        val radius = dim / 20.0 * 0.4
+
+        lineWidth = 3.0
+        fillStyle = "#111"
+        beginPath()
+        drawPill(bottomX, bottomY, length, radius * 2)
+        fill()
+
+        strokeStyle = "#888"
+        beginPath()
+        drawPill(bottomX, bottomY, length, radius * 2)
+        stroke()
+
+        fillStyle = "#999"
+        beginPath()
+        circle(
+            bottomX + radius + scaleSetting / 6.0 * (length - radius * 2.0),
+            bottomY - radius,
+            radius * 0.8
+        )
+        fill()
+
         restore()
     }
 

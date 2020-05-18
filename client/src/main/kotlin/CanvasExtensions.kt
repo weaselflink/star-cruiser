@@ -36,3 +36,23 @@ fun CanvasRenderingContext2D.drawShipSymbol(rot: Double, baseUnit: Double) {
     stroke()
     restore()
 }
+
+fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, height: Double) {
+    if (width > height) {
+        val radius = height / 2.0
+        moveTo(x + radius, y - radius * 2)
+        lineTo(x + width - radius, y - radius * 2)
+        arc(x + width - radius, y - radius, radius, -(PI / 2.0), PI / 2.0)
+        lineTo(x + radius, y)
+        arc(x + radius, y - radius, radius, PI / 2.0, -(PI / 2.0))
+        closePath()
+    } else {
+        val radius = width / 2.0
+        moveTo(x, y - radius)
+        lineTo(x, y - height + radius)
+        arc(x + radius, y - height + radius, radius, PI, 0.0)
+        lineTo(x + radius * 2, y - radius)
+        arc(x + radius, y - radius, radius, 0.0, PI)
+        closePath()
+    }
+}
