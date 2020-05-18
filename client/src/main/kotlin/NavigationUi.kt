@@ -30,8 +30,8 @@ class NavigationUi {
         resize()
         window.onresize = { resize() }
 
-        exitButton.onclick = { clientSocket?.send(Command.CommandExitShip) }
-        toHelmButton.onclick = { clientSocket?.send(Command.CommandChangeStation(Helm)) }
+        exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
+        toHelmButton.onclick = { clientSocket.send(Command.CommandChangeStation(Helm)) }
     }
 
     fun show() {

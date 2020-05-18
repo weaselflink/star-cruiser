@@ -19,7 +19,7 @@ class JoinUi {
             .map {
                 it as HTMLButtonElement
             }.forEach {
-                it.onclick = { clientSocket?.send(Command.CommandSpawnShip) }
+                it.onclick = { clientSocket.send(Command.CommandSpawnShip) }
             }
     }
 
@@ -74,7 +74,7 @@ class JoinUi {
     }
 
     private fun selectPlayerShip(event: MouseEvent) {
-        clientSocket?.apply {
+        clientSocket.apply {
             val target = event.target as HTMLElement
             val shipId = target.attributes["id"]!!.value
             send(Command.CommandJoinShip(shipId = shipId, station = Helm))

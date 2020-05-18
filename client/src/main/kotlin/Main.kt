@@ -60,7 +60,7 @@ fun keyHandler(event: KeyboardEvent) {
     val throttle: Int = state?.snapshot?.ship?.throttle ?: 0
     val rudder: Int = state?.snapshot?.ship?.rudder ?: 0
 
-    clientSocket?.apply {
+    clientSocket.apply {
         when (event.code) {
             "KeyP" -> send(Command.CommandTogglePause)
             "KeyW", "ArrowUp" -> send(Command.CommandChangeThrottle(throttle + 10))
@@ -111,6 +111,6 @@ fun drawUi(stateCopy: GameStateMessage) {
     }
 }
 
-fun WebSocket.send(command: Command) {
-    send(command.toJson())
+fun WebSocket?.send(command: Command) {
+    this?.send(command.toJson())
 }

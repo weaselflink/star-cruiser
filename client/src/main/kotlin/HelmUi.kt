@@ -25,8 +25,8 @@ class HelmUi {
         window.onresize = { resize() }
         canvas.onclick = { handleClick(it) }
 
-        exitButton.onclick = { clientSocket?.send(Command.CommandExitShip) }
-        toNavigationButton.onclick = { clientSocket?.send(Command.CommandChangeStation(Navigation)) }
+        exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
+        toNavigationButton.onclick = { clientSocket.send(Command.CommandChangeStation(Navigation)) }
     }
 
     private fun resize() {
@@ -88,12 +88,12 @@ class HelmUi {
 
         if (x > throttleX && x < throttleX + radius * 2.0 && y > throttleY - length && y < throttleY) {
             val throttle = min(10, max(-10, (-(y - throttleY + length / 2.0) / (length / 2.0 - radius) * 10.0).toInt())) * 10
-            clientSocket?.send(Command.CommandChangeThrottle(throttle))
+            clientSocket.send(Command.CommandChangeThrottle(throttle))
         }
 
         if (x > rudderX && x < rudderX + length && y > rudderY - radius * 2.0 && y < rudderY) {
             val rudder = min(10, max(-10, ((x - rudderX - length / 2.0) / (length / 2.0 - radius) * 10.0).toInt())) * 10
-            clientSocket?.send(Command.CommandChangeRudder(rudder))
+            clientSocket.send(Command.CommandChangeRudder(rudder))
         }
     }
 
