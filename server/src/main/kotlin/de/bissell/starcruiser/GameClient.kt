@@ -89,3 +89,5 @@ class GameClient(
             ).start(this)
     }
 }
+
+suspend fun SendChannel<Frame>.sendText(value: String) = send(Frame.Text(value))

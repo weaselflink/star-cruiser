@@ -7,7 +7,6 @@ import io.ktor.auth.Authentication
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.basic
 import io.ktor.features.ContentNegotiation
-import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.pingPeriod
 import io.ktor.http.cio.websocket.timeout
 import io.ktor.routing.routing
@@ -16,7 +15,6 @@ import io.ktor.server.netty.EngineMain
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -66,5 +64,3 @@ fun Application.module() {
         }
     }
 }
-
-suspend fun SendChannel<Frame>.sendText(value: String) = send(Frame.Text(value))
