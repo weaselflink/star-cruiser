@@ -49,7 +49,7 @@ fun createSocket(): WebSocket? {
             GameStateMessage.parse(event.data.toString()).apply {
                 state = this
             }.also {
-                send(Command.UpdateAcknowledge(counter = it.counter).toJson())
+                send(Command.UpdateAcknowledge(counter = it.counter))
             }
             Unit
         }
@@ -62,11 +62,11 @@ fun keyHandler(event: KeyboardEvent) {
 
     clientSocket?.apply {
         when (event.code) {
-            "KeyP" -> send(Command.CommandTogglePause.toJson())
-            "KeyW", "ArrowUp" -> send(Command.CommandChangeThrottle(throttle + 10).toJson())
-            "KeyS", "ArrowDown" -> send(Command.CommandChangeThrottle(throttle - 10).toJson())
-            "KeyA", "ArrowLeft" -> send(Command.CommandChangeRudder(rudder - 10).toJson())
-            "KeyD", "ArrowRight" -> send(Command.CommandChangeRudder(rudder + 10).toJson())
+            "KeyP" -> send(Command.CommandTogglePause)
+            "KeyW", "ArrowUp" -> send(Command.CommandChangeThrottle(throttle + 10))
+            "KeyS", "ArrowDown" -> send(Command.CommandChangeThrottle(throttle - 10))
+            "KeyA", "ArrowLeft" -> send(Command.CommandChangeRudder(rudder - 10))
+            "KeyD", "ArrowRight" -> send(Command.CommandChangeRudder(rudder + 10))
             "KeyX" -> navigationUi.zoomIn()
             "KeyZ" -> navigationUi.zoomOut()
             "KeyR" -> helmUi.toggleRotateScope()
@@ -109,4 +109,8 @@ fun drawUi(stateCopy: GameStateMessage) {
             }
         }
     }
+}
+
+fun WebSocket.send(command: Command) {
+    send(command.toJson())
 }
