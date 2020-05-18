@@ -194,6 +194,11 @@ private fun BODY.navigationUi() {
         div(classes = "conn") {
             +"disconnected"
         }
+        div(classes = "topInfo") {
+            button(classes = "exit") {
+                +"< Exit ship"
+            }
+        }
         canvas {}
     }
 }

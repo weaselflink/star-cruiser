@@ -10,8 +10,9 @@ import kotlin.math.min
 class HelmUi {
 
     private val root = document.getElementById("helm")!! as HTMLElement
-    private val canvas = root.querySelector("#helm canvas") as HTMLCanvasElement
+    private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
+    private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
 
     private var dim = 100.0
     private var scopeRadius = 100.0
@@ -22,12 +23,7 @@ class HelmUi {
         window.onresize = { resize() }
         canvas.onclick = { handleClick(it) }
 
-        document.getElementsByClassName("exit").asList()
-            .map {
-                it as HTMLButtonElement
-            }.forEach {
-                it.onclick = { clientSocket?.send(Command.CommandExitShip.toJson()) }
-            }
+        exitButton.onclick = { clientSocket?.send(Command.CommandExitShip.toJson()) }
     }
 
     private fun resize() {

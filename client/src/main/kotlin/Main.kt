@@ -90,6 +90,7 @@ fun step() {
 }
 
 fun drawUi(stateCopy: GameStateMessage) {
+    val ship = stateCopy.snapshot.ship
     when (stateCopy.snapshot.clientState) {
         ShipSelection -> {
             helmUi.hide()
@@ -98,15 +99,20 @@ fun drawUi(stateCopy: GameStateMessage) {
             joinUi.draw(stateCopy)
         }
         Helm -> {
-            val ship = stateCopy.snapshot.ship!!
             joinUi.hide()
             navigationUi.hide()
-            helmUi.show()
-            helmUi.draw(ship, stateCopy)
+            helmUi.apply {
+                show()
+                draw(ship!!, stateCopy)
+            }
         }
         Navigation -> {
             helmUi.hide()
             joinUi.hide()
+            navigationUi.apply {
+                show()
+                draw(ship!!, stateCopy)
+            }
         }
     }
 }
