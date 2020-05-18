@@ -100,7 +100,9 @@ class GameState {
         }.id
     }
 
-    fun clientDisconnected(clientId: UUID) {}
+    fun clientDisconnected(clientId: UUID) {
+        clients.remove(clientId)
+    }
 
     fun togglePaused() {
         paused = !paused
