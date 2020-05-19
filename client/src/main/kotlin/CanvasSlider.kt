@@ -20,48 +20,58 @@ class CanvasSlider(
         with(ctx) {
             save()
 
-            lineWidth = 3.0
-            fillStyle = "#111"
-            beginPath()
-            drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
-            fill()
-
-            strokeStyle = "#888"
-            beginPath()
-            drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
-            stroke()
-
-            fillStyle = "#999"
-            beginPath()
-            if (isHorizontal) {
-                circle(
-                    dim.bottomX + dim.radius + value.clip(0.0, 1.0) * (dim.length - dim.radius * 2.0),
-                    dim.bottomY - dim.radius,
-                    dim.radius * 0.8
-                )
-            } else {
-                circle(
-                    dim.bottomX + dim.radius,
-                    dim.bottomY - dim.radius - value.clip(0.0, 1.0) * (dim.length - dim.radius * 2.0),
-                    dim.radius * 0.8
-                )
-            }
-            fill()
-
-            strokeStyle = "#666"
-            lines.forEach {
-                beginPath()
-                if (isHorizontal) {
-                    moveTo(dim.bottomX + dim.radius + it  * (dim.length - dim.radius * 2.0), dim.bottomY - dim.radius * 0.4)
-                    lineTo(dim.bottomX + dim.radius + it  * (dim.length - dim.radius * 2.0), dim.bottomY - dim.radius * 1.6)
-                } else {
-                    moveTo(dim.bottomX + dim.radius * 0.4, dim.bottomY - dim.radius - it * (dim.length - dim.radius * 2.0))
-                    lineTo(dim.bottomX + dim.radius * 1.6, dim.bottomY - dim.radius - it * (dim.length - dim.radius * 2.0))
-                }
-                stroke()
-            }
+            drawPill(dim)
+            drawKnob(dim, value)
+            drawLines(dim)
 
             restore()
+        }
+    }
+
+    private fun CanvasRenderingContext2D.drawPill(dim: SliderDimensions) {
+        lineWidth = 3.0
+        fillStyle = "#111"
+        beginPath()
+        drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
+        fill()
+
+        strokeStyle = "#888"
+        beginPath()
+        drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
+        stroke()
+    }
+
+    private fun CanvasRenderingContext2D.drawKnob(dim: SliderDimensions, value: Double) {
+        fillStyle = "#999"
+        beginPath()
+        if (isHorizontal) {
+            circle(
+                dim.bottomX + dim.radius + value.clip(0.0, 1.0) * (dim.length - dim.radius * 2.0),
+                dim.bottomY - dim.radius,
+                dim.radius * 0.8
+            )
+        } else {
+            circle(
+                dim.bottomX + dim.radius,
+                dim.bottomY - dim.radius - value.clip(0.0, 1.0) * (dim.length - dim.radius * 2.0),
+                dim.radius * 0.8
+            )
+        }
+        fill()
+    }
+
+    private fun CanvasRenderingContext2D.drawLines(dim: SliderDimensions) {
+        strokeStyle = "#666"
+        lines.forEach {
+            beginPath()
+            if (isHorizontal) {
+                moveTo(dim.bottomX + dim.radius + it * (dim.length - dim.radius * 2.0), dim.bottomY - dim.radius * 0.4)
+                lineTo(dim.bottomX + dim.radius + it * (dim.length - dim.radius * 2.0), dim.bottomY - dim.radius * 1.6)
+            } else {
+                moveTo(dim.bottomX + dim.radius * 0.4, dim.bottomY - dim.radius - it * (dim.length - dim.radius * 2.0))
+                lineTo(dim.bottomX + dim.radius * 1.6, dim.bottomY - dim.radius - it * (dim.length - dim.radius * 2.0))
+            }
+            stroke()
         }
     }
 
