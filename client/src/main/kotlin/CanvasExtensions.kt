@@ -45,7 +45,7 @@ fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, heigh
         arc(x + width - radius, y - radius, radius, -(PI / 2.0), PI / 2.0)
         lineTo(x + radius, y)
         arc(x + radius, y - radius, radius, PI / 2.0, -(PI / 2.0))
-        closePath()
+
     } else {
         val radius = width / 2.0
         moveTo(x, y - radius)
@@ -53,6 +53,6 @@ fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, heigh
         arc(x + radius, y - height + radius, radius, PI, 0.0)
         lineTo(x + radius * 2, y - radius)
         arc(x + radius, y - radius, radius, 0.0, PI)
-        closePath()
     }
+    closePath()
 }

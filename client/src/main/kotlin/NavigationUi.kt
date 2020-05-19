@@ -20,6 +20,12 @@ class NavigationUi {
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
     private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
+    private val zoomSlider = CanvasSlider(
+        xExpr = { it / 20.0 },
+        yExpr = { it - it / 20.0 },
+        widthExpr = { it / 20.0 * 8.0 },
+        heightExpr = { it / 20.0 }
+    )
 
     private var dim = 100.0
     private var center = Vector2()
@@ -54,15 +60,8 @@ class NavigationUi {
     }
 
     private fun handleClick(event: MouseEvent) {
-        val x = event.offsetX
-        val y = event.offsetY
-        val length = dim / 20.0 * 8.0
-        val zoomX = dim / 20.0
-        val zoomY = dim - dim / 20.0
-        val radius = dim / 20.0 * 0.4
-
-        if (x > zoomX && x < zoomX + length && y > zoomY - radius * 2.0 && y < zoomY) {
-            scaleSetting = ((x - zoomX - radius) / (length - radius * 2.0) * 6.0).roundToInt().clip(0, 6)
+        if (zoomSlider.isClickInside(canvas, event)) {
+            scaleSetting = (zoomSlider.clickValue(canvas, event) * 6.0).roundToInt()
         }
     }
 
@@ -141,37 +140,8 @@ class NavigationUi {
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawZoom() {
-        resetTransform()
-        save()
-
-        val length = dim / 20.0 * 8.0
-        val bottomX = dim / 20.0
-        val bottomY = dim - dim / 20.0
-        val radius = dim / 20.0 * 0.4
-
-        lineWidth = 3.0
-        fillStyle = "#111"
-        beginPath()
-        drawPill(bottomX, bottomY, length, radius * 2)
-        fill()
-
-        strokeStyle = "#888"
-        beginPath()
-        drawPill(bottomX, bottomY, length, radius * 2)
-        stroke()
-
-        fillStyle = "#999"
-        beginPath()
-        circle(
-            bottomX + radius + scaleSetting / 6.0 * (length - radius * 2.0),
-            bottomY - radius,
-            radius * 0.8
-        )
-        fill()
-
-        restore()
-    }
+    private fun drawZoom() =
+        zoomSlider.draw(canvas, scaleSetting / 6.0)
 
     private fun Vector2.adjustForMap() =
         ((this - center) * scale).let { Vector2(it.x, -it.y) }

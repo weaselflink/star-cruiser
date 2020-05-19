@@ -7,6 +7,7 @@ import kotlin.browser.window
 import kotlin.math.PI
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 class HelmUi {
 
@@ -15,6 +16,20 @@ class HelmUi {
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
     private val toNavigationButton = root.querySelector(".switchToNavigation")!! as HTMLButtonElement
+    private val throttleSlider = CanvasSlider(
+        xExpr = { it / 20.0 },
+        yExpr = { it - it / 20.0 },
+        widthExpr = { it / 20.0 },
+        heightExpr = { it / 20.0 * 8.0 },
+        lines = listOf(0.5)
+    )
+    private val rudderSlider = CanvasSlider(
+        xExpr = { it - it / 20.0 - it / 20.0 * 8.0 },
+        yExpr = { it - it / 20.0 },
+        widthExpr = { it / 20.0 * 8.0 },
+        heightExpr = { it / 20.0 },
+        lines = listOf(0.5)
+    )
 
     private var dim = 100.0
     private var scopeRadius = 100.0
@@ -77,22 +92,13 @@ class HelmUi {
     }
 
     private fun handleClick(event: MouseEvent) {
-        val x = event.offsetX
-        val y = event.offsetY
-        val length = dim / 20.0 * 8.0
-        val throttleX = dim / 20.0
-        val throttleY = dim - dim / 20.0
-        val rudderX = dim - dim / 20.0 - length
-        val rudderY = dim - dim / 20.0
-        val radius = dim / 20.0 * 0.4
-
-        if (x > throttleX && x < throttleX + radius * 2.0 && y > throttleY - length && y < throttleY) {
-            val throttle = min(10, max(-10, (-(y - throttleY + length / 2.0) / (length / 2.0 - radius) * 10.0).toInt())) * 10
+        if (throttleSlider.isClickInside(canvas, event)) {
+            val throttle = min(10.0, max(-10.0, throttleSlider.clickValue(canvas, event) * 20.0 - 10.0)).roundToInt() * 10
             clientSocket.send(Command.CommandChangeThrottle(throttle))
         }
 
-        if (x > rudderX && x < rudderX + length && y > rudderY - radius * 2.0 && y < rudderY) {
-            val rudder = min(10, max(-10, ((x - rudderX - length / 2.0) / (length / 2.0 - radius) * 10.0).toInt())) * 10
+        if (rudderSlider.isClickInside(canvas, event)) {
+            val rudder = min(10.0, max(-10.0, rudderSlider.clickValue(canvas, event) * 20.0 - 10.0)).roundToInt() * 10
             clientSocket.send(Command.CommandChangeRudder(rudder))
         }
     }
@@ -194,81 +200,11 @@ class HelmUi {
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawThrottle(ship: ShipMessage) {
-        resetTransform()
-        save()
+    private fun drawThrottle(ship: ShipMessage) =
+        throttleSlider.draw(canvas, (ship.throttle + 100) / 200.0)
 
-        val length = dim / 20.0 * 8.0
-        val bottomX = dim / 20.0
-        val bottomY = dim - dim / 20.0
-        val radius = dim / 20.0 * 0.4
-
-        lineWidth = 3.0
-        fillStyle = "#111"
-        beginPath()
-        drawPill(bottomX, bottomY, radius * 2, length)
-        fill()
-
-        strokeStyle = "#888"
-        beginPath()
-        drawPill(bottomX, bottomY, radius * 2, length)
-        stroke()
-
-        fillStyle = "#999"
-        beginPath()
-        circle(
-            bottomX + radius,
-            bottomY - length / 2.0 - ship.throttle / 100.0 * (length / 2.0 - radius),
-            radius * 0.8
-        )
-        fill()
-
-        strokeStyle = "#666"
-        beginPath()
-        moveTo(bottomX + radius * 0.4, bottomY - length / 2.0)
-        lineTo(bottomX + radius * 1.6, bottomY - length / 2.0)
-        stroke()
-
-        restore()
-    }
-
-    private fun CanvasRenderingContext2D.drawRudder(ship: ShipMessage) {
-        resetTransform()
-        save()
-
-        val length = dim / 20.0 * 8.0
-        val bottomX = dim - dim / 20.0 - length
-        val bottomY = dim - dim / 20.0
-        val radius = dim / 20.0 * 0.4
-
-        lineWidth = 3.0
-        fillStyle = "#111"
-        beginPath()
-        drawPill(bottomX, bottomY, length, radius * 2)
-        fill()
-
-        strokeStyle = "#888"
-        beginPath()
-        drawPill(bottomX, bottomY, length, radius * 2)
-        stroke()
-
-        fillStyle = "#999"
-        beginPath()
-        circle(
-            bottomX + length / 2.0 + ship.rudder / 100.0 * (length / 2.0 - radius),
-            bottomY - radius,
-            radius * 0.8
-        )
-        fill()
-
-        strokeStyle = "#666"
-        beginPath()
-        moveTo(bottomX + length / 2.0, bottomY - radius * 0.4)
-        lineTo(bottomX + length / 2.0, bottomY - radius * 1.6)
-        stroke()
-
-        restore()
-    }
+    private fun drawRudder(ship: ShipMessage) =
+        rudderSlider.draw(canvas, (ship.rudder + 100) / 200.0)
 
     private fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
         val rot = ship.rotation
