@@ -1,8 +1,6 @@
 import de.bissell.starcruiser.*
 import de.bissell.starcruiser.Station.Helm
-import org.w3c.dom.CENTER
 import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.CanvasTextAlign
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
