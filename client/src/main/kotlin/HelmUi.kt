@@ -132,6 +132,7 @@ class HelmUi {
         circle(0.0, 0.0, scopeRadius)
         clip()
         drawHistory(ship)
+        drawWaypoints(ship)
         stateCopy.snapshot.contacts.forEach {
             ctx.drawContact(ship, it)
         }
@@ -244,13 +245,40 @@ class HelmUi {
 
         for (point in ship.history) {
             val rel = (point.second - ship.position)
-
             val posOnScope = rel.adjustForScope(ship)
             save()
             translate(posOnScope)
             beginPath()
             circle(0.0, 0.0, 2.0)
             fill()
+            restore()
+        }
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawWaypoints(ship: ShipMessage) {
+        save()
+        strokeStyle = "#4682B4"
+        fillStyle = "#4682B4"
+        lineWidth = 3.0
+        val textSize = (scopeRadius * 0.06).toInt()
+        font = "bold ${textSize.px} sans-serif"
+        textAlign = CanvasTextAlign.CENTER
+
+        for (waypoint in ship.waypoints) {
+            val rel = (waypoint.position - ship.position)
+            val posOnScope = rel.adjustForScope(ship)
+            save()
+
+            translate(posOnScope)
+            beginPath()
+            circle(0.0, 0.0, 6.0)
+            stroke()
+
+            rotate(-getScopeRotation(ship))
+            translate(0.0, (-20.0).adjustForScope(ship))
+            fillText("WP${waypoint.index}", 0.0, 0.0)
+
             restore()
         }
         restore()
