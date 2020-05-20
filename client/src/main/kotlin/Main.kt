@@ -22,6 +22,10 @@ fun init() {
     navigationUi = NavigationUi().apply { hide() }
 
     window.requestAnimationFrame { step() }
+    window.onresize = {
+        helmUi.resize()
+        navigationUi.resize()
+    }
 
     createSocket()
 

@@ -5,12 +5,11 @@ import org.w3c.dom.events.MouseEvent
 import kotlin.math.min
 
 class CanvasSlider(
-    private val xExpr: (Double) -> Double,
-    private val yExpr: (Double) -> Double,
-    private val widthExpr: (Double) -> Double,
-    private val heightExpr: (Double) -> Double,
-    private val lines: List<Double> = emptyList(),
-    private val isHorizontal: Boolean = widthExpr(1.0) > heightExpr(1.0)
+    private val xExpr: (CurrentCanvasSize) -> Double,
+    private val yExpr: (CurrentCanvasSize) -> Double,
+    private val widthExpr: (CurrentCanvasSize) -> Double,
+    private val heightExpr: (CurrentCanvasSize) -> Double,
+    private val lines: List<Double> = emptyList()
 ) {
 
     fun draw(canvas: HTMLCanvasElement, value: Double) {
@@ -44,7 +43,7 @@ class CanvasSlider(
     private fun CanvasRenderingContext2D.drawKnob(dim: SliderDimensions, value: Double) {
         fillStyle = "#999"
         beginPath()
-        if (isHorizontal) {
+        if (dim.isHorizontal) {
             circle(
                 dim.bottomX + dim.radius + value.clip(0.0, 1.0) * (dim.length - dim.radius * 2.0),
                 dim.bottomY - dim.radius,
@@ -64,7 +63,7 @@ class CanvasSlider(
         strokeStyle = "#666"
         lines.forEach {
             beginPath()
-            if (isHorizontal) {
+            if (dim.isHorizontal) {
                 moveTo(dim.bottomX + dim.radius + it * (dim.length - dim.radius * 2.0), dim.bottomY - dim.radius * 0.4)
                 lineTo(dim.bottomX + dim.radius + it * (dim.length - dim.radius * 2.0), dim.bottomY - dim.radius * 1.6)
             } else {
@@ -85,7 +84,7 @@ class CanvasSlider(
     fun clickValue(canvas: HTMLCanvasElement, mouseEvent: MouseEvent): Double {
         val dim = currentDimensions(canvas)
 
-        return if (isHorizontal) {
+        return if (dim.isHorizontal) {
             (mouseEvent.offsetX - (dim.bottomX + dim.radius)) / (dim.width - dim.radius * 2.0)
         } else {
             -(mouseEvent.offsetY - (dim.bottomY - dim.radius)) / (dim.height - dim.radius * 2.0)
@@ -93,7 +92,7 @@ class CanvasSlider(
     }
 
     private fun currentDimensions(canvas: HTMLCanvasElement) =
-        min(canvas.width, canvas.height).toDouble().let { dim ->
+        CurrentCanvasSize(canvas.width.toDouble(), canvas.height.toDouble()).let { dim ->
             val width = widthExpr(dim)
             val height = heightExpr(dim)
             SliderDimensions(
@@ -101,11 +100,17 @@ class CanvasSlider(
                 bottomY = yExpr(dim),
                 width = width,
                 height = height,
-                radius = if (isHorizontal) height * 0.5 else width * 0.5,
-                length = if (isHorizontal) width else height
+                radius = if (width > height) height * 0.5 else width * 0.5,
+                length = if (width > height) width else height
             )
         }
 }
+
+data class CurrentCanvasSize(
+    val width: Double,
+    val height: Double,
+    val dim: Double = min(width, height)
+)
 
 private data class SliderDimensions(
     val bottomX: Double,
@@ -113,5 +118,6 @@ private data class SliderDimensions(
     val width: Double,
     val height: Double,
     val radius: Double,
-    val length: Double
+    val length: Double,
+    val isHorizontal: Boolean = width > height
 )

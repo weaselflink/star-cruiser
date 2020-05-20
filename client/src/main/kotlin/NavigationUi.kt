@@ -23,10 +23,10 @@ class NavigationUi {
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
     private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
     private val zoomSlider = CanvasSlider(
-        xExpr = { it / 20.0 },
-        yExpr = { it - it / 20.0 },
-        widthExpr = { it / 20.0 * 8.0 },
-        heightExpr = { it / 20.0 }
+        xExpr = { it.dim * 0.05 },
+        yExpr = { it.dim - it.dim * 0.05 },
+        widthExpr = { it.dim * 0.05 * 8.0 },
+        heightExpr = { it.dim * 0.05 * 1.6 }
     )
 
     private var dim = 100.0
@@ -38,7 +38,6 @@ class NavigationUi {
 
     init {
         resize()
-        window.onresize = { resize() }
         canvas.onclick = { handleClick(it) }
 
         exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
@@ -67,7 +66,7 @@ class NavigationUi {
         }
     }
 
-    private fun resize() {
+    fun resize() {
         val windowWidth: Int = window.innerWidth
         val windowHeight: Int = window.innerHeight
 

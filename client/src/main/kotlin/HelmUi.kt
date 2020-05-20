@@ -17,17 +17,17 @@ class HelmUi {
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
     private val toNavigationButton = root.querySelector(".switchToNavigation")!! as HTMLButtonElement
     private val throttleSlider = CanvasSlider(
-        xExpr = { it / 20.0 },
-        yExpr = { it - it / 20.0 },
-        widthExpr = { it / 20.0 },
-        heightExpr = { it / 20.0 * 8.0 },
+        xExpr = { it.dim * 0.05 },
+        yExpr = { it.dim - it.dim * 0.05 },
+        widthExpr = { it.dim * 0.05 * 1.6 },
+        heightExpr = { it.dim * 0.05 * 8.0 },
         lines = listOf(0.5)
     )
     private val rudderSlider = CanvasSlider(
-        xExpr = { it - it / 20.0 - it / 20.0 * 8.0 },
-        yExpr = { it - it / 20.0 },
-        widthExpr = { it / 20.0 * 8.0 },
-        heightExpr = { it / 20.0 },
+        xExpr = { it.dim - it.dim * 0.05 - it.dim * 0.05 * 8.0 },
+        yExpr = { it.dim - it.dim * 0.05 },
+        widthExpr = { it.dim * 0.05 * 8.0 },
+        heightExpr = { it.dim * 0.05 * 1.6 },
         lines = listOf(0.5)
     )
 
@@ -37,14 +37,13 @@ class HelmUi {
 
     init {
         resize()
-        window.onresize = { resize() }
         canvas.onclick = { handleClick(it) }
 
         exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
         toNavigationButton.onclick = { clientSocket.send(Command.CommandChangeStation(Navigation)) }
     }
 
-    private fun resize() {
+    fun resize() {
         val windowWidth: Int = window.innerWidth
         val windowHeight: Int = window.innerHeight
         val dim: Int = min(window.innerWidth, window.innerHeight)
@@ -84,10 +83,10 @@ class HelmUi {
             resetTransform()
             clear("#222")
 
+            drawScope(stateCopy, ship)
+
             drawThrottle(ship)
             drawRudder(ship)
-
-            drawScope(stateCopy, ship)
         }
     }
 
@@ -123,7 +122,8 @@ class HelmUi {
         }
 
     private fun CanvasRenderingContext2D.drawScope(stateCopy: GameStateMessage, ship: ShipMessage) {
-        resetTransform()
+        save()
+
         translateToCenter()
         rotate(getScopeRotation(ship))
 
@@ -138,6 +138,8 @@ class HelmUi {
         restore()
         drawScopeEdge()
         drawShip(ship)
+
+        restore()
     }
 
     private fun CanvasRenderingContext2D.drawScopeEdge() {
