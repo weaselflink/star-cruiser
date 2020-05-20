@@ -145,12 +145,7 @@ class NavigationUi {
     private fun CanvasRenderingContext2D.drawWaypoints(ship: ShipMessage) {
         save()
         translateToCenter()
-        strokeStyle = "#4682B4"
-        fillStyle = "#4682B4"
-        lineWidth = dim * 0.004
-        val textSize = (dim * 0.02).toInt()
-        font = "bold ${textSize.px} sans-serif"
-        textAlign = CanvasTextAlign.CENTER
+        wayPointStyle(dim)
 
         for (waypoint in ship.waypoints) {
             save()

@@ -1,6 +1,8 @@
 import de.bissell.starcruiser.Vector2
+import org.w3c.dom.CENTER
 import org.w3c.dom.CanvasLineJoin
 import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.CanvasTextAlign
 import org.w3c.dom.ROUND
 import kotlin.math.PI
 
@@ -55,4 +57,21 @@ fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, heigh
         arc(x + radius, y - radius, radius, 0.0, PI)
     }
     closePath()
+}
+
+fun CanvasRenderingContext2D.contactStyle(dim: Double) {
+    strokeStyle = "#555"
+    fillStyle = "#555"
+    val textSize = (dim * 0.02).toInt()
+    font = "bold ${textSize.px} sans-serif"
+    textAlign = CanvasTextAlign.CENTER
+}
+
+fun CanvasRenderingContext2D.wayPointStyle(dim: Double) {
+    strokeStyle = "#4682B4"
+    fillStyle = "#4682B4"
+    lineWidth = dim * 0.004
+    val textSize = (dim * 0.02).toInt()
+    font = "bold ${textSize.px} sans-serif"
+    textAlign = CanvasTextAlign.CENTER
 }
