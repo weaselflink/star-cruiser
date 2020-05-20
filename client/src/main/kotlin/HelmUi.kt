@@ -75,7 +75,7 @@ class HelmUi {
 
     fun draw(ship: ShipMessage, stateCopy: GameStateMessage) {
         dim = min(canvas.width, canvas.height).toDouble()
-        scopeRadius = dim / 2.0 - dim / 10.0
+        scopeRadius = dim * 0.5 - dim * 0.03
 
         updateInfo(ship)
 

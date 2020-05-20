@@ -24,7 +24,7 @@ class NavigationUi {
     private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
     private val zoomSlider = CanvasSlider(
         xExpr = { it.dim * 0.05 },
-        yExpr = { it.dim - it.dim * 0.05 },
+        yExpr = { it.height - it.dim * 0.05 },
         widthExpr = { it.dim * 0.05 * 8.0 },
         heightExpr = { it.dim * 0.05 * 1.6 }
     )
