@@ -1,6 +1,8 @@
 import de.bissell.starcruiser.*
 import de.bissell.starcruiser.Station.Helm
+import org.w3c.dom.CENTER
 import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.CanvasTextAlign
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
@@ -91,6 +93,7 @@ class NavigationUi {
 
             drawGrid()
             drawHistory(ship)
+            drawWaypoints(ship)
             drawShip(ship)
             drawZoom()
         }
@@ -135,6 +138,32 @@ class NavigationUi {
             beginPath()
             circle(0.0, 0.0, 2.0)
             fill()
+            restore()
+        }
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawWaypoints(ship: ShipMessage) {
+        save()
+        translateToCenter()
+        strokeStyle = "#4682B4"
+        fillStyle = "#4682B4"
+        lineWidth = 3.0
+        val textSize = 16
+        font = "bold ${textSize.px} sans-serif"
+        textAlign = CanvasTextAlign.CENTER
+
+        for (waypoint in ship.waypoints) {
+            save()
+
+            translate(waypoint.position.adjustForMap())
+            beginPath()
+            circle(0.0, 0.0, 6.0)
+            stroke()
+
+            translate(0.0, -20.0)
+            fillText("WP${waypoint.index}", 0.0, 0.0)
+
             restore()
         }
         restore()

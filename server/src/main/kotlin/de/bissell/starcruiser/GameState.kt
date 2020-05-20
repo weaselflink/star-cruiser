@@ -104,12 +104,13 @@ class GameState {
 
     fun spawnShip(): UUID {
         return Ship(
-            position = Vector2(
-                x = Random().nextInt(500) - 250.0,
-                y = Random().nextInt(500) - 250.0
-            ),
+            position = Vector2.random(300.0),
             throttle = 100,
-            rudder = 30
+            rudder = 30,
+            waypoints = mutableListOf(
+                Waypoint(1, Vector2.random(1000.0, 500.0)),
+                Waypoint(2, Vector2.random(1000.0, 500.0))
+            )
         ).also {
             ships[it.id] = it
         }.id
@@ -166,7 +167,8 @@ class Ship(
     private var speed: Vector2 = Vector2(),
     private var rotation: Double = 90.0.toRadians(),
     private var throttle: Int = 0,
-    private var rudder: Int = 0
+    private var rudder: Int = 0,
+    private val waypoints: List<Waypoint> = mutableListOf()
 ) {
 
     private var thrust = 0.0
@@ -244,7 +246,8 @@ class Ship(
             thrust = thrust,
             rudder = rudder,
             history = history.map { it.first to it.second },
-            shortRangeScopeRange = shortRangeScopeRange
+            shortRangeScopeRange = shortRangeScopeRange,
+            waypoints = waypoints.filter { true }
         )
 
     fun toContactMessage(relativeTo: Ship) =

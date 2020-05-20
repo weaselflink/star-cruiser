@@ -52,7 +52,8 @@ data class ShipMessage(
     val thrust: Double,
     val rudder: Int,
     val history: List<Pair<Double, Vector2>>,
-    val shortRangeScopeRange: Double
+    val shortRangeScopeRange: Double,
+    val waypoints: List<Waypoint>
 )
 
 @Serializable
@@ -73,3 +74,9 @@ enum class ClientState {
     Helm,
     Navigation
 }
+
+@Serializable
+data class Waypoint(
+    val index: Int,
+    val position: Vector2
+)
