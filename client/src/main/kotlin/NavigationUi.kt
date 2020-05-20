@@ -54,16 +54,16 @@ class NavigationUi {
     }
 
     fun zoomIn() {
-        scaleSetting = (scaleSetting + 1).clip(0, 6)
+        scaleSetting = (scaleSetting - 1).clip(0, 6)
     }
 
     fun zoomOut() {
-        scaleSetting = (scaleSetting - 1).clip(0, 6)
+        scaleSetting = (scaleSetting + 1).clip(0, 6)
     }
 
     private fun handleClick(event: MouseEvent) {
         if (zoomSlider.isClickInside(canvas, event)) {
-            scaleSetting = (zoomSlider.clickValue(canvas, event) * 6.0).roundToInt()
+            scaleSetting = (6.0 - zoomSlider.clickValue(canvas, event) * 6.0).roundToInt()
         }
     }
 
@@ -170,7 +170,7 @@ class NavigationUi {
     }
 
     private fun drawZoom() =
-        zoomSlider.draw(canvas, scaleSetting / 6.0)
+        zoomSlider.draw(canvas, 1.0 - scaleSetting / 6.0)
 
     private fun Vector2.adjustForMap() =
         ((this - center) * scale).let { Vector2(it.x, -it.y) }
