@@ -24,7 +24,7 @@ val Int.px
 
 fun CanvasRenderingContext2D.drawShipSymbol(rot: Double, baseUnit: Double) {
     save()
-    lineWidth = 2.0
+    lineWidth = baseUnit * 0.4
     lineJoin = CanvasLineJoin.ROUND
     rotate(-rot)
     beginPath()

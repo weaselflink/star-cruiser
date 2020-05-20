@@ -221,7 +221,7 @@ class HelmUi {
     private fun CanvasRenderingContext2D.drawContact(ship: ShipMessage, contact: ContactMessage) {
         val rel = contact.relativePosition
         val rot = contact.rotation
-        val textSize = (scopeRadius * 0.06).toInt()
+        val textSize = (dim * 0.02).toInt()
 
         val posOnScope = rel.adjustForScope(ship)
         save()
@@ -234,7 +234,7 @@ class HelmUi {
         font = "bold ${textSize.px} sans-serif"
         fillStyle = "#555"
         rotate(-getScopeRotation(ship))
-        translate(0.0, (-20.0).adjustForScope(ship))
+        translate(0.0, -dim * 0.02)
         fillText(contact.designation, 0.0, 0.0)
         restore()
     }
@@ -249,7 +249,7 @@ class HelmUi {
             save()
             translate(posOnScope)
             beginPath()
-            circle(0.0, 0.0, 2.0)
+            circle(0.0, 0.0, dim * 0.004)
             fill()
             restore()
         }
@@ -260,8 +260,8 @@ class HelmUi {
         save()
         strokeStyle = "#4682B4"
         fillStyle = "#4682B4"
-        lineWidth = 3.0
-        val textSize = (scopeRadius * 0.06).toInt()
+        lineWidth = dim * 0.004
+        val textSize = (dim * 0.02).toInt()
         font = "bold ${textSize.px} sans-serif"
         textAlign = CanvasTextAlign.CENTER
 
@@ -272,11 +272,11 @@ class HelmUi {
 
             translate(posOnScope)
             beginPath()
-            circle(0.0, 0.0, 6.0)
+            circle(0.0, 0.0, dim * 0.008)
             stroke()
 
             rotate(-getScopeRotation(ship))
-            translate(0.0, (-20.0).adjustForScope(ship))
+            translate(0.0, -dim * 0.02)
             fillText("WP${waypoint.index}", 0.0, 0.0)
 
             restore()

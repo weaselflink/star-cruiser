@@ -147,8 +147,8 @@ class NavigationUi {
         translateToCenter()
         strokeStyle = "#4682B4"
         fillStyle = "#4682B4"
-        lineWidth = 3.0
-        val textSize = 16
+        lineWidth = dim * 0.004
+        val textSize = (dim * 0.02).toInt()
         font = "bold ${textSize.px} sans-serif"
         textAlign = CanvasTextAlign.CENTER
 
@@ -157,10 +157,10 @@ class NavigationUi {
 
             translate(waypoint.position.adjustForMap())
             beginPath()
-            circle(0.0, 0.0, 6.0)
+            circle(0.0, 0.0, dim * 0.008)
             stroke()
 
-            translate(0.0, -20.0)
+            translate(0.0, -dim * 0.02)
             fillText("WP${waypoint.index}", 0.0, 0.0)
 
             restore()
