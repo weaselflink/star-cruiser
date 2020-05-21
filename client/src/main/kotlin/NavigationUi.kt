@@ -19,6 +19,7 @@ class NavigationUi {
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
+    private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
     private val zoomSlider = CanvasSlider(
         xExpr = { it.dim * 0.05 },
@@ -39,6 +40,16 @@ class NavigationUi {
         canvas.onclick = { handleClick(it) }
 
         exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
+        fullScreenButton.onclick = {
+            val body = document.querySelector("body")!! as HTMLElement
+            if (document.fullscreenElement == null) {
+                body.requestFullscreen()
+                fullScreenButton.innerText = "Windowed"
+            } else {
+                document.exitFullscreen()
+                fullScreenButton.innerText = "Fullscreen"
+            }
+        }
         toHelmButton.onclick = { clientSocket.send(Command.CommandChangeStation(Helm)) }
     }
 

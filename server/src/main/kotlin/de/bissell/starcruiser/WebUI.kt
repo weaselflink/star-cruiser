@@ -45,6 +45,9 @@ fun Routing.webUi() {
                     color = white
                     fontFamily = "\"Courier New\", Courier, monospace"
                 }
+                "::backdrop" {
+                    backgroundColor = Color("#222")
+                }
                 canvas {
                     position = fixed
                     top = 0.px
@@ -61,6 +64,9 @@ fun Routing.webUi() {
                 }
                 ".topLeftInfo" {
                     position = fixed
+                    display = grid
+                    gap = Gap(10.px.value)
+                    marginTop = 20.px
                     top = 0.px
                     left = 0.px
                     zIndex = 10
@@ -192,7 +198,10 @@ private fun BODY.helmUi() {
         id = "helm"
         div(classes = "topLeftInfo") {
             button(classes = "exit leftEdge") {
-                +"< Exit ship"
+                +"Exit ship"
+            }
+            button(classes = "fullscreen leftEdge") {
+                +"Fullscreen"
             }
         }
         div(classes = "topRightInfo") {
@@ -200,7 +209,7 @@ private fun BODY.helmUi() {
                 +"Helm"
             }
             button(classes = "switchToNavigation rightEdge") {
-                +"Navigation >"
+                +"Navigation"
             }
         }
         canvas {}
@@ -228,12 +237,15 @@ private fun BODY.navigationUi() {
         id = "navigation"
         div(classes = "topLeftInfo") {
             button(classes = "exit leftEdge") {
-                +"< Exit ship"
+                +"Exit ship"
+            }
+            button(classes = "fullscreen leftEdge") {
+                +"Fullscreen"
             }
         }
         div(classes = "topRightInfo") {
             button(classes = "switchToHelm rightEdge") {
-                +"Helm >"
+                +"Helm"
             }
             button(classes = "current rightEdge") {
                 +"Navigation"

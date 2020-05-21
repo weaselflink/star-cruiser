@@ -12,6 +12,7 @@ class HelmUi {
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
+    private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val toNavigationButton = root.querySelector(".switchToNavigation")!! as HTMLButtonElement
     private val throttleSlider = CanvasSlider(
         xExpr = { it.dim * 0.05 },
@@ -37,6 +38,16 @@ class HelmUi {
         canvas.onclick = { handleClick(it) }
 
         exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
+        fullScreenButton.onclick = {
+            val body = document.querySelector("body")!! as HTMLElement
+            if (document.fullscreenElement == null) {
+                body.requestFullscreen()
+                fullScreenButton.innerText = "Windowed"
+            } else {
+                document.exitFullscreen()
+                fullScreenButton.innerText = "Fullscreen"
+            }
+        }
         toNavigationButton.onclick = { clientSocket.send(Command.CommandChangeStation(Navigation)) }
     }
 
