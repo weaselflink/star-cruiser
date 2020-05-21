@@ -301,8 +301,7 @@ class HelmUi {
         closePath()
         stroke()
 
-        textBaseline = CanvasTextBaseline.MIDDLE
-        translate(0.0, -scopeRadius + scopeRadius * 0.16)
+        translate(0.0, -scopeRadius + scopeRadius * 0.14)
         fillText(waypoint.name, 0.0, 0.0)
 
         restore()
