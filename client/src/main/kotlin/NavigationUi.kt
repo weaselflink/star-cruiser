@@ -154,7 +154,7 @@ class NavigationUi {
             stroke()
 
             translate(0.0, -dim * 0.02)
-            fillText("WP${waypoint.index}", 0.0, 0.0)
+            fillText(waypoint.name, 0.0, 0.0)
 
             restore()
         }

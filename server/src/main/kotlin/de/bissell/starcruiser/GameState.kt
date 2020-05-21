@@ -163,7 +163,7 @@ class Ship(
     val shortRangeScopeRange: Double = 400.0,
     private val designation: String = randomShipName(),
     private val shipClass: String = "Infector",
-    private var position: Vector2 = Vector2(),
+    var position: Vector2 = Vector2(),
     private var speed: Vector2 = Vector2(),
     private var rotation: Double = 90.0.toRadians(),
     private var throttle: Int = 0,
@@ -247,7 +247,7 @@ class Ship(
             rudder = rudder,
             history = history.map { it.first to it.second },
             shortRangeScopeRange = shortRangeScopeRange,
-            waypoints = waypoints.filter { true }
+            waypoints = waypoints.map { it.toWaypointMessage(this) }
         )
 
     fun toContactMessage(relativeTo: Ship) =
@@ -260,5 +260,18 @@ class Ship(
             heading = rotation.toHeading(),
             velocity = speed.length(),
             history = history.map { it.first to it.second }
+        )
+}
+
+data class Waypoint(
+    val index: Int,
+    val position: Vector2
+) {
+
+    fun toWaypointMessage(relativeTo: Ship) =
+        WaypointMessage(
+            name = "WP$index",
+            position = position,
+            relativePosition = (position - relativeTo.position)
         )
 }

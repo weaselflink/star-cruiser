@@ -53,7 +53,7 @@ data class ShipMessage(
     val rudder: Int,
     val history: List<Pair<Double, Vector2>>,
     val shortRangeScopeRange: Double,
-    val waypoints: List<Waypoint>
+    val waypoints: List<WaypointMessage>
 )
 
 @Serializable
@@ -76,7 +76,8 @@ enum class ClientState {
 }
 
 @Serializable
-data class Waypoint(
-    val index: Int,
-    val position: Vector2
+data class WaypointMessage(
+    val name: String,
+    val position: Vector2,
+    val relativePosition: Vector2
 )

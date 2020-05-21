@@ -258,8 +258,7 @@ class HelmUi {
         wayPointStyle(dim)
 
         for (waypoint in ship.waypoints) {
-            val rel = (waypoint.position - ship.position)
-            val posOnScope = rel.adjustForScope(ship)
+            val posOnScope = waypoint.relativePosition.adjustForScope(ship)
             save()
 
             translate(posOnScope)
@@ -269,7 +268,7 @@ class HelmUi {
 
             rotate(-getScopeRotation(ship))
             translate(0.0, -dim * 0.02)
-            fillText("WP${waypoint.index}", 0.0, 0.0)
+            fillText(waypoint.name, 0.0, 0.0)
 
             restore()
         }
