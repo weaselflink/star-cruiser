@@ -28,7 +28,7 @@ class CanvasSlider(
     }
 
     private fun CanvasRenderingContext2D.drawPill(dim: SliderDimensions) {
-        lineWidth = 3.0
+        lineWidth = dim.lineWidth
         fillStyle = "#111"
         beginPath()
         drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
@@ -101,7 +101,8 @@ class CanvasSlider(
                 width = width,
                 height = height,
                 radius = if (width > height) height * 0.5 else width * 0.5,
-                length = if (width > height) width else height
+                length = if (width > height) width else height,
+                lineWidth = dim.dim * 0.004
             )
         }
 }
@@ -119,5 +120,6 @@ private data class SliderDimensions(
     val height: Double,
     val radius: Double,
     val length: Double,
+    val lineWidth: Double,
     val isHorizontal: Boolean = width > height
 )

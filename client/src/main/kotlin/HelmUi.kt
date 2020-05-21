@@ -155,7 +155,7 @@ class HelmUi {
 
     private fun CanvasRenderingContext2D.drawScopeEdge() {
         save()
-        lineWidth = 5.0
+        lineWidth = dim * 0.01
         strokeStyle = "#666"
         beginPath()
         circle(0.0, 0.0, scopeRadius)
@@ -177,7 +177,7 @@ class HelmUi {
         val textSize = (scopeRadius * 0.06).toInt()
         strokeStyle = "#222"
         fillStyle = "#222"
-        lineWidth = 3.0
+        lineWidth = dim * 0.006
         lineCap = CanvasLineCap.ROUND
         textAlign = CanvasTextAlign.CENTER
         font = "bold ${textSize.px} sans-serif"
@@ -203,7 +203,7 @@ class HelmUi {
 
         save()
         strokeStyle = "#222"
-        lineWidth = 2.0
+        lineWidth = dim * 0.004
         for (i in 1..3) {
             val radius = (ship.shortRangeScopeRange / 4.0 * i).adjustForScope(ship)
             beginPath()
