@@ -24,7 +24,6 @@ import kotlinx.css.Display.block
 import kotlinx.css.Display.grid
 import kotlinx.css.FontWeight.Companion.bold
 import kotlinx.css.Position.fixed
-import kotlinx.css.TextAlign.center
 import kotlinx.html.*
 
 fun Routing.webUi() {
@@ -69,6 +68,9 @@ fun Routing.webUi() {
                 }
                 ".topRightInfo" {
                     position = fixed
+                    display = grid
+                    gap = Gap(10.px.value)
+                    marginTop = 20.px
                     top = 0.px
                     right = 0.px
                     zIndex = 10
@@ -89,13 +91,21 @@ fun Routing.webUi() {
                     display = block
                     color = lightGrey
                     backgroundColor = black
-                    textAlign = center
+                    textAlign = TextAlign.left
                     borderWidth = 3.px
                     borderStyle = solid
                     borderColor = darkGrey
                     cursor = pointer
                     fontWeight = bold
                     fontSize = 16.px
+                }
+                "button.current" {
+                    color = black
+                    backgroundColor = darkGrey
+                }
+                "button.current::hover" {
+                    color = black
+                    backgroundColor = darkGrey
                 }
                 "button.leftEdge" {
                     paddingTop = 10.px
@@ -125,6 +135,9 @@ fun Routing.webUi() {
                     color = black
                     backgroundColor = dimGrey
                     borderColor = dimGrey
+                }
+                "button.current" {
+
                 }
             }.toString()
         }
@@ -183,6 +196,9 @@ private fun BODY.helmUi() {
             }
         }
         div(classes = "topRightInfo") {
+            button(classes = "current rightEdge") {
+                +"Helm"
+            }
             button(classes = "switchToNavigation rightEdge") {
                 +"Navigation >"
             }
@@ -218,6 +234,9 @@ private fun BODY.navigationUi() {
         div(classes = "topRightInfo") {
             button(classes = "switchToHelm rightEdge") {
                 +"Helm >"
+            }
+            button(classes = "current rightEdge") {
+                +"Navigation"
             }
         }
         canvas {}
