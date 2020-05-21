@@ -4,10 +4,7 @@ import org.w3c.dom.*
 import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.math.PI
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
+import kotlin.math.*
 
 class HelmUi {
 
@@ -129,8 +126,10 @@ class HelmUi {
 
         drawCompass(ship)
         save()
+        beginPath()
         circle(0.0, 0.0, scopeRadius)
         clip()
+
         drawHistory(ship)
         drawWaypoints(ship)
         stateCopy.snapshot.contacts.forEach {
@@ -213,7 +212,7 @@ class HelmUi {
         val rot = ship.rotation
 
         save()
-        strokeStyle = "#1e90ff"
+        shipStyle(dim)
         drawShipSymbol(rot, dim * 0.008)
         restore()
     }
@@ -238,7 +237,7 @@ class HelmUi {
 
     private fun CanvasRenderingContext2D.drawHistory(ship: ShipMessage) {
         save()
-        fillStyle = "#222"
+        historyStyle(dim)
 
         for (point in ship.history) {
             val rel = (point.second - ship.position)
@@ -258,20 +257,54 @@ class HelmUi {
         wayPointStyle(dim)
 
         for (waypoint in ship.waypoints) {
-            val posOnScope = waypoint.relativePosition.adjustForScope(ship)
-            save()
-
-            translate(posOnScope)
-            beginPath()
-            circle(0.0, 0.0, dim * 0.008)
-            stroke()
-
-            rotate(-getScopeRotation(ship))
-            translate(0.0, -dim * 0.02)
-            fillText(waypoint.name, 0.0, 0.0)
-
-            restore()
+            val distance = waypoint.relativePosition.length()
+            if (distance < ship.shortRangeScopeRange * 0.9) {
+                drawOnScopeWaypoint(ship, waypoint)
+            } else {
+                drawOffScopeWaypoint(waypoint)
+            }
         }
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawOnScopeWaypoint(
+        ship: ShipMessage,
+        waypoint: WaypointMessage
+    ) {
+        val posOnScope = waypoint.relativePosition.adjustForScope(ship)
+        save()
+
+        translate(posOnScope)
+        beginPath()
+        circle(0.0, 0.0, dim * 0.008)
+        stroke()
+
+        rotate(-getScopeRotation(ship))
+        translate(0.0, -dim * 0.02)
+        fillText(waypoint.name, 0.0, 0.0)
+
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawOffScopeWaypoint(
+        waypoint: WaypointMessage
+    ) {
+        val rel = waypoint.relativePosition
+        val angle = atan2(rel.y, rel.x)
+        save()
+
+        rotate(-angle + PI * 0.5)
+        beginPath()
+        moveTo(0.0, -scopeRadius + scopeRadius * 0.05)
+        lineTo(scopeRadius * 0.03, -scopeRadius + scopeRadius * 0.08)
+        lineTo(-scopeRadius * 0.03, -scopeRadius + scopeRadius * 0.08)
+        closePath()
+        stroke()
+
+        textBaseline = CanvasTextBaseline.MIDDLE
+        translate(0.0, -scopeRadius + scopeRadius * 0.16)
+        fillText(waypoint.name, 0.0, 0.0)
+
         restore()
     }
 

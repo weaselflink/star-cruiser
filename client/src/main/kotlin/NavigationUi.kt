@@ -119,7 +119,7 @@ class NavigationUi {
         save()
         translateToCenter()
         translate(ship.position.adjustForMap())
-        strokeStyle = "#1e90ff"
+        shipStyle(dim)
         drawShipSymbol(ship.rotation, dim * 0.008)
         restore()
     }
