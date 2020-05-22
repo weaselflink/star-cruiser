@@ -21,6 +21,9 @@ data class Vector2(
     operator fun times(other: Double): Vector2 =
         Vector2(x * other, y * other)
 
+    operator fun div(other: Double): Vector2 =
+        Vector2(x / other, y / other)
+
     fun isZero() = x == 0.0 && y == 0.0
 
     fun length(): Double =

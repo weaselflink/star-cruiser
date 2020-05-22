@@ -22,6 +22,7 @@ class MouseEventDispatcher(
         canvas.onmousedown = { handleMouseDown(canvas, it) }
         canvas.onmousemove = { handleMouseMove(canvas, it) }
         canvas.onmouseup = { handleMouseUp(canvas, it) }
+        canvas.onmouseleave = { handleMouseUp(canvas, it) }
     }
 
     fun addHandler(handler: MouseEventHandler) {

@@ -11,6 +11,12 @@ fun CanvasRenderingContext2D.translateToCenter() {
     translate(canvas.width / 2.0, canvas.height / 2.0)
 }
 
+fun CanvasRenderingContext2D.moveTo(vector: Vector2) =
+    moveTo(vector.x, vector.y)
+
+fun CanvasRenderingContext2D.lineTo(vector: Vector2) =
+    lineTo(vector.x, vector.y)
+
 fun CanvasRenderingContext2D.translate(vector: Vector2) =
     translate(vector.x, vector.y)
 

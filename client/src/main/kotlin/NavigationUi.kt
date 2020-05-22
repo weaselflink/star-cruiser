@@ -4,6 +4,7 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.math.min
@@ -39,6 +40,7 @@ class NavigationUi {
     init {
         resize()
         mouseEventDispatcher.addHandler(zoomSlider)
+        mouseEventDispatcher.addHandler(MapMouseEventHandler())
 
         exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
         fullScreenButton.onclick = {
@@ -112,14 +114,14 @@ class NavigationUi {
         strokeStyle = "#4682b4"
         (-20..20).forEach { gridX ->
             beginPath()
-            moveTo(gridX * gridSize * scale, -20_000.0 * scale)
-            lineTo(gridX * gridSize * scale, 20_000.0 * scale)
+            moveTo(Vector2(gridX * gridSize, -20_000.0).adjustForMap())
+            lineTo(Vector2(gridX * gridSize, +20_000.0).adjustForMap())
             stroke()
         }
         (-20..20).forEach { gridY ->
             beginPath()
-            moveTo(-20_000.0 * scale, gridY * gridSize * scale)
-            lineTo(20_000.0 * scale, gridY * gridSize * scale)
+            moveTo(Vector2(-20_000.0, gridY * gridSize).adjustForMap())
+            lineTo(Vector2(20_000.0, gridY * gridSize).adjustForMap())
             stroke()
         }
         restore()
@@ -176,4 +178,28 @@ class NavigationUi {
 
     private fun Vector2.adjustForMap() =
         ((this - center) * scale).let { Vector2(it.x, -it.y) }
+
+    inner class MapMouseEventHandler : MouseEventHandler {
+
+        private var lastEvent: Vector2? = null
+
+        override fun handleMouseDown(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
+            lastEvent = Vector2(mouseEvent.offsetX, mouseEvent.offsetY)
+        }
+
+        override fun handleMouseMove(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
+            val currentEvent = Vector2(mouseEvent.offsetX, mouseEvent.offsetY)
+            lastEvent?.let {
+                center += (currentEvent - it).convert()
+            }
+            lastEvent = currentEvent
+        }
+
+        override fun handleMouseUp(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
+            lastEvent = null
+        }
+
+        private fun Vector2.convert() =
+            (this / scale).let { Vector2(-it.x, it.y) }
+    }
 }
