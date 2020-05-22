@@ -9,8 +9,9 @@ class CanvasSlider(
     private val yExpr: (CurrentCanvasSize) -> Double,
     private val widthExpr: (CurrentCanvasSize) -> Double,
     private val heightExpr: (CurrentCanvasSize) -> Double,
+    private val onChange: (Double) -> Unit = {},
     private val lines: List<Double> = emptyList()
-) {
+) : MouseEventHandler {
 
     fun draw(canvas: HTMLCanvasElement, value: Double) {
         val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
@@ -25,6 +26,35 @@ class CanvasSlider(
 
             restore()
         }
+    }
+
+    override fun isInterestedIn(canvas: HTMLCanvasElement, mouseEvent: MouseEvent): Boolean {
+        val dim = currentDimensions(canvas)
+
+        return mouseEvent.offsetX > dim.bottomX && mouseEvent.offsetX < dim.bottomX + dim.width
+                && mouseEvent.offsetY > dim.bottomY - dim.height && mouseEvent.offsetY < dim.bottomY
+    }
+
+    override fun handleMouseDown(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
+        onChange(clickValue(canvas, mouseEvent))
+    }
+
+    override fun handleMouseMove(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
+        onChange(clickValue(canvas, mouseEvent))
+    }
+
+    override fun handleMouseUp(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
+        onChange(clickValue(canvas, mouseEvent))
+    }
+
+    private fun clickValue(canvas: HTMLCanvasElement, mouseEvent: MouseEvent): Double {
+        val dim = currentDimensions(canvas)
+
+        return if (dim.isHorizontal) {
+            (mouseEvent.offsetX - (dim.bottomX + dim.radius)) / (dim.width - dim.radius * 2.0)
+        } else {
+            -(mouseEvent.offsetY - (dim.bottomY - dim.radius)) / (dim.height - dim.radius * 2.0)
+        }.clip(0.0, 1.0)
     }
 
     private fun CanvasRenderingContext2D.drawPill(dim: SliderDimensions) {
@@ -72,23 +102,6 @@ class CanvasSlider(
             }
             stroke()
         }
-    }
-
-    fun isClickInside(canvas: HTMLCanvasElement, mouseEvent: MouseEvent): Boolean {
-        val dim = currentDimensions(canvas)
-
-        return mouseEvent.offsetX > dim.bottomX && mouseEvent.offsetX < dim.bottomX + dim.width
-                && mouseEvent.offsetY > dim.bottomY - dim.height && mouseEvent.offsetY < dim.bottomY
-    }
-
-    fun clickValue(canvas: HTMLCanvasElement, mouseEvent: MouseEvent): Double {
-        val dim = currentDimensions(canvas)
-
-        return if (dim.isHorizontal) {
-            (mouseEvent.offsetX - (dim.bottomX + dim.radius)) / (dim.width - dim.radius * 2.0)
-        } else {
-            -(mouseEvent.offsetY - (dim.bottomY - dim.radius)) / (dim.height - dim.radius * 2.0)
-        }.clip(0.0, 1.0)
     }
 
     private fun currentDimensions(canvas: HTMLCanvasElement) =

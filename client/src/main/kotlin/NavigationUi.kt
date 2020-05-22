@@ -4,7 +4,6 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
-import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.math.min
@@ -18,6 +17,7 @@ class NavigationUi {
     private val root = document.getElementById("navigation")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
+    private val mouseEventDispatcher = MouseEventDispatcher(canvas)
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
     private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
@@ -25,7 +25,8 @@ class NavigationUi {
         xExpr = { it.dim * 0.05 },
         yExpr = { it.height - it.dim * 0.05 },
         widthExpr = { it.dim * 0.05 * 8.0 },
-        heightExpr = { it.dim * 0.05 * 1.6 }
+        heightExpr = { it.dim * 0.05 * 1.6 },
+        onChange = { changeZoom(it) }
     )
 
     private var dim = 100.0
@@ -37,7 +38,7 @@ class NavigationUi {
 
     init {
         resize()
-        canvas.onclick = { handleClick(it) }
+        mouseEventDispatcher.addHandler(zoomSlider)
 
         exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
         fullScreenButton.onclick = {
@@ -69,10 +70,8 @@ class NavigationUi {
         scaleSetting = (scaleSetting + 1).clip(0, 6)
     }
 
-    private fun handleClick(event: MouseEvent) {
-        if (zoomSlider.isClickInside(canvas, event)) {
-            scaleSetting = (6.0 - zoomSlider.clickValue(canvas, event) * 6.0).roundToInt()
-        }
+    private fun changeZoom(value: Double) {
+        scaleSetting = (6.0 - value * 6.0).roundToInt()
     }
 
     fun resize() {

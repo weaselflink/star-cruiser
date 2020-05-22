@@ -1,7 +1,6 @@
 import de.bissell.starcruiser.*
 import de.bissell.starcruiser.Station.Navigation
 import org.w3c.dom.*
-import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.math.*
@@ -11,6 +10,7 @@ class HelmUi {
     private val root = document.getElementById("helm")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
+    private val mouseEventDispatcher = MouseEventDispatcher(canvas)
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
     private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val toNavigationButton = root.querySelector(".switchToNavigation")!! as HTMLButtonElement
@@ -19,6 +19,10 @@ class HelmUi {
         yExpr = { it.dim - it.dim * 0.05 },
         widthExpr = { it.dim * 0.05 * 1.6 },
         heightExpr = { it.dim * 0.05 * 8.0 },
+        onChange = {
+            val throttle = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
+            clientSocket.send(Command.CommandChangeThrottle(throttle))
+        },
         lines = listOf(0.5)
     )
     private val rudderSlider = CanvasSlider(
@@ -26,6 +30,10 @@ class HelmUi {
         yExpr = { it.dim - it.dim * 0.05 },
         widthExpr = { it.dim * 0.05 * 8.0 },
         heightExpr = { it.dim * 0.05 * 1.6 },
+        onChange = {
+            val rudder = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
+            clientSocket.send(Command.CommandChangeRudder(rudder))
+        },
         lines = listOf(0.5)
     )
 
@@ -35,7 +43,8 @@ class HelmUi {
 
     init {
         resize()
-        canvas.onclick = { handleClick(it) }
+        mouseEventDispatcher.addHandler(throttleSlider)
+        mouseEventDispatcher.addHandler(rudderSlider)
 
         exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
         fullScreenButton.onclick = {
@@ -95,18 +104,6 @@ class HelmUi {
 
             drawThrottle(ship)
             drawRudder(ship)
-        }
-    }
-
-    private fun handleClick(event: MouseEvent) {
-        if (throttleSlider.isClickInside(canvas, event)) {
-            val throttle = min(10.0, max(-10.0, throttleSlider.clickValue(canvas, event) * 20.0 - 10.0)).roundToInt() * 10
-            clientSocket.send(Command.CommandChangeThrottle(throttle))
-        }
-
-        if (rudderSlider.isClickInside(canvas, event)) {
-            val rudder = min(10.0, max(-10.0, rudderSlider.clickValue(canvas, event) * 20.0 - 10.0)).roundToInt() * 10
-            clientSocket.send(Command.CommandChangeRudder(rudder))
         }
     }
 
