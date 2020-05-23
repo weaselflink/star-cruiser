@@ -1,5 +1,6 @@
 import de.bissell.starcruiser.*
 import de.bissell.starcruiser.Station.Helm
+import de.bissell.starcruiser.Station.MainScreen
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -22,6 +23,7 @@ class NavigationUi {
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
     private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
+    private val toMainScreenButton = root.querySelector(".switchToMainScreen")!! as HTMLButtonElement
     private val zoomSlider = CanvasSlider(
         xExpr = { it.dim * 0.05 },
         yExpr = { it.height - it.dim * 0.05 },
@@ -54,6 +56,7 @@ class NavigationUi {
             }
         }
         toHelmButton.onclick = { clientSocket.send(Command.CommandChangeStation(Helm)) }
+        toMainScreenButton.onclick = { clientSocket.send(Command.CommandChangeStation(MainScreen)) }
     }
 
     fun show() {

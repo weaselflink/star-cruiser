@@ -79,6 +79,7 @@ class GameState {
             client.state = when (station) {
                 Station.Helm -> Helm
                 Station.Navigation -> Navigation
+                Station.MainScreen -> MainScreen
             }
             client.shipId = shipId
         }
@@ -90,6 +91,7 @@ class GameState {
                 client.state = when (station) {
                     Station.Helm -> Helm
                     Station.Navigation -> Navigation
+                    Station.MainScreen -> MainScreen
                 }
             }
         }

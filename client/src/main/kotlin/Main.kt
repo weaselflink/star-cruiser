@@ -9,6 +9,7 @@ import kotlin.browser.window
 lateinit var joinUi: JoinUi
 lateinit var helmUi: HelmUi
 lateinit var navigationUi: NavigationUi
+lateinit var mainScreenUi: MainScreenUi
 var clientSocket: WebSocket? = null
 var state: GameStateMessage? = null
 
@@ -20,11 +21,13 @@ fun init() {
     joinUi = JoinUi().apply { show() }
     helmUi = HelmUi().apply { hide() }
     navigationUi = NavigationUi().apply { hide() }
+    mainScreenUi = MainScreenUi().apply { hide() }
 
     window.requestAnimationFrame { step() }
     window.onresize = {
         helmUi.resize()
         navigationUi.resize()
+        mainScreenUi.resize()
     }
 
     createSocket()
@@ -93,12 +96,14 @@ fun drawUi(stateCopy: GameStateMessage) {
         ShipSelection -> {
             helmUi.hide()
             navigationUi.hide()
+            mainScreenUi.hide()
             joinUi.show()
             joinUi.draw(stateCopy)
         }
         Helm -> {
             joinUi.hide()
             navigationUi.hide()
+            mainScreenUi.hide()
             helmUi.apply {
                 show()
                 draw(ship!!, stateCopy)
@@ -107,7 +112,17 @@ fun drawUi(stateCopy: GameStateMessage) {
         Navigation -> {
             helmUi.hide()
             joinUi.hide()
+            mainScreenUi.hide()
             navigationUi.apply {
+                show()
+                draw(ship!!, stateCopy)
+            }
+        }
+        MainScreen -> {
+            helmUi.hide()
+            joinUi.hide()
+            navigationUi.hide()
+            mainScreenUi.apply {
                 show()
                 draw(ship!!, stateCopy)
             }

@@ -158,6 +158,10 @@ fun Routing.webUi() {
                 }
                 script {
                     type = ScriptType.textJavaScript
+                    src = "/js/three.min.js"
+                }
+                script {
+                    type = ScriptType.textJavaScript
                     src = "/js/client.js"
                 }
                 link {
@@ -169,6 +173,7 @@ fun Routing.webUi() {
                 joinUi()
                 helmUi()
                 navigationUi()
+                mainScreenUi()
             }
         }
     }
@@ -211,6 +216,9 @@ private fun BODY.helmUi() {
             button(classes = "switchToNavigation rightEdge") {
                 +"Navigation"
             }
+            button(classes = "switchToMainScreen rightEdge") {
+                +"Main screen"
+            }
         }
         canvas {}
         div(classes = "info") {
@@ -249,6 +257,35 @@ private fun BODY.navigationUi() {
             }
             button(classes = "current rightEdge") {
                 +"Navigation"
+            }
+            button(classes = "switchToMainScreen rightEdge") {
+                +"Main screen"
+            }
+        }
+        canvas {}
+    }
+}
+
+private fun BODY.mainScreenUi() {
+    div {
+        id = "main-screen"
+        div(classes = "topLeftInfo") {
+            button(classes = "exit leftEdge") {
+                +"Exit ship"
+            }
+            button(classes = "fullscreen leftEdge") {
+                +"Fullscreen"
+            }
+        }
+        div(classes = "topRightInfo") {
+            button(classes = "switchToHelm rightEdge") {
+                +"Helm"
+            }
+            button(classes = "switchToNavigation rightEdge") {
+                +"Navigation"
+            }
+            button(classes = "current rightEdge") {
+                +"Main screen"
             }
         }
         canvas {}

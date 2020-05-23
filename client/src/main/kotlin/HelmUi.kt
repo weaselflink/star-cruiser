@@ -14,6 +14,7 @@ class HelmUi {
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
     private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val toNavigationButton = root.querySelector(".switchToNavigation")!! as HTMLButtonElement
+    private val toMainScreenButton = root.querySelector(".switchToMainScreen")!! as HTMLButtonElement
     private val throttleSlider = CanvasSlider(
         xExpr = { it.dim * 0.05 },
         yExpr = { it.dim - it.dim * 0.05 },
@@ -58,6 +59,7 @@ class HelmUi {
             }
         }
         toNavigationButton.onclick = { clientSocket.send(Command.CommandChangeStation(Navigation)) }
+        toMainScreenButton.onclick = { clientSocket.send(Command.CommandChangeStation(Station.MainScreen)) }
     }
 
     fun resize() {

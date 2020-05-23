@@ -72,7 +72,8 @@ data class ContactMessage(
 enum class ClientState {
     ShipSelection,
     Helm,
-    Navigation
+    Navigation,
+    MainScreen
 }
 
 @Serializable

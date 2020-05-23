@@ -40,5 +40,6 @@ sealed class Command {
 @Serializable
 enum class Station {
     Helm,
-    Navigation
+    Navigation,
+    MainScreen
 }
