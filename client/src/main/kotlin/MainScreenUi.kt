@@ -3,12 +3,12 @@ import de.bissell.starcruiser.GameStateMessage
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.Station.Helm
 import de.bissell.starcruiser.Station.Navigation
-
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import three.cameras.PerspectiveCamera
 import three.core.Color
+import three.core.Object3D
 import three.geometries.BoxGeometry
 import three.materials.MaterialParameters
 import three.materials.MeshBasicMaterial
@@ -28,10 +28,12 @@ class MainScreenUi {
     private val camera = PerspectiveCamera(
         fov = 75,
         aspect = window.innerWidth.toDouble() / window.innerHeight.toDouble(),
-        near = 0.1,
+        near = 1,
         far = 1000
     )
-    private val cube: Mesh
+    private val contactGroup = Object3D().also { scene.add(it) }
+    private val geometry = BoxGeometry(10, 10, 10)
+    private val material = MeshBasicMaterial(MaterialParameters(color = Color(0x5f9ea0), wireframe = true))
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
     private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
@@ -52,13 +54,6 @@ class MainScreenUi {
         }
         toHelmButton.onclick = { clientSocket.send(Command.CommandChangeStation(Helm)) }
         toNavigationButton.onclick = { clientSocket.send(Command.CommandChangeStation(Navigation)) }
-
-        val geometry = BoxGeometry()
-        val material = MeshBasicMaterial(MaterialParameters(color = Color(0x5f9ea0), wireframe = true))
-        cube = Mesh(geometry, material)
-        scene.add(cube)
-
-        camera.position.z = 5.0
     }
 
     fun resize() {
@@ -79,8 +74,18 @@ class MainScreenUi {
     }
 
     fun draw(ship: ShipMessage, stateCopy: GameStateMessage) {
-        cube.rotation.x += 0.01
-        cube.rotation.y += 0.01
+        camera.rotation.y = ship.rotation
+
+        contactGroup.remove(*contactGroup.children)
+        stateCopy.snapshot.contacts.map {
+            Mesh(geometry, material).apply {
+                position.z = -it.relativePosition.x
+                position.x = -it.relativePosition.y
+                rotation.y = it.rotation
+            }
+        }.forEach {
+            contactGroup.add(it)
+        }
 
         renderer.render(scene, camera)
     }
