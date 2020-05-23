@@ -9,5 +9,7 @@ open external class PerspectiveCamera(
     far: Number
 ) : Camera {
 
+    var aspect: Number
+
     fun updateProjectionMatrix()
 }
