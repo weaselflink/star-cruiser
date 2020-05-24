@@ -22,3 +22,11 @@ Then open the URL shown in the logs in a browser
 
 Spawn a ship and click it, now you should see a radar-like UI.
 Try pressing W,A,S,D,P or clicking stuff.
+
+### Thanks to
+
+Initial space ship model created by [niko-3d-models](https://niko-3d-models.itch.io). 
+The model is from the [free sci-fi spaceships pack](https://niko-3d-models.itch.io/free-sc-fi-spaceships-pack).
+
+Textures for sky box created with [Spacescape](http://wwwtyro.github.io/space-3d) 
+(Source: https://github.com/petrocket/spacescape).

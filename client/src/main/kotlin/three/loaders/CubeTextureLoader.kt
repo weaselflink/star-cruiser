@@ -2,20 +2,16 @@
 
 package three.loaders
 
-import three.objects.Group
+import three.textures.CubeTexture
 
-external class GLTFLoader(
+external class CubeTextureLoader(
     manager: LoadingManager? = definedExternally
 ) : Loader {
 
     fun load(
-        url: String,
-        onLoad: (GLTF) -> Unit = definedExternally,
+        urls: Array<String>,
+        onLoad: (CubeTexture) -> Unit = definedExternally,
         onProgress: ((dynamic) -> Unit)? = definedExternally,
         onError: ((dynamic) -> Unit)? = definedExternally
-    )
-}
-
-external interface GLTF {
-    var scene: Group
+    ): CubeTexture
 }

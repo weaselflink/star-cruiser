@@ -2,4 +2,6 @@
 
 package three.loaders
 
-open external class Loader
+open external class Loader(
+    manager: LoadingManager? = definedExternally
+)

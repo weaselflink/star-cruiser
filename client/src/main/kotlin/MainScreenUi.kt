@@ -11,6 +11,7 @@ import three.cameras.PerspectiveCamera
 import three.core.Object3D
 import three.lights.AmbientLight
 import three.lights.DirectionalLight
+import three.loaders.CubeTextureLoader
 import three.loaders.GLTFLoader
 import three.objects.Group
 import three.renderers.WebGLRenderer
@@ -69,9 +70,23 @@ class MainScreenUi {
         scene.add(directionalLight)
 
         GLTFLoader().load(
-            url = "/assets/carrier.glb",
+            url = "/assets/ships/carrier.glb",
             onLoad = {
                 model = it.scene
+            }
+        )
+
+        CubeTextureLoader().load(
+            urls = arrayOf(
+                "/assets/backgrounds/default/right.png",
+                "/assets/backgrounds/default/left.png",
+                "/assets/backgrounds/default/top.png",
+                "/assets/backgrounds/default/bottom.png",
+                "/assets/backgrounds/default/front.png",
+                "/assets/backgrounds/default/back.png"
+            ),
+            onLoad = {
+                scene.background = it
             }
         )
     }
