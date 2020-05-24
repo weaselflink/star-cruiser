@@ -1,4 +1,5 @@
 import de.bissell.starcruiser.Command
+import de.bissell.starcruiser.ContactMessage
 import de.bissell.starcruiser.GameStateMessage
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.Station.Helm
@@ -37,6 +38,7 @@ class MainScreenUi {
     )
     private val contactGroup = Object3D().also { scene.add(it) }
     private var model: Group? = null
+    private val contactModels = mutableMapOf<String, Object3D>()
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
     private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
@@ -94,18 +96,48 @@ class MainScreenUi {
     fun draw(ship: ShipMessage, stateCopy: GameStateMessage) {
         camera.rotation.y = ship.rotation
 
-        contactGroup.remove(*contactGroup.children)
-        stateCopy.snapshot.contacts.mapNotNull {
+        val contacts = stateCopy.snapshot.contacts
+        val oldContactIds = contactModels.keys.filter { true }
 
-            model?.clone(true)?.apply {
-                position.z = -it.relativePosition.x
-                position.x = -it.relativePosition.y
-                rotation.y = it.rotation
-            }
-        }.forEach {
-            contactGroup.add(it)
-        }
+        addNewContacts(contacts)
+        removeOldContacts(contacts, oldContactIds)
+        updateContacts(contacts)
 
         renderer.render(scene, camera)
+    }
+
+    private fun addNewContacts(contacts: List<ContactMessage>) {
+        contacts.filter {
+            !contactModels.containsKey(it.id)
+        }.forEach {
+            model?.clone(true)?.also { contactModel ->
+                contactModels[it.id] = contactModel
+                contactGroup.add(contactModel)
+            }
+        }
+    }
+
+    private fun removeOldContacts(
+        contacts: List<ContactMessage>,
+        oldContactIds: List<String>
+    ) {
+        val currentIds = contacts.map { it.id }
+        oldContactIds.filter {
+            !currentIds.contains(it)
+        }.forEach { id ->
+            contactModels.remove(id)?.also {
+                contactGroup.remove(it)
+            }
+        }
+    }
+
+    private fun updateContacts(contacts: List<ContactMessage>) {
+        contacts.forEach { contact ->
+            contactModels[contact.id]?.apply {
+                position.z = -contact.relativePosition.x
+                position.x = -contact.relativePosition.y
+                rotation.y = contact.rotation
+            }
+        }
     }
 }

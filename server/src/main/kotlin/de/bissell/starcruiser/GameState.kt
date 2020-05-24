@@ -281,6 +281,7 @@ class Ship(
 
     fun toContactMessage(relativeTo: Ship) =
         ContactMessage(
+            id = id.toString(),
             designation = designation,
             speed = speed,
             position = position,
