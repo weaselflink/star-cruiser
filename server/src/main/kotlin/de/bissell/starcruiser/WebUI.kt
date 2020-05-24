@@ -1,9 +1,6 @@
 package de.bissell.starcruiser
 
 import io.ktor.application.call
-import io.ktor.auth.UserIdPrincipal
-import io.ktor.auth.authenticate
-import io.ktor.auth.principal
 import io.ktor.html.respondHtml
 import io.ktor.http.ContentType
 import io.ktor.http.LinkHeader
@@ -183,13 +180,6 @@ fun Routing.webUi() {
                 navigationUi()
                 mainScreenUi()
             }
-        }
-    }
-
-    authenticate("myBasicAuth") {
-        get("/protected/route/basic") {
-            val principal = call.principal<UserIdPrincipal>()!!
-            call.respondText("Hello ${principal.name}")
         }
     }
 }

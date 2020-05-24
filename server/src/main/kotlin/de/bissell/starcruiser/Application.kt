@@ -3,9 +3,6 @@ package de.bissell.starcruiser
 import de.bissell.starcruiser.GameClient.Companion.startGameClient
 import io.ktor.application.Application
 import io.ktor.application.install
-import io.ktor.auth.Authentication
-import io.ktor.auth.UserIdPrincipal
-import io.ktor.auth.basic
 import io.ktor.features.ContentNegotiation
 import io.ktor.http.cio.websocket.pingPeriod
 import io.ktor.http.cio.websocket.timeout
@@ -31,13 +28,6 @@ fun Application.module() {
         while (isActive) {
             gameStateActor.send(Update)
             delay(20)
-        }
-    }
-
-    install(Authentication) {
-        basic("myBasicAuth") {
-            realm = "Star Cruiser"
-            validate { if (it.name == "test" && it.password == "password") UserIdPrincipal(it.name) else null }
         }
     }
 
