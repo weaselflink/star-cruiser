@@ -7,12 +7,11 @@ import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import three.cameras.PerspectiveCamera
-import three.core.Color
 import three.core.Object3D
-import three.geometries.BoxGeometry
-import three.materials.MaterialParameters
-import three.materials.MeshBasicMaterial
-import three.objects.Mesh
+import three.lights.AmbientLight
+import three.lights.DirectionalLight
+import three.loaders.GLTFLoader
+import three.objects.Group
 import three.renderers.WebGLRenderer
 import three.renderers.WebGLRendererParams
 import three.scenes.Scene
@@ -23,17 +22,21 @@ class MainScreenUi {
 
     private val root = document.getElementById("main-screen")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
-    private val renderer = WebGLRenderer(WebGLRendererParams(canvas))
+    private val renderer = WebGLRenderer(
+        WebGLRendererParams(
+            canvas = canvas,
+            antialias = true
+        )
+    )
     private val scene = Scene()
     private val camera = PerspectiveCamera(
         fov = 75,
         aspect = window.innerWidth.toDouble() / window.innerHeight.toDouble(),
         near = 1,
-        far = 1000
+        far = 10_000
     )
     private val contactGroup = Object3D().also { scene.add(it) }
-    private val geometry = BoxGeometry(10, 10, 10)
-    private val material = MeshBasicMaterial(MaterialParameters(color = Color(0x5f9ea0), wireframe = true))
+    private var model: Group? = null
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
     private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
@@ -54,6 +57,21 @@ class MainScreenUi {
         }
         toHelmButton.onclick = { clientSocket.send(Command.CommandChangeStation(Helm)) }
         toNavigationButton.onclick = { clientSocket.send(Command.CommandChangeStation(Navigation)) }
+
+        val ambientLight = AmbientLight(intensity = 0.25)
+        scene.add(ambientLight)
+        val directionalLight = DirectionalLight(intensity = 4).apply {
+            position.x = 5.0
+            position.y = 1.0
+        }
+        scene.add(directionalLight)
+
+        GLTFLoader().load(
+            url = "/assets/carrier.glb",
+            onLoad = {
+                model = it.scene
+            }
+        )
     }
 
     fun resize() {
@@ -77,8 +95,9 @@ class MainScreenUi {
         camera.rotation.y = ship.rotation
 
         contactGroup.remove(*contactGroup.children)
-        stateCopy.snapshot.contacts.map {
-            Mesh(geometry, material).apply {
+        stateCopy.snapshot.contacts.mapNotNull {
+
+            model?.clone(true)?.apply {
                 position.z = -it.relativePosition.x
                 position.x = -it.relativePosition.y
                 rotation.y = it.rotation

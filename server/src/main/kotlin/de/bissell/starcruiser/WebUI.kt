@@ -31,6 +31,10 @@ fun Routing.webUi() {
         resources("js")
     }
 
+    static("/assets") {
+        resources("assets")
+    }
+
     get("/status") {
         call.respondText("alive")
     }
@@ -159,6 +163,10 @@ fun Routing.webUi() {
                 script {
                     type = ScriptType.textJavaScript
                     src = "/js/three.min.js"
+                }
+                script {
+                    type = ScriptType.textJavaScript
+                    src = "/js/gltf-loader.js"
                 }
                 script {
                     type = ScriptType.textJavaScript

@@ -3,5 +3,5 @@
 package three.materials
 
 external class MeshBasicMaterial(
-    parameters: MaterialParameters = definedExternally
+    parameters: MaterialParameters? = definedExternally
 ) : Material
