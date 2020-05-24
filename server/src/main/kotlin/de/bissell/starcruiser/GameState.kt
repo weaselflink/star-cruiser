@@ -5,6 +5,9 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.actor
+import java.time.Instant
+import java.time.Instant.now
+import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.math.PI
 import kotlin.math.abs
@@ -65,7 +68,9 @@ class GameState {
                     .filter { it.key != clientShip.id }
                     .map { it.value }
                     .map { it.toContactMessage(clientShip) }
-                    .filter { it.relativePosition.length() < clientShip.shortRangeScopeRange * 1.1 }
+                    .filter {
+                        client.state != Helm || it.relativePosition.length() < clientShip.shortRangeScopeRange * 1.1
+                    }
             }
         )
     }
@@ -123,13 +128,13 @@ class GameState {
     }
 
     fun togglePaused() {
-        paused = !paused
+        time.paused = !time.paused
     }
 
     fun update() {
-        if (paused) return
+        if (time.paused) return
 
-        time = time.update()
+        time.update()
 
         ships.forEach { it.value.update(time) }
     }
@@ -146,12 +151,34 @@ class GameState {
         clients[clientId]?.let { ships[it.shipId] }
 }
 
-data class GameTime(
-    val current: Double = 0.0,
-    val delta: Double = 0.02
-) {
+class GameTime {
 
-    fun update() = GameTime(current + delta, delta)
+    private var lastUpdate: Instant? = null
+
+    var current: Double = 0.0
+        private set
+
+    var delta: Double = 0.001
+        private set
+
+    var paused: Boolean = false
+        set(value) {
+            if (value != field) {
+                field = value
+                lastUpdate = null
+            }
+        }
+
+    fun update() {
+        val now = now()
+        delta = if (lastUpdate == null) {
+            0.001
+        } else {
+            (lastUpdate!!.until(now, ChronoUnit.MILLIS)) / 1000.0
+        }
+        current += delta
+        lastUpdate = now
+    }
 }
 
 data class Client(
