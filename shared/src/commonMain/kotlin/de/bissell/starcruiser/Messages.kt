@@ -23,12 +23,34 @@ data class GameStateMessage(
 }
 
 @Serializable
-data class SnapshotMessage(
-    val clientState: ClientState,
-    val playerShips: List<PlayerShipMessage>,
-    val ship: ShipMessage?,
-    val contacts: List<ContactMessage>
-)
+sealed class SnapshotMessage {
+
+    interface ShipSnapshot {
+        val ship: ShipMessage
+    }
+
+    @Serializable
+    class ShipSelection(
+        val playerShips: List<PlayerShipMessage>
+    ) : SnapshotMessage()
+
+    @Serializable
+    class Helm(
+        override val ship: ShipMessage,
+        val contacts: List<ContactMessage>
+    ) : SnapshotMessage(), ShipSnapshot
+
+    @Serializable
+    class Navigation(
+        override val ship: ShipMessage
+    ) : SnapshotMessage(), ShipSnapshot
+
+    @Serializable
+    class MainScreen(
+        override val ship: ShipMessage,
+        val contacts: List<ContactMessage>
+    ) : SnapshotMessage(), ShipSnapshot
+}
 
 @Serializable
 data class PlayerShipMessage(
@@ -67,14 +89,6 @@ data class ContactMessage(
     val velocity: Double,
     val history: List<Pair<Double, Vector2>>
 )
-
-@Serializable
-enum class ClientState {
-    ShipSelection,
-    Helm,
-    Navigation,
-    MainScreen
-}
 
 @Serializable
 data class WaypointMessage(

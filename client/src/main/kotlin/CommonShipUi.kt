@@ -1,11 +1,9 @@
-import de.bissell.starcruiser.ClientState
 import de.bissell.starcruiser.Command
-import de.bissell.starcruiser.GameStateMessage
+import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import de.bissell.starcruiser.Station.*
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
-import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.dom.removeClass
@@ -52,10 +50,10 @@ class CommonShipUi {
         root.style.visibility = "hidden"
     }
 
-    fun draw(stateCopy: GameStateMessage) {
-        val newStation = when (stateCopy.snapshot.clientState) {
-            ClientState.Navigation -> Navigation
-            ClientState.MainScreen -> MainScreen
+    fun draw(snapshot: SnapshotMessage.ShipSnapshot) {
+        val newStation = when (snapshot) {
+            is SnapshotMessage.Navigation -> Navigation
+            is SnapshotMessage.MainScreen -> MainScreen
             else -> Helm
         }
 
@@ -80,20 +78,20 @@ class CommonShipUi {
 
         extraButton.element.apply {
             style.visibility = "hidden"
-            onclick = { extraButton.callback(it, this) }
+            onclick = { extraButton.callback() }
         }
     }
 }
 
 data class ExtraButton(
     val stations: List<Station>,
-    val callback: (MouseEvent, HTMLButtonElement) -> Unit,
+    val callback: () -> Unit,
     val element: HTMLButtonElement
 ) {
 
     constructor(
         station: Station,
-        callback: (MouseEvent, HTMLButtonElement) -> Unit,
+        callback: () -> Unit,
         selector: String
     ) : this(
         listOf(station),

@@ -1,6 +1,5 @@
 import de.bissell.starcruiser.ContactMessage
-import de.bissell.starcruiser.GameStateMessage
-import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.SnapshotMessage
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import three.cameras.PerspectiveCamera
@@ -59,10 +58,10 @@ class MainScreenUi {
         root.style.visibility = "hidden"
     }
 
-    fun draw(ship: ShipMessage, stateCopy: GameStateMessage) {
-        camera.rotation.y = ship.rotation
+    fun draw(snapshot: SnapshotMessage.MainScreen) {
+        camera.rotation.y = snapshot.ship.rotation
 
-        val contacts = stateCopy.snapshot.contacts
+        val contacts = snapshot.contacts
         val oldContactIds = contactModels.keys.filter { true }
 
         addNewContacts(contacts)

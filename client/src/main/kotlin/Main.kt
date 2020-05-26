@@ -1,7 +1,4 @@
-import de.bissell.starcruiser.ClientState.*
-import de.bissell.starcruiser.Command
-import de.bissell.starcruiser.GameStateMessage
-import de.bissell.starcruiser.Station
+import de.bissell.starcruiser.*
 import org.w3c.dom.WebSocket
 import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document
@@ -76,8 +73,8 @@ fun createSocket(): WebSocket? {
 }
 
 fun keyHandler(event: KeyboardEvent) {
-    val throttle: Int = state?.snapshot?.ship?.throttle ?: 0
-    val rudder: Int = state?.snapshot?.ship?.rudder ?: 0
+    val throttle: Int = state.currentShip()?.throttle ?: 0
+    val rudder: Int = state.currentShip()?.rudder ?: 0
 
     clientSocket.apply {
         when (event.code) {
@@ -94,6 +91,15 @@ fun keyHandler(event: KeyboardEvent) {
     }
 }
 
+fun GameStateMessage?.currentShip() : ShipMessage? {
+    return this?.snapshot?.let {
+        when (it) {
+            is SnapshotMessage.ShipSnapshot -> it.ship
+            else -> null
+        }
+    }
+}
+
 fun step() {
     state?.also {
         drawUi(it)
@@ -103,55 +109,54 @@ fun step() {
 }
 
 fun drawUi(stateCopy: GameStateMessage) {
-    val ship = stateCopy.snapshot.ship
-    when (stateCopy.snapshot.clientState) {
-        ShipSelection -> {
+    when (val snapshot = stateCopy.snapshot) {
+        is SnapshotMessage.ShipSelection -> {
             commonShipUi.hide()
             helmUi.hide()
             navigationUi.hide()
             mainScreenUi.hide()
             joinUi.apply {
                 show()
-                draw(stateCopy)
+                draw(snapshot)
             }
         }
-        Helm -> {
+        is SnapshotMessage.Helm -> {
             joinUi.hide()
             navigationUi.hide()
             mainScreenUi.hide()
             commonShipUi.apply {
                 show()
-                draw(stateCopy)
+                draw(snapshot)
             }
             helmUi.apply {
                 show()
-                draw(ship!!, stateCopy)
+                draw(snapshot)
             }
         }
-        Navigation -> {
+        is SnapshotMessage.Navigation -> {
             helmUi.hide()
             joinUi.hide()
             mainScreenUi.hide()
             commonShipUi.apply {
                 show()
-                draw(stateCopy)
+                draw(snapshot)
             }
             navigationUi.apply {
                 show()
-                draw(ship!!)
+                draw(snapshot)
             }
         }
-        MainScreen -> {
+        is SnapshotMessage.MainScreen -> {
             helmUi.hide()
             joinUi.hide()
             navigationUi.hide()
             commonShipUi.apply {
                 show()
-                draw(stateCopy)
+                draw(snapshot)
             }
             mainScreenUi.apply {
                 show()
-                draw(ship!!, stateCopy)
+                draw(snapshot)
             }
         }
     }

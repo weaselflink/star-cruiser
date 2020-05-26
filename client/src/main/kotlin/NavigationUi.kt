@@ -1,5 +1,6 @@
 import de.bissell.starcruiser.Command.CommandAddWaypoint
 import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Vector2
 import de.bissell.starcruiser.clip
 import org.w3c.dom.CanvasRenderingContext2D
@@ -8,6 +9,8 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
+import kotlin.dom.addClass
+import kotlin.dom.removeClass
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -20,6 +23,7 @@ class NavigationUi {
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val mouseEventDispatcher = MouseEventDispatcher(canvas)
+    private val addWaypointButton = document.querySelector(".addWaypoint")!! as HTMLButtonElement
     private val zoomSlider = CanvasSlider(
         xExpr = { it.dim * 0.05 },
         yExpr = { it.height - it.dim * 0.05 },
@@ -66,7 +70,8 @@ class NavigationUi {
         canvas.updateSize(square = false)
     }
 
-    fun draw(ship: ShipMessage) {
+    fun draw(snapshot: SnapshotMessage.Navigation) {
+        val ship = snapshot.ship
         dim = min(canvas.width, canvas.height).toDouble()
 
         with(ctx) {
@@ -81,8 +86,12 @@ class NavigationUi {
         }
     }
 
-    fun addWayPointClicked(mouseEvent: MouseEvent, button: HTMLButtonElement) {
+    fun addWayPointClicked() {
         addingWaypoint = !addingWaypoint
+        addWaypointButton.removeClass("current")
+        if (addingWaypoint) {
+            addWaypointButton.addClass("current")
+        }
     }
 
     private fun CanvasRenderingContext2D.drawGrid() {
@@ -163,6 +172,7 @@ class NavigationUi {
         override fun handleMouseDown(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
             if (addingWaypoint) {
                 clientSocket.send(CommandAddWaypoint(mouseEvent.toWorld()))
+                addWaypointButton.removeClass("current")
                 addingWaypoint = false
             } else {
                 lastEvent = Vector2(mouseEvent.offsetX, mouseEvent.offsetY)

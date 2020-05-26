@@ -27,14 +27,14 @@ class GameClient(
 
             while (isActive) {
                 if (throttleActor.getInflightMessageCount() < maxInflightMessages) {
-                    val snapShot = gameStateActor.getGameStateSnapShot()
-                    if (lastSnapshot != snapShot) {
+                    val snapshot = gameStateActor.getGameStateSnapshot()
+                    if (lastSnapshot != snapshot) {
                         val counterResponse = throttleActor.addInflightMessage()
-                        lastSnapshot = snapShot
+                        lastSnapshot = snapshot
                         outgoing.sendText(
                             GameStateMessage(
                                 counterResponse,
-                                snapShot
+                                snapshot
                             ).toJson()
                         )
                     }
@@ -74,7 +74,7 @@ class GameClient(
         return response.await()
     }
 
-    private suspend fun SendChannel<GameStateChange>.getGameStateSnapShot(): SnapshotMessage {
+    private suspend fun SendChannel<GameStateChange>.getGameStateSnapshot(): SnapshotMessage {
         val response = CompletableDeferred<SnapshotMessage>()
         send(GetGameStateSnapshot(id, response))
         return response.await()

@@ -57,22 +57,22 @@ class GameState {
     fun toMessage(clientId: UUID): SnapshotMessage {
         val clientShip = clientShip(clientId)
         val client = clients[clientId]!!
-        return SnapshotMessage(
-            clientState = client.state,
-            playerShips = ships.values.map(Ship::toPlayerShipMessage),
-            ship = clientShip?.toMessage(),
-            contacts = if (clientShip == null) {
-                emptyList()
-            } else {
-                ships
-                    .filter { it.key != clientShip.id }
-                    .map { it.value }
-                    .map { it.toContactMessage(clientShip) }
-                    .filter {
-                        client.state != Helm || it.relativePosition.length() < clientShip.shortRangeScopeRange * 1.1
-                    }
-            }
-        )
+        return when (client.state) {
+            ShipSelection -> SnapshotMessage.ShipSelection(
+                playerShips = ships.values.map(Ship::toPlayerShipMessage)
+            )
+            Helm -> SnapshotMessage.Helm(
+                ship = clientShip!!.toMessage(),
+                contacts = getContacts(clientShip, client)
+            )
+            Navigation -> SnapshotMessage.Navigation(
+                ship = clientShip!!.toMessage()
+            )
+            MainScreen -> SnapshotMessage.MainScreen(
+                ship = clientShip!!.toMessage(),
+                contacts = getContacts(clientShip, client)
+            )
+        }
     }
 
     fun clientConnected(clientId: UUID) {
@@ -153,6 +153,16 @@ class GameState {
 
     private fun clientShip(clientId: UUID): Ship? =
         clients[clientId]?.let { ships[it.shipId] }
+
+    private fun getContacts(clientShip: Ship, client: Client): List<ContactMessage> {
+        return ships
+            .filter { it.key != clientShip.id }
+            .map { it.value }
+            .map { it.toContactMessage(clientShip) }
+            .filter {
+                client.state != Helm || it.relativePosition.length() < clientShip.shortRangeScopeRange * 1.1
+            }
+    }
 }
 
 class GameTime {
@@ -190,6 +200,13 @@ data class Client(
     var state: ClientState = ShipSelection,
     var shipId: UUID? = null
 )
+
+enum class ClientState {
+    ShipSelection,
+    Helm,
+    Navigation,
+    MainScreen
+}
 
 class Ship(
     val id: UUID = UUID.randomUUID(),

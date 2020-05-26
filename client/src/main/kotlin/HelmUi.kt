@@ -1,24 +1,7 @@
-import de.bissell.starcruiser.Command
-import de.bissell.starcruiser.ContactMessage
-import de.bissell.starcruiser.GameStateMessage
-import de.bissell.starcruiser.ShipMessage
-import de.bissell.starcruiser.Vector2
-import de.bissell.starcruiser.WaypointMessage
-import de.bissell.starcruiser.format
-import de.bissell.starcruiser.toRadians
-import org.w3c.dom.CENTER
-import org.w3c.dom.CanvasLineCap
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.CanvasTextAlign
-import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.ROUND
+import de.bissell.starcruiser.*
+import org.w3c.dom.*
 import kotlin.browser.document
-import kotlin.math.PI
-import kotlin.math.atan2
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
+import kotlin.math.*
 
 class HelmUi {
 
@@ -75,7 +58,8 @@ class HelmUi {
         rotateScope = !rotateScope
     }
 
-    fun draw(ship: ShipMessage, stateCopy: GameStateMessage) {
+    fun draw(snapshot: SnapshotMessage.Helm) {
+        val ship = snapshot.ship
         dim = min(canvas.width, canvas.height).toDouble()
         scopeRadius = dim * 0.5 - dim * 0.03
 
@@ -85,7 +69,7 @@ class HelmUi {
             resetTransform()
             clear("#222")
 
-            drawScope(stateCopy, ship)
+            drawScope(snapshot, ship)
 
             drawThrottle(ship)
             drawRudder(ship)
@@ -111,7 +95,7 @@ class HelmUi {
             0.0
         }
 
-    private fun CanvasRenderingContext2D.drawScope(stateCopy: GameStateMessage, ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.drawScope(snapshot: SnapshotMessage.Helm, ship: ShipMessage) {
         save()
 
         translateToCenter()
@@ -125,7 +109,7 @@ class HelmUi {
 
         drawHistory(ship)
         drawWaypoints(ship)
-        stateCopy.snapshot.contacts.forEach {
+        snapshot.contacts.forEach {
             ctx.drawContact(ship, it)
         }
         restore()

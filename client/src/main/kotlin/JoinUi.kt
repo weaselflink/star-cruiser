@@ -1,5 +1,5 @@
 import de.bissell.starcruiser.Command
-import de.bissell.starcruiser.GameStateMessage
+import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station.Helm
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
@@ -31,15 +31,15 @@ class JoinUi {
         root.style.visibility = "hidden"
     }
 
-    fun draw(stateCopy: GameStateMessage) {
+    fun draw(snapshot: SnapshotMessage.ShipSelection) {
         document.getElementsByClassName("playerShips").asList().forEach { playerShipsList ->
             val listElements = playerShipsList.getElementsByTagName("button")
 
-            val max = max(stateCopy.snapshot.playerShips.size, listElements.length)
+            val max = max(snapshot.playerShips.size, listElements.length)
 
             for (index in 0 until max) {
-                if (index < stateCopy.snapshot.playerShips.size) {
-                    val playerShip = stateCopy.snapshot.playerShips[index]
+                if (index < snapshot.playerShips.size) {
+                    val playerShip = snapshot.playerShips[index]
                     val buttonText = playerShip.name + (playerShip.shipClass?.let { " ($it class)" } ?: "")
                     if (index < listElements.length) {
                         listElements.item(index)!!.let {
