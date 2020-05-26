@@ -1,4 +1,3 @@
-import de.bissell.starcruiser.GameStateMessage
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.Vector2
 import de.bissell.starcruiser.clip
@@ -7,7 +6,6 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
-import kotlin.browser.window
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -62,23 +60,10 @@ class NavigationUi {
     }
 
     fun resize() {
-        val windowWidth: Int = window.innerWidth
-        val windowHeight: Int = window.innerHeight
-
-        with(canvas) {
-            if (width != windowWidth || height != windowHeight) {
-                width = windowWidth
-                height = windowHeight
-            }
-
-            style.left = 0.px
-            style.top = 0.px
-            style.width = windowWidth.px
-            style.height = windowHeight.px
-        }
+        canvas.updateSize(square = false)
     }
 
-    fun draw(ship: ShipMessage, stateCopy: GameStateMessage) {
+    fun draw(ship: ShipMessage) {
         dim = min(canvas.width, canvas.height).toDouble()
 
         with(ctx) {

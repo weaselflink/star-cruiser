@@ -1,6 +1,8 @@
 import de.bissell.starcruiser.Vector2
 import org.w3c.dom.*
+import kotlin.browser.window
 import kotlin.math.PI
+import kotlin.math.min
 
 fun CanvasRenderingContext2D.clear(color: String) {
     fillStyle = color
@@ -92,4 +94,22 @@ fun CanvasRenderingContext2D.wayPointStyle(dim: Double) {
     font = "bold ${textSize.px} sans-serif"
     textAlign = CanvasTextAlign.CENTER
     lineJoin = CanvasLineJoin.ROUND
+}
+
+fun HTMLCanvasElement.updateSize(square: Boolean = false) {
+    val windowWidth = window.innerWidth
+    val windowHeight = window.innerHeight
+    val dim = min(windowWidth, windowHeight)
+    val newWidth = if (square) dim else windowWidth
+    val newHeight = if (square) dim else windowHeight
+
+    if (width != newWidth || height != newHeight) {
+        width = newWidth
+        height = newHeight
+    }
+
+    style.left = ((windowWidth - newWidth) / 2).px
+    style.top = ((windowHeight - newHeight) / 2).px
+    style.width = newWidth.px
+    style.height = newHeight.px
 }

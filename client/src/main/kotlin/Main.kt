@@ -128,7 +128,7 @@ fun drawUi(stateCopy: GameStateMessage) {
             }
             navigationUi.apply {
                 show()
-                draw(ship!!, stateCopy)
+                draw(ship!!)
             }
         }
         MainScreen -> {

@@ -14,7 +14,6 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.ROUND
 import kotlin.browser.document
-import kotlin.browser.window
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.max
@@ -61,21 +60,7 @@ class HelmUi {
     }
 
     fun resize() {
-        val windowWidth: Int = window.innerWidth
-        val windowHeight: Int = window.innerHeight
-        val dim: Int = min(window.innerWidth, window.innerHeight)
-
-        with (canvas) {
-            if (width != dim || height != dim) {
-                width = dim
-                height = dim
-            }
-
-            style.left = ((windowWidth - dim) / 2).px
-            style.top = ((windowHeight - dim) / 2).px
-            style.width = dim.px
-            style.height = dim.px
-        }
+        canvas.updateSize(square = true)
     }
 
     fun show() {

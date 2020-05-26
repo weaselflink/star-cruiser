@@ -14,6 +14,7 @@ import three.plusAssign
 import three.renderers.WebGLRenderer
 import three.renderers.WebGLRendererParams
 import three.scenes.Scene
+import three.updateSize
 import kotlin.browser.document
 import kotlin.browser.window
 
@@ -43,12 +44,11 @@ class MainScreenUi {
     }
 
     fun resize() {
-        val windowWidth: Int = window.innerWidth
-        val windowHeight: Int = window.innerHeight
+        val windowWidth = window.innerWidth
+        val windowHeight = window.innerHeight
 
         renderer.setSize(windowWidth, windowHeight)
-        camera.aspect = windowWidth.toDouble() / windowHeight.toDouble()
-        camera.updateProjectionMatrix()
+        camera.updateSize(windowWidth, windowHeight)
     }
 
     fun show() {
