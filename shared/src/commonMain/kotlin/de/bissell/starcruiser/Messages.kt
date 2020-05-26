@@ -13,7 +13,7 @@ val jsonConfiguration = JsonConfiguration.Stable.copy(
 @Serializable
 data class GameStateMessage(
     val counter: Long,
-    val snapshot: GameStateSnapshot
+    val snapshot: SnapshotMessage
 ) {
     fun toJson(): String = Json(jsonConfiguration).stringify(serializer(), this)
 
@@ -23,9 +23,8 @@ data class GameStateMessage(
 }
 
 @Serializable
-data class GameStateSnapshot(
+data class SnapshotMessage(
     val clientState: ClientState,
-    val paused: Boolean,
     val playerShips: List<PlayerShipMessage>,
     val ship: ShipMessage?,
     val contacts: List<ContactMessage>

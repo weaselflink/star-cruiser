@@ -24,7 +24,7 @@ class NewGameClient(val clientId: UUID) : GameStateChange()
 class GameClientDisconnected(val clientId: UUID) : GameStateChange()
 class ChangeThrottle(val clientId: UUID, val value: Int) : GameStateChange()
 class ChangeRudder(val clientId: UUID, val value: Int) : GameStateChange()
-class GetGameStateSnapshot(val clientId: UUID, val response: CompletableDeferred<GameStateSnapshot>) : GameStateChange()
+class GetGameStateSnapshot(val clientId: UUID, val response: CompletableDeferred<SnapshotMessage>) : GameStateChange()
 
 @ObsoleteCoroutinesApi
 fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
@@ -53,12 +53,11 @@ class GameState {
     private val ships = mutableMapOf<UUID, Ship>()
     private val clients = mutableMapOf<UUID, Client>()
 
-    fun toMessage(clientId: UUID): GameStateSnapshot {
+    fun toMessage(clientId: UUID): SnapshotMessage {
         val clientShip = clientShip(clientId)
         val client = clients[clientId]!!
-        return GameStateSnapshot(
+        return SnapshotMessage(
             clientState = client.state,
-            paused = paused,
             playerShips = ships.values.map(Ship::toPlayerShipMessage),
             ship = clientShip?.toMessage(),
             contacts = if (clientShip == null) {

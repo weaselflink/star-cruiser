@@ -23,16 +23,21 @@ class GameClient(
         gameStateActor.send(NewGameClient(id))
 
         val updateJob = coroutineScope.launch {
+            var lastSnapshot: SnapshotMessage? = null
+
             while (isActive) {
                 if (throttleActor.getInflightMessageCount() < maxInflightMessages) {
-                    val counterResponse = throttleActor.addInflightMessage()
-                    val gameStateSnapShot = gameStateActor.getGameStateSnapShot()
-                    outgoing.sendText(
-                        GameStateMessage(
-                            counterResponse,
-                            gameStateSnapShot
-                        ).toJson()
-                    )
+                    val snapShot = gameStateActor.getGameStateSnapShot()
+                    if (lastSnapshot != snapShot) {
+                        val counterResponse = throttleActor.addInflightMessage()
+                        lastSnapshot = snapShot
+                        outgoing.sendText(
+                            GameStateMessage(
+                                counterResponse,
+                                snapShot
+                            ).toJson()
+                        )
+                    }
                 }
                 delay(updateIntervalMillis)
             }
@@ -68,8 +73,8 @@ class GameClient(
         return response.await()
     }
 
-    private suspend fun SendChannel<GameStateChange>.getGameStateSnapShot(): GameStateSnapshot {
-        val response = CompletableDeferred<GameStateSnapshot>()
+    private suspend fun SendChannel<GameStateChange>.getGameStateSnapShot(): SnapshotMessage {
+        val response = CompletableDeferred<SnapshotMessage>()
         send(GetGameStateSnapshot(id, response))
         return response.await()
     }
