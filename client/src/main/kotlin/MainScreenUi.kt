@@ -10,6 +10,7 @@ import three.lights.DirectionalLight
 import three.loaders.CubeTextureLoader
 import three.loaders.GLTFLoader
 import three.objects.Group
+import three.plusAssign
 import three.renderers.WebGLRenderer
 import three.renderers.WebGLRendererParams
 import three.scenes.Scene
@@ -29,7 +30,7 @@ class MainScreenUi {
     private val scene = Scene()
     private val camera = createCamera()
 
-    private val contactGroup = Object3D().also { scene.add(it) }
+    private val contactGroup = Object3D().also { scene += it }
     private var model: Group? = null
     private val contactModels = mutableMapOf<String, Object3D>()
 
@@ -116,13 +117,11 @@ class MainScreenUi {
     }
 
     private fun createLights() {
-        val ambientLight = AmbientLight(intensity = 0.25)
-        scene.add(ambientLight)
-        val directionalLight = DirectionalLight(intensity = 4).apply {
-            position.x = 5.0
-            position.y = 1.0
+        scene += AmbientLight(intensity = 0.25)
+        scene += DirectionalLight(intensity = 4).apply {
+            position.x = 5000.0
+            position.y = 1000.0
         }
-        scene.add(directionalLight)
     }
 
     private fun loadBackground() {
