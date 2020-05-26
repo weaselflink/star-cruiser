@@ -27,12 +27,8 @@ class MainScreenUi {
         )
     )
     private val scene = Scene()
-    private val camera = PerspectiveCamera(
-        fov = 75,
-        aspect = window.innerWidth.toDouble() / window.innerHeight.toDouble(),
-        near = 1,
-        far = 10_000
-    )
+    private val camera = createCamera()
+
     private val contactGroup = Object3D().also { scene.add(it) }
     private var model: Group? = null
     private val contactModels = mutableMapOf<String, Object3D>()
@@ -40,34 +36,9 @@ class MainScreenUi {
     init {
         resize()
 
-        val ambientLight = AmbientLight(intensity = 0.25)
-        scene.add(ambientLight)
-        val directionalLight = DirectionalLight(intensity = 4).apply {
-            position.x = 5.0
-            position.y = 1.0
-        }
-        scene.add(directionalLight)
-
-        GLTFLoader().load(
-            url = "/assets/ships/carrier.glb",
-            onLoad = {
-                model = it.scene
-            }
-        )
-
-        CubeTextureLoader().load(
-            urls = arrayOf(
-                "/assets/backgrounds/default/right.png",
-                "/assets/backgrounds/default/left.png",
-                "/assets/backgrounds/default/top.png",
-                "/assets/backgrounds/default/bottom.png",
-                "/assets/backgrounds/default/front.png",
-                "/assets/backgrounds/default/back.png"
-            ),
-            onLoad = {
-                scene.background = it
-            }
-        )
+        createLights()
+        loadBackground()
+        loadShipModel()
     }
 
     fun resize() {
@@ -133,5 +104,44 @@ class MainScreenUi {
                 rotation.y = contact.rotation
             }
         }
+    }
+
+    private fun createCamera(): PerspectiveCamera {
+        return PerspectiveCamera(
+            fov = 75,
+            aspect = window.innerWidth.toDouble() / window.innerHeight.toDouble(),
+            near = 1,
+            far = 10_000
+        )
+    }
+
+    private fun createLights() {
+        val ambientLight = AmbientLight(intensity = 0.25)
+        scene.add(ambientLight)
+        val directionalLight = DirectionalLight(intensity = 4).apply {
+            position.x = 5.0
+            position.y = 1.0
+        }
+        scene.add(directionalLight)
+    }
+
+    private fun loadBackground() {
+        CubeTextureLoader().load(
+            urls = backgroundUrls { "/assets/backgrounds/default/$it.png" },
+            onLoad = { scene.background = it }
+        )
+    }
+
+    private fun backgroundUrls(block: (String) -> String): Array<String> {
+        return listOf("right", "left", "top", "bottom", "front", "back")
+            .map(block)
+            .toTypedArray()
+    }
+
+    private fun loadShipModel() {
+        GLTFLoader().load(
+            url = "/assets/ships/carrier.glb",
+            onLoad = { model = it.scene }
+        )
     }
 }
