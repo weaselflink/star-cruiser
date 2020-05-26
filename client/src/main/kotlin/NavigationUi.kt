@@ -194,7 +194,7 @@ class NavigationUi {
         private fun Vector2.convert() = (this / scale).let { Vector2(-it.x, it.y) }
 
         private fun MouseEvent.toWorld() =
-            (fromCenterCanvas() / scale + center).let { Vector2(it.x, -it.y) }
+            (fromCenterCanvas() / scale).let { Vector2(it.x, -it.y) } + center
 
         private fun MouseEvent.fromCenterCanvas() =
             Vector2(offsetX, offsetY) - Vector2(canvas.width / 2.0, canvas.height / 2.0)
