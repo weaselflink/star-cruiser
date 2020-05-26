@@ -167,25 +167,11 @@ fun Routing.webUi() {
                 }
             }
             body {
-                commonShipUi()
                 joinUi()
+                commonShipUi()
                 helmUi()
                 navigationUi()
                 mainScreenUi()
-            }
-        }
-    }
-}
-
-private fun BODY.commonShipUi() {
-    div {
-        id = "common-ship-ui"
-        div(classes = "topLeftInfo") {
-            button(classes = "exit leftEdge") {
-                +"Exit ship"
-            }
-            button(classes = "fullscreen leftEdge") {
-                +"Fullscreen"
             }
         }
     }
@@ -203,11 +189,19 @@ private fun BODY.joinUi() {
     }
 }
 
-private fun BODY.helmUi() {
+private fun BODY.commonShipUi() {
     div {
-        id = "helm-ui"
+        id = "common-ship-ui"
+        div(classes = "topLeftInfo") {
+            button(classes = "exit leftEdge") {
+                +"Exit ship"
+            }
+            button(classes = "fullscreen leftEdge") {
+                +"Fullscreen"
+            }
+        }
         div(classes = "topRightInfo") {
-            button(classes = "current rightEdge") {
+            button(classes = "current switchToHelm rightEdge") {
                 +"Helm"
             }
             button(classes = "switchToNavigation rightEdge") {
@@ -217,6 +211,12 @@ private fun BODY.helmUi() {
                 +"Main screen"
             }
         }
+    }
+}
+
+private fun BODY.helmUi() {
+    div {
+        id = "helm-ui"
         canvas {}
         div(classes = "info") {
             p {
@@ -240,17 +240,6 @@ private fun BODY.helmUi() {
 private fun BODY.navigationUi() {
     div {
         id = "navigation-ui"
-        div(classes = "topRightInfo") {
-            button(classes = "switchToHelm rightEdge") {
-                +"Helm"
-            }
-            button(classes = "current rightEdge") {
-                +"Navigation"
-            }
-            button(classes = "switchToMainScreen rightEdge") {
-                +"Main screen"
-            }
-        }
         canvas {}
     }
 }
@@ -258,17 +247,6 @@ private fun BODY.navigationUi() {
 private fun BODY.mainScreenUi() {
     div {
         id = "main-screen-ui"
-        div(classes = "topRightInfo") {
-            button(classes = "switchToHelm rightEdge") {
-                +"Helm"
-            }
-            button(classes = "switchToNavigation rightEdge") {
-                +"Navigation"
-            }
-            button(classes = "current rightEdge") {
-                +"Main screen"
-            }
-        }
         canvas {}
     }
 }

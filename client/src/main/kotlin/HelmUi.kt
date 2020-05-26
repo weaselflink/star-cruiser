@@ -1,9 +1,25 @@
-import de.bissell.starcruiser.*
-import de.bissell.starcruiser.Station.Navigation
-import org.w3c.dom.*
+import de.bissell.starcruiser.Command
+import de.bissell.starcruiser.ContactMessage
+import de.bissell.starcruiser.GameStateMessage
+import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.Vector2
+import de.bissell.starcruiser.WaypointMessage
+import de.bissell.starcruiser.format
+import de.bissell.starcruiser.toRadians
+import org.w3c.dom.CENTER
+import org.w3c.dom.CanvasLineCap
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.CanvasTextAlign
+import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.ROUND
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.atan2
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 class HelmUi {
 
@@ -11,8 +27,6 @@ class HelmUi {
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val mouseEventDispatcher = MouseEventDispatcher(canvas)
-    private val toNavigationButton = root.querySelector(".switchToNavigation")!! as HTMLButtonElement
-    private val toMainScreenButton = root.querySelector(".switchToMainScreen")!! as HTMLButtonElement
     private val throttleSlider = CanvasSlider(
         xExpr = { it.dim * 0.05 },
         yExpr = { it.dim - it.dim * 0.05 },
@@ -44,9 +58,6 @@ class HelmUi {
         resize()
         mouseEventDispatcher.addHandler(throttleSlider)
         mouseEventDispatcher.addHandler(rudderSlider)
-
-        toNavigationButton.onclick = { clientSocket.send(Command.CommandChangeStation(Navigation)) }
-        toMainScreenButton.onclick = { clientSocket.send(Command.CommandChangeStation(Station.MainScreen)) }
     }
 
     fun resize() {

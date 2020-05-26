@@ -106,30 +106,39 @@ fun drawUi(stateCopy: GameStateMessage) {
             }
         }
         Helm -> {
-            commonShipUi.show()
             joinUi.hide()
             navigationUi.hide()
             mainScreenUi.hide()
+            commonShipUi.apply {
+                show()
+                draw(ship!!, stateCopy)
+            }
             helmUi.apply {
                 show()
                 draw(ship!!, stateCopy)
             }
         }
         Navigation -> {
-            commonShipUi.show()
             helmUi.hide()
             joinUi.hide()
             mainScreenUi.hide()
+            commonShipUi.apply {
+                show()
+                draw(ship!!, stateCopy)
+            }
             navigationUi.apply {
                 show()
                 draw(ship!!, stateCopy)
             }
         }
         MainScreen -> {
-            commonShipUi.show()
             helmUi.hide()
             joinUi.hide()
             navigationUi.hide()
+            commonShipUi.apply {
+                show()
+                draw(ship!!, stateCopy)
+            }
             mainScreenUi.apply {
                 show()
                 draw(ship!!, stateCopy)

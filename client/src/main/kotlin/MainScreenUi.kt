@@ -1,10 +1,6 @@
-import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.ContactMessage
 import de.bissell.starcruiser.GameStateMessage
 import de.bissell.starcruiser.ShipMessage
-import de.bissell.starcruiser.Station.Helm
-import de.bissell.starcruiser.Station.Navigation
-import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import three.cameras.PerspectiveCamera
@@ -40,14 +36,9 @@ class MainScreenUi {
     private val contactGroup = Object3D().also { scene.add(it) }
     private var model: Group? = null
     private val contactModels = mutableMapOf<String, Object3D>()
-    private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
-    private val toNavigationButton = root.querySelector(".switchToNavigation")!! as HTMLButtonElement
 
     init {
         resize()
-
-        toHelmButton.onclick = { clientSocket.send(Command.CommandChangeStation(Helm)) }
-        toNavigationButton.onclick = { clientSocket.send(Command.CommandChangeStation(Navigation)) }
 
         val ambientLight = AmbientLight(intensity = 0.25)
         scene.add(ambientLight)

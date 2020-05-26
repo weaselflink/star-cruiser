@@ -1,8 +1,8 @@
-import de.bissell.starcruiser.*
-import de.bissell.starcruiser.Station.Helm
-import de.bissell.starcruiser.Station.MainScreen
+import de.bissell.starcruiser.GameStateMessage
+import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.Vector2
+import de.bissell.starcruiser.clip
 import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.MouseEvent
@@ -20,8 +20,6 @@ class NavigationUi {
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val mouseEventDispatcher = MouseEventDispatcher(canvas)
-    private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
-    private val toMainScreenButton = root.querySelector(".switchToMainScreen")!! as HTMLButtonElement
     private val zoomSlider = CanvasSlider(
         xExpr = { it.dim * 0.05 },
         yExpr = { it.height - it.dim * 0.05 },
@@ -41,9 +39,6 @@ class NavigationUi {
         resize()
         mouseEventDispatcher.addHandler(zoomSlider)
         mouseEventDispatcher.addHandler(MapMouseEventHandler())
-
-        toHelmButton.onclick = { clientSocket.send(Command.CommandChangeStation(Helm)) }
-        toMainScreenButton.onclick = { clientSocket.send(Command.CommandChangeStation(MainScreen)) }
     }
 
     fun show() {
