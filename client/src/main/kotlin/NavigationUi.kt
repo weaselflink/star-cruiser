@@ -1,7 +1,9 @@
+import de.bissell.starcruiser.Command.CommandAddWaypoint
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.Vector2
 import de.bissell.starcruiser.clip
 import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.MouseEvent
@@ -29,6 +31,7 @@ class NavigationUi {
     private var dim = 100.0
     private var center = Vector2()
     private var scaleSetting = 3
+    private var addingWaypoint = false
 
     private val scale: Double
         get() = 4.0 / 2.0.pow(scaleSetting.toDouble())
@@ -76,6 +79,10 @@ class NavigationUi {
             drawShip(ship)
             drawZoom()
         }
+    }
+
+    fun addWayPointClicked(mouseEvent: MouseEvent, button: HTMLButtonElement) {
+        addingWaypoint = !addingWaypoint
     }
 
     private fun CanvasRenderingContext2D.drawGrid() {
@@ -154,7 +161,12 @@ class NavigationUi {
         private var lastEvent: Vector2? = null
 
         override fun handleMouseDown(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-            lastEvent = Vector2(mouseEvent.offsetX, mouseEvent.offsetY)
+            if (addingWaypoint) {
+                clientSocket.send(CommandAddWaypoint(mouseEvent.toWorld()))
+                addingWaypoint = false
+            } else {
+                lastEvent = Vector2(mouseEvent.offsetX, mouseEvent.offsetY)
+            }
         }
 
         override fun handleMouseMove(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
@@ -169,7 +181,12 @@ class NavigationUi {
             lastEvent = null
         }
 
-        private fun Vector2.convert() =
-            (this / scale).let { Vector2(-it.x, it.y) }
+        private fun Vector2.convert() = (this / scale).let { Vector2(-it.x, it.y) }
+
+        private fun MouseEvent.toWorld() =
+            (fromCenterCanvas() / scale + center).let { Vector2(it.x, -it.y) }
+
+        private fun MouseEvent.fromCenterCanvas() =
+            Vector2(offsetX, offsetY) - Vector2(canvas.width / 2.0, canvas.height / 2.0)
     }
 }

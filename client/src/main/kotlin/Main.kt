@@ -1,6 +1,7 @@
 import de.bissell.starcruiser.ClientState.*
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.GameStateMessage
+import de.bissell.starcruiser.Station
 import org.w3c.dom.WebSocket
 import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document
@@ -20,10 +21,19 @@ fun main() {
 
 fun init() {
     joinUi = JoinUi().apply { show() }
-    commonShipUi = CommonShipUi().apply { hide() }
     helmUi = HelmUi().apply { hide() }
     navigationUi = NavigationUi().apply { hide() }
     mainScreenUi = MainScreenUi().apply { hide() }
+    commonShipUi = CommonShipUi().apply {
+        hide()
+        addExtraButton(
+            ExtraButton(
+                Station.Navigation,
+                navigationUi::addWayPointClicked,
+                ".addWaypoint"
+            )
+        )
+    }
 
     window.requestAnimationFrame { step() }
     window.onresize = {
@@ -111,7 +121,7 @@ fun drawUi(stateCopy: GameStateMessage) {
             mainScreenUi.hide()
             commonShipUi.apply {
                 show()
-                draw(ship!!, stateCopy)
+                draw(stateCopy)
             }
             helmUi.apply {
                 show()
@@ -124,7 +134,7 @@ fun drawUi(stateCopy: GameStateMessage) {
             mainScreenUi.hide()
             commonShipUi.apply {
                 show()
-                draw(ship!!, stateCopy)
+                draw(stateCopy)
             }
             navigationUi.apply {
                 show()
@@ -137,7 +147,7 @@ fun drawUi(stateCopy: GameStateMessage) {
             navigationUi.hide()
             commonShipUi.apply {
                 show()
-                draw(ship!!, stateCopy)
+                draw(stateCopy)
             }
             mainScreenUi.apply {
                 show()

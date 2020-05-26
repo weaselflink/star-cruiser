@@ -25,6 +25,7 @@ class GameClientDisconnected(val clientId: UUID) : GameStateChange()
 class ChangeThrottle(val clientId: UUID, val value: Int) : GameStateChange()
 class ChangeRudder(val clientId: UUID, val value: Int) : GameStateChange()
 class GetGameStateSnapshot(val clientId: UUID, val response: CompletableDeferred<SnapshotMessage>) : GameStateChange()
+class AddWaypoint(val clientId: UUID, val position: Vector2) : GameStateChange()
 
 @ObsoleteCoroutinesApi
 fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
@@ -42,6 +43,7 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
             is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.value)
             is ChangeRudder -> gameState.changeRudder(change.clientId, change.value)
             is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
+            is AddWaypoint -> gameState.addWaypoint(change.clientId, change.position)
         }
     }
 }
@@ -49,7 +51,6 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
 class GameState {
 
     private var time = GameTime()
-    private var paused = false
     private val ships = mutableMapOf<UUID, Ship>()
     private val clients = mutableMapOf<UUID, Client>()
 
@@ -146,6 +147,10 @@ class GameState {
         clientShip(clientId)?.changeRudder(value)
     }
 
+    fun addWaypoint(clientId: UUID, position: Vector2) {
+        clientShip(clientId)?.addWaypoint(position)
+    }
+
     private fun clientShip(clientId: UUID): Ship? =
         clients[clientId]?.let { ships[it.shipId] }
 }
@@ -196,7 +201,7 @@ class Ship(
     private var rotation: Double = 90.0.toRadians(),
     private var throttle: Int = 0,
     private var rudder: Int = 0,
-    private val waypoints: List<Waypoint> = mutableListOf()
+    private val waypoints: MutableList<Waypoint> = mutableListOf()
 ) {
 
     private var thrust = 0.0
@@ -251,6 +256,14 @@ class Ship(
 
     fun changeRudder(value: Int) {
         rudder = value.clip(-100, 100)
+    }
+
+    fun addWaypoint(position: Vector2) {
+        (1..waypoints.size * 2).firstOrNull {
+            waypoints.none { waypoint -> waypoint.index == it }
+        }?.also {
+            waypoints += Waypoint(it, position)
+        }
     }
 
     fun toPlayerShipMessage() =

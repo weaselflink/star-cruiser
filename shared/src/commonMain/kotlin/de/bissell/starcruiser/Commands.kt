@@ -30,6 +30,9 @@ sealed class Command {
     @Serializable
     class CommandChangeRudder(val value: Int) : Command()
 
+    @Serializable
+    class CommandAddWaypoint(val position: Vector2) : Command()
+
     fun toJson() = Json(jsonConfiguration).stringify(serializer(), this)
 
     companion object {
