@@ -6,6 +6,7 @@ import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document
 import kotlin.browser.window
 
+lateinit var commonShipUi: CommonShipUi
 lateinit var joinUi: JoinUi
 lateinit var helmUi: HelmUi
 lateinit var navigationUi: NavigationUi
@@ -19,6 +20,7 @@ fun main() {
 
 fun init() {
     joinUi = JoinUi().apply { show() }
+    commonShipUi = CommonShipUi().apply { hide() }
     helmUi = HelmUi().apply { hide() }
     navigationUi = NavigationUi().apply { hide() }
     mainScreenUi = MainScreenUi().apply { hide() }
@@ -94,13 +96,17 @@ fun drawUi(stateCopy: GameStateMessage) {
     val ship = stateCopy.snapshot.ship
     when (stateCopy.snapshot.clientState) {
         ShipSelection -> {
+            commonShipUi.hide()
             helmUi.hide()
             navigationUi.hide()
             mainScreenUi.hide()
-            joinUi.show()
-            joinUi.draw(stateCopy)
+            joinUi.apply {
+                show()
+                draw(stateCopy)
+            }
         }
         Helm -> {
+            commonShipUi.show()
             joinUi.hide()
             navigationUi.hide()
             mainScreenUi.hide()
@@ -110,6 +116,7 @@ fun drawUi(stateCopy: GameStateMessage) {
             }
         }
         Navigation -> {
+            commonShipUi.show()
             helmUi.hide()
             joinUi.hide()
             mainScreenUi.hide()
@@ -119,6 +126,7 @@ fun drawUi(stateCopy: GameStateMessage) {
             }
         }
         MainScreen -> {
+            commonShipUi.show()
             helmUi.hide()
             joinUi.hide()
             navigationUi.hide()

@@ -22,7 +22,7 @@ import kotlin.browser.window
 
 class MainScreenUi {
 
-    private val root = document.getElementById("main-screen")!! as HTMLElement
+    private val root = document.getElementById("main-screen-ui")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val renderer = WebGLRenderer(
         WebGLRendererParams(
@@ -40,24 +40,12 @@ class MainScreenUi {
     private val contactGroup = Object3D().also { scene.add(it) }
     private var model: Group? = null
     private val contactModels = mutableMapOf<String, Object3D>()
-    private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
-    private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
     private val toNavigationButton = root.querySelector(".switchToNavigation")!! as HTMLButtonElement
 
     init {
         resize()
-        exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
-        fullScreenButton.onclick = {
-            val body = document.querySelector("body")!! as HTMLElement
-            if (document.fullscreenElement == null) {
-                body.requestFullscreen()
-                fullScreenButton.innerText = "Windowed"
-            } else {
-                document.exitFullscreen()
-                fullScreenButton.innerText = "Fullscreen"
-            }
-        }
+
         toHelmButton.onclick = { clientSocket.send(Command.CommandChangeStation(Helm)) }
         toNavigationButton.onclick = { clientSocket.send(Command.CommandChangeStation(Navigation)) }
 

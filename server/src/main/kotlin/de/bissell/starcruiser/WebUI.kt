@@ -63,25 +63,20 @@ fun Routing.webUi() {
                     zIndex = 10
                     padding = 20.px.value
                 }
-                ".topLeftInfo" {
+                ".topLeftInfo, .topRightInfo" {
                     position = fixed
                     display = grid
                     gap = Gap(10.px.value)
                     marginTop = 20.px
                     top = 0.px
-                    left = 0.px
                     zIndex = 10
                     padding(20.px, 0.px)
                 }
+                ".topLeftInfo" {
+                    left = 0.px
+                }
                 ".topRightInfo" {
-                    position = fixed
-                    display = grid
-                    gap = Gap(10.px.value)
-                    marginTop = 20.px
-                    top = 0.px
                     right = 0.px
-                    zIndex = 10
-                    padding(20.px, 0.px)
                 }
                 ".info" {
                     position = fixed
@@ -143,9 +138,6 @@ fun Routing.webUi() {
                     backgroundColor = dimGrey
                     borderColor = dimGrey
                 }
-                "button.current" {
-
-                }
             }.toString()
         }
     }
@@ -175,6 +167,7 @@ fun Routing.webUi() {
                 }
             }
             body {
+                commonShipUi()
                 joinUi()
                 helmUi()
                 navigationUi()
@@ -184,9 +177,23 @@ fun Routing.webUi() {
     }
 }
 
+private fun BODY.commonShipUi() {
+    div {
+        id = "common-ship-ui"
+        div(classes = "topLeftInfo") {
+            button(classes = "exit leftEdge") {
+                +"Exit ship"
+            }
+            button(classes = "fullscreen leftEdge") {
+                +"Fullscreen"
+            }
+        }
+    }
+}
+
 private fun BODY.joinUi() {
     div {
-        id = "join"
+        id = "join-ui"
         div(classes = "topLeftInfo") {
             button(classes = "spawn leftEdge") {
                 +"+ Spawn ship"
@@ -198,15 +205,7 @@ private fun BODY.joinUi() {
 
 private fun BODY.helmUi() {
     div {
-        id = "helm"
-        div(classes = "topLeftInfo") {
-            button(classes = "exit leftEdge") {
-                +"Exit ship"
-            }
-            button(classes = "fullscreen leftEdge") {
-                +"Fullscreen"
-            }
-        }
+        id = "helm-ui"
         div(classes = "topRightInfo") {
             button(classes = "current rightEdge") {
                 +"Helm"
@@ -240,15 +239,7 @@ private fun BODY.helmUi() {
 
 private fun BODY.navigationUi() {
     div {
-        id = "navigation"
-        div(classes = "topLeftInfo") {
-            button(classes = "exit leftEdge") {
-                +"Exit ship"
-            }
-            button(classes = "fullscreen leftEdge") {
-                +"Fullscreen"
-            }
-        }
+        id = "navigation-ui"
         div(classes = "topRightInfo") {
             button(classes = "switchToHelm rightEdge") {
                 +"Helm"
@@ -266,15 +257,7 @@ private fun BODY.navigationUi() {
 
 private fun BODY.mainScreenUi() {
     div {
-        id = "main-screen"
-        div(classes = "topLeftInfo") {
-            button(classes = "exit leftEdge") {
-                +"Exit ship"
-            }
-            button(classes = "fullscreen leftEdge") {
-                +"Fullscreen"
-            }
-        }
+        id = "main-screen-ui"
         div(classes = "topRightInfo") {
             button(classes = "switchToHelm rightEdge") {
                 +"Helm"

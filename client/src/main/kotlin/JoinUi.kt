@@ -12,7 +12,7 @@ import kotlin.math.max
 
 class JoinUi {
 
-    private val root = document.getElementById("join")!! as HTMLElement
+    private val root = document.getElementById("join-ui")!! as HTMLElement
 
     init {
         document.getElementsByClassName("spawn").asList()

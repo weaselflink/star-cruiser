@@ -16,12 +16,10 @@ class NavigationUi {
 
     private val gridSize = 1000.0
 
-    private val root = document.getElementById("navigation")!! as HTMLElement
+    private val root = document.getElementById("navigation-ui")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val mouseEventDispatcher = MouseEventDispatcher(canvas)
-    private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
-    private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val toHelmButton = root.querySelector(".switchToHelm")!! as HTMLButtonElement
     private val toMainScreenButton = root.querySelector(".switchToMainScreen")!! as HTMLButtonElement
     private val zoomSlider = CanvasSlider(
@@ -44,17 +42,6 @@ class NavigationUi {
         mouseEventDispatcher.addHandler(zoomSlider)
         mouseEventDispatcher.addHandler(MapMouseEventHandler())
 
-        exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
-        fullScreenButton.onclick = {
-            val body = document.querySelector("body")!! as HTMLElement
-            if (document.fullscreenElement == null) {
-                body.requestFullscreen()
-                fullScreenButton.innerText = "Windowed"
-            } else {
-                document.exitFullscreen()
-                fullScreenButton.innerText = "Fullscreen"
-            }
-        }
         toHelmButton.onclick = { clientSocket.send(Command.CommandChangeStation(Helm)) }
         toMainScreenButton.onclick = { clientSocket.send(Command.CommandChangeStation(MainScreen)) }
     }

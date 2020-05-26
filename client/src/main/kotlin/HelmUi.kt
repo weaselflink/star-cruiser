@@ -7,12 +7,10 @@ import kotlin.math.*
 
 class HelmUi {
 
-    private val root = document.getElementById("helm")!! as HTMLElement
+    private val root = document.getElementById("helm-ui")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val mouseEventDispatcher = MouseEventDispatcher(canvas)
-    private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
-    private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val toNavigationButton = root.querySelector(".switchToNavigation")!! as HTMLButtonElement
     private val toMainScreenButton = root.querySelector(".switchToMainScreen")!! as HTMLButtonElement
     private val throttleSlider = CanvasSlider(
@@ -47,17 +45,6 @@ class HelmUi {
         mouseEventDispatcher.addHandler(throttleSlider)
         mouseEventDispatcher.addHandler(rudderSlider)
 
-        exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
-        fullScreenButton.onclick = {
-            val body = document.querySelector("body")!! as HTMLElement
-            if (document.fullscreenElement == null) {
-                body.requestFullscreen()
-                fullScreenButton.innerText = "Windowed"
-            } else {
-                document.exitFullscreen()
-                fullScreenButton.innerText = "Fullscreen"
-            }
-        }
         toNavigationButton.onclick = { clientSocket.send(Command.CommandChangeStation(Navigation)) }
         toMainScreenButton.onclick = { clientSocket.send(Command.CommandChangeStation(Station.MainScreen)) }
     }
