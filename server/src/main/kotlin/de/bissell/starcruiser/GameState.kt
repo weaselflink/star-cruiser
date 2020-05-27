@@ -4,7 +4,6 @@ import de.bissell.starcruiser.ClientState.*
 import de.bissell.starcruiser.Station.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.actor
 import java.time.Instant
 import java.time.Instant.now
@@ -28,7 +27,6 @@ class ChangeRudder(val clientId: UUID, val value: Int) : GameStateChange()
 class GetGameStateSnapshot(val clientId: UUID, val response: CompletableDeferred<SnapshotMessage>) : GameStateChange()
 class AddWaypoint(val clientId: UUID, val position: Vector2) : GameStateChange()
 
-@ObsoleteCoroutinesApi
 fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
     val gameState = GameState()
     for (change in channel) {

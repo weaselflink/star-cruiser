@@ -1,4 +1,4 @@
-@file:Suppress("PropertyName")
+@file:Suppress("PropertyName", "SuspiciousCollectionReassignment")
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -53,7 +53,10 @@ tasks {
     }
 
     withType<KotlinCompile>().configureEach {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions {
+            jvmTarget = "1.8"
+            freeCompilerArgs += listOf("-Xuse-experimental=kotlinx.coroutines.ObsoleteCoroutinesApi")
+        }
     }
 
     withType<Jar> {

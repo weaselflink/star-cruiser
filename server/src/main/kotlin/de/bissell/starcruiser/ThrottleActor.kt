@@ -3,7 +3,6 @@ package de.bissell.starcruiser
 import de.bissell.starcruiser.ThrottleMessage.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.actor
 
 sealed class ThrottleMessage {
@@ -13,7 +12,6 @@ sealed class ThrottleMessage {
     class AcknowledgeInflightMessage(val counter: Long) : ThrottleMessage()
 }
 
-@ObsoleteCoroutinesApi
 fun CoroutineScope.createThrottleActor() = actor<ThrottleMessage> {
     var updateCounter: Long = 0
     val inflightUpdates: MutableList<Long> = mutableListOf()

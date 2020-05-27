@@ -11,7 +11,6 @@ import io.ktor.serialization.json
 import io.ktor.server.netty.EngineMain
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -19,7 +18,6 @@ import java.time.Duration
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
-@ObsoleteCoroutinesApi
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
     val gameStateActor = gameStateActor()

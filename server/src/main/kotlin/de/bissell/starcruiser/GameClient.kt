@@ -7,7 +7,6 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import java.util.*
 
-@ObsoleteCoroutinesApi
 class GameClient(
     private val id: UUID = UUID.randomUUID(),
     private val gameStateActor: SendChannel<GameStateChange>,
