@@ -30,23 +30,23 @@ sealed class SnapshotMessage {
     }
 
     @Serializable
-    class ShipSelection(
+    data class ShipSelection(
         val playerShips: List<PlayerShipMessage>
     ) : SnapshotMessage()
 
     @Serializable
-    class Helm(
+    data class Helm(
         override val ship: ShipMessage,
         val contacts: List<ContactMessage>
     ) : SnapshotMessage(), ShipSnapshot
 
     @Serializable
-    class Navigation(
+    data class Navigation(
         override val ship: ShipMessage
     ) : SnapshotMessage(), ShipSnapshot
 
     @Serializable
-    class MainScreen(
+    data class MainScreen(
         override val ship: ShipMessage,
         val contacts: List<ContactMessage>
     ) : SnapshotMessage(), ShipSnapshot

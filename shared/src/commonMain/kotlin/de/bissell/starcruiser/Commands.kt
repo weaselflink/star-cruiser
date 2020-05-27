@@ -7,7 +7,7 @@ import kotlinx.serialization.json.Json
 sealed class Command {
 
     @Serializable
-    class UpdateAcknowledge(val counter: Long) : Command()
+    data class UpdateAcknowledge(val counter: Long) : Command()
 
     @Serializable
     object CommandTogglePause : Command()
@@ -16,22 +16,22 @@ sealed class Command {
     object CommandSpawnShip: Command()
 
     @Serializable
-    class CommandJoinShip(val shipId: String, val station: Station) : Command()
+    data class CommandJoinShip(val shipId: String, val station: Station) : Command()
 
     @Serializable
-    class CommandChangeStation(val station: Station) : Command()
+    data class CommandChangeStation(val station: Station) : Command()
 
     @Serializable
     object CommandExitShip : Command()
 
     @Serializable
-    class CommandChangeThrottle(val value: Int) : Command()
+    data class CommandChangeThrottle(val value: Int) : Command()
 
     @Serializable
-    class CommandChangeRudder(val value: Int) : Command()
+    data class CommandChangeRudder(val value: Int) : Command()
 
     @Serializable
-    class CommandAddWaypoint(val position: Vector2) : Command()
+    data class CommandAddWaypoint(val position: Vector2) : Command()
 
     fun toJson() = Json(jsonConfiguration).stringify(serializer(), this)
 
