@@ -111,6 +111,7 @@ class GameState {
 
     fun spawnShip(): UUID {
         return Ship(
+            template = ShipTemplate(),
             position = Vector2.random(300.0),
             throttle = 100,
             rudder = 30,
@@ -210,9 +211,9 @@ enum class ClientState {
 
 class Ship(
     val id: UUID = UUID.randomUUID(),
+    val template: ShipTemplate,
     val shortRangeScopeRange: Double = 400.0,
     private val designation: String = randomShipName(),
-    private val shipClass: String = "Infector",
     var position: Vector2 = Vector2(),
     private var speed: Vector2 = Vector2(),
     private var rotation: Double = 90.0.toRadians(),
@@ -225,14 +226,16 @@ class Ship(
 
     private val history = mutableListOf<Pair<Double, Vector2>>()
 
-    private val thrustFactor = 0.2
-    private val rudderFactor = 10.0
-
     fun update(time: GameTime) {
         updateThrust(time)
         updateRotation(time)
 
-        speed = Vector2(thrust * thrustFactor, 0.0).rotate(rotation)
+        val effectiveThrust = if (thrust < 0) {
+            thrust * template.reverseThrustFactor
+        } else {
+            thrust * template.aheadThrustFactor
+        }
+        speed = Vector2(effectiveThrust, 0.0).rotate(rotation)
         position = (position + speed * time.delta)
 
         updateHistory(time)
@@ -244,7 +247,7 @@ class Ship(
     }
 
     private fun updateRotation(time: GameTime) {
-        val diff = -(rudder.toDouble().toRadians() * 0.01 * rudderFactor * PI)
+        val diff = -(rudder.toDouble().toRadians() * 0.01 * template.rudderFactor * PI)
         rotation = (rotation + diff * time.delta)
         if (rotation >= PI * 2) {
             rotation %= (PI * 2)
@@ -268,11 +271,11 @@ class Ship(
     }
 
     fun changeThrottle(value: Int) {
-        throttle = value.clip(-100, 100)
+        throttle = value.clamp(-100, 100)
     }
 
     fun changeRudder(value: Int) {
-        rudder = value.clip(-100, 100)
+        rudder = value.clamp(-100, 100)
     }
 
     fun addWaypoint(position: Vector2) {
@@ -287,14 +290,14 @@ class Ship(
         PlayerShipMessage(
             id = id.toString(),
             name = designation,
-            shipClass = shipClass
+            shipClass = template.className
         )
 
     fun toMessage() =
         ShipMessage(
             id = id.toString(),
             designation = designation,
-            shipClass = shipClass,
+            shipClass = template.className,
             speed = speed,
             position = position,
             rotation = rotation,

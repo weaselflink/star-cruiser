@@ -5,9 +5,9 @@ import kotlin.math.*
 const val degreesToRadians = 0.017453292519943295
 const val radiansToDegrees = 57.29577951308232
 
-fun Int.clip(lower: Int, upper: Int) = min(upper, max(lower, this))
+fun Int.clamp(lower: Int, upper: Int) = min(upper, max(lower, this))
 
-fun Double.clip(lower: Double, upper: Double) = min(upper, max(lower, this))
+fun Double.clamp(lower: Double, upper: Double) = min(upper, max(lower, this))
 
 fun Int.toRadians() = this * degreesToRadians
 

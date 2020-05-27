@@ -1,4 +1,4 @@
-import de.bissell.starcruiser.clip
+import de.bissell.starcruiser.clamp
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.MouseEvent
@@ -54,7 +54,7 @@ class CanvasSlider(
             (mouseEvent.offsetX - (dim.bottomX + dim.radius)) / (dim.width - dim.radius * 2.0)
         } else {
             -(mouseEvent.offsetY - (dim.bottomY - dim.radius)) / (dim.height - dim.radius * 2.0)
-        }.clip(0.0, 1.0)
+        }.clamp(0.0, 1.0)
     }
 
     private fun CanvasRenderingContext2D.drawPill(dim: SliderDimensions) {
@@ -75,14 +75,14 @@ class CanvasSlider(
         beginPath()
         if (dim.isHorizontal) {
             circle(
-                dim.bottomX + dim.radius + value.clip(0.0, 1.0) * (dim.length - dim.radius * 2.0),
+                dim.bottomX + dim.radius + value.clamp(0.0, 1.0) * (dim.length - dim.radius * 2.0),
                 dim.bottomY - dim.radius,
                 dim.radius * 0.8
             )
         } else {
             circle(
                 dim.bottomX + dim.radius,
-                dim.bottomY - dim.radius - value.clip(0.0, 1.0) * (dim.length - dim.radius * 2.0),
+                dim.bottomY - dim.radius - value.clamp(0.0, 1.0) * (dim.length - dim.radius * 2.0),
                 dim.radius * 0.8
             )
         }

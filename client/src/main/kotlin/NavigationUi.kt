@@ -2,7 +2,7 @@ import de.bissell.starcruiser.Command.CommandAddWaypoint
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Vector2
-import de.bissell.starcruiser.clip
+import de.bissell.starcruiser.clamp
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -55,11 +55,11 @@ class NavigationUi {
     }
 
     fun zoomIn() {
-        scaleSetting = (scaleSetting - 1).clip(0, 6)
+        scaleSetting = (scaleSetting - 1).clamp(0, 6)
     }
 
     fun zoomOut() {
-        scaleSetting = (scaleSetting + 1).clip(0, 6)
+        scaleSetting = (scaleSetting + 1).clamp(0, 6)
     }
 
     private fun changeZoom(value: Double) {
