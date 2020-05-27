@@ -2,6 +2,7 @@ import de.bissell.starcruiser.Vector2
 import org.w3c.dom.*
 import kotlin.browser.window
 import kotlin.math.PI
+import kotlin.math.max
 import kotlin.math.min
 
 fun CanvasRenderingContext2D.clear(color: String) {
@@ -61,36 +62,36 @@ fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, heigh
     closePath()
 }
 
-fun CanvasRenderingContext2D.historyStyle(dim: Double) {
+fun CanvasRenderingContext2D.historyStyle(dim: CanvasDimensions) {
     fillStyle = "#222"
-    lineWidth = dim * 0.004
+    lineWidth = dim.vmin * 0.4
 }
 
-fun CanvasRenderingContext2D.shipStyle(dim: Double) {
-    lineWidth = dim * 0.008 * 0.4
+fun CanvasRenderingContext2D.shipStyle(dim: CanvasDimensions) {
+    lineWidth = dim.vmin * 0.8 * 0.4
     lineJoin = CanvasLineJoin.ROUND
     strokeStyle = "#1e90ff"
     fillStyle = "#1e90ff"
-    val textSize = (dim * 0.02).toInt()
+    val textSize = (dim.vmin * 2).toInt()
     font = "bold ${textSize.px} sans-serif"
     textAlign = CanvasTextAlign.CENTER
 }
 
-fun CanvasRenderingContext2D.contactStyle(dim: Double) {
-    lineWidth = dim * 0.008 * 0.4
+fun CanvasRenderingContext2D.contactStyle(dim: CanvasDimensions) {
+    lineWidth = dim.vmin * 0.8 * 0.4
     lineJoin = CanvasLineJoin.ROUND
     strokeStyle = "#555"
     fillStyle = "#555"
-    val textSize = (dim * 0.02).toInt()
+    val textSize = (dim.vmin * 2).toInt()
     font = "bold ${textSize.px} sans-serif"
     textAlign = CanvasTextAlign.CENTER
 }
 
-fun CanvasRenderingContext2D.wayPointStyle(dim: Double) {
+fun CanvasRenderingContext2D.wayPointStyle(dim: CanvasDimensions) {
     strokeStyle = "#4682B4"
     fillStyle = "#4682B4"
-    lineWidth = dim * 0.004
-    val textSize = (dim * 0.02).toInt()
+    lineWidth = dim.vmin * 0.4
+    val textSize = (dim.vmin * 2).toInt()
     font = "bold ${textSize.px} sans-serif"
     textAlign = CanvasTextAlign.CENTER
     lineJoin = CanvasLineJoin.ROUND
@@ -112,4 +113,23 @@ fun HTMLCanvasElement.updateSize(square: Boolean = false) {
     style.top = ((windowHeight - newHeight) / 2).px
     style.width = newWidth.px
     style.height = newHeight.px
+}
+
+fun HTMLCanvasElement.dimensions() = CanvasDimensions(width, height)
+
+data class CanvasDimensions(
+    val width: Double,
+    val height: Double,
+    val min: Double = min(width, height),
+    val max: Double = max(width, height),
+    val vw: Double = width / 100.0,
+    val vh: Double = width / 100.0,
+    val vmin: Double = min / 100.0,
+    val vmax: Double = min / 100.0,
+    val isLandscape: Boolean = height > width
+) {
+    constructor(
+        width: Number,
+        height: Number
+    ) : this(width.toDouble(), height.toDouble())
 }

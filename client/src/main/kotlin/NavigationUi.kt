@@ -11,7 +11,6 @@ import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.dom.removeClass
-import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -25,14 +24,14 @@ class NavigationUi {
     private val mouseEventDispatcher = MouseEventDispatcher(canvas)
     private val addWaypointButton = document.querySelector(".addWaypoint")!! as HTMLButtonElement
     private val zoomSlider = CanvasSlider(
-        xExpr = { it.dim * 0.05 },
-        yExpr = { it.height - it.dim * 0.05 },
-        widthExpr = { it.dim * 0.05 * 8.0 },
-        heightExpr = { it.dim * 0.05 * 1.6 },
+        xExpr = { it.vmin * 5 },
+        yExpr = { it.height - it.vmin * 5 },
+        widthExpr = { it.vmin * 40 },
+        heightExpr = { it.vmin * 8 },
         onChange = { changeZoom(it) }
     )
 
-    private var dim = 100.0
+    private var dim = CanvasDimensions(100, 100)
     private var center = Vector2()
     private var scaleSetting = 3
     private var addingWaypoint = false
@@ -72,7 +71,7 @@ class NavigationUi {
 
     fun draw(snapshot: SnapshotMessage.Navigation) {
         val ship = snapshot.ship
-        dim = min(canvas.width, canvas.height).toDouble()
+        dim = canvas.dimensions()
 
         with(ctx) {
             resetTransform()
@@ -118,7 +117,7 @@ class NavigationUi {
         translateToCenter()
         translate(ship.position.adjustForMap())
         shipStyle(dim)
-        drawShipSymbol(ship.rotation, dim * 0.008)
+        drawShipSymbol(ship.rotation, dim.vmin * 0.8)
         restore()
     }
 
@@ -148,10 +147,10 @@ class NavigationUi {
 
             translate(waypoint.position.adjustForMap())
             beginPath()
-            circle(0.0, 0.0, dim * 0.008)
+            circle(0.0, 0.0, dim.vmin * 0.8)
             stroke()
 
-            translate(0.0, -dim * 0.02)
+            translate(0.0, -dim.vmin * 2)
             fillText(waypoint.name, 0.0, 0.0)
 
             restore()

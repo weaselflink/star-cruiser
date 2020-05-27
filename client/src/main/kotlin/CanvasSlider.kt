@@ -2,13 +2,12 @@ import de.bissell.starcruiser.clamp
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.MouseEvent
-import kotlin.math.min
 
 class CanvasSlider(
-    private val xExpr: (CurrentCanvasSize) -> Double,
-    private val yExpr: (CurrentCanvasSize) -> Double,
-    private val widthExpr: (CurrentCanvasSize) -> Double,
-    private val heightExpr: (CurrentCanvasSize) -> Double,
+    private val xExpr: (CanvasDimensions) -> Double,
+    private val yExpr: (CanvasDimensions) -> Double,
+    private val widthExpr: (CanvasDimensions) -> Double,
+    private val heightExpr: (CanvasDimensions) -> Double,
     private val onChange: (Double) -> Unit = {},
     private val lines: List<Double> = emptyList()
 ) : MouseEventHandler {
@@ -105,7 +104,7 @@ class CanvasSlider(
     }
 
     private fun currentDimensions(canvas: HTMLCanvasElement) =
-        CurrentCanvasSize(canvas.width.toDouble(), canvas.height.toDouble()).let { dim ->
+        canvas.dimensions().let { dim ->
             val width = widthExpr(dim)
             val height = heightExpr(dim)
             SliderDimensions(
@@ -115,16 +114,10 @@ class CanvasSlider(
                 height = height,
                 radius = if (width > height) height * 0.5 else width * 0.5,
                 length = if (width > height) width else height,
-                lineWidth = dim.dim * 0.004
+                lineWidth = dim.vmin * 0.4
             )
         }
 }
-
-data class CurrentCanvasSize(
-    val width: Double,
-    val height: Double,
-    val dim: Double = min(width, height)
-)
 
 private data class SliderDimensions(
     val bottomX: Double,

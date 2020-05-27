@@ -10,10 +10,10 @@ class HelmUi {
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val mouseEventDispatcher = MouseEventDispatcher(canvas)
     private val throttleSlider = CanvasSlider(
-        xExpr = { it.dim * 0.05 },
-        yExpr = { it.dim - it.dim * 0.05 },
-        widthExpr = { it.dim * 0.05 * 1.6 },
-        heightExpr = { it.dim * 0.05 * 8.0 },
+        xExpr = { it.vmin * 5 },
+        yExpr = { it.min - it.vmin * 5 },
+        widthExpr = { it.vmin * 8 },
+        heightExpr = { it.vmin * 40 },
         onChange = {
             val throttle = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
             clientSocket.send(Command.CommandChangeThrottle(throttle))
@@ -21,10 +21,10 @@ class HelmUi {
         lines = listOf(0.5)
     )
     private val rudderSlider = CanvasSlider(
-        xExpr = { it.dim - it.dim * 0.05 - it.dim * 0.05 * 8.0 },
-        yExpr = { it.dim - it.dim * 0.05 },
-        widthExpr = { it.dim * 0.05 * 8.0 },
-        heightExpr = { it.dim * 0.05 * 1.6 },
+        xExpr = { it.min - it.vmin * 5 - it.vmin * 40 },
+        yExpr = { it.min - it.vmin * 5 },
+        widthExpr = { it.vmin * 40 },
+        heightExpr = { it.vmin * 8 },
         onChange = {
             val rudder = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
             clientSocket.send(Command.CommandChangeRudder(rudder))
@@ -32,7 +32,7 @@ class HelmUi {
         lines = listOf(0.5)
     )
 
-    private var dim = 100.0
+    private var dim = CanvasDimensions(100, 100)
     private var scopeRadius = 100.0
     private var rotateScope = false
 
@@ -60,8 +60,8 @@ class HelmUi {
 
     fun draw(snapshot: SnapshotMessage.Helm) {
         val ship = snapshot.ship
-        dim = min(canvas.width, canvas.height).toDouble()
-        scopeRadius = dim * 0.5 - dim * 0.03
+        dim = canvas.dimensions()
+        scopeRadius = dim.min * 0.5 - dim.vmin * 3
 
         updateInfo(ship)
 
@@ -121,7 +121,7 @@ class HelmUi {
 
     private fun CanvasRenderingContext2D.drawScopeEdge() {
         save()
-        lineWidth = dim * 0.01
+        lineWidth = dim.vmin
         strokeStyle = "#666"
         beginPath()
         circle(0.0, 0.0, scopeRadius)
@@ -143,7 +143,7 @@ class HelmUi {
         val textSize = (scopeRadius * 0.06).toInt()
         strokeStyle = "#222"
         fillStyle = "#222"
-        lineWidth = dim * 0.006
+        lineWidth = dim.vmin * 0.6
         lineCap = CanvasLineCap.ROUND
         textAlign = CanvasTextAlign.CENTER
         font = "bold ${textSize.px} sans-serif"
@@ -169,7 +169,7 @@ class HelmUi {
 
         save()
         strokeStyle = "#222"
-        lineWidth = dim * 0.004
+        lineWidth = dim.vmin * 0.4
         for (i in 1..3) {
             val radius = (ship.shortRangeScopeRange / 4.0 * i).adjustForScope(ship)
             beginPath()
@@ -190,7 +190,7 @@ class HelmUi {
 
         save()
         shipStyle(dim)
-        drawShipSymbol(rot, dim * 0.008)
+        drawShipSymbol(rot, dim.vmin * 0.8)
         restore()
     }
 
@@ -204,10 +204,10 @@ class HelmUi {
 
         translate(posOnScope)
         beginPath()
-        drawShipSymbol(rot, dim * 0.008)
+        drawShipSymbol(rot, dim.vmin * 0.8)
 
         rotate(-getScopeRotation(ship))
-        translate(0.0, -dim * 0.02)
+        translate(0.0, -dim.vmin * 2)
         fillText(contact.designation, 0.0, 0.0)
         restore()
     }
@@ -222,7 +222,7 @@ class HelmUi {
             save()
             translate(posOnScope)
             beginPath()
-            circle(0.0, 0.0, dim * 0.004)
+            circle(0.0, 0.0, dim.min * 0.004)
             fill()
             restore()
         }
@@ -253,11 +253,11 @@ class HelmUi {
 
         translate(posOnScope)
         beginPath()
-        circle(0.0, 0.0, dim * 0.008)
+        circle(0.0, 0.0, dim.vmin * 0.8)
         stroke()
 
         rotate(-getScopeRotation(ship))
-        translate(0.0, -dim * 0.02)
+        translate(0.0, -dim.vmin * 2)
         fillText(waypoint.name, 0.0, 0.0)
 
         restore()
