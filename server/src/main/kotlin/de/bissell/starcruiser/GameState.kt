@@ -34,6 +34,7 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
     for (change in channel) {
         when (change) {
             is Update -> gameState.update()
+            is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
             is NewGameClient -> gameState.clientConnected(change.clientId)
             is GameClientDisconnected -> gameState.clientDisconnected(change.clientId)
             is TogglePause -> gameState.togglePaused()
@@ -43,7 +44,6 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
             is ExitShip -> gameState.exitShip(change.clientId)
             is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.value)
             is ChangeRudder -> gameState.changeRudder(change.clientId, change.value)
-            is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
             is AddWaypoint -> gameState.addWaypoint(change.clientId, change.position)
         }
     }
@@ -56,8 +56,8 @@ class GameState {
     private val clients = mutableMapOf<UUID, Client>()
 
     fun toMessage(clientId: UUID): SnapshotMessage {
-        val clientShip = clientShip(clientId)
-        val client = clients[clientId]!!
+        val client = getClient(clientId)
+        val clientShip = getClientShip(clientId)
         return when (client.state) {
             ShipSelection -> SnapshotMessage.ShipSelection(
                 playerShips = ships.values.map(Ship::toPlayerShipMessage)
@@ -79,11 +79,11 @@ class GameState {
     }
 
     fun clientConnected(clientId: UUID) {
-        clients[clientId] = Client(clientId)
+        getClient(clientId)
     }
 
     fun joinShip(clientId: UUID, shipId: UUID, station: Station) {
-        clients[clientId]?.also { client ->
+        getClient(clientId).also { client ->
             client.state = InShip
             client.shipId = shipId
             client.station = station
@@ -91,7 +91,7 @@ class GameState {
     }
 
     fun changeStation(clientId: UUID, station: Station) {
-        clients[clientId]?.also { client ->
+        getClient(clientId).also { client ->
             if (client.shipId != null) {
                 client.station = station
             }
@@ -99,7 +99,7 @@ class GameState {
     }
 
     fun exitShip(clientId: UUID) {
-        clients[clientId]?.also { client ->
+        getClient(clientId).also { client ->
             client.state = ShipSelection
             client.shipId = null
             client.station = null
@@ -138,19 +138,22 @@ class GameState {
     }
 
     fun changeThrottle(clientId: UUID, value: Int) {
-        clientShip(clientId)?.changeThrottle(value)
+        getClientShip(clientId)?.changeThrottle(value)
     }
 
     fun changeRudder(clientId: UUID, value: Int) {
-        clientShip(clientId)?.changeRudder(value)
+        getClientShip(clientId)?.changeRudder(value)
     }
 
     fun addWaypoint(clientId: UUID, position: Vector2) {
-        clientShip(clientId)?.addWaypoint(position)
+        getClientShip(clientId)?.addWaypoint(position)
     }
 
-    private fun clientShip(clientId: UUID): Ship? =
-        clients[clientId]?.let { ships[it.shipId] }
+    private fun getClient(clientId: UUID) =
+        clients.computeIfAbsent(clientId) { Client(clientId) }
+
+    private fun getClientShip(clientId: UUID): Ship? =
+        getClient(clientId).let { ships[it.shipId] }
 
     private fun getContacts(clientShip: Ship, client: Client): List<ContactMessage> {
         return ships
