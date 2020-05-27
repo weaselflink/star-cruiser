@@ -1,6 +1,7 @@
 package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ClientState.*
+import de.bissell.starcruiser.Station.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -61,17 +62,19 @@ class GameState {
             ShipSelection -> SnapshotMessage.ShipSelection(
                 playerShips = ships.values.map(Ship::toPlayerShipMessage)
             )
-            Helm -> SnapshotMessage.Helm(
-                ship = clientShip!!.toMessage(),
-                contacts = getContacts(clientShip, client)
-            )
-            Navigation -> SnapshotMessage.Navigation(
-                ship = clientShip!!.toMessage()
-            )
-            MainScreen -> SnapshotMessage.MainScreen(
-                ship = clientShip!!.toMessage(),
-                contacts = getContacts(clientShip, client)
-            )
+            InShip -> when (client.station!!) {
+                Helm -> SnapshotMessage.Helm(
+                    ship = clientShip!!.toMessage(),
+                    contacts = getContacts(clientShip, client)
+                )
+                Navigation -> SnapshotMessage.Navigation(
+                    ship = clientShip!!.toMessage()
+                )
+                MainScreen -> SnapshotMessage.MainScreen(
+                    ship = clientShip!!.toMessage(),
+                    contacts = getContacts(clientShip, client)
+                )
+            }
         }
     }
 
@@ -81,31 +84,25 @@ class GameState {
 
     fun joinShip(clientId: UUID, shipId: UUID, station: Station) {
         clients[clientId]?.also { client ->
-            client.state = when (station) {
-                Station.Helm -> Helm
-                Station.Navigation -> Navigation
-                Station.MainScreen -> MainScreen
-            }
+            client.state = InShip
             client.shipId = shipId
+            client.station = station
         }
     }
 
     fun changeStation(clientId: UUID, station: Station) {
         clients[clientId]?.also { client ->
             if (client.shipId != null) {
-                client.state = when (station) {
-                    Station.Helm -> Helm
-                    Station.Navigation -> Navigation
-                    Station.MainScreen -> MainScreen
-                }
+                client.station = station
             }
         }
     }
 
     fun exitShip(clientId: UUID) {
-        clients[clientId]?.also {
-            it.state = ShipSelection
-            it.shipId = null
+        clients[clientId]?.also { client ->
+            client.state = ShipSelection
+            client.shipId = null
+            client.station = null
         }
     }
 
@@ -161,7 +158,7 @@ class GameState {
             .map { it.value }
             .map { it.toContactMessage(clientShip) }
             .filter {
-                client.state != Helm || it.relativePosition.length() < clientShip.shortRangeScopeRange * 1.1
+                client.station != Helm || it.relativePosition.length() < clientShip.shortRangeScopeRange * 1.1
             }
     }
 }
@@ -199,14 +196,13 @@ class GameTime {
 data class Client(
     val id: UUID,
     var state: ClientState = ShipSelection,
-    var shipId: UUID? = null
+    var shipId: UUID? = null,
+    var station: Station? = null
 )
 
 enum class ClientState {
     ShipSelection,
-    Helm,
-    Navigation,
-    MainScreen
+    InShip
 }
 
 class Ship(
