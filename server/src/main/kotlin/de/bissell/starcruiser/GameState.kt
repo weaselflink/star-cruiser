@@ -34,14 +34,14 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
     for (change in channel) {
         when (change) {
             is Update -> gameState.update()
+            is TogglePause -> gameState.togglePaused()
             is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
             is NewGameClient -> gameState.clientConnected(change.clientId)
             is GameClientDisconnected -> gameState.clientDisconnected(change.clientId)
-            is TogglePause -> gameState.togglePaused()
-            is SpawnShip -> gameState.spawnShip()
             is JoinShip -> gameState.joinShip(change.clientId, change.shipId, change.station)
             is ChangeStation -> gameState.changeStation(change.clientId, change.station)
             is ExitShip -> gameState.exitShip(change.clientId)
+            is SpawnShip -> gameState.spawnShip()
             is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.value)
             is ChangeRudder -> gameState.changeRudder(change.clientId, change.value)
             is AddWaypoint -> gameState.addWaypoint(change.clientId, change.position)
@@ -82,28 +82,20 @@ class GameState {
         getClient(clientId)
     }
 
+    fun clientDisconnected(clientId: UUID) {
+        clients.remove(clientId)
+    }
+
     fun joinShip(clientId: UUID, shipId: UUID, station: Station) {
-        getClient(clientId).also { client ->
-            client.state = InShip
-            client.shipId = shipId
-            client.station = station
-        }
+        getClient(clientId).joinShip(shipId, station)
     }
 
     fun changeStation(clientId: UUID, station: Station) {
-        getClient(clientId).also { client ->
-            if (client.shipId != null) {
-                client.station = station
-            }
-        }
+        getClient(clientId).changeStation(station)
     }
 
     fun exitShip(clientId: UUID) {
-        getClient(clientId).also { client ->
-            client.state = ShipSelection
-            client.shipId = null
-            client.station = null
-        }
+        getClient(clientId).exitShip()
     }
 
     fun spawnShip(): UUID {
@@ -119,10 +111,6 @@ class GameState {
         ).also {
             ships[it.id] = it
         }.id
-    }
-
-    fun clientDisconnected(clientId: UUID) {
-        clients.remove(clientId)
     }
 
     fun togglePaused() {
@@ -201,7 +189,26 @@ data class Client(
     var state: ClientState = ShipSelection,
     var shipId: UUID? = null,
     var station: Station? = null
-)
+) {
+
+    fun joinShip(shipId: UUID, station: Station) {
+        state = InShip
+        this.shipId = shipId
+        this.station = station
+    }
+
+    fun changeStation(station: Station) {
+        if (shipId != null) {
+            this.station = station
+        }
+    }
+
+    fun exitShip() {
+        state = ShipSelection
+        shipId = null
+        station = null
+    }
+}
 
 enum class ClientState {
     ShipSelection,
