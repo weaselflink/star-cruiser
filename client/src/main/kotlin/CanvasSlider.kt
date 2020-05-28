@@ -1,7 +1,12 @@
 import de.bissell.starcruiser.clamp
+import org.w3c.dom.ALPHABETIC
 import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.CanvasTextAlign
+import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.LEFT
 import org.w3c.dom.events.MouseEvent
+import kotlin.math.PI
 
 class CanvasSlider(
     private val xExpr: (CanvasDimensions) -> Double,
@@ -9,7 +14,8 @@ class CanvasSlider(
     private val widthExpr: (CanvasDimensions) -> Double,
     private val heightExpr: (CanvasDimensions) -> Double,
     private val onChange: (Double) -> Unit = {},
-    private val lines: List<Double> = emptyList()
+    private val lines: List<Double> = emptyList(),
+    private val leftText: String? = null
 ) : MouseEventHandler {
 
     fun draw(canvas: HTMLCanvasElement, value: Double) {
@@ -20,6 +26,7 @@ class CanvasSlider(
             save()
 
             drawPill(dim)
+            drawText(dim)
             drawKnob(dim, value)
             drawLines(dim)
 
@@ -67,6 +74,31 @@ class CanvasSlider(
         beginPath()
         drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
         stroke()
+    }
+
+    private fun CanvasRenderingContext2D.drawText(dim: SliderDimensions) {
+        if (leftText != null) {
+            save()
+
+            fillStyle = "#333"
+            textAlign = CanvasTextAlign.LEFT
+            textBaseline = CanvasTextBaseline.ALPHABETIC
+            translate(dim.bottomX, dim.bottomY)
+            if (dim.isHorizontal) {
+                val textSize = (dim.height * 0.5).toInt()
+                font = "${textSize.px} sans-serif"
+                translate(dim.height * 0.4, -dim.height * 0.35)
+                fillText(leftText, 0.0, 0.0, dim.width - dim.height)
+            } else {
+                val textSize = (dim.width * 0.5).toInt()
+                font = "${textSize.px} sans-serif"
+                translate(dim.width * 0.65, -dim.width * 0.4)
+                rotate(-PI * 0.5)
+                fillText(leftText, 0.0, 0.0, dim.height - dim.width)
+            }
+
+            restore()
+        }
     }
 
     private fun CanvasRenderingContext2D.drawKnob(dim: SliderDimensions, value: Double) {

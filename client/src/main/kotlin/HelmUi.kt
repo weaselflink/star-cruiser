@@ -43,7 +43,8 @@ class HelmUi {
             val throttle = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
             clientSocket.send(Command.CommandChangeThrottle(throttle))
         },
-        lines = listOf(0.5)
+        lines = listOf(0.5),
+        leftText = "Impulse"
     )
     private val rudderSlider = CanvasSlider(
         xExpr = { it.min - it.vmin * 5 - it.vmin * 40 },
@@ -54,7 +55,8 @@ class HelmUi {
             val rudder = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
             clientSocket.send(Command.CommandChangeRudder(rudder))
         },
-        lines = listOf(0.5)
+        lines = listOf(0.5),
+        leftText = "Rudder"
     )
 
     private var dim = CanvasDimensions(100, 100)

@@ -28,7 +28,8 @@ class NavigationUi {
         yExpr = { it.height - it.vmin * 5 },
         widthExpr = { it.vmin * 40 },
         heightExpr = { it.vmin * 8 },
-        onChange = { changeZoom(it) }
+        onChange = { changeZoom(it) },
+        leftText = "Zoom"
     )
 
     private var dim = CanvasDimensions(100, 100)
