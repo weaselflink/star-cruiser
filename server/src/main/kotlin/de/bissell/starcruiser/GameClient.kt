@@ -30,11 +30,11 @@ class GameClient(
                     if (lastSnapshot != snapshot) {
                         val counterResponse = throttleActor.addInflightMessage()
                         lastSnapshot = snapshot
-                        outgoing.sendText(
+                        outgoing.send(
                             GameStateMessage(
                                 counterResponse,
                                 snapshot
-                            ).toJson()
+                            )
                         )
                     }
                 }
@@ -79,6 +79,8 @@ class GameClient(
         return response.await()
     }
 
+    private suspend fun SendChannel<Frame>.send(message: GameStateMessage) = send(Frame.Text(message.toJson()))
+
     private fun String.toUUID() = UUID.fromString(this)
 
     companion object {
@@ -94,5 +96,3 @@ class GameClient(
             ).start(this)
     }
 }
-
-suspend fun SendChannel<Frame>.sendText(value: String) = send(Frame.Text(value))
