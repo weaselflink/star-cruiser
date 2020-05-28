@@ -29,5 +29,15 @@ fun Double.round(digits: Int) =
 
 fun Double.format(digits: Int) =
     this.round(digits).toString().let {
-        if (it.contains(".")) it else "$it.${(1..digits).joinToString { "0" }}"
+        if (it.contains(".")) it else "$it.${(1..digits).joinToString(separator = "") { "0" }}"
+    }
+
+fun Int.pad(width: Int) =
+    toString().let {
+        if (it.length >= width || width <= 0) {
+            it
+        } else {
+            val missing = width - it.length
+            (1..missing).joinToString(separator = "") { "0" } + it
+        }
     }

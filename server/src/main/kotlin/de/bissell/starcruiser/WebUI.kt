@@ -235,13 +235,6 @@ private fun BODY.helmUi() {
         canvas {}
         div(classes = "info") {
             p {
-                +"Heading: "
-                span {
-                    id = "heading"
-                    +"unknown"
-                }
-            }
-            p {
                 +"Velocity: "
                 span {
                     id = "velocity"

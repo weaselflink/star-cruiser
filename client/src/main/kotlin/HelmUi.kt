@@ -1,7 +1,28 @@
-import de.bissell.starcruiser.*
-import org.w3c.dom.*
+import de.bissell.starcruiser.Command
+import de.bissell.starcruiser.ContactMessage
+import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.SnapshotMessage
+import de.bissell.starcruiser.Vector2
+import de.bissell.starcruiser.WaypointMessage
+import de.bissell.starcruiser.format
+import de.bissell.starcruiser.pad
+import de.bissell.starcruiser.toHeading
+import de.bissell.starcruiser.toRadians
+import org.w3c.dom.CENTER
+import org.w3c.dom.CanvasLineCap
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.CanvasTextAlign
+import org.w3c.dom.CanvasTextBaseline
+import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.MIDDLE
+import org.w3c.dom.ROUND
 import kotlin.browser.document
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.atan2
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 class HelmUi {
 
@@ -70,22 +91,51 @@ class HelmUi {
             clear("#222")
 
             drawScope(snapshot, ship)
+            drawHeading(ship)
 
             drawThrottle(ship)
             drawRudder(ship)
         }
     }
 
-    private fun updateInfo(ship: ShipMessage?) {
-        val headingElement = document.getElementById("heading")!!
-        val velocityElement = document.getElementById("velocity")!!
-        if (ship != null) {
-            headingElement.innerHTML = ship.heading.format(1)
-            velocityElement.innerHTML = ship.velocity.format(1)
-        } else {
-            headingElement.innerHTML = "unknown"
-            velocityElement.innerHTML = "unknown"
-        }
+    private fun CanvasRenderingContext2D.drawHeading(ship: ShipMessage) {
+        val centerX = dim.width / 2.0
+        val centerY = dim.height / 2.0
+        val width = dim.vmin * 12
+        val height = dim.vmin * 5
+        val textSize = (dim.vmin * 4).toInt()
+        val headingText = ship.rotation.toHeading().roundToInt().pad(3)
+
+        save()
+
+        fillStyle = "#111"
+        beginPath()
+        drawPill(
+            centerX - width / 2.0, centerY - scopeRadius + height / 2.0,
+            width, height
+        )
+        fill()
+
+        strokeStyle = "#666"
+        lineWidth = dim.vmin * 0.4
+        beginPath()
+        drawPill(
+            centerX - width / 2.0, centerY - scopeRadius + height / 2.0,
+            width, height
+        )
+        stroke()
+
+        fillStyle = "#aaa"
+        font = "bold ${textSize.px} sans-serif"
+        textAlign = CanvasTextAlign.CENTER
+        textBaseline = CanvasTextBaseline.MIDDLE
+        fillText(headingText, centerX, centerY - scopeRadius + dim.vmin * 0.35)
+
+        restore()
+    }
+
+    private fun updateInfo(ship: ShipMessage) {
+        document.getElementById("velocity")!!.innerHTML = ship.velocity.format(1)
     }
 
     private fun getScopeRotation(ship: ShipMessage) =

@@ -2,6 +2,7 @@ package de.bissell.starcruiser
 
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.isEqualTo
 import kotlin.math.PI
 
 class NumberExtensionsTest {
@@ -48,5 +49,24 @@ class NumberExtensionsTest {
         expectThat((-PI).round(4)).isNear(-3.1416)
         expectThat(0.0.round(0)).isNear(0.0)
         expectThat(0.0.round(4)).isNear(0.0)
+    }
+
+    @Test
+    fun `no padding if width greater than target`() {
+        expectThat(456.pad(2)).isEqualTo("456")
+        expectThat(1.pad(1)).isEqualTo("1")
+    }
+
+    @Test
+    fun `no padding if target is invalid`() {
+        expectThat(456.pad(0)).isEqualTo("456")
+        expectThat(1.pad(-5)).isEqualTo("1")
+    }
+
+    @Test
+    fun `adds padding if needed`() {
+        expectThat(456.pad(4)).isEqualTo("0456")
+        expectThat(1.pad(5)).isEqualTo("00001")
+        expectThat(0.pad(3)).isEqualTo("000")
     }
 }
