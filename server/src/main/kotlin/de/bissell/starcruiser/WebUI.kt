@@ -211,6 +211,9 @@ private fun BODY.commonShipUi() {
             button(classes = "fullscreen leftEdge") {
                 +"Fullscreen"
             }
+            button(classes = "extraButton rotateScope leftEdge") {
+                +"Rotate scope"
+            }
             button(classes = "extraButton addWaypoint leftEdge") {
                 +"Add waypoint"
             }

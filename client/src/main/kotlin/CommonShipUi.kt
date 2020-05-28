@@ -63,9 +63,9 @@ class CommonShipUi {
 
             extraButtons.forEach {
                 if (it.isVisibleAtStation(newStation)) {
-                    it.element.style.visibility = "visible"
+                    it.element.style.display = "block"
                 } else {
-                    it.element.style.visibility = "hidden"
+                    it.element.style.display = "none"
                 }
             }
 
@@ -73,12 +73,16 @@ class CommonShipUi {
         }
     }
 
-    fun addExtraButton(extraButton: ExtraButton) {
-        extraButtons += extraButton
+    fun addExtraButtons(vararg buttons: ExtraButton) {
+        buttons.forEach { extraButton ->
+            extraButtons += extraButton
 
-        extraButton.element.apply {
-            style.visibility = "hidden"
-            onclick = { extraButton.callback() }
+            extraButton.element.apply {
+                if (!extraButton.isVisibleAtStation(Helm)) {
+                    style.display = "none"
+                }
+                onclick = { extraButton.callback() }
+            }
         }
     }
 }

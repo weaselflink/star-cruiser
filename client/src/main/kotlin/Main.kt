@@ -23,11 +23,16 @@ fun init() {
     mainScreenUi = MainScreenUi().apply { hide() }
     commonShipUi = CommonShipUi().apply {
         hide()
-        addExtraButton(
+        addExtraButtons(
             ExtraButton(
                 Station.Navigation,
                 navigationUi::addWayPointClicked,
                 ".addWaypoint"
+            ),
+            ExtraButton(
+                Station.Helm,
+                helmUi::toggleRotateScope,
+                ".rotateScope"
             )
         )
     }

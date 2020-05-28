@@ -13,11 +13,14 @@ import org.w3c.dom.CanvasLineCap
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextAlign
 import org.w3c.dom.CanvasTextBaseline
+import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.MIDDLE
 import org.w3c.dom.ROUND
 import kotlin.browser.document
+import kotlin.dom.addClass
+import kotlin.dom.removeClass
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.max
@@ -30,6 +33,7 @@ class HelmUi {
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val mouseEventDispatcher = MouseEventDispatcher(canvas)
+    private val rotateScopeButton = document.querySelector(".rotateScope")!! as HTMLButtonElement
     private val throttleSlider = CanvasSlider(
         xExpr = { it.vmin * 5 },
         yExpr = { it.min - it.vmin * 5 },
@@ -77,6 +81,10 @@ class HelmUi {
 
     fun toggleRotateScope() {
         rotateScope = !rotateScope
+        rotateScopeButton.removeClass("current")
+        if (rotateScope) {
+            rotateScopeButton.addClass("current")
+        }
     }
 
     fun draw(snapshot: SnapshotMessage.Helm) {
