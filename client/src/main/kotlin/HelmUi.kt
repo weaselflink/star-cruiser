@@ -56,7 +56,8 @@ class HelmUi {
             clientSocket.send(Command.CommandChangeRudder(rudder))
         },
         lines = listOf(0.5),
-        leftText = "Rudder"
+        leftText = "Rudder",
+        reverseValue = true
     )
 
     private var dim = CanvasDimensions(100, 100)

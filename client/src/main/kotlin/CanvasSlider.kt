@@ -15,7 +15,8 @@ class CanvasSlider(
     private val heightExpr: (CanvasDimensions) -> Double,
     private val onChange: (Double) -> Unit = {},
     private val lines: List<Double> = emptyList(),
-    private val leftText: String? = null
+    private val leftText: String? = null,
+    private val reverseValue: Boolean = false
 ) : MouseEventHandler {
 
     fun draw(canvas: HTMLCanvasElement, value: Double) {
@@ -27,7 +28,8 @@ class CanvasSlider(
 
             drawPill(dim)
             drawText(dim)
-            drawKnob(dim, value)
+            val effectiveValue = if (reverseValue) 1.0 - value else value
+            drawKnob(dim, effectiveValue)
             drawLines(dim)
 
             restore()
@@ -60,7 +62,9 @@ class CanvasSlider(
             (mouseEvent.offsetX - (dim.bottomX + dim.radius)) / (dim.width - dim.radius * 2.0)
         } else {
             -(mouseEvent.offsetY - (dim.bottomY - dim.radius)) / (dim.height - dim.radius * 2.0)
-        }.clamp(0.0, 1.0)
+        }.clamp(0.0, 1.0).let {
+            if (reverseValue) 1.0 - it else it
+        }
     }
 
     private fun CanvasRenderingContext2D.drawPill(dim: SliderDimensions) {

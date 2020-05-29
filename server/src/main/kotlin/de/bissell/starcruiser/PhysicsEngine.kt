@@ -21,12 +21,13 @@ class PhysicsEngine {
             type = BodyType.DYNAMIC
             position.set(ship.position.toVec2())
             allowSleep = false
-            linearDamping = 0.5f
+            awake = true
+            linearDamping = 0.4f
             angularDamping = 0.95f
         }).apply {
             createFixture(
                 CircleShape().apply {
-                    radius = 10f
+                    radius = ship.template.shieldRadius.toFloat()
                 },
                 0.01f
             )
@@ -39,7 +40,7 @@ class PhysicsEngine {
             applyForceToCenter(
                 Mat22.createRotationalTransform(angle).mul(Vec2(thrust.toFloat(), 0f))
             )
-            applyTorque(-rudder.toFloat())
+            applyTorque(rudder.toFloat())
         }
     }
 
