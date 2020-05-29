@@ -111,7 +111,7 @@ class GameState {
             )
         ).also {
             ships[it.id] = it
-            physicsEngine.createShip(it)
+            physicsEngine.addShip(it)
         }.id
 
     fun togglePaused() {

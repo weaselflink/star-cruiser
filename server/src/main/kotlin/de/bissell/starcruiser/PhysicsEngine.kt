@@ -14,25 +14,10 @@ class PhysicsEngine {
     private val world = World(Vec2())
     private val ships: MutableMap<UUID, Body> = mutableMapOf()
 
-    fun step(time: GameTime) = world.step(time.delta.toFloat(), 6 , 2)
+    fun step(time: GameTime) = world.step(time.delta.toFloat(), 6, 2)
 
-    fun createShip(ship: Ship) {
-        val body = world.createBody(BodyDef().apply {
-            type = BodyType.DYNAMIC
-            position.set(ship.position.toVec2())
-            allowSleep = false
-            awake = true
-            linearDamping = 0.4f
-            angularDamping = 0.95f
-        }).apply {
-            createFixture(
-                CircleShape().apply {
-                    radius = ship.template.shieldRadius.toFloat()
-                },
-                0.01f
-            )
-        }
-        ships[ship.id] = body
+    fun addShip(ship: Ship) {
+        ships[ship.id] = ship.toBody()
     }
 
     fun updateShip(id: UUID, thrust: Double, rudder: Double) {
@@ -52,6 +37,28 @@ class PhysicsEngine {
                 rotation = it.angle.toDouble()
             )
         }
+
+    private fun Ship.toBody() =
+        world.createBody(
+            BodyDef().apply {
+                type = BodyType.DYNAMIC
+                position.set(this@toBody.position.toVec2())
+                allowSleep = false
+                awake = true
+                linearDamping = 0.4f
+                angularDamping = 0.95f
+            }
+        ).apply {
+            createFixture(this@toBody)
+        }
+
+    private fun Body.createFixture(ship: Ship) =
+        createFixture(
+            CircleShape().apply {
+                radius = ship.template.shieldRadius.toFloat()
+            },
+            ship.template.density.toFloat()
+        )
 
     private fun Vec2.toVector2() = Vector2(x.toDouble(), y.toDouble())
 
