@@ -38,6 +38,7 @@ dependencies {
     implementation("io.ktor:ktor-websockets:$ktor_version")
     implementation("io.ktor:ktor-html-builder:$ktor_version")
     implementation("io.ktor:ktor-serialization:$ktor_version")
+    implementation("org.jbox2d:jbox2d-testbed:2.2.1.1")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")

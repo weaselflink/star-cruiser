@@ -1,15 +1,22 @@
 package de.bissell.starcruiser
 
-import de.bissell.starcruiser.ClientState.*
+import de.bissell.starcruiser.ClientState.InShip
+import de.bissell.starcruiser.ClientState.ShipSelection
 import de.bissell.starcruiser.Station.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
+import org.jbox2d.collision.shapes.CircleShape
+import org.jbox2d.common.Mat22
+import org.jbox2d.common.Vec2
+import org.jbox2d.dynamics.Body
+import org.jbox2d.dynamics.BodyDef
+import org.jbox2d.dynamics.BodyType
+import org.jbox2d.dynamics.World
 import java.time.Instant
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit
 import java.util.*
-import kotlin.math.PI
 import kotlin.math.abs
 
 sealed class GameStateChange
@@ -52,6 +59,8 @@ class GameState {
     private var time = GameTime()
     private val ships = mutableMapOf<UUID, Ship>()
     private val clients = mutableMapOf<UUID, Client>()
+
+    private val world = World(Vec2())
 
     fun toMessage(clientId: UUID): SnapshotMessage {
         val client = getClient(clientId)
@@ -97,17 +106,35 @@ class GameState {
     }
 
     fun spawnShip(): UUID {
-        return Ship(
-            template = ShipTemplate(),
-            position = Vector2.random(300.0),
-            throttle = 100,
-            rudder = 30,
-            waypoints = mutableListOf(
-                Waypoint(1, Vector2.random(1000.0, 500.0)),
-                Waypoint(2, Vector2.random(1000.0, 500.0))
+        return Vector2.random(300.0).let {
+            world.createBody(BodyDef().apply {
+                type = BodyType.DYNAMIC
+                position.set(it.toVec2())
+                allowSleep = false
+                linearDamping = 0.9f
+                angularDamping = 0.95f
+            })
+        }.apply {
+            createFixture(
+                CircleShape().apply {
+                    radius = 10f
+                },
+                0.01f
             )
-        ).also {
-            ships[it.id] = it
+        }.let { body ->
+            Ship(
+                template = ShipTemplate(),
+                position = Vector2(),
+                throttle = 0,
+                rudder = 0,
+                waypoints = mutableListOf(
+                    Waypoint(1, Vector2.random(1000.0, 500.0)),
+                    Waypoint(2, Vector2.random(1000.0, 500.0))
+                ),
+                body = body
+            ).also {
+                ships[it.id] = it
+            }
         }.id
     }
 
@@ -120,6 +147,7 @@ class GameState {
 
         time.update()
 
+        world.step(0.01f, 6, 2)
         ships.forEach { it.value.update(time) }
     }
 
@@ -223,7 +251,8 @@ class Ship(
     private var rotation: Double = 90.0.toRadians(),
     private var throttle: Int = 0,
     private var rudder: Int = 0,
-    private val waypoints: MutableList<Waypoint> = mutableListOf()
+    private val waypoints: MutableList<Waypoint> = mutableListOf(),
+    private val body: Body
 ) {
 
     private var thrust = 0.0
@@ -232,15 +261,20 @@ class Ship(
 
     fun update(time: GameTime) {
         updateThrust(time)
-        updateRotation(time)
-
         val effectiveThrust = if (thrust < 0) {
             thrust * template.reverseThrustFactor
         } else {
             thrust * template.aheadThrustFactor
         }
-        speed = Vector2(effectiveThrust, 0.0).rotate(rotation)
-        position = (position + speed * time.delta)
+
+        body.applyForceToCenter(
+            Mat22.createRotationalTransform(rotation.toFloat()).mul(Vec2(effectiveThrust.toFloat(), 0f))
+        )
+        body.applyTorque((-rudder * template.rudderFactor).toFloat())
+
+        speed = body.linearVelocity.toVector2()
+        position = body.position.toVector2()
+        rotation = body.angle.toDouble()
 
         updateHistory(time)
     }
@@ -249,17 +283,6 @@ class Ship(
         val responsiveness = template.throttleResponsiveness
         val diff = if (throttle > thrust) responsiveness else if (throttle < thrust) -responsiveness else 0.0
         thrust = (thrust + diff * time.delta).clamp(-100.0, 100.0)
-    }
-
-    private fun updateRotation(time: GameTime) {
-        val diff = -(rudder.toDouble().toRadians() * 0.01 * template.rudderFactor * PI)
-        rotation = (rotation + diff * time.delta)
-        if (rotation >= PI * 2) {
-            rotation %= (PI * 2)
-        }
-        if (rotation < 0.0) {
-            rotation = PI * 2 + rotation % (PI * 2)
-        }
     }
 
     private fun updateHistory(time: GameTime) {
@@ -342,3 +365,7 @@ data class Waypoint(
             relativePosition = (position - relativeTo.position)
         )
 }
+
+private fun Vec2.toVector2() = Vector2(x.toDouble(), y.toDouble())
+
+private fun Vector2.toVec2() = Vec2(x.toFloat(), y.toFloat())
