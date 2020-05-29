@@ -1,5 +1,6 @@
 import de.bissell.starcruiser.ContactMessage
 import de.bissell.starcruiser.SnapshotMessage
+import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import three.cameras.PerspectiveCamera
@@ -17,10 +18,14 @@ import three.scenes.Scene
 import three.updateSize
 import kotlin.browser.document
 import kotlin.browser.window
+import kotlin.dom.addClass
+import kotlin.dom.removeClass
+import kotlin.math.PI
 
 class MainScreenUi {
 
     private val root = document.getElementById("main-screen-ui")!! as HTMLElement
+    private val topViewButton = document.querySelector(".topView")!! as HTMLButtonElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val renderer = WebGLRenderer(
         WebGLRendererParams(
@@ -29,10 +34,14 @@ class MainScreenUi {
         )
     )
     private val scene = Scene()
-    private val camera = createCamera()
+    private val shipGroup = Group().also { scene.add(it) }
+    private val frontCamera = createFrontCamera().also { shipGroup.add(it) }
+    private val topCamera = createTopCamera().also { shipGroup.add(it) }
+    private var topView = false
 
     private val contactGroup = Object3D().also { scene += it }
     private var model: Group? = null
+    private var ownModel: Object3D? = null
     private val contactModels = mutableMapOf<String, Object3D>()
 
     init {
@@ -48,7 +57,8 @@ class MainScreenUi {
         val windowHeight = window.innerHeight
 
         renderer.setSize(windowWidth, windowHeight)
-        camera.updateSize(windowWidth, windowHeight)
+        frontCamera.updateSize(windowWidth, windowHeight)
+        topCamera.updateSize(windowWidth, windowHeight)
     }
 
     fun show() {
@@ -60,7 +70,7 @@ class MainScreenUi {
     }
 
     fun draw(snapshot: SnapshotMessage.MainScreen) {
-        camera.rotation.y = snapshot.ship.rotation
+        shipGroup.rotation.y = snapshot.ship.rotation
 
         val contacts = snapshot.contacts
         val oldContactIds = contactModels.keys.filter { true }
@@ -69,7 +79,19 @@ class MainScreenUi {
         removeOldContacts(contacts, oldContactIds)
         updateContacts(contacts)
 
-        renderer.render(scene, camera)
+        if (topView) {
+            renderer.render(scene, topCamera)
+        } else {
+            renderer.render(scene, frontCamera)
+        }
+    }
+
+    fun toggleTopView() {
+        topView = !topView
+        topViewButton.removeClass("current")
+        if (topView) {
+            topViewButton.addClass("current")
+        }
     }
 
     private fun addNewContacts(contacts: List<ContactMessage>) {
@@ -107,13 +129,27 @@ class MainScreenUi {
         }
     }
 
-    private fun createCamera(): PerspectiveCamera {
+    private fun createFrontCamera(): PerspectiveCamera {
         return PerspectiveCamera(
             fov = 75,
             aspect = window.innerWidth.toDouble() / window.innerHeight.toDouble(),
             near = 1,
             far = 10_000
-        )
+        ).apply {
+            position.z = -12.5
+        }
+    }
+
+    private fun createTopCamera(): PerspectiveCamera {
+        return PerspectiveCamera(
+            fov = 75,
+            aspect = window.innerWidth.toDouble() / window.innerHeight.toDouble(),
+            near = 1,
+            far = 10_000
+        ).apply {
+            position.y = 100.0
+            rotation.x = PI * -0.5
+        }
     }
 
     private fun createLights() {
@@ -143,6 +179,9 @@ class MainScreenUi {
             onLoad = {
                 model = it.scene.apply {
                     debugPrint()
+                }
+                ownModel = model?.clone(true)?.also { ownModel ->
+                    shipGroup.add(ownModel)
                 }
             }
         )

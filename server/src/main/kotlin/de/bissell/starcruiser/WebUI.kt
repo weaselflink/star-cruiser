@@ -217,6 +217,9 @@ private fun BODY.commonShipUi() {
             button(classes = "extraButton addWaypoint leftEdge") {
                 +"Add waypoint"
             }
+            button(classes = "extraButton topView leftEdge") {
+                +"Top view"
+            }
         }
         div(classes = "topRightInfo") {
             button(classes = "current switchToHelm rightEdge") {

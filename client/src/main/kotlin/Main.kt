@@ -33,6 +33,11 @@ fun init() {
                 Station.Helm,
                 helmUi::toggleRotateScope,
                 ".rotateScope"
+            ),
+            ExtraButton(
+                Station.MainScreen,
+                mainScreenUi::toggleTopView,
+                ".topView"
             )
         )
     }
@@ -91,6 +96,7 @@ fun keyHandler(event: KeyboardEvent) {
             "KeyX" -> navigationUi.zoomIn()
             "KeyZ" -> navigationUi.zoomOut()
             "KeyR" -> helmUi.toggleRotateScope()
+            "KeyC" -> mainScreenUi.toggleTopView()
             else -> println("not bound: ${event.code}")
         }
     }
