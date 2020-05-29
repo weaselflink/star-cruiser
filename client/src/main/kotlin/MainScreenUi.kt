@@ -4,6 +4,7 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import three.cameras.PerspectiveCamera
 import three.core.Object3D
+import three.debugPrint
 import three.lights.AmbientLight
 import three.lights.DirectionalLight
 import three.loaders.CubeTextureLoader
@@ -139,7 +140,11 @@ class MainScreenUi {
     private fun loadShipModel() {
         GLTFLoader().load(
             url = "/assets/ships/carrier.glb",
-            onLoad = { model = it.scene }
+            onLoad = {
+                model = it.scene.apply {
+                    debugPrint()
+                }
+            }
         )
     }
 }
