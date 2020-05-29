@@ -39,16 +39,14 @@ class PhysicsEngine {
         }
 
     private fun Ship.toBody() =
-        world.createBody(
-            BodyDef().apply {
-                type = BodyType.DYNAMIC
-                position.set(this@toBody.position.toVec2())
-                allowSleep = false
-                awake = true
-                linearDamping = 0.4f
-                angularDamping = 0.95f
-            }
-        ).apply {
+        world.createBody {
+            type = BodyType.DYNAMIC
+            position.set(this@toBody.position.toVec2())
+            allowSleep = false
+            awake = true
+            linearDamping = 0.4f
+            angularDamping = 0.95f
+        }.apply {
             createFixture(this@toBody)
         }
 
@@ -60,9 +58,11 @@ class PhysicsEngine {
             ship.template.density.toFloat()
         )
 
-    private fun Vec2.toVector2() = Vector2(x.toDouble(), y.toDouble())
+    private fun Vec2.toVector2(): Vector2 = Vector2(x.toDouble(), y.toDouble())
 
-    private fun Vector2.toVec2() = Vec2(x.toFloat(), y.toFloat())
+    private fun Vector2.toVec2(): Vec2 = Vec2(x.toFloat(), y.toFloat())
+
+    private fun World.createBody(block: BodyDef.() -> Unit): Body = createBody(BodyDef().apply(block))
 }
 
 data class ShipParameters(
