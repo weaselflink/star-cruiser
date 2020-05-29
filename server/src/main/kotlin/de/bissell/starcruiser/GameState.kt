@@ -2,21 +2,16 @@ package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ClientState.InShip
 import de.bissell.starcruiser.ClientState.ShipSelection
-import de.bissell.starcruiser.Station.*
+import de.bissell.starcruiser.Station.Helm
+import de.bissell.starcruiser.Station.MainScreen
+import de.bissell.starcruiser.Station.Navigation
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
-import org.jbox2d.collision.shapes.CircleShape
-import org.jbox2d.common.Mat22
-import org.jbox2d.common.Vec2
-import org.jbox2d.dynamics.Body
-import org.jbox2d.dynamics.BodyDef
-import org.jbox2d.dynamics.BodyType
-import org.jbox2d.dynamics.World
 import java.time.Instant
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.UUID
 import kotlin.math.abs
 
 sealed class GameStateChange
@@ -60,7 +55,7 @@ class GameState {
     private val ships = mutableMapOf<UUID, Ship>()
     private val clients = mutableMapOf<UUID, Client>()
 
-    private val world = World(Vec2())
+    private val physicsEngine = PhysicsEngine()
 
     fun toMessage(clientId: UUID): SnapshotMessage {
         val client = getClient(clientId)
@@ -105,38 +100,20 @@ class GameState {
         getClient(clientId).exitShip()
     }
 
-    fun spawnShip(): UUID {
-        return Vector2.random(300.0).let {
-            world.createBody(BodyDef().apply {
-                type = BodyType.DYNAMIC
-                position.set(it.toVec2())
-                allowSleep = false
-                linearDamping = 0.5f
-                angularDamping = 0.95f
-            })
-        }.apply {
-            createFixture(
-                CircleShape().apply {
-                    radius = 10f
-                },
-                0.01f
+    fun spawnShip(): UUID =
+        Ship(
+            template = ShipTemplate(),
+            position = Vector2.random(300.0),
+            throttle = 0,
+            rudder = 0,
+            waypoints = mutableListOf(
+                Waypoint(1, Vector2.random(1000.0, 500.0)),
+                Waypoint(2, Vector2.random(1000.0, 500.0))
             )
-        }.let { body ->
-            Ship(
-                template = ShipTemplate(),
-                position = Vector2(),
-                throttle = 0,
-                rudder = 0,
-                waypoints = mutableListOf(
-                    Waypoint(1, Vector2.random(1000.0, 500.0)),
-                    Waypoint(2, Vector2.random(1000.0, 500.0))
-                ),
-                body = body
-            ).also {
-                ships[it.id] = it
-            }
+        ).also {
+            ships[it.id] = it
+            physicsEngine.createShip(it)
         }.id
-    }
 
     fun togglePaused() {
         time.paused = !time.paused
@@ -147,8 +124,8 @@ class GameState {
 
         time.update()
 
-        world.step(time)
-        ships.forEach { it.value.update(time) }
+        physicsEngine.step(time)
+        ships.forEach { it.value.update(time, physicsEngine) }
     }
 
     fun changeThrottle(clientId: UUID, value: Int) {
@@ -178,8 +155,6 @@ class GameState {
                 client.station != Helm || it.relativePosition.length() < clientShip.shortRangeScopeRange * 1.1
             }
     }
-
-    private fun World.step(time: GameTime) = step(time.delta.toFloat(), 6 , 2)
 }
 
 class GameTime {
@@ -253,30 +228,28 @@ class Ship(
     private var rotation: Double = 90.0.toRadians(),
     private var throttle: Int = 0,
     private var rudder: Int = 0,
-    private val waypoints: MutableList<Waypoint> = mutableListOf(),
-    private val body: Body
+    private val waypoints: MutableList<Waypoint> = mutableListOf()
 ) {
 
     private var thrust = 0.0
 
     private val history = mutableListOf<Pair<Double, Vector2>>()
 
-    fun update(time: GameTime) {
+    fun update(time: GameTime, physicsEngine: PhysicsEngine) {
         updateThrust(time)
         val effectiveThrust = if (thrust < 0) {
             thrust * template.reverseThrustFactor
         } else {
             thrust * template.aheadThrustFactor
         }
+        val effectiveRudder = rudder * template.rudderFactor
+        physicsEngine.updateShip(id, effectiveThrust, effectiveRudder)
 
-        body.applyForceToCenter(
-            Mat22.createRotationalTransform(rotation.toFloat()).mul(Vec2(effectiveThrust.toFloat(), 0f))
-        )
-        body.applyTorque((-rudder * template.rudderFactor).toFloat())
-
-        speed = body.linearVelocity.toVector2()
-        position = body.position.toVector2()
-        rotation = body.angle.toDouble()
+        physicsEngine.getShipStats(id)?.let {
+            position = it.position
+            speed = it.speed
+            rotation = it.rotation
+        }
 
         updateHistory(time)
     }
@@ -367,7 +340,3 @@ data class Waypoint(
             relativePosition = (position - relativeTo.position)
         )
 }
-
-private fun Vec2.toVector2() = Vector2(x.toDouble(), y.toDouble())
-
-private fun Vector2.toVec2() = Vec2(x.toFloat(), y.toFloat())
