@@ -1,13 +1,13 @@
 package de.bissell.starcruiser
 
-import org.jbox2d.collision.shapes.CircleShape
+import org.jbox2d.collision.shapes.PolygonShape
 import org.jbox2d.common.Mat22
 import org.jbox2d.common.Vec2
 import org.jbox2d.dynamics.Body
 import org.jbox2d.dynamics.BodyDef
 import org.jbox2d.dynamics.BodyType
 import org.jbox2d.dynamics.World
-import java.util.UUID
+import java.util.*
 
 class PhysicsEngine {
 
@@ -52,8 +52,8 @@ class PhysicsEngine {
 
     private fun Body.createFixture(ship: Ship) =
         createFixture(
-            CircleShape().apply {
-                radius = ship.template.shieldRadius.toFloat()
+            PolygonShape().apply {
+                setAsBox(12f, 5f)
             },
             ship.template.density.toFloat()
         )
