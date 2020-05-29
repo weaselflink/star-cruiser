@@ -111,7 +111,7 @@ class GameState {
                 type = BodyType.DYNAMIC
                 position.set(it.toVec2())
                 allowSleep = false
-                linearDamping = 0.9f
+                linearDamping = 0.5f
                 angularDamping = 0.95f
             })
         }.apply {
@@ -147,7 +147,7 @@ class GameState {
 
         time.update()
 
-        world.step(0.01f, 6, 2)
+        world.step(time)
         ships.forEach { it.value.update(time) }
     }
 
@@ -178,6 +178,8 @@ class GameState {
                 client.station != Helm || it.relativePosition.length() < clientShip.shortRangeScopeRange * 1.1
             }
     }
+
+    private fun World.step(time: GameTime) = step(time.delta.toFloat(), 6 , 2)
 }
 
 class GameTime {
