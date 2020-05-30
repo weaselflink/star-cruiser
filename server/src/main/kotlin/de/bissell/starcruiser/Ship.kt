@@ -5,7 +5,7 @@ import kotlin.math.abs
 
 class Ship(
     val id: UUID = UUID.randomUUID(),
-    val template: ShipTemplate,
+    val template: ShipTemplate = ShipTemplate(),
     val shortRangeScopeRange: Double = 400.0,
     private val designation: String = randomShipName(),
     var position: Vector2 = Vector2(),
@@ -13,7 +13,7 @@ class Ship(
     private var rotation: Double = 90.0.toRadians(),
     private var throttle: Int = 0,
     private var rudder: Int = 0,
-    private val waypoints: MutableList<Waypoint> = mutableListOf()
+    val waypoints: MutableList<Waypoint> = mutableListOf()
 ) {
 
     private var thrust = 0.0
