@@ -139,7 +139,8 @@ class MainScreenUi {
             near = 1,
             far = 10_000
         ).apply {
-            position.z = -12.5
+            position.y = 1.0
+            position.z = -12.3
         }
     }
 
