@@ -2,16 +2,14 @@ package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ClientState.InShip
 import de.bissell.starcruiser.ClientState.ShipSelection
-import de.bissell.starcruiser.Station.Helm
-import de.bissell.starcruiser.Station.MainScreen
-import de.bissell.starcruiser.Station.Navigation
+import de.bissell.starcruiser.Station.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
 import java.time.Instant
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit
-import java.util.UUID
+import java.util.*
 
 sealed class GameStateChange
 
@@ -69,7 +67,8 @@ class GameState {
                     contacts = getContacts(clientShip, client)
                 )
                 Navigation -> SnapshotMessage.Navigation(
-                    ship = clientShip!!.toMessage()
+                    ship = clientShip!!.toMessage(),
+                    contacts = getContacts(clientShip, client)
                 )
                 MainScreen -> SnapshotMessage.MainScreen(
                     ship = clientShip!!.toMessage(),

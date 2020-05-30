@@ -1,8 +1,5 @@
+import de.bissell.starcruiser.*
 import de.bissell.starcruiser.Command.CommandAddWaypoint
-import de.bissell.starcruiser.ShipMessage
-import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.Vector2
-import de.bissell.starcruiser.clamp
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -81,6 +78,9 @@ class NavigationUi {
             drawGrid()
             drawHistory(ship)
             drawWaypoints(ship)
+            snapshot.contacts.forEach {
+                ctx.drawContact(it)
+            }
             drawShip(ship)
             drawZoom()
         }
@@ -110,6 +110,20 @@ class NavigationUi {
             lineTo(Vector2(20_000.0, gridY * gridSize).adjustForMap())
             stroke()
         }
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawContact(contact: ContactMessage) {
+        save()
+        translateToCenter()
+        contactStyle(dim)
+
+        translate(contact.position.adjustForMap())
+        beginPath()
+        drawShipSymbol(contact.rotation, dim.vmin * 0.8)
+
+        translate(0.0, -dim.vmin * 2)
+        fillText(contact.designation, 0.0, 0.0)
         restore()
     }
 

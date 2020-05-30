@@ -42,7 +42,8 @@ sealed class SnapshotMessage {
 
     @Serializable
     data class Navigation(
-        override val ship: ShipMessage
+        override val ship: ShipMessage,
+        val contacts: List<ContactMessage>
     ) : SnapshotMessage(), ShipSnapshot
 
     @Serializable

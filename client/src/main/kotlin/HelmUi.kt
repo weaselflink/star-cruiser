@@ -1,31 +1,9 @@
-import de.bissell.starcruiser.Command
-import de.bissell.starcruiser.ContactMessage
-import de.bissell.starcruiser.ShipMessage
-import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.Vector2
-import de.bissell.starcruiser.WaypointMessage
-import de.bissell.starcruiser.format
-import de.bissell.starcruiser.pad
-import de.bissell.starcruiser.toHeading
-import de.bissell.starcruiser.toRadians
-import org.w3c.dom.CENTER
-import org.w3c.dom.CanvasLineCap
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.CanvasTextAlign
-import org.w3c.dom.CanvasTextBaseline
-import org.w3c.dom.HTMLButtonElement
-import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.MIDDLE
-import org.w3c.dom.ROUND
+import de.bissell.starcruiser.*
+import org.w3c.dom.*
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.dom.removeClass
-import kotlin.math.PI
-import kotlin.math.atan2
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
+import kotlin.math.*
 
 class HelmUi {
 
@@ -256,16 +234,14 @@ class HelmUi {
     }
 
     private fun CanvasRenderingContext2D.drawContact(ship: ShipMessage, contact: ContactMessage) {
-        val rel = contact.relativePosition
-        val rot = contact.rotation
 
-        val posOnScope = rel.adjustForScope(ship)
+        val posOnScope = contact.relativePosition.adjustForScope(ship)
         save()
         contactStyle(dim)
 
         translate(posOnScope)
         beginPath()
-        drawShipSymbol(rot, dim.vmin * 0.8)
+        drawShipSymbol(contact.rotation, dim.vmin * 0.8)
 
         rotate(-getScopeRotation(ship))
         translate(0.0, -dim.vmin * 2)
