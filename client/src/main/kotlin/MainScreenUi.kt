@@ -42,7 +42,7 @@ class MainScreenUi {
     private val contactGroup = Object3D().also { scene += it }
     private var model: Group? = null
     private var ownModel: Object3D? = null
-    private val contactModels = mutableMapOf<String, Object3D>()
+    private val contactNodes = mutableMapOf<String, Object3D>()
 
     init {
         resize()
@@ -73,7 +73,7 @@ class MainScreenUi {
         shipGroup.rotation.y = snapshot.ship.rotation
 
         val contacts = snapshot.contacts
-        val oldContactIds = contactModels.keys.filter { true }
+        val oldContactIds = contactNodes.keys.filter { true }
 
         addNewContacts(contacts)
         removeOldContacts(contacts, oldContactIds)
@@ -96,11 +96,14 @@ class MainScreenUi {
 
     private fun addNewContacts(contacts: List<ContactMessage>) {
         contacts.filter {
-            !contactModels.containsKey(it.id)
+            !contactNodes.containsKey(it.id)
         }.forEach {
-            model?.clone(true)?.also { contactModel ->
-                contactModels[it.id] = contactModel
-                contactGroup.add(contactModel)
+            Object3D().also { contactNode ->
+                contactNodes[it.id] = contactNode
+                contactGroup.add(contactNode)
+                model?.clone(true)?.also { contactModel ->
+                    contactNode.add(contactModel)
+                }
             }
         }
     }
@@ -113,7 +116,7 @@ class MainScreenUi {
         oldContactIds.filter {
             !currentIds.contains(it)
         }.forEach { id ->
-            contactModels.remove(id)?.also {
+            contactNodes.remove(id)?.also {
                 contactGroup.remove(it)
             }
         }
@@ -121,7 +124,7 @@ class MainScreenUi {
 
     private fun updateContacts(contacts: List<ContactMessage>) {
         contacts.forEach { contact ->
-            contactModels[contact.id]?.apply {
+            contactNodes[contact.id]?.apply {
                 position.z = -contact.relativePosition.x
                 position.x = -contact.relativePosition.y
                 rotation.y = contact.rotation

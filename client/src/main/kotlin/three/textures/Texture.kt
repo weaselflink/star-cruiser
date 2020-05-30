@@ -2,5 +2,11 @@
 
 package three.textures
 
-open external class Texture {
+import org.w3c.dom.HTMLCanvasElement
+
+open external class Texture(
+    image: HTMLCanvasElement
+) {
+
+    var needsUpdate: Boolean
 }
