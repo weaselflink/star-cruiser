@@ -54,6 +54,7 @@ class GameClient(
                 is Command.CommandChangeThrottle -> gameStateActor.send(ChangeThrottle(id, command.value))
                 is Command.CommandChangeRudder -> gameStateActor.send(ChangeRudder(id, command.value))
                 is Command.CommandAddWaypoint -> gameStateActor.send(AddWaypoint(id, command.position))
+                is Command.CommandDeleteWaypoint -> gameStateActor.send(DeleteWaypoint(id, command.position))
             }
         }
 

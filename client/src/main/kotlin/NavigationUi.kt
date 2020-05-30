@@ -1,5 +1,6 @@
 import de.bissell.starcruiser.*
 import de.bissell.starcruiser.Command.CommandAddWaypoint
+import de.bissell.starcruiser.Command.CommandDeleteWaypoint
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -20,6 +21,7 @@ class NavigationUi {
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val mouseEventDispatcher = MouseEventDispatcher(canvas)
     private val addWaypointButton = document.querySelector(".addWaypoint")!! as HTMLButtonElement
+    private val deleteWaypointButton = document.querySelector(".deleteWaypoint")!! as HTMLButtonElement
     private val zoomSlider = CanvasSlider(
         xExpr = { it.vmin * 5 },
         yExpr = { it.height - it.vmin * 5 },
@@ -33,6 +35,7 @@ class NavigationUi {
     private var center = Vector2()
     private var scaleSetting = 3
     private var addingWaypoint = false
+    private var deletingWaypoint = false
 
     private val scale: Double
         get() = 4.0 / 2.0.pow(scaleSetting.toDouble())
@@ -88,9 +91,21 @@ class NavigationUi {
 
     fun addWayPointClicked() {
         addingWaypoint = !addingWaypoint
+        deletingWaypoint = false
         addWaypointButton.removeClass("current")
+        deleteWaypointButton.removeClass("current")
         if (addingWaypoint) {
             addWaypointButton.addClass("current")
+        }
+    }
+
+    fun deleteWayPointClicked() {
+        addingWaypoint = false
+        deletingWaypoint = !deletingWaypoint
+        addWaypointButton.removeClass("current")
+        deleteWaypointButton.removeClass("current")
+        if (deletingWaypoint) {
+            deleteWaypointButton.addClass("current")
         }
     }
 
@@ -184,12 +199,18 @@ class NavigationUi {
         private var lastEvent: Vector2? = null
 
         override fun handleMouseDown(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-            if (addingWaypoint) {
-                clientSocket.send(CommandAddWaypoint(mouseEvent.toWorld()))
-                addWaypointButton.removeClass("current")
-                addingWaypoint = false
-            } else {
-                lastEvent = Vector2(mouseEvent.offsetX, mouseEvent.offsetY)
+            when {
+                addingWaypoint -> {
+                    clientSocket.send(CommandAddWaypoint(mouseEvent.toWorld()))
+                    addWaypointButton.removeClass("current")
+                    addingWaypoint = false
+                }
+                deletingWaypoint -> {
+                    clientSocket.send(CommandDeleteWaypoint(mouseEvent.toWorld()))
+                    deleteWaypointButton.removeClass("current")
+                    deletingWaypoint = false
+                }
+                else -> lastEvent = Vector2(mouseEvent.offsetX, mouseEvent.offsetY)
             }
         }
 

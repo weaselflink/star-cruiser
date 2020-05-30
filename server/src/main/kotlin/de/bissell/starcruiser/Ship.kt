@@ -1,6 +1,6 @@
 package de.bissell.starcruiser
 
-import java.util.UUID
+import java.util.*
 import kotlin.math.abs
 
 class Ship(
@@ -71,6 +71,16 @@ class Ship(
             waypoints.none { waypoint -> waypoint.index == it }
         }?.also {
             waypoints += Waypoint(it, position)
+        }
+    }
+
+    fun deleteWaypoint(position: Vector2) {
+        waypoints.map {
+            (it.position - position).length() to it
+        }.minBy {
+            it.first
+        }?.also {
+            waypoints.remove(it.second)
         }
     }
 

@@ -30,6 +30,11 @@ fun init() {
                 ".addWaypoint"
             ),
             ExtraButton(
+                Station.Navigation,
+                navigationUi::deleteWayPointClicked,
+                ".deleteWaypoint"
+            ),
+            ExtraButton(
                 Station.Helm,
                 helmUi::toggleRotateScope,
                 ".rotateScope"
