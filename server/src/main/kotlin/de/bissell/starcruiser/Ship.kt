@@ -67,7 +67,8 @@ class Ship(
     }
 
     fun addWaypoint(position: Vector2) {
-        (1..waypoints.size * 2).firstOrNull {
+        println(position)
+        (1..waypoints.size * 2 + 1).firstOrNull {
             waypoints.none { waypoint -> waypoint.index == it }
         }?.also {
             waypoints += Waypoint(it, position)
@@ -75,12 +76,15 @@ class Ship(
     }
 
     fun deleteWaypoint(position: Vector2) {
+        println(position)
         waypoints.map {
             (it.position - position).length() to it
         }.minBy {
             it.first
         }?.also {
-            waypoints.remove(it.second)
+            if (it.first < 100.0) {
+                waypoints.remove(it.second)
+            }
         }
     }
 
