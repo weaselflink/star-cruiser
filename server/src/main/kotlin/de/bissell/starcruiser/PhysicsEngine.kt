@@ -50,13 +50,50 @@ class PhysicsEngine {
             createFixture(this@toBody)
         }
 
-    private fun Body.createFixture(ship: Ship) =
+    private fun Body.createFixture(ship: Ship) {
         createFixture(
             PolygonShape().apply {
-                setAsBox(12f, 5f)
+                val points = arrayOf(
+                    Vec2(-14.1f, 3.3f),
+                    Vec2(-13.24f, 4.7f),
+                    Vec2(-7f, 4.7f),
+                    Vec2(-7f, -4.7f),
+                    Vec2(-13.24f, -4.7f),
+                    Vec2(-14.1f, -3.3f)
+                )
+                set(points, points.size)
             },
             ship.template.density.toFloat()
         )
+        createFixture(
+            PolygonShape().apply {
+                val points = arrayOf(
+                    Vec2(-12.4f, 3.4f),
+                    Vec2(9.2f, 3.4f),
+                    Vec2(9.2f, -3.4f),
+                    Vec2(-12.4f, -3.4f)
+                )
+                set(points, points.size)
+            },
+            ship.template.density.toFloat()
+        )
+        createFixture(
+            PolygonShape().apply {
+                val points = arrayOf(
+                    Vec2(9f, 3.7f),
+                    Vec2(11.9f, 3f),
+                    Vec2(12.5f, 2.4f),
+                    Vec2(13f, 1.1f),
+                    Vec2(13f, -1.1f),
+                    Vec2(12.5f, -2.4f),
+                    Vec2(11.9f, -3f),
+                    Vec2(9f, -3.7f)
+                )
+                set(points, points.size)
+            },
+            ship.template.density.toFloat()
+        )
+    }
 
     private fun Vec2.toVector2(): Vector2 = Vector2(x.toDouble(), y.toDouble())
 
