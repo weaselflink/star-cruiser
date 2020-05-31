@@ -24,6 +24,7 @@ class HelmUi {
     private val rotateScopeButton = document.querySelector(".rotateScope")!! as HTMLButtonElement
     private val shortRangeScope = ShortRangeScope(canvas)
     private val throttleSlider = CanvasSlider(
+        canvas = canvas,
         xExpr = { it.vmin * 5 },
         yExpr = { it.min - it.vmin * 5 },
         widthExpr = { it.vmin * 8 },
@@ -36,6 +37,7 @@ class HelmUi {
         leftText = "Impulse"
     )
     private val rudderSlider = CanvasSlider(
+        canvas = canvas,
         xExpr = { it.min - it.vmin * 5 - it.vmin * 40 },
         yExpr = { it.min - it.vmin * 5 },
         widthExpr = { it.vmin * 40 },
@@ -97,8 +99,8 @@ class HelmUi {
     }
 
     private fun drawThrottle(ship: ShipMessage) =
-        throttleSlider.draw(canvas, (ship.throttle + 100) / 200.0)
+        throttleSlider.draw((ship.throttle + 100) / 200.0)
 
     private fun drawRudder(ship: ShipMessage) =
-        rudderSlider.draw(canvas, (ship.rudder + 100) / 200.0)
+        rudderSlider.draw((ship.rudder + 100) / 200.0)
 }

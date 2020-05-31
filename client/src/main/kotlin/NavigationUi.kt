@@ -24,6 +24,7 @@ class NavigationUi {
     private val addWaypointButton = document.querySelector(".addWaypoint")!! as HTMLButtonElement
     private val deleteWaypointButton = document.querySelector(".deleteWaypoint")!! as HTMLButtonElement
     private val zoomSlider = CanvasSlider(
+        canvas = canvas,
         xExpr = { it.vmin * 5 },
         yExpr = { it.height - it.vmin * 5 },
         widthExpr = { it.vmin * 40 },
@@ -190,7 +191,7 @@ class NavigationUi {
     }
 
     private fun drawZoom() =
-        zoomSlider.draw(canvas, 1.0 - scaleSetting / 6.0)
+        zoomSlider.draw(1.0 - scaleSetting / 6.0)
 
     private fun Vector2.adjustForMap() =
         ((this - center) * scale).let { Vector2(it.x, -it.y) }

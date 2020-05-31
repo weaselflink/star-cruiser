@@ -12,6 +12,8 @@ import px
 import kotlin.math.PI
 
 class CanvasSlider(
+    private val canvas: HTMLCanvasElement,
+    private val ctx: CanvasRenderingContext2D = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D,
     private val xExpr: (CanvasDimensions) -> Double,
     private val yExpr: (CanvasDimensions) -> Double,
     private val widthExpr: (CanvasDimensions) -> Double,
@@ -22,8 +24,7 @@ class CanvasSlider(
     private val reverseValue: Boolean = false
 ) : MouseEventHandler {
 
-    fun draw(canvas: HTMLCanvasElement, value: Double) {
-        val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
+    fun draw(value: Double) {
         val dim = currentDimensions(canvas)
 
         with(ctx) {
