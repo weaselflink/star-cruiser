@@ -1,3 +1,4 @@
+import components.CanvasSlider
 import de.bissell.starcruiser.*
 import de.bissell.starcruiser.Command.CommandAddWaypoint
 import de.bissell.starcruiser.Command.CommandDeleteWaypoint

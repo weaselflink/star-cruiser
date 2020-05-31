@@ -1,11 +1,14 @@
+package components
+
+import CanvasDimensions
+import MouseEventHandler
+import circle
 import de.bissell.starcruiser.clamp
-import org.w3c.dom.ALPHABETIC
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.CanvasTextAlign
-import org.w3c.dom.CanvasTextBaseline
-import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.LEFT
+import dimensions
+import drawPill
+import org.w3c.dom.*
 import org.w3c.dom.events.MouseEvent
+import px
 import kotlin.math.PI
 
 class CanvasSlider(
