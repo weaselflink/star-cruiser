@@ -136,7 +136,7 @@ class MainScreenUi {
         return PerspectiveCamera(
             fov = 75,
             aspect = window.innerWidth.toDouble() / window.innerHeight.toDouble(),
-            near = 1,
+            near = 0.1,
             far = 10_000
         ).apply {
             position.y = 1.0

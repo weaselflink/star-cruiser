@@ -193,7 +193,7 @@ class ShortRangeScope(
         }
     }
 
-    private fun CanvasRenderingContext2D.drawContact(ship: ShipMessage, contact: ContactMessage) {
+    private fun CanvasRenderingContext2D.drawContact(ship: ShipMessage, contact: ScopeContactMessage) {
         val posOnScope = contact.relativePosition.adjustForScope(ship)
         save()
         contactStyle(dim)

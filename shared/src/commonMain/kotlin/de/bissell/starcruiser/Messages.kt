@@ -37,7 +37,7 @@ sealed class SnapshotMessage {
     @Serializable
     data class Helm(
         override val ship: ShipMessage,
-        val contacts: List<ContactMessage>
+        val contacts: List<ScopeContactMessage>
     ) : SnapshotMessage(), ShipSnapshot
 
     @Serializable
@@ -90,6 +90,19 @@ data class ContactMessage(
     val velocity: Double,
     val history: List<Pair<Double, Vector2>>
 )
+
+@Serializable
+data class ScopeContactMessage(
+    val id: String,
+    val type: ContactType,
+    val designation: String,
+    val relativePosition: Vector2,
+    val rotation: Double
+)
+
+enum class ContactType {
+    Unknown
+}
 
 @Serializable
 data class WaypointMessage(

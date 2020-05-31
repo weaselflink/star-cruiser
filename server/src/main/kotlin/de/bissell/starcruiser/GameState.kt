@@ -69,7 +69,7 @@ class GameState {
             InShip -> when (client.station!!) {
                 Helm -> SnapshotMessage.Helm(
                     ship = clientShip!!.toMessage(),
-                    contacts = getContacts(clientShip, client)
+                    contacts = getScopeContacts(clientShip)
                 )
                 Navigation -> SnapshotMessage.Navigation(
                     ship = clientShip!!.toMessage(),
@@ -160,6 +160,16 @@ class GameState {
             .map { it.toContactMessage(clientShip) }
             .filter {
                 client.station != Helm || it.relativePosition.length() < clientShip.shortRangeScopeRange * 1.1
+            }
+    }
+
+    private fun getScopeContacts(clientShip: Ship): List<ScopeContactMessage> {
+        return ships
+            .filter { it.key != clientShip.id }
+            .map { it.value }
+            .map { it.toScopeContactMessage(clientShip) }
+            .filter {
+                it.relativePosition.length() < clientShip.shortRangeScopeRange * 1.1
             }
     }
 }

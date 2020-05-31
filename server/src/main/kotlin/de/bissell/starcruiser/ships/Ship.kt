@@ -114,6 +114,15 @@ class Ship(
             waypoints = waypoints.map { it.toWaypointMessage(this) }
         )
 
+    fun toScopeContactMessage(relativeTo: Ship) =
+        ScopeContactMessage(
+            id = id.toString(),
+            type = ContactType.Unknown,
+            designation = designation,
+            relativePosition = (position - relativeTo.position),
+            rotation = rotation
+        )
+
     fun toContactMessage(relativeTo: Ship) =
         ContactMessage(
             id = id.toString(),
