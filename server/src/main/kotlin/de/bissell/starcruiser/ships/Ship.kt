@@ -18,8 +18,8 @@ class Ship(
 ) {
 
     private var thrust = 0.0
-
     private val history = mutableListOf<Pair<Double, Vector2>>()
+    private val scans = mutableMapOf<UUID, ScanLevel>()
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine) {
         updateThrust(time)
@@ -126,6 +126,8 @@ class Ship(
     fun toContactMessage(relativeTo: Ship) =
         ContactMessage(
             id = id.toString(),
+            type = getContactType(relativeTo),
+            scanLevel = relativeTo.getScanLevel(this),
             designation = designation,
             speed = speed,
             position = position,
@@ -135,6 +137,15 @@ class Ship(
             velocity = speed.length(),
             history = history.map { it.first to it.second }
         )
+
+    private fun getScanLevel(ship: Ship) = scans[ship.id] ?: ScanLevel.None
+
+    private fun getContactType(relativeTo: Ship) =
+        if (relativeTo.getScanLevel(this) == ScanLevel.Faction) {
+            ContactType.Friendly
+        } else {
+            ContactType.Unknown
+        }
 }
 
 data class Waypoint(

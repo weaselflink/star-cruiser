@@ -81,6 +81,8 @@ data class ShipMessage(
 @Serializable
 data class ContactMessage(
     val id: String,
+    val type: ContactType,
+    val scanLevel: ScanLevel,
     val designation: String,
     val position: Vector2,
     val relativePosition: Vector2,
@@ -101,7 +103,13 @@ data class ScopeContactMessage(
 )
 
 enum class ContactType {
-    Unknown
+    Unknown,
+    Friendly
+}
+
+enum class ScanLevel {
+    None,
+    Faction
 }
 
 @Serializable
