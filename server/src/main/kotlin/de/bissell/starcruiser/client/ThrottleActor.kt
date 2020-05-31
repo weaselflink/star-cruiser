@@ -1,6 +1,6 @@
-package de.bissell.starcruiser
+package de.bissell.starcruiser.client
 
-import de.bissell.starcruiser.ThrottleMessage.*
+import de.bissell.starcruiser.client.ThrottleMessage.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor

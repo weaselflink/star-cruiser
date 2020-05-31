@@ -1,5 +1,6 @@
 package de.bissell.starcruiser
 
+import de.bissell.starcruiser.ships.Ship
 import org.jbox2d.collision.shapes.PolygonShape
 import org.jbox2d.common.Mat22
 import org.jbox2d.common.Vec2

@@ -1,5 +1,6 @@
-package de.bissell.starcruiser
+package de.bissell.starcruiser.ships
 
+import de.bissell.starcruiser.*
 import java.util.*
 import kotlin.math.abs
 

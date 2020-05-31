@@ -3,6 +3,9 @@ package de.bissell.starcruiser
 import de.bissell.starcruiser.ClientState.InShip
 import de.bissell.starcruiser.ClientState.ShipSelection
 import de.bissell.starcruiser.Station.*
+import de.bissell.starcruiser.ships.Ship
+import de.bissell.starcruiser.ships.ShipTemplate
+import de.bissell.starcruiser.ships.Waypoint
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor

@@ -1,6 +1,6 @@
 package de.bissell.starcruiser
 
-import de.bissell.starcruiser.GameClient.Companion.startGameClient
+import de.bissell.starcruiser.client.GameClient.Companion.startGameClient
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation

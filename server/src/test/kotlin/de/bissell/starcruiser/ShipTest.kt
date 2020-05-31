@@ -1,5 +1,7 @@
 package de.bissell.starcruiser
 
+import de.bissell.starcruiser.ships.Ship
+import de.bissell.starcruiser.ships.Waypoint
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.containsExactly

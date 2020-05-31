@@ -1,6 +1,7 @@
-package de.bissell.starcruiser
+package de.bissell.starcruiser.client
 
-import de.bissell.starcruiser.ThrottleMessage.*
+import de.bissell.starcruiser.*
+import de.bissell.starcruiser.client.ThrottleMessage.*
 import io.ktor.http.cio.websocket.Frame
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -46,15 +47,33 @@ class GameClient(
             val input = String(frame.data)
             when (val command = Command.parse(input)) {
                 is Command.UpdateAcknowledge -> throttleActor.send(AcknowledgeInflightMessage(command.counter))
-                is Command.CommandTogglePause -> gameStateActor.send(TogglePause)
-                is Command.CommandSpawnShip -> gameStateActor.send(SpawnShip)
-                is Command.CommandJoinShip -> gameStateActor.send(JoinShip(id, command.shipId.toUUID(), command.station))
-                is Command.CommandChangeStation -> gameStateActor.send(ChangeStation(id, command.station))
-                is Command.CommandExitShip -> gameStateActor.send(ExitShip(id))
-                is Command.CommandChangeThrottle -> gameStateActor.send(ChangeThrottle(id, command.value))
-                is Command.CommandChangeRudder -> gameStateActor.send(ChangeRudder(id, command.value))
-                is Command.CommandAddWaypoint -> gameStateActor.send(AddWaypoint(id, command.position))
-                is Command.CommandDeleteWaypoint -> gameStateActor.send(DeleteWaypoint(id, command.position))
+                is Command.CommandTogglePause -> gameStateActor.send(
+                    TogglePause
+                )
+                is Command.CommandSpawnShip -> gameStateActor.send(
+                    SpawnShip
+                )
+                is Command.CommandJoinShip -> gameStateActor.send(
+                    JoinShip(id, command.shipId.toUUID(), command.station)
+                )
+                is Command.CommandChangeStation -> gameStateActor.send(
+                    ChangeStation(id, command.station)
+                )
+                is Command.CommandExitShip -> gameStateActor.send(
+                    ExitShip(id)
+                )
+                is Command.CommandChangeThrottle -> gameStateActor.send(
+                    ChangeThrottle(id, command.value)
+                )
+                is Command.CommandChangeRudder -> gameStateActor.send(
+                    ChangeRudder(id, command.value)
+                )
+                is Command.CommandAddWaypoint -> gameStateActor.send(
+                    AddWaypoint(id, command.position)
+                )
+                is Command.CommandDeleteWaypoint -> gameStateActor.send(
+                    DeleteWaypoint(id, command.position)
+                )
             }
         }
 

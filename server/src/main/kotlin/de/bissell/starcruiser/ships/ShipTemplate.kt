@@ -1,4 +1,4 @@
-package de.bissell.starcruiser
+package de.bissell.starcruiser.ships
 
 data class ShipTemplate(
     val className: String = "Infector",
