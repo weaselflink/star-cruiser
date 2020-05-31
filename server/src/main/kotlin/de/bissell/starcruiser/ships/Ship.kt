@@ -11,7 +11,7 @@ class Ship(
     private val designation: String = randomShipName(),
     var position: Vector2 = Vector2(),
     private var speed: Vector2 = Vector2(),
-    private var rotation: Double = 90.0.toRadians(),
+    var rotation: Double = 90.0.toRadians(),
     private var throttle: Int = 0,
     private var rudder: Int = 0,
     val waypoints: MutableList<Waypoint> = mutableListOf()
