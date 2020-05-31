@@ -34,7 +34,10 @@ sealed class Command {
     data class CommandAddWaypoint(val position: Vector2) : Command()
 
     @Serializable
-    data class CommandDeleteWaypoint(val position: Vector2) : Command()
+    data class CommandDeleteWaypoint(val index: Int) : Command()
+
+    @Serializable
+    data class CommandScanShip(val targetId: String) : Command()
 
     fun toJson() = Json(jsonConfiguration).stringify(serializer(), this)
 

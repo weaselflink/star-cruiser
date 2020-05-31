@@ -68,7 +68,6 @@ class Ship(
     }
 
     fun addWaypoint(position: Vector2) {
-        println(position)
         (1..waypoints.size * 2 + 1).firstOrNull {
             waypoints.none { waypoint -> waypoint.index == it }
         }?.also {
@@ -76,17 +75,12 @@ class Ship(
         }
     }
 
-    fun deleteWaypoint(position: Vector2) {
-        println(position)
-        waypoints.map {
-            (it.position - position).length() to it
-        }.minBy {
-            it.first
-        }?.also {
-            if (it.first < 100.0) {
-                waypoints.remove(it.second)
-            }
-        }
+    fun deleteWaypoint(index: Int) {
+        waypoints.removeIf { it.index == index }
+    }
+
+    fun startScan(targetId: UUID) {
+        scans[targetId] = ScanLevel.Faction
     }
 
     fun toPlayerShipMessage() =
@@ -117,7 +111,7 @@ class Ship(
     fun toScopeContactMessage(relativeTo: Ship) =
         ScopeContactMessage(
             id = id.toString(),
-            type = ContactType.Unknown,
+            type = getContactType(relativeTo),
             designation = designation,
             relativePosition = (position - relativeTo.position),
             rotation = rotation
@@ -155,6 +149,7 @@ data class Waypoint(
 
     fun toWaypointMessage(relativeTo: Ship) =
         WaypointMessage(
+            index = index,
             name = "WP$index",
             position = position,
             relativePosition = (position - relativeTo.position)

@@ -1,7 +1,6 @@
 import components.CanvasSlider
 import de.bissell.starcruiser.*
-import de.bissell.starcruiser.Command.CommandAddWaypoint
-import de.bissell.starcruiser.Command.CommandDeleteWaypoint
+import de.bissell.starcruiser.Command.*
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -23,6 +22,7 @@ class NavigationUi {
     private val mouseEventDispatcher = MouseEventDispatcher(canvas)
     private val addWaypointButton = document.querySelector(".addWaypoint")!! as HTMLButtonElement
     private val deleteWaypointButton = document.querySelector(".deleteWaypoint")!! as HTMLButtonElement
+    private val scanShipButton = document.querySelector(".scanShip")!! as HTMLButtonElement
     private val zoomSlider = CanvasSlider(
         canvas = canvas,
         xExpr = { it.vmin * 5 },
@@ -36,8 +36,9 @@ class NavigationUi {
     private var dim = CanvasDimensions(100, 100)
     private var center = Vector2()
     private var scaleSetting = 3
-    private var addingWaypoint = false
-    private var deletingWaypoint = false
+    private var buttonState: ButtonState = ButtonState.Initial
+    private var contacts: List<ContactMessage> = emptyList()
+    private var waypoints: List<WaypointMessage> = emptyList()
 
     private val scale: Double
         get() = 4.0 / 2.0.pow(scaleSetting.toDouble())
@@ -74,6 +75,8 @@ class NavigationUi {
 
     fun draw(snapshot: SnapshotMessage.Navigation) {
         val ship = snapshot.ship
+        contacts = snapshot.contacts
+        waypoints = ship.waypoints
         dim = canvas.dimensions()
 
         with(ctx) {
@@ -83,31 +86,51 @@ class NavigationUi {
             drawGrid()
             drawHistory(ship)
             drawWaypoints(ship)
-            snapshot.contacts.forEach {
-                ctx.drawContact(it)
-            }
+            drawContacts(snapshot)
             drawShip(ship)
             drawZoom()
         }
     }
 
     fun addWayPointClicked() {
-        addingWaypoint = !addingWaypoint
-        deletingWaypoint = false
+        buttonState = if (buttonState != ButtonState.AddWaypoint) {
+            ButtonState.AddWaypoint
+        } else {
+            ButtonState.Initial
+        }
         addWaypointButton.removeClass("current")
         deleteWaypointButton.removeClass("current")
-        if (addingWaypoint) {
+        scanShipButton.removeClass("current")
+        if (buttonState == ButtonState.AddWaypoint) {
             addWaypointButton.addClass("current")
         }
     }
 
     fun deleteWayPointClicked() {
-        addingWaypoint = false
-        deletingWaypoint = !deletingWaypoint
+        buttonState = if (buttonState != ButtonState.DeleteWaypoint) {
+            ButtonState.DeleteWaypoint
+        } else {
+            ButtonState.Initial
+        }
         addWaypointButton.removeClass("current")
         deleteWaypointButton.removeClass("current")
-        if (deletingWaypoint) {
+        scanShipButton.removeClass("current")
+        if (buttonState == ButtonState.DeleteWaypoint) {
             deleteWaypointButton.addClass("current")
+        }
+    }
+
+    fun scanShipClicked() {
+        buttonState = if (buttonState != ButtonState.ScanShip) {
+            ButtonState.ScanShip
+        } else {
+            ButtonState.Initial
+        }
+        addWaypointButton.removeClass("current")
+        deleteWaypointButton.removeClass("current")
+        scanShipButton.removeClass("current")
+        if (buttonState == ButtonState.ScanShip) {
+            scanShipButton.addClass("current")
         }
     }
 
@@ -130,10 +153,19 @@ class NavigationUi {
         restore()
     }
 
+    private fun CanvasRenderingContext2D.drawContacts(snapshot: SnapshotMessage.Navigation) {
+        snapshot.contacts.forEach {
+            drawContact(it)
+        }
+    }
+
     private fun CanvasRenderingContext2D.drawContact(contact: ContactMessage) {
         save()
         translateToCenter()
-        contactStyle(dim)
+        when (contact.type) {
+            ContactType.Friendly -> friendlyContactStyle(dim)
+            else -> unknownContactStyle(dim)
+        }
 
         translate(contact.position.adjustForMap())
         beginPath()
@@ -201,16 +233,25 @@ class NavigationUi {
         private var lastEvent: Vector2? = null
 
         override fun handleMouseDown(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-            when {
-                addingWaypoint -> {
+            when (buttonState) {
+                ButtonState.AddWaypoint -> {
                     clientSocket.send(CommandAddWaypoint(mouseEvent.toWorld()))
                     addWaypointButton.removeClass("current")
-                    addingWaypoint = false
+                    buttonState = ButtonState.Initial
                 }
-                deletingWaypoint -> {
-                    clientSocket.send(CommandDeleteWaypoint(mouseEvent.toWorld()))
-                    deleteWaypointButton.removeClass("current")
-                    deletingWaypoint = false
+                ButtonState.DeleteWaypoint -> {
+                    getNearestWaypoint(mouseEvent)?.also {
+                        clientSocket.send(CommandDeleteWaypoint(it.index))
+                        deleteWaypointButton.removeClass("current")
+                        buttonState = ButtonState.Initial
+                    }
+                }
+                ButtonState.ScanShip -> {
+                    getNearestContact(mouseEvent)?.also {
+                        clientSocket.send(CommandScanShip(it.id))
+                        scanShipButton.removeClass("current")
+                        buttonState = ButtonState.Initial
+                    }
                 }
                 else -> lastEvent = Vector2(mouseEvent.offsetX, mouseEvent.offsetY)
             }
@@ -228,6 +269,24 @@ class NavigationUi {
             lastEvent = null
         }
 
+        private fun getNearestWaypoint(mouseEvent: MouseEvent): WaypointMessage? {
+            val worldClick = mouseEvent.toWorld()
+            return waypoints
+                .map { it to (it.position - worldClick).length() }
+                .filter { it.second < 50 }
+                .minBy { it.second }
+                ?.first
+        }
+
+        private fun getNearestContact(mouseEvent: MouseEvent): ContactMessage? {
+            val worldClick = mouseEvent.toWorld()
+            return contacts
+                .map { it to (it.position - worldClick).length() }
+                .filter { it.second < 50 }
+                .minBy { it.second }
+                ?.first
+        }
+
         private fun Vector2.convert() = (this / scale).let { Vector2(-it.x, it.y) }
 
         private fun MouseEvent.toWorld() =
@@ -236,4 +295,12 @@ class NavigationUi {
         private fun MouseEvent.fromCenterCanvas() =
             Vector2(offsetX, offsetY) - Vector2(canvas.width / 2.0, canvas.height / 2.0)
     }
+
+    enum class ButtonState {
+        Initial,
+        AddWaypoint,
+        DeleteWaypoint,
+        ScanShip
+    }
+
 }

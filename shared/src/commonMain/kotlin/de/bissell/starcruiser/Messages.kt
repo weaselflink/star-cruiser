@@ -114,6 +114,7 @@ enum class ScanLevel {
 
 @Serializable
 data class WaypointMessage(
+    val index: Int,
     val name: String,
     val position: Vector2,
     val relativePosition: Vector2

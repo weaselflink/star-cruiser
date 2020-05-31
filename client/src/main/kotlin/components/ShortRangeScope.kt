@@ -1,17 +1,18 @@
 package components
 
 import circle
-import contactStyle
 import de.bissell.starcruiser.*
 import dimensions
 import drawPill
 import drawShipSymbol
+import friendlyContactStyle
 import historyStyle
 import org.w3c.dom.*
 import px
 import shipStyle
 import translate
 import translateToCenter
+import unknownContactStyle
 import wayPointStyle
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -196,7 +197,10 @@ class ShortRangeScope(
     private fun CanvasRenderingContext2D.drawContact(ship: ShipMessage, contact: ScopeContactMessage) {
         val posOnScope = contact.relativePosition.adjustForScope(ship)
         save()
-        contactStyle(dim)
+        when (contact.type) {
+            ContactType.Friendly -> friendlyContactStyle(dim)
+            else -> unknownContactStyle(dim)
+        }
 
         translate(posOnScope)
         beginPath()

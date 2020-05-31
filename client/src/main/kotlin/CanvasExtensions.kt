@@ -77,11 +77,21 @@ fun CanvasRenderingContext2D.shipStyle(dim: CanvasDimensions) {
     textAlign = CanvasTextAlign.CENTER
 }
 
-fun CanvasRenderingContext2D.contactStyle(dim: CanvasDimensions) {
-    lineWidth = dim.vmin * 0.8 * 0.4
-    lineJoin = CanvasLineJoin.ROUND
+fun CanvasRenderingContext2D.unknownContactStyle(dim: CanvasDimensions) {
     strokeStyle = "#555"
     fillStyle = "#555"
+    contactStyle(dim)
+}
+
+fun CanvasRenderingContext2D.friendlyContactStyle(dim: CanvasDimensions) {
+    strokeStyle = "#1e90ff"
+    fillStyle = "#1e90ff"
+    contactStyle(dim)
+}
+
+private fun CanvasRenderingContext2D.contactStyle(dim: CanvasDimensions) {
+    lineWidth = dim.vmin * 0.8 * 0.4
+    lineJoin = CanvasLineJoin.ROUND
     val textSize = (dim.vmin * 2).toInt()
     font = "bold ${textSize.px} sans-serif"
     textAlign = CanvasTextAlign.CENTER

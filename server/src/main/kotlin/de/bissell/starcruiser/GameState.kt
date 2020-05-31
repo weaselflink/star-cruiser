@@ -28,7 +28,8 @@ class ChangeThrottle(val clientId: UUID, val value: Int) : GameStateChange()
 class ChangeRudder(val clientId: UUID, val value: Int) : GameStateChange()
 class GetGameStateSnapshot(val clientId: UUID, val response: CompletableDeferred<SnapshotMessage>) : GameStateChange()
 class AddWaypoint(val clientId: UUID, val position: Vector2) : GameStateChange()
-class DeleteWaypoint(val clientId: UUID, val position: Vector2) : GameStateChange()
+class DeleteWaypoint(val clientId: UUID, val index: Int) : GameStateChange()
+class ScanShip(val clientId: UUID, val targetId: UUID) : GameStateChange()
 
 fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
     val gameState = GameState()
@@ -46,7 +47,8 @@ fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
             is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.value)
             is ChangeRudder -> gameState.changeRudder(change.clientId, change.value)
             is AddWaypoint -> gameState.addWaypoint(change.clientId, change.position)
-            is DeleteWaypoint -> gameState.deleteWaypoint(change.clientId, change.position)
+            is DeleteWaypoint -> gameState.deleteWaypoint(change.clientId, change.index)
+            is ScanShip -> gameState.scanShip(change.clientId, change.targetId)
         }
     }
 }
@@ -143,8 +145,14 @@ class GameState {
         getClientShip(clientId)?.addWaypoint(position)
     }
 
-    fun deleteWaypoint(clientId: UUID, position: Vector2) {
-        getClientShip(clientId)?.deleteWaypoint(position)
+    fun deleteWaypoint(clientId: UUID, index: Int) {
+        getClientShip(clientId)?.deleteWaypoint(index)
+    }
+
+    fun scanShip(clientId: UUID, targetId: UUID) {
+        ships[targetId]?.also {
+            getClientShip(clientId)?.startScan(targetId)
+        }
     }
 
     private fun getClient(clientId: UUID) =

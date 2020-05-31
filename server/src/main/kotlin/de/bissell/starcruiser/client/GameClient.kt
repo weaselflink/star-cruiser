@@ -72,7 +72,10 @@ class GameClient(
                     AddWaypoint(id, command.position)
                 )
                 is Command.CommandDeleteWaypoint -> gameStateActor.send(
-                    DeleteWaypoint(id, command.position)
+                    DeleteWaypoint(id, command.index)
+                )
+                is Command.CommandScanShip -> gameStateActor.send(
+                    ScanShip(id, command.targetId.toUUID())
                 )
             }
         }

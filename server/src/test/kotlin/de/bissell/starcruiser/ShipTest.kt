@@ -24,16 +24,16 @@ class ShipTest {
     @Test
     fun `can delete waypoint`() {
         ship.addWaypoint(Vector2(5.0, -4.0))
-        ship.deleteWaypoint(Vector2(5.0, -4.0))
+        ship.deleteWaypoint(1)
 
         expectThat(ship.waypoints).isEmpty()
     }
 
     @Test
-    fun `deletes nearest waypoint`() {
+    fun `keeps index after deletion`() {
         ship.addWaypoint(Vector2(5.0, -4.0))
         ship.addWaypoint(Vector2(10.0, -4.0))
-        ship.deleteWaypoint(Vector2(7.0, -4.0))
+        ship.deleteWaypoint(1)
 
         expectThat(ship.waypoints).containsExactly(
             Waypoint(2, Vector2(10.0, -4.0))
@@ -44,7 +44,7 @@ class ShipTest {
     fun `fills waypoint slot`() {
         ship.addWaypoint(Vector2(5.0, -4.0))
         ship.addWaypoint(Vector2(10.0, -4.0))
-        ship.deleteWaypoint(Vector2(5.0, -4.0))
+        ship.deleteWaypoint(1)
         ship.addWaypoint(Vector2(15.0, -4.0))
 
         expectThat(ship.waypoints).containsExactlyInAnyOrder(

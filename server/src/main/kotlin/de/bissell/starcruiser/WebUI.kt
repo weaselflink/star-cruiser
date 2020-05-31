@@ -220,6 +220,9 @@ private fun BODY.commonShipUi() {
             button(classes = "extraButton deleteWaypoint leftEdge") {
                 +"Delete waypoint"
             }
+            button(classes = "extraButton scanShip leftEdge") {
+                +"Scan ship"
+            }
             button(classes = "extraButton topView leftEdge") {
                 +"Top view"
             }
