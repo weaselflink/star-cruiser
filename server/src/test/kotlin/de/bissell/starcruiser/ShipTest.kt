@@ -2,11 +2,11 @@ package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ships.Ship
 import de.bissell.starcruiser.ships.Waypoint
+import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
-import strikt.assertions.containsExactly
-import strikt.assertions.containsExactlyInAnyOrder
-import strikt.assertions.isEmpty
+import strikt.assertions.*
+import java.time.Instant
 
 class ShipTest {
 
@@ -51,5 +51,58 @@ class ShipTest {
             Waypoint(1, Vector2(15.0, -4.0)),
             Waypoint(2, Vector2(10.0, -4.0))
         )
+    }
+
+    @Test
+    fun `does not start scan with scan in progress`() {
+        val target1 = Ship()
+        val target2 = Ship()
+        val time = GameTime()
+        time.update(Instant.EPOCH)
+
+        ship.startScan(target1.id)
+        ship.startScan(target2.id)
+
+        expectThat(ship.toMessage().scanProgress).isNotNull()
+            .get { targetId }.isEqualTo(target1.id.toString())
+    }
+
+    @Test
+    fun `scans target`() {
+        val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
+
+        val target = Ship()
+        val time = GameTime()
+        time.update(Instant.EPOCH)
+
+        ship.startScan(target.id)
+        time.update(Instant.EPOCH.plusSeconds(4))
+        ship.update(time, physicsEngine)
+
+        expectThat(target.toContactMessage(ship).type).isEqualTo(ContactType.Unknown)
+
+        time.update(Instant.EPOCH.plusSeconds(6))
+        ship.update(time, physicsEngine)
+
+        expectThat(target.toContactMessage(ship).type).isEqualTo(ContactType.Friendly)
+    }
+
+    @Test
+    fun `does not scan target with maximum scan level`() {
+        val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
+
+        val target = Ship()
+        val time = GameTime()
+        time.update(Instant.EPOCH)
+
+        ship.startScan(target.id)
+        time.update(Instant.EPOCH.plusSeconds(6))
+        ship.update(time, physicsEngine)
+
+        expectThat(target.toContactMessage(ship).type).isEqualTo(ContactType.Friendly)
+
+        ship.startScan(target.id)
+
+        expectThat(ship.toMessage().scanProgress).isNull()
     }
 }

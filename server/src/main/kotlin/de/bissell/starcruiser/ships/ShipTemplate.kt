@@ -7,5 +7,6 @@ data class ShipTemplate(
     val reverseThrustFactor: Double = 0.1,
     val rudderFactor: Double = 0.4,
     val shieldRadius: Double = 10.0,
-    val density: Double = 0.02
+    val density: Double = 0.02,
+    val scanSpeed: Double = 0.2
 )

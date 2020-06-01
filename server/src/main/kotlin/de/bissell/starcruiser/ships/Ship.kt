@@ -20,8 +20,10 @@ class Ship(
     private var thrust = 0.0
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val scans = mutableMapOf<UUID, ScanLevel>()
+    private var scanHandler: ScanHandler? = null
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine) {
+        updateScan(time)
         updateThrust(time)
         val effectiveThrust = if (thrust < 0) {
             thrust * template.reverseThrustFactor
@@ -38,6 +40,17 @@ class Ship(
         }
 
         updateHistory(time)
+    }
+
+    private fun updateScan(time: GameTime) {
+        scanHandler?.also {
+            it.update(time)
+            if (it.isComplete) {
+                val scan = scans[scanHandler!!.targetId] ?: ScanLevel.None
+                scans[scanHandler!!.targetId] = scan.next()
+                scanHandler = null
+            }
+        }
     }
 
     private fun updateThrust(time: GameTime) {
@@ -80,7 +93,9 @@ class Ship(
     }
 
     fun startScan(targetId: UUID) {
-        scans[targetId] = ScanLevel.Faction
+        if (scanHandler == null && canIncreaseScanLevel(targetId)) {
+            scanHandler = ScanHandler(targetId)
+        }
     }
 
     fun toPlayerShipMessage() =
@@ -105,7 +120,8 @@ class Ship(
             rudder = rudder,
             history = history.map { it.first to it.second },
             shortRangeScopeRange = shortRangeScopeRange,
-            waypoints = waypoints.map { it.toWaypointMessage(this) }
+            waypoints = waypoints.map { it.toWaypointMessage(this) },
+            scanProgress = scanHandler?.toMessage()
         )
 
     fun toScopeContactMessage(relativeTo: Ship) =
@@ -121,7 +137,7 @@ class Ship(
         ContactMessage(
             id = id.toString(),
             type = getContactType(relativeTo),
-            scanLevel = relativeTo.getScanLevel(this),
+            scanLevel = relativeTo.getScanLevel(id),
             designation = designation,
             speed = speed,
             position = position,
@@ -132,14 +148,36 @@ class Ship(
             history = history.map { it.first to it.second }
         )
 
-    private fun getScanLevel(ship: Ship) = scans[ship.id] ?: ScanLevel.None
+    private fun canIncreaseScanLevel(targetId: UUID) = getScanLevel(targetId).let { it != it.next() }
+
+    private fun getScanLevel(targetId: UUID) = scans[targetId] ?: ScanLevel.None
 
     private fun getContactType(relativeTo: Ship) =
-        if (relativeTo.getScanLevel(this) == ScanLevel.Faction) {
+        if (relativeTo.getScanLevel(id) == ScanLevel.Faction) {
             ContactType.Friendly
         } else {
             ContactType.Unknown
         }
+
+    private inner class ScanHandler(
+        val targetId: UUID,
+        private var progress: Double = 0.0
+    ) {
+
+        var isComplete: Boolean = false
+            get() = progress >= 1.0
+            private set
+
+        fun update(time: GameTime) {
+            progress += time.delta * template.scanSpeed
+        }
+
+        fun toMessage() =
+            ScanProgress(
+                targetId = targetId.toString(),
+                progress = progress
+            )
+    }
 }
 
 data class Waypoint(

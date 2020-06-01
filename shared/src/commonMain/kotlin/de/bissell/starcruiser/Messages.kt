@@ -75,7 +75,8 @@ data class ShipMessage(
     val rudder: Int,
     val history: List<Pair<Double, Vector2>>,
     val shortRangeScopeRange: Double,
-    val waypoints: List<WaypointMessage>
+    val waypoints: List<WaypointMessage>,
+    val scanProgress: ScanProgress?
 )
 
 @Serializable
@@ -109,8 +110,20 @@ enum class ContactType {
 
 enum class ScanLevel {
     None,
-    Faction
+    Faction;
+
+    fun next() =
+        when (this) {
+            None -> Faction
+            Faction -> Faction
+        }
 }
+
+@Serializable
+data class ScanProgress(
+    val targetId: String,
+    val progress: Double
+)
 
 @Serializable
 data class WaypointMessage(

@@ -127,7 +127,7 @@ class GameState {
     fun update() {
         if (time.paused) return
 
-        time.update()
+        time.update(now())
 
         physicsEngine.step(time)
         ships.forEach { it.value.update(time, physicsEngine) }
@@ -200,8 +200,7 @@ class GameTime {
             }
         }
 
-    fun update() {
-        val now = now()
+    fun update(now: Instant) {
         delta = if (lastUpdate == null) {
             0.001
         } else {
