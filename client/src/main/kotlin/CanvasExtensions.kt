@@ -75,11 +75,7 @@ fun CanvasRenderingContext2D.historyStyle(dim: CanvasDimensions) {
 fun CanvasRenderingContext2D.shipStyle(dim: CanvasDimensions) {
     lineWidth = dim.vmin * 0.8 * 0.4
     lineJoin = CanvasLineJoin.ROUND
-    strokeStyle = "#1e90ff"
-    fillStyle = "#1e90ff"
-    val textSize = (dim.vmin * 2).toInt()
-    font = "bold ${textSize.px} sans-serif"
-    textAlign = CanvasTextAlign.CENTER
+    strokeStyle = "#ffffff"
 }
 
 fun CanvasRenderingContext2D.unknownContactStyle(dim: CanvasDimensions) {
