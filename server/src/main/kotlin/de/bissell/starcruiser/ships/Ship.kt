@@ -13,11 +13,11 @@ class Ship(
     private var speed: Vector2 = Vector2(),
     var rotation: Double = 90.0.toRadians(),
     private var throttle: Int = 0,
-    private var rudder: Int = 0,
-    val waypoints: MutableList<Waypoint> = mutableListOf()
+    private var rudder: Int = 0
 ) {
 
     private var thrust = 0.0
+    private val waypoints: MutableList<Waypoint> = mutableListOf()
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val scans = mutableMapOf<UUID, ScanLevel>()
     private var scanHandler: ScanHandler? = null
@@ -178,18 +178,18 @@ class Ship(
                 progress = progress
             )
     }
-}
 
-data class Waypoint(
-    val index: Int,
-    val position: Vector2
-) {
+    private inner class Waypoint(
+        val index: Int,
+        val position: Vector2
+    ) {
 
-    fun toWaypointMessage(relativeTo: Ship) =
-        WaypointMessage(
-            index = index,
-            name = "WP$index",
-            position = position,
-            relativePosition = (position - relativeTo.position)
-        )
+        fun toWaypointMessage(relativeTo: Ship) =
+            WaypointMessage(
+                index = index,
+                name = "WP$index",
+                position = position,
+                relativePosition = (position - relativeTo.position)
+            )
+    }
 }

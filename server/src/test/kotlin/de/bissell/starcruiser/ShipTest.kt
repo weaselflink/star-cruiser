@@ -1,7 +1,6 @@
 package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ships.Ship
-import de.bissell.starcruiser.ships.Waypoint
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -10,7 +9,9 @@ import java.time.Instant
 
 class ShipTest {
 
-    private val ship = Ship()
+    private val ship = Ship(
+        position = Vector2(3.0, -4.0)
+    )
     private val time = GameTime().apply {
         update(Instant.EPOCH)
     }
@@ -52,8 +53,8 @@ class ShipTest {
     fun `can add waypoint`() {
         ship.addWaypoint(Vector2(5.0, -4.0))
 
-        expectThat(ship.waypoints).containsExactly(
-            Waypoint(1, Vector2(5.0, -4.0))
+        expectThat(ship.toMessage().waypoints).containsExactly(
+            WaypointMessage(1, "WP1", Vector2(5.0, -4.0), Vector2(2.0, 0.0))
         )
     }
 
@@ -62,7 +63,7 @@ class ShipTest {
         ship.addWaypoint(Vector2(5.0, -4.0))
         ship.deleteWaypoint(1)
 
-        expectThat(ship.waypoints).isEmpty()
+        expectThat(ship.toMessage().waypoints).isEmpty()
     }
 
     @Test
@@ -71,8 +72,8 @@ class ShipTest {
         ship.addWaypoint(Vector2(10.0, -4.0))
         ship.deleteWaypoint(1)
 
-        expectThat(ship.waypoints).containsExactly(
-            Waypoint(2, Vector2(10.0, -4.0))
+        expectThat(ship.toMessage().waypoints).containsExactly(
+            WaypointMessage(2, "WP2", Vector2(10.0, -4.0), Vector2(7.0, 0.0))
         )
     }
 
@@ -83,9 +84,9 @@ class ShipTest {
         ship.deleteWaypoint(1)
         ship.addWaypoint(Vector2(15.0, -4.0))
 
-        expectThat(ship.waypoints).containsExactlyInAnyOrder(
-            Waypoint(1, Vector2(15.0, -4.0)),
-            Waypoint(2, Vector2(10.0, -4.0))
+        expectThat(ship.toMessage().waypoints).containsExactly(
+            WaypointMessage(2, "WP2", Vector2(10.0, -4.0), Vector2(7.0, 0.0)),
+            WaypointMessage(1, "WP1", Vector2(15.0, -4.0), Vector2(12.0, 0.0))
         )
     }
 
