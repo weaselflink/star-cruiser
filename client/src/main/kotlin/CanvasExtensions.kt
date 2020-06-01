@@ -113,8 +113,8 @@ fun CanvasRenderingContext2D.wayPointStyle(dim: CanvasDimensions) {
 }
 
 fun CanvasRenderingContext2D.scanProgressStyle(dim: CanvasDimensions) {
-    strokeStyle = "#8b0000"
-    fillStyle = "#8b0000"
+    strokeStyle = "#ff6347"
+    fillStyle = "#ff6347"
     lineWidth = dim.vmin * 0.5
     val textSize = (dim.vmin * 4).toInt()
     font = "bold ${textSize.px} sans-serif"

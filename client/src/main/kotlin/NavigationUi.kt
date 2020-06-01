@@ -246,11 +246,11 @@ class NavigationUi {
             dim.vmin * 38 * scanProgress.progress, dim.vmin * 4
         )
 
-        strokeStyle = "#8b000090"
+        strokeStyle = "#fa807290"
         translateToCenter()
         translate(contact.position.adjustForMap())
         beginPath()
-        circle(0.0, 0.0, dim.vmin * 2.5, 0.0, PI * scanProgress.progress * 2.0)
+        circle(0.0, 0.0, dim.vmin * 2.3, 0.0, PI * scanProgress.progress * 2.0)
         stroke()
 
         restore()

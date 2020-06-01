@@ -11,6 +11,42 @@ import java.time.Instant
 class ShipTest {
 
     private val ship = Ship()
+    private val time = GameTime().apply {
+        update(Instant.EPOCH)
+    }
+    private val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
+
+    @Test
+    fun `updates positive thrust`() {
+        ship.changeThrottle(100)
+        time.update(Instant.EPOCH.plusSeconds(2))
+        ship.update(time, physicsEngine)
+
+        expectThat(ship.toMessage().thrust).isNear(ship.template.throttleResponsiveness * 2)
+    }
+
+    @Test
+    fun `updates negative thrust`() {
+        ship.changeThrottle(-100)
+        time.update(Instant.EPOCH.plusSeconds(2))
+        ship.update(time, physicsEngine)
+
+        expectThat(ship.toMessage().thrust).isNear(ship.template.throttleResponsiveness * -2)
+    }
+
+    @Test
+    fun `sets positive rudder`() {
+        ship.changeRudder(50)
+
+        expectThat(ship.toMessage().rudder).isEqualTo(50)
+    }
+
+    @Test
+    fun `sets negative rudder`() {
+        ship.changeRudder(-50)
+
+        expectThat(ship.toMessage().rudder).isEqualTo(-50)
+    }
 
     @Test
     fun `can add waypoint`() {
@@ -57,8 +93,6 @@ class ShipTest {
     fun `does not start scan with scan in progress`() {
         val target1 = Ship()
         val target2 = Ship()
-        val time = GameTime()
-        time.update(Instant.EPOCH)
 
         ship.startScan(target1.id)
         ship.startScan(target2.id)
@@ -69,11 +103,7 @@ class ShipTest {
 
     @Test
     fun `scans target`() {
-        val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
-
         val target = Ship()
-        val time = GameTime()
-        time.update(Instant.EPOCH)
 
         ship.startScan(target.id)
         time.update(Instant.EPOCH.plusSeconds(4))
@@ -89,11 +119,7 @@ class ShipTest {
 
     @Test
     fun `does not scan target with maximum scan level`() {
-        val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
-
         val target = Ship()
-        val time = GameTime()
-        time.update(Instant.EPOCH)
 
         ship.startScan(target.id)
         time.update(Instant.EPOCH.plusSeconds(6))
