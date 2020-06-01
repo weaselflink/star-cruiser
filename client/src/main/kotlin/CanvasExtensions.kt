@@ -23,8 +23,13 @@ fun CanvasRenderingContext2D.lineTo(vector: Vector2) =
 fun CanvasRenderingContext2D.translate(vector: Vector2) =
     translate(vector.x, vector.y)
 
-fun CanvasRenderingContext2D.circle(x: Double, y: Double, radius: Double) =
-    ellipse(x, y, radius, radius, 0.0, 0.0, PI * 2)
+fun CanvasRenderingContext2D.circle(
+    x: Double,
+    y: Double,
+    radius: Double,
+    startAngle: Double = 0.0,
+    endAngle: Double = PI * 2
+) = ellipse(x, y, radius, radius, 0.0, startAngle, endAngle)
 
 val Int.px
     get() = "${this}px"
@@ -98,12 +103,23 @@ private fun CanvasRenderingContext2D.contactStyle(dim: CanvasDimensions) {
 }
 
 fun CanvasRenderingContext2D.wayPointStyle(dim: CanvasDimensions) {
-    strokeStyle = "#4682B4"
-    fillStyle = "#4682B4"
+    strokeStyle = "#4682b4"
+    fillStyle = "#4682b4"
     lineWidth = dim.vmin * 0.4
     val textSize = (dim.vmin * 2).toInt()
     font = "bold ${textSize.px} sans-serif"
     textAlign = CanvasTextAlign.CENTER
+    lineJoin = CanvasLineJoin.ROUND
+}
+
+fun CanvasRenderingContext2D.scanProgressStyle(dim: CanvasDimensions) {
+    strokeStyle = "#8b0000"
+    fillStyle = "#8b0000"
+    lineWidth = dim.vmin * 0.5
+    val textSize = (dim.vmin * 4).toInt()
+    font = "bold ${textSize.px} sans-serif"
+    textAlign = CanvasTextAlign.CENTER
+    textBaseline = CanvasTextBaseline.TOP
     lineJoin = CanvasLineJoin.ROUND
 }
 

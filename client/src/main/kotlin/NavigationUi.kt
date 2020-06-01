@@ -9,6 +9,7 @@ import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.dom.removeClass
+import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -89,6 +90,7 @@ class NavigationUi {
             drawContacts(snapshot)
             drawShip(ship)
             drawZoom()
+            drawScanProgress(ship)
         }
     }
 
@@ -224,6 +226,35 @@ class NavigationUi {
 
     private fun drawZoom() =
         zoomSlider.draw(1.0 - scaleSetting / 6.0)
+
+    private fun CanvasRenderingContext2D.drawScanProgress(ship: ShipMessage) {
+        val scanProgress = ship.scanProgress ?: return
+        val contact = contacts.firstOrNull { it.id == scanProgress.targetId } ?: return
+
+        save()
+        scanProgressStyle(dim)
+
+        val designation = contact.designation
+        fillText("Scanning $designation", dim.width * 0.5, dim.vmin * 4)
+
+        strokeRect(
+            dim.width * 0.5 - dim.vmin * 20, dim.vmin * 10,
+            dim.vmin * 40, dim.vmin * 6
+        )
+        fillRect(
+            dim.width * 0.5 - dim.vmin * 19, dim.vmin * 11,
+            dim.vmin * 38 * scanProgress.progress, dim.vmin * 4
+        )
+
+        strokeStyle = "#8b000090"
+        translateToCenter()
+        translate(contact.position.adjustForMap())
+        beginPath()
+        circle(0.0, 0.0, dim.vmin * 2.5, 0.0, PI * scanProgress.progress * 2.0)
+        stroke()
+
+        restore()
+    }
 
     private fun Vector2.adjustForMap() =
         ((this - center) * scale).let { Vector2(it.x, -it.y) }
