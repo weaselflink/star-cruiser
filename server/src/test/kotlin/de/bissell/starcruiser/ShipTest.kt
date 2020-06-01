@@ -1,7 +1,9 @@
 package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ships.Ship
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
@@ -10,7 +12,7 @@ import java.time.Instant
 class ShipTest {
 
     private val ship = Ship(
-        position = Vector2(3.0, -4.0)
+        position = Vector2(3, -4)
     )
     private val time = GameTime().apply {
         update(Instant.EPOCH)
@@ -51,16 +53,16 @@ class ShipTest {
 
     @Test
     fun `can add waypoint`() {
-        ship.addWaypoint(Vector2(5.0, -4.0))
+        ship.addWaypoint(Vector2(5, -4))
 
         expectThat(ship.toMessage().waypoints).containsExactly(
-            WaypointMessage(1, "WP1", Vector2(5.0, -4.0), Vector2(2.0, 0.0))
+            WaypointMessage(1, "WP1", Vector2(5, -4), Vector2(2, 0))
         )
     }
 
     @Test
     fun `can delete waypoint`() {
-        ship.addWaypoint(Vector2(5.0, -4.0))
+        ship.addWaypoint(Vector2(5, -4))
         ship.deleteWaypoint(1)
 
         expectThat(ship.toMessage().waypoints).isEmpty()
@@ -68,25 +70,25 @@ class ShipTest {
 
     @Test
     fun `keeps index after deletion`() {
-        ship.addWaypoint(Vector2(5.0, -4.0))
-        ship.addWaypoint(Vector2(10.0, -4.0))
+        ship.addWaypoint(Vector2(5, -4))
+        ship.addWaypoint(Vector2(10, -4))
         ship.deleteWaypoint(1)
 
         expectThat(ship.toMessage().waypoints).containsExactly(
-            WaypointMessage(2, "WP2", Vector2(10.0, -4.0), Vector2(7.0, 0.0))
+            WaypointMessage(2, "WP2", Vector2(10, -4), Vector2(7, 0))
         )
     }
 
     @Test
     fun `fills waypoint slot`() {
-        ship.addWaypoint(Vector2(5.0, -4.0))
-        ship.addWaypoint(Vector2(10.0, -4.0))
+        ship.addWaypoint(Vector2(5, -4))
+        ship.addWaypoint(Vector2(10, -4))
         ship.deleteWaypoint(1)
-        ship.addWaypoint(Vector2(15.0, -4.0))
+        ship.addWaypoint(Vector2(15, -4))
 
         expectThat(ship.toMessage().waypoints).containsExactly(
-            WaypointMessage(2, "WP2", Vector2(10.0, -4.0), Vector2(7.0, 0.0)),
-            WaypointMessage(1, "WP1", Vector2(15.0, -4.0), Vector2(12.0, 0.0))
+            WaypointMessage(2, "WP2", Vector2(10, -4), Vector2(7, 0)),
+            WaypointMessage(1, "WP1", Vector2(15, -4), Vector2(12, 0))
         )
     }
 
@@ -131,5 +133,41 @@ class ShipTest {
         ship.startScan(target.id)
 
         expectThat(ship.toMessage().scanProgress).isNull()
+    }
+
+    @Test
+    fun `updates physics engine`() {
+        ship.changeThrottle(50)
+        ship.changeRudder(50)
+        time.update(Instant.EPOCH.plusSeconds(2))
+        ship.update(time, physicsEngine)
+
+        verify(exactly = 1) {
+            physicsEngine.updateShip(
+                ship.id,
+                50 * ship.template.aheadThrustFactor,
+                50 * ship.template.rudderFactor
+            )
+        }
+    }
+
+    @Test
+    fun `takes values from physics engine`() {
+        every {
+            physicsEngine.getShipStats(ship.id)
+        } returns ShipParameters(
+            position = Vector2(1, 2),
+            speed = Vector2(3, 4),
+            rotation = 5.0
+        )
+
+        ship.update(time, physicsEngine)
+
+        ship.toMessage().also {
+            expectThat(it.position).isEqualTo(Vector2(1, 2))
+            expectThat(it.speed).isEqualTo(Vector2(3, 4))
+            expectThat(it.rotation).isEqualTo(5.0)
+        }
+
     }
 }

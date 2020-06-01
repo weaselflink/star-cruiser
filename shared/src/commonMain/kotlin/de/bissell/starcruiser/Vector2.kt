@@ -12,6 +12,13 @@ data class Vector2(
     val y: Double = 0.0
 ) {
 
+    constructor() : this(0.0, 0.0)
+
+    constructor(
+        x: Number = 0.0,
+        y: Number = 0.0
+    ) : this(x.toDouble(), y.toDouble())
+
     operator fun plus(other: Vector2): Vector2 =
         Vector2(x + other.x, y + other.y)
 
@@ -47,12 +54,12 @@ data class Vector2(
         }
 
     companion object {
-        fun random(maxLength: Double, minLength: Double = 0.001) =
+        fun random(maxLength: Number, minLength: Number = 0.001) =
             Vector2(
                 x = Random.nextDouble() - 0.5,
                 y = Random.nextDouble() - 0.5
             ).let {
-                it.normalize() * Random.nextDouble(minLength, maxLength)
+                it.normalize() * Random.nextDouble(minLength.toDouble(), maxLength.toDouble())
             }
     }
 }

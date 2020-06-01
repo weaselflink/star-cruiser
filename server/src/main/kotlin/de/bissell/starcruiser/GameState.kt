@@ -4,7 +4,6 @@ import de.bissell.starcruiser.ClientState.InShip
 import de.bissell.starcruiser.ClientState.ShipSelection
 import de.bissell.starcruiser.Station.*
 import de.bissell.starcruiser.ships.Ship
-import de.bissell.starcruiser.ships.ShipTemplate
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
@@ -106,13 +105,10 @@ class GameState {
 
     fun spawnShip(): UUID =
         Ship(
-            template = ShipTemplate(),
-            position = Vector2.random(300.0),
-            throttle = 0,
-            rudder = 0
+            position = Vector2.random(300)
         ).also {
-            it.addWaypoint(Vector2.random(1000.0, 500.0))
-            it.addWaypoint(Vector2.random(1000.0, 500.0))
+            it.addWaypoint(Vector2.random(1000, 500))
+            it.addWaypoint(Vector2.random(1000, 500))
             ships[it.id] = it
             physicsEngine.addShip(it)
         }.id
