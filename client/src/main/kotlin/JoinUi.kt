@@ -1,4 +1,5 @@
 import de.bissell.starcruiser.Command
+import de.bissell.starcruiser.ShipId
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station.Helm
 import org.w3c.dom.HTMLButtonElement
@@ -45,8 +46,8 @@ class JoinUi {
                         listElements.item(index)!!.let {
                             it as HTMLElement
                         }.apply {
-                            if (getAttribute("id") != playerShip.id) {
-                                setAttribute("id", playerShip.id)
+                            if (getAttribute("id") != playerShip.id.id) {
+                                setAttribute("id", playerShip.id.id)
                                 innerHTML = buttonText
                             }
                         }
@@ -54,7 +55,7 @@ class JoinUi {
                         document.createElement("button").let {
                             it as HTMLElement
                         }.apply {
-                            setAttribute("id", playerShip.id)
+                            setAttribute("id", playerShip.id.id)
                             addClass("leftEdge")
                             innerHTML = buttonText
                             onclick = { selectPlayerShip(it) }
@@ -76,7 +77,7 @@ class JoinUi {
     private fun selectPlayerShip(event: MouseEvent) {
         clientSocket.apply {
             val target = event.target as HTMLElement
-            val shipId = target.attributes["id"]!!.value
+            val shipId = ShipId(target.attributes["id"]!!.value)
             send(Command.CommandJoinShip(shipId = shipId, station = Helm))
         }
     }

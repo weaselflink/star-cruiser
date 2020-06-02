@@ -8,6 +8,7 @@ import de.bissell.starcruiser.PlayerShipMessage
 import de.bissell.starcruiser.ScanLevel
 import de.bissell.starcruiser.ScanProgress
 import de.bissell.starcruiser.ScopeContactMessage
+import de.bissell.starcruiser.ShipId
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.Vector2
 import de.bissell.starcruiser.WaypointMessage
@@ -17,15 +18,6 @@ import de.bissell.starcruiser.toHeading
 import de.bissell.starcruiser.toRadians
 import java.util.UUID
 import kotlin.math.abs
-
-data class ShipId(private val id: String) {
-
-    fun serialize() = id
-
-    companion object {
-        fun random() = ShipId(UUID.randomUUID().toString())
-    }
-}
 
 class Ship(
     val id: ShipId = ShipId.random(),
@@ -123,14 +115,14 @@ class Ship(
 
     fun toPlayerShipMessage() =
         PlayerShipMessage(
-            id = id.serialize(),
+            id = id,
             name = designation,
             shipClass = template.className
         )
 
     fun toMessage() =
         ShipMessage(
-            id = id.serialize(),
+            id = id,
             designation = designation,
             shipClass = template.className,
             speed = speed,
@@ -149,7 +141,7 @@ class Ship(
 
     fun toScopeContactMessage(relativeTo: Ship) =
         ScopeContactMessage(
-            id = id.serialize(),
+            id = id,
             type = getContactType(relativeTo),
             designation = designation,
             relativePosition = (position - relativeTo.position),
@@ -158,7 +150,7 @@ class Ship(
 
     fun toContactMessage(relativeTo: Ship) =
         ContactMessage(
-            id = id.serialize(),
+            id = id,
             type = getContactType(relativeTo),
             scanLevel = relativeTo.getScanLevel(id),
             designation = designation,
@@ -197,7 +189,7 @@ class Ship(
 
         fun toMessage() =
             ScanProgress(
-                targetId = targetId.serialize(),
+                targetId = targetId,
                 progress = progress
             )
     }
@@ -214,5 +206,9 @@ class Ship(
                 position = position,
                 relativePosition = (position - relativeTo.position)
             )
+    }
+
+    companion object {
+        private fun ShipId.Companion.random() = ShipId(UUID.randomUUID().toString())
     }
 }

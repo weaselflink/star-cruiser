@@ -16,7 +16,7 @@ sealed class Command {
     object CommandSpawnShip: Command()
 
     @Serializable
-    data class CommandJoinShip(val shipId: String, val station: Station) : Command()
+    data class CommandJoinShip(val shipId: ShipId, val station: Station) : Command()
 
     @Serializable
     data class CommandChangeStation(val station: Station) : Command()
@@ -37,7 +37,7 @@ sealed class Command {
     data class CommandDeleteWaypoint(val index: Int) : Command()
 
     @Serializable
-    data class CommandScanShip(val targetId: String) : Command()
+    data class CommandScanShip(val targetId: ShipId) : Command()
 
     fun toJson() = Json(jsonConfiguration).stringify(serializer(), this)
 

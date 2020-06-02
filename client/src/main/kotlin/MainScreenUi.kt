@@ -1,4 +1,5 @@
 import de.bissell.starcruiser.ContactMessage
+import de.bissell.starcruiser.ShipId
 import de.bissell.starcruiser.SnapshotMessage
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -42,7 +43,7 @@ class MainScreenUi {
     private val contactGroup = Object3D().also { scene += it }
     private var model: Group? = null
     private var ownModel: Object3D? = null
-    private val contactNodes = mutableMapOf<String, Object3D>()
+    private val contactNodes = mutableMapOf<ShipId, Object3D>()
 
     init {
         resize()
@@ -110,7 +111,7 @@ class MainScreenUi {
 
     private fun removeOldContacts(
         contacts: List<ContactMessage>,
-        oldContactIds: List<String>
+        oldContactIds: List<ShipId>
     ) {
         val currentIds = contacts.map { it.id }
         oldContactIds.filter {

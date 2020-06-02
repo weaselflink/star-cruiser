@@ -101,7 +101,7 @@ class ShipTest {
         ship.startScan(target2.id)
 
         expectThat(ship.toMessage().scanProgress).isNotNull()
-            .get { targetId }.isEqualTo(target1.id.serialize())
+            .get { targetId }.isEqualTo(target1.id)
     }
 
     @Test

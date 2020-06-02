@@ -1,6 +1,13 @@
 package de.bissell.starcruiser
 
+import kotlinx.serialization.Decoder
+import kotlinx.serialization.Encoder
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.PrimitiveDescriptor
+import kotlinx.serialization.PrimitiveKind
+import kotlinx.serialization.SerialDescriptor
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 
@@ -9,6 +16,23 @@ val jsonConfiguration = JsonConfiguration.Stable.copy(
     isLenient = true,
     prettyPrint = true
 )
+
+@Serializable
+data class ShipId(val id: String) {
+
+    @Serializer(forClass = ShipId::class)
+    companion object : KSerializer<ShipId> {
+        override val descriptor: SerialDescriptor = PrimitiveDescriptor("ShipId", PrimitiveKind.STRING)
+
+        override fun serialize(encoder: Encoder, value: ShipId) {
+            encoder.encodeString(value.id)
+        }
+
+        override fun deserialize(decoder: Decoder): ShipId {
+            return ShipId(decoder.decodeString())
+        }
+    }
+}
 
 @Serializable
 data class GameStateMessage(
@@ -55,14 +79,14 @@ sealed class SnapshotMessage {
 
 @Serializable
 data class PlayerShipMessage(
-    val id: String,
+    val id: ShipId,
     val name: String,
     val shipClass: String?
 )
 
 @Serializable
 data class ShipMessage(
-    val id: String,
+    val id: ShipId,
     val designation: String,
     val shipClass: String?,
     val position: Vector2,
@@ -81,7 +105,7 @@ data class ShipMessage(
 
 @Serializable
 data class ContactMessage(
-    val id: String,
+    val id: ShipId,
     val type: ContactType,
     val scanLevel: ScanLevel,
     val designation: String,
@@ -96,7 +120,7 @@ data class ContactMessage(
 
 @Serializable
 data class ScopeContactMessage(
-    val id: String,
+    val id: ShipId,
     val type: ContactType,
     val designation: String,
     val relativePosition: Vector2,
@@ -121,7 +145,7 @@ enum class ScanLevel {
 
 @Serializable
 data class ScanProgress(
-    val targetId: String,
+    val targetId: ShipId,
     val progress: Double
 )
 

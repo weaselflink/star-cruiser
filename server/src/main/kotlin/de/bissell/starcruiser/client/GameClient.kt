@@ -4,7 +4,6 @@ import de.bissell.starcruiser.*
 import de.bissell.starcruiser.ApplicationConfig.gameClientMaxInflightMessages
 import de.bissell.starcruiser.ApplicationConfig.gameClientUpdateIntervalMillis
 import de.bissell.starcruiser.client.ThrottleMessage.*
-import de.bissell.starcruiser.ships.ShipId
 import io.ktor.http.cio.websocket.Frame
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -42,7 +41,7 @@ class GameClient(
                     SpawnShip
                 )
                 is Command.CommandJoinShip -> gameStateActor.send(
-                    JoinShip(id, ShipId(command.shipId), command.station)
+                    JoinShip(id, command.shipId, command.station)
                 )
                 is Command.CommandChangeStation -> gameStateActor.send(
                     ChangeStation(id, command.station)
@@ -63,7 +62,7 @@ class GameClient(
                     DeleteWaypoint(id, command.index)
                 )
                 is Command.CommandScanShip -> gameStateActor.send(
-                    ScanShip(id, ShipId(command.targetId))
+                    ScanShip(id, command.targetId)
                 )
             }
         }
