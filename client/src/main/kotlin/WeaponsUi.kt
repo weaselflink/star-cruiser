@@ -16,7 +16,10 @@ class WeaponsUi {
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val mouseEventDispatcher = MouseEventDispatcher(canvas)
     private val rotateScopeButton = document.querySelector(".rotateScope")!! as HTMLButtonElement
+    private val lockTargetButton = document.querySelector(".lockTarget")!! as HTMLButtonElement
     private val shortRangeScope = ShortRangeScope(canvas)
+
+    private var selectingTarget = false
 
     init {
         resize()
@@ -39,6 +42,14 @@ class WeaponsUi {
         rotateScopeButton.removeClass("current")
         if (shortRangeScope.rotating) {
             rotateScopeButton.addClass("current")
+        }
+    }
+
+    fun lockTarget() {
+        selectingTarget = !selectingTarget
+        lockTargetButton.removeClass("current")
+        if (selectingTarget) {
+            lockTargetButton.addClass("current")
         }
     }
 

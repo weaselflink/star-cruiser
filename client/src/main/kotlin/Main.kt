@@ -27,6 +27,20 @@ fun init() {
         hide()
         addExtraButtons(
             ExtraButton(
+                ".rotateScope",
+                {
+                    helmUi.toggleRotateScope()
+                    weaponsUi.toggleRotateScope()
+                },
+                Station.Helm,
+                Station.Weapons
+            ),
+            ExtraButton(
+                ".lockTarget",
+                weaponsUi::lockTarget,
+                Station.Weapons
+            ),
+            ExtraButton(
                 ".addWaypoint",
                 navigationUi::addWayPointClicked,
                 Station.Navigation
@@ -40,15 +54,6 @@ fun init() {
                 ".scanShip",
                 navigationUi::scanShipClicked,
                 Station.Navigation
-            ),
-            ExtraButton(
-                ".rotateScope",
-                {
-                    helmUi.toggleRotateScope()
-                    weaponsUi.toggleRotateScope()
-                },
-                Station.Helm,
-                Station.Weapons
             ),
             ExtraButton(
                 ".topView",

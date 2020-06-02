@@ -215,6 +215,9 @@ private fun BODY.commonShipUi() {
             button(classes = "extraButton rotateScope leftEdge") {
                 +"Rotate scope"
             }
+            button(classes = "extraButton lockTarget leftEdge") {
+                +"Lock target"
+            }
             button(classes = "extraButton addWaypoint leftEdge") {
                 +"Add waypoint"
             }
