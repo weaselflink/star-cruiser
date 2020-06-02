@@ -281,7 +281,9 @@ class ShortRangeScope(
         }
     }
 
-    private fun CanvasRenderingContext2D.drawContact(contact: ScopeContactMessage) {
+    private fun CanvasRenderingContext2D.drawContact(
+        contact: ScopeContactMessage
+    ) {
         val posOnScope = contact.relativePosition.adjustForScope()
         save()
         when (contact.type) {
@@ -294,7 +296,12 @@ class ShortRangeScope(
         drawShipSymbol(contact.rotation, dim.vmin * 0.8)
 
         rotate(-scopeRotation)
-        translate(0.0, -dim.vmin * 3)
+        if (showLocks && contact.locked) {
+            lockMarkerStyle(dim)
+            translate(0.0, -dim.vmin * 4)
+        } else {
+            translate(0.0, -dim.vmin * 3)
+        }
         fillText(contact.designation, 0.0, 0.0)
         restore()
     }

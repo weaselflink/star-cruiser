@@ -147,7 +147,8 @@ class Ship(
             type = getContactType(relativeTo),
             designation = designation,
             relativePosition = (position - relativeTo.position),
-            rotation = rotation
+            rotation = rotation,
+            locked = relativeTo.isLocking(id)
         )
 
     fun toContactMessage(relativeTo: Ship) =
@@ -174,6 +175,13 @@ class Ship(
             ContactType.Friendly
         } else {
             ContactType.Unknown
+        }
+
+    private fun isLocking(targetId: ShipId) =
+        if (lockHandler != null) {
+            lockHandler?.targetId == targetId
+        } else {
+            false
         }
 
     private inner class ScanHandler(
@@ -209,7 +217,7 @@ class Ship(
             progress += time.delta * template.lockingSpeed
         }
 
-        fun toMessage() =
+        fun toMessage(): LockStatus =
             if (isComplete) {
                 Locked(targetId)
             } else {

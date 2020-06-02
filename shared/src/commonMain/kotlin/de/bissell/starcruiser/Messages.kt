@@ -105,7 +105,7 @@ data class ShipMessage(
     val shortRangeScopeRange: Double,
     val waypoints: List<WaypointMessage>,
     val scanProgress: ScanProgress?,
-    val lockProgress: LockedTarget,
+    val lockProgress: LockStatus,
     val beams: List<BeamMessage>
 )
 
@@ -130,7 +130,8 @@ data class ScopeContactMessage(
     val type: ContactType,
     val designation: String,
     val relativePosition: Vector2,
-    val rotation: Double
+    val rotation: Double,
+    val locked: Boolean
 )
 
 enum class ContactType {
@@ -156,21 +157,25 @@ data class ScanProgress(
 )
 
 @Serializable
-sealed class LockedTarget
+sealed class LockStatus
 
 @Serializable
-object NoLock : LockedTarget()
+object NoLock : LockStatus()
+
+interface LockedTarget {
+    val targetId: ShipId
+}
 
 @Serializable
 data class LockInProgress(
-    val targetId: ShipId,
+    override val targetId: ShipId,
     val progress: Double
-) : LockedTarget()
+) : LockStatus(), LockedTarget
 
 @Serializable
 data class Locked(
-    val targetId: ShipId
-) : LockedTarget()
+    override val targetId: ShipId
+) : LockStatus(), LockedTarget
 
 @Serializable
 data class WaypointMessage(
