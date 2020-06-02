@@ -21,26 +21,7 @@ class GameClient(
         val throttleActor = coroutineScope.createThrottleActor()
         gameStateActor.send(NewGameClient(id))
 
-        val updateJob = coroutineScope.launch {
-            var lastSnapshot: SnapshotMessage? = null
-
-            while (isActive) {
-                if (throttleActor.getInflightMessageCount() < gameClientMaxInflightMessages) {
-                    val snapshot = gameStateActor.getGameStateSnapshot()
-                    if (lastSnapshot != snapshot) {
-                        val counterResponse = throttleActor.addInflightMessage()
-                        lastSnapshot = snapshot
-                        outgoing.send(
-                            GameStateMessage(
-                                counterResponse,
-                                snapshot
-                            )
-                        )
-                    }
-                }
-                delay(gameClientUpdateIntervalMillis)
-            }
-        }
+        val updateJob = coroutineScope.launchUpdateJob(throttleActor)
 
         for (frame in incoming) {
             val input = String(frame.data)
@@ -81,6 +62,29 @@ class GameClient(
 
         updateJob.cancelAndJoin()
         gameStateActor.send(GameClientDisconnected(id))
+    }
+
+    private fun CoroutineScope.launchUpdateJob(throttleActor: SendChannel<ThrottleMessage>): Job {
+        return launch {
+            var lastSnapshot: SnapshotMessage? = null
+
+            while (isActive) {
+                if (throttleActor.getInflightMessageCount() < gameClientMaxInflightMessages) {
+                    val snapshot = gameStateActor.getGameStateSnapshot()
+                    if (lastSnapshot != snapshot) {
+                        val counterResponse = throttleActor.addInflightMessage()
+                        lastSnapshot = snapshot
+                        outgoing.send(
+                            GameStateMessage(
+                                counterResponse,
+                                snapshot
+                            )
+                        )
+                    }
+                }
+                delay(gameClientUpdateIntervalMillis)
+            }
+        }
     }
 
     private suspend fun SendChannel<ThrottleMessage>.getInflightMessageCount(): Int {
