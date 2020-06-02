@@ -15,6 +15,7 @@ class CommonShipUi {
     private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val stationButtons = mapOf(
         Helm to root.querySelector(".switchToHelm")!! as HTMLButtonElement,
+        Weapons to root.querySelector(".switchToWeapons")!! as HTMLButtonElement,
         Navigation to root.querySelector(".switchToNavigation")!! as HTMLButtonElement,
         MainScreen to root.querySelector(".switchToMainScreen")!! as HTMLButtonElement
     )
@@ -52,6 +53,7 @@ class CommonShipUi {
 
     fun draw(snapshot: SnapshotMessage.ShipSnapshot) {
         val newStation = when (snapshot) {
+            is SnapshotMessage.Weapons -> Weapons
             is SnapshotMessage.Navigation -> Navigation
             is SnapshotMessage.MainScreen -> MainScreen
             else -> Helm
@@ -88,19 +90,19 @@ class CommonShipUi {
 }
 
 data class ExtraButton(
-    val stations: List<Station>,
+    val element: HTMLButtonElement,
     val callback: () -> Unit,
-    val element: HTMLButtonElement
+    val stations: List<Station>
 ) {
 
     constructor(
-        station: Station,
+        selector: String,
         callback: () -> Unit,
-        selector: String
+        vararg station: Station
     ) : this(
-        listOf(station),
+        document.querySelector(selector)!! as HTMLButtonElement,
         callback,
-        document.querySelector(selector)!! as HTMLButtonElement
+        station.toList()
     )
 
     fun isVisibleAtStation(station: Station) = stations.contains(station)

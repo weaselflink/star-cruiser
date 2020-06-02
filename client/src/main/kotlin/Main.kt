@@ -7,6 +7,7 @@ import kotlin.browser.window
 lateinit var commonShipUi: CommonShipUi
 lateinit var joinUi: JoinUi
 lateinit var helmUi: HelmUi
+lateinit var weaponsUi: WeaponsUi
 lateinit var navigationUi: NavigationUi
 lateinit var mainScreenUi: MainScreenUi
 var clientSocket: WebSocket? = null
@@ -19,35 +20,40 @@ fun main() {
 fun init() {
     joinUi = JoinUi().apply { show() }
     helmUi = HelmUi().apply { hide() }
+    weaponsUi = WeaponsUi().apply { hide() }
     navigationUi = NavigationUi().apply { hide() }
     mainScreenUi = MainScreenUi().apply { hide() }
     commonShipUi = CommonShipUi().apply {
         hide()
         addExtraButtons(
             ExtraButton(
-                Station.Navigation,
+                ".addWaypoint",
                 navigationUi::addWayPointClicked,
-                ".addWaypoint"
+                Station.Navigation
             ),
             ExtraButton(
-                Station.Navigation,
+                ".deleteWaypoint",
                 navigationUi::deleteWayPointClicked,
-                ".deleteWaypoint"
+                Station.Navigation
             ),
             ExtraButton(
-                Station.Navigation,
+                ".scanShip",
                 navigationUi::scanShipClicked,
-                ".scanShip"
+                Station.Navigation
             ),
             ExtraButton(
+                ".rotateScope",
+                {
+                    helmUi.toggleRotateScope()
+                    weaponsUi.toggleRotateScope()
+                },
                 Station.Helm,
-                helmUi::toggleRotateScope,
-                ".rotateScope"
+                Station.Weapons
             ),
             ExtraButton(
-                Station.MainScreen,
+                ".topView",
                 mainScreenUi::toggleTopView,
-                ".topView"
+                Station.MainScreen
             )
         )
     }
@@ -55,6 +61,7 @@ fun init() {
     window.requestAnimationFrame { step() }
     window.onresize = {
         helmUi.resize()
+        weaponsUi.resize()
         navigationUi.resize()
         mainScreenUi.resize()
     }
@@ -105,7 +112,10 @@ fun keyHandler(event: KeyboardEvent) {
             "KeyD", "ArrowRight" -> send(Command.CommandChangeRudder(rudder - 10))
             "KeyX" -> navigationUi.zoomIn()
             "KeyZ" -> navigationUi.zoomOut()
-            "KeyR" -> helmUi.toggleRotateScope()
+            "KeyR" -> {
+                helmUi.toggleRotateScope()
+                weaponsUi.toggleRotateScope()
+            }
             "KeyC" -> mainScreenUi.toggleTopView()
             else -> println("not bound: ${event.code}")
         }
@@ -134,6 +144,7 @@ fun drawUi(stateCopy: GameStateMessage) {
         is SnapshotMessage.ShipSelection -> {
             commonShipUi.hide()
             helmUi.hide()
+            weaponsUi.hide()
             navigationUi.hide()
             mainScreenUi.hide()
             joinUi.apply {
@@ -141,27 +152,43 @@ fun drawUi(stateCopy: GameStateMessage) {
                 draw(snapshot)
             }
         }
+        is SnapshotMessage.ShipSnapshot -> {
+            drawShipUi(snapshot)
+        }
+    }
+}
+
+fun drawShipUi(snapshot: SnapshotMessage.ShipSnapshot) {
+    commonShipUi.apply {
+        show()
+        draw(snapshot)
+    }
+    when (snapshot) {
         is SnapshotMessage.Helm -> {
             joinUi.hide()
+            weaponsUi.hide()
             navigationUi.hide()
             mainScreenUi.hide()
-            commonShipUi.apply {
+            helmUi.apply {
                 show()
                 draw(snapshot)
             }
-            helmUi.apply {
+        }
+        is SnapshotMessage.Weapons -> {
+            joinUi.hide()
+            helmUi.hide()
+            navigationUi.hide()
+            mainScreenUi.hide()
+            weaponsUi.apply {
                 show()
                 draw(snapshot)
             }
         }
         is SnapshotMessage.Navigation -> {
             helmUi.hide()
+            weaponsUi.hide()
             joinUi.hide()
             mainScreenUi.hide()
-            commonShipUi.apply {
-                show()
-                draw(snapshot)
-            }
             navigationUi.apply {
                 show()
                 draw(snapshot)
@@ -169,12 +196,9 @@ fun drawUi(stateCopy: GameStateMessage) {
         }
         is SnapshotMessage.MainScreen -> {
             helmUi.hide()
+            weaponsUi.hide()
             joinUi.hide()
             navigationUi.hide()
-            commonShipUi.apply {
-                show()
-                draw(snapshot)
-            }
             mainScreenUi.apply {
                 show()
                 draw(snapshot)

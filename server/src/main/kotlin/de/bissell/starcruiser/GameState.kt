@@ -2,9 +2,7 @@ package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ClientState.InShip
 import de.bissell.starcruiser.ClientState.ShipSelection
-import de.bissell.starcruiser.Station.Helm
-import de.bissell.starcruiser.Station.MainScreen
-import de.bissell.starcruiser.Station.Navigation
+import de.bissell.starcruiser.Station.*
 import de.bissell.starcruiser.client.ClientId
 import de.bissell.starcruiser.ships.Ship
 import kotlinx.coroutines.CompletableDeferred
@@ -48,6 +46,10 @@ class GameState {
             )
             InShip -> when (client.station!!) {
                 Helm -> SnapshotMessage.Helm(
+                    ship = clientShip!!.toMessage(),
+                    contacts = getScopeContacts(clientShip)
+                )
+                Weapons -> SnapshotMessage.Weapons(
                     ship = clientShip!!.toMessage(),
                     contacts = getScopeContacts(clientShip)
                 )

@@ -74,14 +74,14 @@ fun CanvasRenderingContext2D.historyStyle(dim: CanvasDimensions) {
 }
 
 fun CanvasRenderingContext2D.shipStyle(dim: CanvasDimensions) {
-    lineWidth = dim.vmin * 0.8 * 0.4
+    lineWidth = dim.vmin * 0.3
     lineJoin = CanvasLineJoin.ROUND
     strokeStyle = "#ffffff"
 }
 
 fun CanvasRenderingContext2D.beamStyle(dim: CanvasDimensions) {
-    strokeStyle = "#ff6347"
-    lineWidth = dim.vmin * 0.8 * 0.2
+    strokeStyle = "#ff634760"
+    lineWidth = dim.vmin * 0.3
 }
 
 fun CanvasRenderingContext2D.unknownContactStyle(dim: CanvasDimensions) {
@@ -97,7 +97,7 @@ fun CanvasRenderingContext2D.friendlyContactStyle(dim: CanvasDimensions) {
 }
 
 private fun CanvasRenderingContext2D.contactStyle(dim: CanvasDimensions) {
-    lineWidth = dim.vmin * 0.8 * 0.4
+    lineWidth = dim.vmin * 0.3
     lineJoin = CanvasLineJoin.ROUND
     val textSize = (dim.vmin * 2).toInt()
     font = "bold ${textSize.px} sans-serif"

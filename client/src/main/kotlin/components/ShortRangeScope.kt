@@ -3,6 +3,7 @@ package components
 import beamStyle
 import circle
 import de.bissell.starcruiser.*
+import de.bissell.starcruiser.SnapshotMessage.ShortRangeScopeStation
 import dimensions
 import drawPill
 import drawShipSymbol
@@ -33,14 +34,14 @@ class ShortRangeScope(
         rotating = !rotating
     }
 
-    fun draw(snapshot: SnapshotMessage.Helm) {
+    fun draw(snapshot: ShortRangeScopeStation) {
         dim = canvas.dimensions()
         scopeRadius = dim.vmin * 47
 
         ctx.draw(snapshot, snapshot.ship)
     }
 
-    private fun CanvasRenderingContext2D.draw(snapshot: SnapshotMessage.Helm, ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.draw(snapshot: ShortRangeScopeStation, ship: ShipMessage) {
         save()
 
         translateToCenter()
@@ -138,14 +139,18 @@ class ShortRangeScope(
         rotate(-ship.rotation)
 
         for (beam in ship.beams) {
+            val x = -beam.position.z.adjustForScope(ship)
+            val y = beam.position.y.adjustForScope(ship)
             val left = -beam.leftArc.toRadians()
             val right = -beam.rightArc.toRadians()
+            val minRange = beam.minRange.adjustForScope(ship)
+            val maxRange = beam.maxRange.adjustForScope(ship)
 
             save()
-            translate(-beam.position.z, beam.position.y)
+            translate(x, y)
             beginPath()
-            circle(0.0, 0.0, beam.maxRange, left, right)
-            circle(0.0, 0.0, beam.minRange, right, left, true)
+            circle(0.0, 0.0, maxRange, left, right)
+            circle(0.0, 0.0, minRange, right, left, true)
             closePath()
             stroke()
             restore()
@@ -210,7 +215,7 @@ class ShortRangeScope(
     }
 
     private fun CanvasRenderingContext2D.drawContacts(
-        snapshot: SnapshotMessage.Helm,
+        snapshot: ShortRangeScopeStation,
         ship: ShipMessage
     ) {
         snapshot.contacts.forEach {

@@ -182,6 +182,7 @@ fun Routing.webUi() {
                 joinUi()
                 commonShipUi()
                 helmUi()
+                weaponsUI()
                 navigationUi()
                 mainScreenUi()
             }
@@ -231,6 +232,9 @@ private fun BODY.commonShipUi() {
             button(classes = "current switchToHelm rightEdge") {
                 +"Helm"
             }
+            button(classes = "switchToWeapons rightEdge") {
+                +"Weapons"
+            }
             button(classes = "switchToNavigation rightEdge") {
                 +"Navigation"
             }
@@ -254,6 +258,13 @@ private fun BODY.helmUi() {
                 }
             }
         }
+    }
+}
+
+private fun BODY.weaponsUI() {
+    div {
+        id = "weapons-ui"
+        canvas {}
     }
 }
 

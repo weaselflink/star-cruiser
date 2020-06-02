@@ -1,13 +1,6 @@
 package de.bissell.starcruiser
 
-import kotlinx.serialization.Decoder
-import kotlinx.serialization.Encoder
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.PrimitiveDescriptor
-import kotlinx.serialization.PrimitiveKind
-import kotlinx.serialization.SerialDescriptor
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
+import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 
@@ -53,6 +46,11 @@ sealed class SnapshotMessage {
         val ship: ShipMessage
     }
 
+    interface ShortRangeScopeStation {
+        val ship: ShipMessage
+        val contacts: List<ScopeContactMessage>
+    }
+
     @Serializable
     data class ShipSelection(
         val playerShips: List<PlayerShipMessage>
@@ -61,8 +59,14 @@ sealed class SnapshotMessage {
     @Serializable
     data class Helm(
         override val ship: ShipMessage,
-        val contacts: List<ScopeContactMessage>
-    ) : SnapshotMessage(), ShipSnapshot
+        override val contacts: List<ScopeContactMessage>
+    ) : SnapshotMessage(), ShipSnapshot, ShortRangeScopeStation
+
+    @Serializable
+    data class Weapons(
+        override val ship: ShipMessage,
+        override val contacts: List<ScopeContactMessage>
+    ) : SnapshotMessage(), ShipSnapshot, ShortRangeScopeStation
 
     @Serializable
     data class Navigation(
