@@ -1,6 +1,7 @@
 package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ships.Ship
+import de.bissell.starcruiser.ships.ShipId
 import org.jbox2d.collision.shapes.PolygonShape
 import org.jbox2d.common.Mat22
 import org.jbox2d.common.Vec2
@@ -8,12 +9,11 @@ import org.jbox2d.dynamics.Body
 import org.jbox2d.dynamics.BodyDef
 import org.jbox2d.dynamics.BodyType
 import org.jbox2d.dynamics.World
-import java.util.*
 
 class PhysicsEngine {
 
     private val world = World(Vec2())
-    private val ships: MutableMap<UUID, Body> = mutableMapOf()
+    private val ships: MutableMap<ShipId, Body> = mutableMapOf()
 
     fun step(time: GameTime) = world.step(time.delta.toFloat(), 6, 2)
 
@@ -21,7 +21,7 @@ class PhysicsEngine {
         ships[ship.id] = ship.toBody()
     }
 
-    fun updateShip(id: UUID, thrust: Double, rudder: Double) {
+    fun updateShip(id: ShipId, thrust: Double, rudder: Double) {
         ships[id]?.apply {
             applyForceToCenter(
                 Mat22.createRotationalTransform(angle).mul(Vec2(thrust.toFloat(), 0f))
@@ -30,7 +30,7 @@ class PhysicsEngine {
         }
     }
 
-    fun getShipStats(id: UUID) =
+    fun getShipStats(id: ShipId) =
         ships[id]?.let {
             ShipParameters(
                 position = it.position.toVector2(),

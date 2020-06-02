@@ -4,14 +4,22 @@ import de.bissell.starcruiser.*
 import de.bissell.starcruiser.ApplicationConfig.gameClientMaxInflightMessages
 import de.bissell.starcruiser.ApplicationConfig.gameClientUpdateIntervalMillis
 import de.bissell.starcruiser.client.ThrottleMessage.*
+import de.bissell.starcruiser.ships.ShipId
 import io.ktor.http.cio.websocket.Frame
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import java.util.*
 
+data class ClientId(private val id: String) {
+
+    companion object {
+        fun random() = ClientId(UUID.randomUUID().toString())
+    }
+}
+
 class GameClient(
-    private val id: UUID = UUID.randomUUID(),
+    private val id: ClientId = ClientId.random(),
     private val gameStateActor: SendChannel<GameStateChange>,
     private val outgoing: SendChannel<Frame>,
     private val incoming: ReceiveChannel<Frame>
@@ -34,7 +42,7 @@ class GameClient(
                     SpawnShip
                 )
                 is Command.CommandJoinShip -> gameStateActor.send(
-                    JoinShip(id, command.shipId.toUUID(), command.station)
+                    JoinShip(id, ShipId(command.shipId), command.station)
                 )
                 is Command.CommandChangeStation -> gameStateActor.send(
                     ChangeStation(id, command.station)
@@ -55,7 +63,7 @@ class GameClient(
                     DeleteWaypoint(id, command.index)
                 )
                 is Command.CommandScanShip -> gameStateActor.send(
-                    ScanShip(id, command.targetId.toUUID())
+                    ScanShip(id, ShipId(command.targetId))
                 )
             }
         }
@@ -106,8 +114,6 @@ class GameClient(
     }
 
     private suspend fun SendChannel<Frame>.send(message: GameStateMessage) = send(Frame.Text(message.toJson()))
-
-    private fun String.toUUID() = UUID.fromString(this)
 
     companion object {
         suspend fun CoroutineScope.startGameClient(

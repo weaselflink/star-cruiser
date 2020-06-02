@@ -2,42 +2,45 @@ package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ClientState.InShip
 import de.bissell.starcruiser.ClientState.ShipSelection
-import de.bissell.starcruiser.Station.*
+import de.bissell.starcruiser.Station.Helm
+import de.bissell.starcruiser.Station.MainScreen
+import de.bissell.starcruiser.Station.Navigation
+import de.bissell.starcruiser.client.ClientId
 import de.bissell.starcruiser.ships.Ship
+import de.bissell.starcruiser.ships.ShipId
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
 import java.time.Instant
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit
-import java.util.*
 
 sealed class GameStateChange
 
 object Update : GameStateChange()
 object TogglePause : GameStateChange()
 object SpawnShip : GameStateChange()
-class JoinShip(val clientId: UUID, val shipId: UUID, val station: Station) : GameStateChange()
-class ChangeStation(val clientId: UUID, val station: Station) : GameStateChange()
-class ExitShip(val clientId: UUID) : GameStateChange()
-class NewGameClient(val clientId: UUID) : GameStateChange()
-class GameClientDisconnected(val clientId: UUID) : GameStateChange()
-class ChangeThrottle(val clientId: UUID, val value: Int) : GameStateChange()
-class ChangeRudder(val clientId: UUID, val value: Int) : GameStateChange()
-class GetGameStateSnapshot(val clientId: UUID, val response: CompletableDeferred<SnapshotMessage>) : GameStateChange()
-class AddWaypoint(val clientId: UUID, val position: Vector2) : GameStateChange()
-class DeleteWaypoint(val clientId: UUID, val index: Int) : GameStateChange()
-class ScanShip(val clientId: UUID, val targetId: UUID) : GameStateChange()
+class JoinShip(val clientId: ClientId, val shipId: ShipId, val station: Station) : GameStateChange()
+class ChangeStation(val clientId: ClientId, val station: Station) : GameStateChange()
+class ExitShip(val clientId: ClientId) : GameStateChange()
+class NewGameClient(val clientId: ClientId) : GameStateChange()
+class GameClientDisconnected(val clientId: ClientId) : GameStateChange()
+class ChangeThrottle(val clientId: ClientId, val value: Int) : GameStateChange()
+class ChangeRudder(val clientId: ClientId, val value: Int) : GameStateChange()
+class GetGameStateSnapshot(val clientId: ClientId, val response: CompletableDeferred<SnapshotMessage>) : GameStateChange()
+class AddWaypoint(val clientId: ClientId, val position: Vector2) : GameStateChange()
+class DeleteWaypoint(val clientId: ClientId, val index: Int) : GameStateChange()
+class ScanShip(val clientId: ClientId, val targetId: ShipId) : GameStateChange()
 
 class GameState {
 
     private var time = GameTime()
-    private val ships = mutableMapOf<UUID, Ship>()
-    private val clients = mutableMapOf<UUID, Client>()
+    private val ships = mutableMapOf<ShipId, Ship>()
+    private val clients = mutableMapOf<ClientId, Client>()
 
     private val physicsEngine = PhysicsEngine()
 
-    fun toMessage(clientId: UUID): SnapshotMessage {
+    fun toMessage(clientId: ClientId): SnapshotMessage {
         val client = getClient(clientId)
         val clientShip = getClientShip(clientId)
         return when (client.state) {
@@ -61,27 +64,27 @@ class GameState {
         }
     }
 
-    fun clientConnected(clientId: UUID) {
+    fun clientConnected(clientId: ClientId) {
         getClient(clientId)
     }
 
-    fun clientDisconnected(clientId: UUID) {
+    fun clientDisconnected(clientId: ClientId) {
         clients.remove(clientId)
     }
 
-    fun joinShip(clientId: UUID, shipId: UUID, station: Station) {
+    fun joinShip(clientId: ClientId, shipId: ShipId, station: Station) {
         getClient(clientId).joinShip(shipId, station)
     }
 
-    fun changeStation(clientId: UUID, station: Station) {
+    fun changeStation(clientId: ClientId, station: Station) {
         getClient(clientId).changeStation(station)
     }
 
-    fun exitShip(clientId: UUID) {
+    fun exitShip(clientId: ClientId) {
         getClient(clientId).exitShip()
     }
 
-    fun spawnShip(): UUID =
+    fun spawnShip() =
         Ship(
             position = Vector2.random(300)
         ).also {
@@ -104,33 +107,33 @@ class GameState {
         ships.forEach { it.value.update(time, physicsEngine) }
     }
 
-    fun changeThrottle(clientId: UUID, value: Int) {
+    fun changeThrottle(clientId: ClientId, value: Int) {
         getClientShip(clientId)?.changeThrottle(value)
     }
 
-    fun changeRudder(clientId: UUID, value: Int) {
+    fun changeRudder(clientId: ClientId, value: Int) {
         getClientShip(clientId)?.changeRudder(value)
     }
 
-    fun addWaypoint(clientId: UUID, position: Vector2) {
+    fun addWaypoint(clientId: ClientId, position: Vector2) {
         getClientShip(clientId)?.addWaypoint(position)
     }
 
-    fun deleteWaypoint(clientId: UUID, index: Int) {
+    fun deleteWaypoint(clientId: ClientId, index: Int) {
         getClientShip(clientId)?.deleteWaypoint(index)
     }
 
-    fun scanShip(clientId: UUID, targetId: UUID) {
+    fun scanShip(clientId: ClientId, targetId: ShipId) {
         ships[targetId]?.also {
             getClientShip(clientId)?.startScan(targetId)
         }
     }
 
-    private fun getClient(clientId: UUID) =
+    private fun getClient(clientId: ClientId) =
         clients.computeIfAbsent(clientId) { Client(clientId) }
 
-    private fun getClientShip(clientId: UUID): Ship? =
-        getClient(clientId).let { ships[it.shipId] }
+    private fun getClientShip(clientId: ClientId): Ship? =
+        getClient(clientId).shipId?.let { ships[it] }
 
     private fun getContacts(clientShip: Ship): List<ContactMessage> {
         return ships
@@ -204,13 +207,13 @@ class GameTime {
 }
 
 data class Client(
-    val id: UUID,
+    val id: ClientId,
     var state: ClientState = ShipSelection,
-    var shipId: UUID? = null,
+    var shipId: ShipId? = null,
     var station: Station? = null
 ) {
 
-    fun joinShip(shipId: UUID, station: Station) {
+    fun joinShip(shipId: ShipId, station: Station) {
         state = InShip
         this.shipId = shipId
         this.station = station

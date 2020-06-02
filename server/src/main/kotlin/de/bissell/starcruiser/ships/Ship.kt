@@ -1,11 +1,34 @@
 package de.bissell.starcruiser.ships
 
-import de.bissell.starcruiser.*
-import java.util.*
+import de.bissell.starcruiser.ContactMessage
+import de.bissell.starcruiser.ContactType
+import de.bissell.starcruiser.GameTime
+import de.bissell.starcruiser.PhysicsEngine
+import de.bissell.starcruiser.PlayerShipMessage
+import de.bissell.starcruiser.ScanLevel
+import de.bissell.starcruiser.ScanProgress
+import de.bissell.starcruiser.ScopeContactMessage
+import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.Vector2
+import de.bissell.starcruiser.WaypointMessage
+import de.bissell.starcruiser.clamp
+import de.bissell.starcruiser.randomShipName
+import de.bissell.starcruiser.toHeading
+import de.bissell.starcruiser.toRadians
+import java.util.UUID
 import kotlin.math.abs
 
+data class ShipId(private val id: String) {
+
+    fun serialize() = id
+
+    companion object {
+        fun random() = ShipId(UUID.randomUUID().toString())
+    }
+}
+
 class Ship(
-    val id: UUID = UUID.randomUUID(),
+    val id: ShipId = ShipId.random(),
     val template: ShipTemplate = ShipTemplate(),
     val shortRangeScopeRange: Double = 400.0,
     private val designation: String = randomShipName(),
@@ -19,7 +42,7 @@ class Ship(
     private var thrust = 0.0
     private val waypoints: MutableList<Waypoint> = mutableListOf()
     private val history = mutableListOf<Pair<Double, Vector2>>()
-    private val scans = mutableMapOf<UUID, ScanLevel>()
+    private val scans = mutableMapOf<ShipId, ScanLevel>()
     private var scanHandler: ScanHandler? = null
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine) {
@@ -92,7 +115,7 @@ class Ship(
         waypoints.removeIf { it.index == index }
     }
 
-    fun startScan(targetId: UUID) {
+    fun startScan(targetId: ShipId) {
         if (scanHandler == null && canIncreaseScanLevel(targetId)) {
             scanHandler = ScanHandler(targetId)
         }
@@ -100,14 +123,14 @@ class Ship(
 
     fun toPlayerShipMessage() =
         PlayerShipMessage(
-            id = id.toString(),
+            id = id.serialize(),
             name = designation,
             shipClass = template.className
         )
 
     fun toMessage() =
         ShipMessage(
-            id = id.toString(),
+            id = id.serialize(),
             designation = designation,
             shipClass = template.className,
             speed = speed,
@@ -126,7 +149,7 @@ class Ship(
 
     fun toScopeContactMessage(relativeTo: Ship) =
         ScopeContactMessage(
-            id = id.toString(),
+            id = id.serialize(),
             type = getContactType(relativeTo),
             designation = designation,
             relativePosition = (position - relativeTo.position),
@@ -135,7 +158,7 @@ class Ship(
 
     fun toContactMessage(relativeTo: Ship) =
         ContactMessage(
-            id = id.toString(),
+            id = id.serialize(),
             type = getContactType(relativeTo),
             scanLevel = relativeTo.getScanLevel(id),
             designation = designation,
@@ -148,9 +171,9 @@ class Ship(
             history = history.map { it.first to it.second }
         )
 
-    private fun canIncreaseScanLevel(targetId: UUID) = getScanLevel(targetId).let { it != it.next() }
+    private fun canIncreaseScanLevel(targetId: ShipId) = getScanLevel(targetId).let { it != it.next() }
 
-    private fun getScanLevel(targetId: UUID) = scans[targetId] ?: ScanLevel.None
+    private fun getScanLevel(targetId: ShipId) = scans[targetId] ?: ScanLevel.None
 
     private fun getContactType(relativeTo: Ship) =
         if (relativeTo.getScanLevel(id) == ScanLevel.Faction) {
@@ -160,7 +183,7 @@ class Ship(
         }
 
     private inner class ScanHandler(
-        val targetId: UUID,
+        val targetId: ShipId,
         private var progress: Double = 0.0
     ) {
 
@@ -174,7 +197,7 @@ class Ship(
 
         fun toMessage() =
             ScanProgress(
-                targetId = targetId.toString(),
+                targetId = targetId.serialize(),
                 progress = progress
             )
     }
