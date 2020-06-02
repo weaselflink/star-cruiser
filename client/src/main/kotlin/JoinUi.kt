@@ -45,8 +45,8 @@ class JoinUi {
                         listElements.item(index)!!.let {
                             it as HTMLElement
                         }.apply {
-                            if (getAttribute("id") != playerShip.id.id) {
-                                setAttribute("id", playerShip.id.id)
+                            if (shipId != playerShip.id) {
+                                shipId = playerShip.id
                                 innerHTML = buttonText
                             }
                         }
@@ -54,7 +54,7 @@ class JoinUi {
                         document.createElement("button").let {
                             it as HTMLElement
                         }.apply {
-                            setAttribute("id", playerShip.id.id)
+                            shipId = playerShip.id
                             addClass("leftEdge")
                             innerHTML = buttonText
                             onclick = { selectPlayerShip(it) }
@@ -76,8 +76,17 @@ class JoinUi {
     private fun selectPlayerShip(event: MouseEvent) {
         clientSocket.apply {
             val target = event.target as HTMLElement
-            val shipId = ShipId(target.getAttribute("id")!!)
-            send(Command.CommandJoinShip(shipId = shipId, station = Helm))
+            target.shipId?.also {
+                send(Command.CommandJoinShip(shipId = it, station = Helm))
+            }
         }
     }
+
+    private var HTMLElement.shipId: ShipId?
+        get() = getAttribute("id")?.let { ShipId(it) }
+        set(value) = if (value != null) {
+            setAttribute("id", value.id)
+        } else {
+            removeAttribute("id")
+        }
 }
