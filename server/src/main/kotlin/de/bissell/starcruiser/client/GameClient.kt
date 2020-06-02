@@ -1,6 +1,8 @@
 package de.bissell.starcruiser.client
 
 import de.bissell.starcruiser.*
+import de.bissell.starcruiser.ApplicationConfig.gameClientMaxInflightMessages
+import de.bissell.starcruiser.ApplicationConfig.gameClientUpdateIntervalMillis
 import de.bissell.starcruiser.client.ThrottleMessage.*
 import io.ktor.http.cio.websocket.Frame
 import kotlinx.coroutines.*
@@ -15,9 +17,6 @@ class GameClient(
     private val incoming: ReceiveChannel<Frame>
 ) {
 
-    private val maxInflightMessages: Int = 3
-    private val updateIntervalMillis: Long = 10
-
     suspend fun start(coroutineScope: CoroutineScope) {
         val throttleActor = coroutineScope.createThrottleActor()
         gameStateActor.send(NewGameClient(id))
@@ -26,7 +25,7 @@ class GameClient(
             var lastSnapshot: SnapshotMessage? = null
 
             while (isActive) {
-                if (throttleActor.getInflightMessageCount() < maxInflightMessages) {
+                if (throttleActor.getInflightMessageCount() < gameClientMaxInflightMessages) {
                     val snapshot = gameStateActor.getGameStateSnapshot()
                     if (lastSnapshot != snapshot) {
                         val counterResponse = throttleActor.addInflightMessage()
@@ -39,7 +38,7 @@ class GameClient(
                         )
                     }
                 }
-                delay(updateIntervalMillis)
+                delay(gameClientUpdateIntervalMillis)
             }
         }
 

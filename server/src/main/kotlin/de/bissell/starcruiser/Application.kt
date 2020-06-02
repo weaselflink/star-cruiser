@@ -1,5 +1,7 @@
 package de.bissell.starcruiser
 
+import de.bissell.starcruiser.ApplicationConfig.gameStateUpdateIntervalMillis
+import de.bissell.starcruiser.GameState.Companion.gameStateActor
 import de.bissell.starcruiser.client.GameClient.Companion.startGameClient
 import io.ktor.application.Application
 import io.ktor.application.install
@@ -18,14 +20,22 @@ import java.time.Duration
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
+object ApplicationConfig {
+
+    const val gameStateUpdateIntervalMillis: Long = 20
+    const val gameClientUpdateIntervalMillis: Long = 10
+    const val gameClientMaxInflightMessages: Int = 3
+}
+
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
+
     val gameStateActor = gameStateActor()
 
     launch {
         while (isActive) {
             gameStateActor.send(Update)
-            delay(20)
+            delay(gameStateUpdateIntervalMillis)
         }
     }
 

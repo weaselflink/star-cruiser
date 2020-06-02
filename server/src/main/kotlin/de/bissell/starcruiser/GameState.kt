@@ -29,28 +29,6 @@ class AddWaypoint(val clientId: UUID, val position: Vector2) : GameStateChange()
 class DeleteWaypoint(val clientId: UUID, val index: Int) : GameStateChange()
 class ScanShip(val clientId: UUID, val targetId: UUID) : GameStateChange()
 
-fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
-    val gameState = GameState()
-    for (change in channel) {
-        when (change) {
-            is Update -> gameState.update()
-            is TogglePause -> gameState.togglePaused()
-            is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
-            is NewGameClient -> gameState.clientConnected(change.clientId)
-            is GameClientDisconnected -> gameState.clientDisconnected(change.clientId)
-            is JoinShip -> gameState.joinShip(change.clientId, change.shipId, change.station)
-            is ChangeStation -> gameState.changeStation(change.clientId, change.station)
-            is ExitShip -> gameState.exitShip(change.clientId)
-            is SpawnShip -> gameState.spawnShip()
-            is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.value)
-            is ChangeRudder -> gameState.changeRudder(change.clientId, change.value)
-            is AddWaypoint -> gameState.addWaypoint(change.clientId, change.position)
-            is DeleteWaypoint -> gameState.deleteWaypoint(change.clientId, change.index)
-            is ScanShip -> gameState.scanShip(change.clientId, change.targetId)
-        }
-    }
-}
-
 class GameState {
 
     private var time = GameTime()
@@ -169,6 +147,30 @@ class GameState {
             .filter {
                 it.relativePosition.length() < clientShip.shortRangeScopeRange * 1.1
             }
+    }
+
+    companion object {
+        fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
+            val gameState = GameState()
+            for (change in channel) {
+                when (change) {
+                    is Update -> gameState.update()
+                    is TogglePause -> gameState.togglePaused()
+                    is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
+                    is NewGameClient -> gameState.clientConnected(change.clientId)
+                    is GameClientDisconnected -> gameState.clientDisconnected(change.clientId)
+                    is JoinShip -> gameState.joinShip(change.clientId, change.shipId, change.station)
+                    is ChangeStation -> gameState.changeStation(change.clientId, change.station)
+                    is ExitShip -> gameState.exitShip(change.clientId)
+                    is SpawnShip -> gameState.spawnShip()
+                    is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.value)
+                    is ChangeRudder -> gameState.changeRudder(change.clientId, change.value)
+                    is AddWaypoint -> gameState.addWaypoint(change.clientId, change.position)
+                    is DeleteWaypoint -> gameState.deleteWaypoint(change.clientId, change.index)
+                    is ScanShip -> gameState.scanShip(change.clientId, change.targetId)
+                }
+            }
+        }
     }
 }
 
