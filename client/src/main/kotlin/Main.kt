@@ -37,7 +37,7 @@ fun init() {
             ),
             ExtraButton(
                 ".lockTarget",
-                weaponsUi::lockTarget,
+                weaponsUi::toggleLockTarget,
                 Station.Weapons
             ),
             ExtraButton(

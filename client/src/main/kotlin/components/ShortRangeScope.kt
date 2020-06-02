@@ -5,11 +5,14 @@ import circle
 import de.bissell.starcruiser.*
 import de.bissell.starcruiser.SnapshotMessage.ShortRangeScopeStation
 import dimensions
+import drawLockMarker
 import drawPill
 import drawShipSymbol
 import friendlyContactStyle
 import historyStyle
+import lockMarkerStyle
 import org.w3c.dom.*
+import org.w3c.dom.events.MouseEvent
 import px
 import shipStyle
 import translate
@@ -21,14 +24,22 @@ import kotlin.math.atan2
 import kotlin.math.roundToInt
 
 class ShortRangeScope(
-    private val canvas: HTMLCanvasElement
+    private val canvas: HTMLCanvasElement,
+    private val showLocks: Boolean = false,
+    private val clickListener: ((ShipId) -> Unit)? = null
 ) {
 
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private var dim = canvas.dimensions()
     private var scopeRadius = dim.vmin * 47
+    private var ship: ShipMessage? = null
+    private var contacts: List<ScopeContactMessage> = emptyList()
     var rotating = false
         private set
+
+    init {
+        canvas.onclick = { scopeClicked(it) }
+    }
 
     fun toggleRotating() {
         rotating = !rotating
@@ -37,17 +48,40 @@ class ShortRangeScope(
     fun draw(snapshot: ShortRangeScopeStation) {
         dim = canvas.dimensions()
         scopeRadius = dim.vmin * 47
+        ship = snapshot.ship
+        contacts = snapshot.contacts
 
-        ctx.draw(snapshot, snapshot.ship)
+        ctx.draw(snapshot.ship)
     }
 
-    private fun CanvasRenderingContext2D.draw(snapshot: ShortRangeScopeStation, ship: ShipMessage) {
+    private fun scopeClicked(mouseEvent: MouseEvent) {
+        if (clickListener == null) return
+
+        val mouseOnScope = mouseEvent.adjustForScope()
+
+        contacts.map {
+            it to (it.relativePosition.adjustForScope() - mouseOnScope).length()
+        }.filter {
+            it.second <= 20.0
+        }.minBy {
+            it.second
+        }?.also {
+            clickListener.invoke(it.first.id)
+        }
+    }
+
+    private fun MouseEvent.adjustForScope(): Vector2 {
+        val center = Vector2(dim.width * 0.5, dim.height * 0.5)
+        return (Vector2(offsetX, offsetY) - center).rotate(-scopeRotation)
+    }
+
+    private fun CanvasRenderingContext2D.draw(ship: ShipMessage) {
         save()
 
         translateToCenter()
-        rotate(getScopeRotation(ship))
+        rotate(scopeRotation)
 
-        drawCompass(ship)
+        drawCompass()
         save()
         beginPath()
         circle(0.0, 0.0, scopeRadius)
@@ -56,7 +90,8 @@ class ShortRangeScope(
         drawHistory(ship)
         drawBeams(ship)
         drawWaypoints(ship)
-        drawContacts(snapshot, ship)
+        drawLock(ship)
+        drawContacts()
         restore()
         drawScopeEdge()
         drawShip(ship)
@@ -66,7 +101,7 @@ class ShortRangeScope(
         drawHeading(ship)
     }
 
-    private fun CanvasRenderingContext2D.drawCompass(ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.drawCompass() {
         save()
         fillStyle = "#000"
         beginPath()
@@ -108,7 +143,7 @@ class ShortRangeScope(
         strokeStyle = "#222"
         lineWidth = dim.vmin * 0.4
         for (i in 1..3) {
-            val radius = (ship.shortRangeScopeRange / 4.0 * i).adjustForScope(ship)
+            val radius = (shortRangeScopeRange / 4.0 * i).adjustForScope()
             beginPath()
             circle(0.0, 0.0, radius)
             stroke()
@@ -122,7 +157,7 @@ class ShortRangeScope(
 
         for (point in ship.history) {
             val rel = (point.second - ship.position)
-            val posOnScope = rel.adjustForScope(ship)
+            val posOnScope = rel.adjustForScope()
             save()
             translate(posOnScope)
             beginPath()
@@ -139,12 +174,12 @@ class ShortRangeScope(
         rotate(-ship.rotation)
 
         for (beam in ship.beams) {
-            val x = -beam.position.z.adjustForScope(ship)
-            val y = beam.position.y.adjustForScope(ship)
+            val x = -beam.position.z.adjustForScope()
+            val y = beam.position.y.adjustForScope()
             val left = -beam.leftArc.toRadians()
             val right = -beam.rightArc.toRadians()
-            val minRange = beam.minRange.adjustForScope(ship)
-            val maxRange = beam.maxRange.adjustForScope(ship)
+            val minRange = beam.minRange.adjustForScope()
+            val maxRange = beam.maxRange.adjustForScope()
 
             save()
             translate(x, y)
@@ -165,8 +200,8 @@ class ShortRangeScope(
 
         for (waypoint in ship.waypoints) {
             val distance = waypoint.relativePosition.length()
-            if (distance < ship.shortRangeScopeRange * 0.9) {
-                drawOnScopeWaypoint(ship, waypoint)
+            if (distance < shortRangeScopeRange * 0.9) {
+                drawOnScopeWaypoint(waypoint)
             } else {
                 drawOffScopeWaypoint(waypoint)
             }
@@ -175,10 +210,9 @@ class ShortRangeScope(
     }
 
     private fun CanvasRenderingContext2D.drawOnScopeWaypoint(
-        ship: ShipMessage,
         waypoint: WaypointMessage
     ) {
-        val posOnScope = waypoint.relativePosition.adjustForScope(ship)
+        val posOnScope = waypoint.relativePosition.adjustForScope()
         save()
 
         translate(posOnScope)
@@ -186,7 +220,7 @@ class ShortRangeScope(
         circle(0.0, 0.0, dim.vmin * 0.8)
         stroke()
 
-        rotate(-getScopeRotation(ship))
+        rotate(-scopeRotation)
         translate(0.0, -dim.vmin * 2)
         fillText(waypoint.name, 0.0, 0.0)
 
@@ -214,17 +248,41 @@ class ShortRangeScope(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawContacts(
-        snapshot: ShortRangeScopeStation,
-        ship: ShipMessage
-    ) {
-        snapshot.contacts.forEach {
-            drawContact(ship, it)
+    private fun CanvasRenderingContext2D.drawLock(ship: ShipMessage) {
+        if (showLocks) {
+            when (val lock = ship.lockProgress) {
+                is LockInProgress -> drawLockProgress(lock.targetId, lock.progress)
+                is Locked -> drawLockProgress(lock.targetId, 1.0)
+            }
         }
     }
 
-    private fun CanvasRenderingContext2D.drawContact(ship: ShipMessage, contact: ScopeContactMessage) {
-        val posOnScope = contact.relativePosition.adjustForScope(ship)
+    private fun CanvasRenderingContext2D.drawLockProgress(
+        targetId: ShipId,
+        progress: Double
+    ) {
+        val contact = contacts.firstOrNull {
+            it.id == targetId
+        } ?: return
+        val posOnScope = contact.relativePosition.adjustForScope()
+        val scale = 2.0 - progress
+
+        save()
+        lockMarkerStyle(dim)
+        translate(posOnScope)
+        rotate(-scopeRotation)
+        drawLockMarker(dim.vmin * 3.2 * scale)
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawContacts() {
+        contacts.forEach {
+            drawContact(it)
+        }
+    }
+
+    private fun CanvasRenderingContext2D.drawContact(contact: ScopeContactMessage) {
+        val posOnScope = contact.relativePosition.adjustForScope()
         save()
         when (contact.type) {
             ContactType.Friendly -> friendlyContactStyle(dim)
@@ -235,8 +293,8 @@ class ShortRangeScope(
         beginPath()
         drawShipSymbol(contact.rotation, dim.vmin * 0.8)
 
-        rotate(-getScopeRotation(ship))
-        translate(0.0, -dim.vmin * 2)
+        rotate(-scopeRotation)
+        translate(0.0, -dim.vmin * 3)
         fillText(contact.designation, 0.0, 0.0)
         restore()
     }
@@ -296,16 +354,19 @@ class ShortRangeScope(
         restore()
     }
 
-    private fun Double.adjustForScope(ship: ShipMessage) =
-        (this * (scopeRadius / ship.shortRangeScopeRange))
+    private fun Double.adjustForScope() =
+        (this * (scopeRadius / shortRangeScopeRange))
 
-    private fun Vector2.adjustForScope(ship: ShipMessage) =
-        (this * (scopeRadius / ship.shortRangeScopeRange)).let { Vector2(it.x, -it.y) }
+    private fun Vector2.adjustForScope() =
+        (this * (scopeRadius / shortRangeScopeRange)).let { Vector2(it.x, -it.y) }
 
-    private fun getScopeRotation(ship: ShipMessage) =
-        if (rotating) {
-            ship.rotation - PI / 2.0
+    private val scopeRotation
+        get() = if (rotating) {
+            (ship?.rotation ?: 0.0) - PI / 2.0
         } else {
             0.0
         }
+
+    private val shortRangeScopeRange
+        get() = ship?.shortRangeScopeRange ?: 100.0
 }

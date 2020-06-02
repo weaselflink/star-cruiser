@@ -173,7 +173,7 @@ class NavigationUi {
         beginPath()
         drawShipSymbol(contact.rotation, dim.vmin * 0.8)
 
-        translate(0.0, -dim.vmin * 2)
+        translate(0.0, -dim.vmin * 3)
         fillText(contact.designation, 0.0, 0.0)
         restore()
     }

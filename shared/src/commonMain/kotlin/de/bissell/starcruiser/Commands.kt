@@ -39,6 +39,9 @@ sealed class Command {
     @Serializable
     data class CommandScanShip(val targetId: ShipId) : Command()
 
+    @Serializable
+    data class CommandLockTarget(val targetId: ShipId) : Command()
+
     fun toJson() = Json(jsonConfiguration).stringify(serializer(), this)
 
     companion object {

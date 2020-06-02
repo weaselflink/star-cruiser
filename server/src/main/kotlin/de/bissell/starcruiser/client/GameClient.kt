@@ -64,6 +64,9 @@ class GameClient(
                 is Command.CommandScanShip -> gameStateActor.send(
                     ScanShip(id, command.targetId)
                 )
+                is Command.CommandLockTarget -> gameStateActor.send(
+                    LockTarget(id, command.targetId)
+                )
             }
         }
 

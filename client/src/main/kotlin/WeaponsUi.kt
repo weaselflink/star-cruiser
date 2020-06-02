@@ -1,5 +1,6 @@
 import components.ShortRangeScope
-import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.Command.CommandLockTarget
+import de.bissell.starcruiser.ShipId
 import de.bissell.starcruiser.SnapshotMessage
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
@@ -14,10 +15,9 @@ class WeaponsUi {
     private val root = document.getElementById("weapons-ui")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
-    private val mouseEventDispatcher = MouseEventDispatcher(canvas)
     private val rotateScopeButton = document.querySelector(".rotateScope")!! as HTMLButtonElement
     private val lockTargetButton = document.querySelector(".lockTarget")!! as HTMLButtonElement
-    private val shortRangeScope = ShortRangeScope(canvas)
+    private val shortRangeScope = ShortRangeScope(canvas, true) { contactSelected(it) }
 
     private var selectingTarget = false
 
@@ -45,7 +45,7 @@ class WeaponsUi {
         }
     }
 
-    fun lockTarget() {
+    fun toggleLockTarget() {
         selectingTarget = !selectingTarget
         lockTargetButton.removeClass("current")
         if (selectingTarget) {
@@ -54,15 +54,20 @@ class WeaponsUi {
     }
 
     fun draw(snapshot: SnapshotMessage.Weapons) {
-        val ship = snapshot.ship
-
-        ctx.draw(snapshot, ship)
+        ctx.draw(snapshot)
     }
 
-    private fun CanvasRenderingContext2D.draw(snapshot: SnapshotMessage.Weapons, ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.draw(snapshot: SnapshotMessage.Weapons) {
         resetTransform()
         clear("#222")
 
         shortRangeScope.draw(snapshot)
+    }
+
+    private fun contactSelected(targetId: ShipId) {
+        if (selectingTarget) {
+            toggleLockTarget()
+            clientSocket.send(CommandLockTarget(targetId))
+        }
     }
 }

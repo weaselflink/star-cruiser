@@ -12,6 +12,7 @@ data class ShipTemplate(
     val shieldRadius: Double = 10.0,
     val density: Double = 0.02,
     val scanSpeed: Double = 0.2,
+    val lockingSpeed: Double = 0.5,
     val shortRangeScopeRange: Double = 400.0,
     val beams: List<BeamWeapon> = listOf(
         BeamWeapon(

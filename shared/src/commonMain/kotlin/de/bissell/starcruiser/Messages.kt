@@ -105,6 +105,7 @@ data class ShipMessage(
     val shortRangeScopeRange: Double,
     val waypoints: List<WaypointMessage>,
     val scanProgress: ScanProgress?,
+    val lockProgress: LockedTarget,
     val beams: List<BeamMessage>
 )
 
@@ -153,6 +154,23 @@ data class ScanProgress(
     val targetId: ShipId,
     val progress: Double
 )
+
+@Serializable
+sealed class LockedTarget
+
+@Serializable
+object NoLock : LockedTarget()
+
+@Serializable
+data class LockInProgress(
+    val targetId: ShipId,
+    val progress: Double
+) : LockedTarget()
+
+@Serializable
+data class Locked(
+    val targetId: ShipId
+) : LockedTarget()
 
 @Serializable
 data class WaypointMessage(

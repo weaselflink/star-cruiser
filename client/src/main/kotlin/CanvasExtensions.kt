@@ -48,6 +48,18 @@ fun CanvasRenderingContext2D.drawShipSymbol(rot: Double, baseUnit: Double) {
     restore()
 }
 
+fun CanvasRenderingContext2D.drawLockMarker(baseUnit: Double) {
+    save()
+    beginPath()
+    moveTo(0.0, -baseUnit)
+    lineTo(-baseUnit, 0.0)
+    lineTo(0.0, baseUnit)
+    lineTo(baseUnit, 0.0)
+    closePath()
+    stroke()
+    restore()
+}
+
 fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, height: Double) {
     if (width > height) {
         val radius = height / 2.0
@@ -80,7 +92,7 @@ fun CanvasRenderingContext2D.shipStyle(dim: CanvasDimensions) {
 }
 
 fun CanvasRenderingContext2D.beamStyle(dim: CanvasDimensions) {
-    strokeStyle = "#ff634760"
+    strokeStyle = "#dc143c60"
     lineWidth = dim.vmin * 0.3
 }
 
@@ -122,6 +134,12 @@ fun CanvasRenderingContext2D.scanProgressStyle(dim: CanvasDimensions) {
     font = "bold ${textSize.px} sans-serif"
     textAlign = CanvasTextAlign.CENTER
     textBaseline = CanvasTextBaseline.TOP
+    lineJoin = CanvasLineJoin.ROUND
+}
+
+fun CanvasRenderingContext2D.lockMarkerStyle(dim: CanvasDimensions) {
+    strokeStyle = "#dc143c60"
+    lineWidth = dim.vmin * 0.5
     lineJoin = CanvasLineJoin.ROUND
 }
 

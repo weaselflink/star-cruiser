@@ -1,22 +1,7 @@
 package de.bissell.starcruiser.ships
 
-import de.bissell.starcruiser.ContactMessage
-import de.bissell.starcruiser.ContactType
-import de.bissell.starcruiser.GameTime
-import de.bissell.starcruiser.PhysicsEngine
-import de.bissell.starcruiser.PlayerShipMessage
-import de.bissell.starcruiser.ScanLevel
-import de.bissell.starcruiser.ScanProgress
-import de.bissell.starcruiser.ScopeContactMessage
-import de.bissell.starcruiser.ShipId
-import de.bissell.starcruiser.ShipMessage
-import de.bissell.starcruiser.Vector2
-import de.bissell.starcruiser.WaypointMessage
-import de.bissell.starcruiser.clamp
-import de.bissell.starcruiser.randomShipName
-import de.bissell.starcruiser.toHeading
-import de.bissell.starcruiser.toRadians
-import java.util.UUID
+import de.bissell.starcruiser.*
+import java.util.*
 import kotlin.math.abs
 
 class Ship(
@@ -35,9 +20,11 @@ class Ship(
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val scans = mutableMapOf<ShipId, ScanLevel>()
     private var scanHandler: ScanHandler? = null
+    private var lockHandler: LockHandler? = null
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine) {
         updateScan(time)
+        updateLock(time)
         updateThrust(time)
         val effectiveThrust = if (thrust < 0) {
             thrust * template.reverseThrustFactor
@@ -63,6 +50,14 @@ class Ship(
                 val scan = scans[scanHandler!!.targetId] ?: ScanLevel.None
                 scans[scanHandler!!.targetId] = scan.next()
                 scanHandler = null
+            }
+        }
+    }
+
+    private fun updateLock(time: GameTime) {
+        lockHandler?.also {
+            if (!it.isComplete) {
+                it.update(time)
             }
         }
     }
@@ -112,6 +107,12 @@ class Ship(
         }
     }
 
+    fun lockTarget(targetId: ShipId) {
+        if (lockHandler?.targetId != targetId) {
+            lockHandler = LockHandler(targetId)
+        }
+    }
+
     fun toPlayerShipMessage() =
         PlayerShipMessage(
             id = id,
@@ -136,6 +137,7 @@ class Ship(
             shortRangeScopeRange = template.shortRangeScopeRange,
             waypoints = waypoints.map { it.toWaypointMessage(this) },
             scanProgress = scanHandler?.toMessage(),
+            lockProgress = lockHandler?.toMessage() ?: NoLock,
             beams = template.beams.map { it.toMessage() }
         )
 
@@ -192,6 +194,27 @@ class Ship(
                 targetId = targetId,
                 progress = progress
             )
+    }
+
+    private inner class LockHandler(
+        val targetId: ShipId,
+        private var progress: Double = 0.0
+    ) {
+
+        var isComplete: Boolean = false
+            get() = progress >= 1.0
+            private set
+
+        fun update(time: GameTime) {
+            progress += time.delta * template.lockingSpeed
+        }
+
+        fun toMessage() =
+            if (isComplete) {
+                Locked(targetId)
+            } else {
+                LockInProgress(targetId, progress)
+            }
     }
 
     private inner class Waypoint(
