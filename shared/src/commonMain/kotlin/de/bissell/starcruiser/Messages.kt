@@ -100,7 +100,8 @@ data class ShipMessage(
     val history: List<Pair<Double, Vector2>>,
     val shortRangeScopeRange: Double,
     val waypoints: List<WaypointMessage>,
-    val scanProgress: ScanProgress?
+    val scanProgress: ScanProgress?,
+    val beams: List<BeamMessage>
 )
 
 @Serializable
@@ -155,4 +156,13 @@ data class WaypointMessage(
     val name: String,
     val position: Vector2,
     val relativePosition: Vector2
+)
+
+@Serializable
+data class BeamMessage(
+    val position: Vector3 = Vector3(),
+    val minRange: Double,
+    val maxRange: Double,
+    val leftArc: Double,
+    val rightArc: Double
 )

@@ -1,5 +1,6 @@
 package components
 
+import beamStyle
 import circle
 import de.bissell.starcruiser.*
 import dimensions
@@ -52,6 +53,7 @@ class ShortRangeScope(
         clip()
 
         drawHistory(ship)
+        drawBeams(ship)
         drawWaypoints(ship)
         drawContacts(snapshot, ship)
         restore()
@@ -127,6 +129,28 @@ class ShortRangeScope(
             fill()
             restore()
         }
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawBeams(ship: ShipMessage) {
+        save()
+        beamStyle(dim)
+        rotate(-ship.rotation)
+
+        for (beam in ship.beams) {
+            val left = -beam.leftArc.toRadians()
+            val right = -beam.rightArc.toRadians()
+
+            save()
+            translate(-beam.position.z, beam.position.y)
+            beginPath()
+            circle(0.0, 0.0, beam.maxRange, left, right)
+            circle(0.0, 0.0, beam.minRange, right, left, true)
+            closePath()
+            stroke()
+            restore()
+        }
+
         restore()
     }
 

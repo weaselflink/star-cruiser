@@ -28,8 +28,9 @@ fun CanvasRenderingContext2D.circle(
     y: Double,
     radius: Double,
     startAngle: Double = 0.0,
-    endAngle: Double = PI * 2
-) = ellipse(x, y, radius, radius, 0.0, startAngle, endAngle)
+    endAngle: Double = PI * 2,
+    anticlockwise: Boolean = false
+) = ellipse(x, y, radius, radius, 0.0, startAngle, endAngle, anticlockwise)
 
 val Int.px
     get() = "${this}px"
@@ -68,7 +69,7 @@ fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, heigh
 }
 
 fun CanvasRenderingContext2D.historyStyle(dim: CanvasDimensions) {
-    fillStyle = "#222"
+    fillStyle = "#555"
     lineWidth = dim.vmin * 0.4
 }
 
@@ -76,6 +77,11 @@ fun CanvasRenderingContext2D.shipStyle(dim: CanvasDimensions) {
     lineWidth = dim.vmin * 0.8 * 0.4
     lineJoin = CanvasLineJoin.ROUND
     strokeStyle = "#ffffff"
+}
+
+fun CanvasRenderingContext2D.beamStyle(dim: CanvasDimensions) {
+    strokeStyle = "#ff6347"
+    lineWidth = dim.vmin * 0.8 * 0.2
 }
 
 fun CanvasRenderingContext2D.unknownContactStyle(dim: CanvasDimensions) {

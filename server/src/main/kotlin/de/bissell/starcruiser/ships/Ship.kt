@@ -22,7 +22,6 @@ import kotlin.math.abs
 class Ship(
     val id: ShipId = ShipId.random(),
     val template: ShipTemplate = ShipTemplate(),
-    val shortRangeScopeRange: Double = 400.0,
     private val designation: String = randomShipName(),
     var position: Vector2 = Vector2(),
     private var speed: Vector2 = Vector2(),
@@ -134,9 +133,10 @@ class Ship(
             thrust = thrust,
             rudder = rudder,
             history = history.map { it.first to it.second },
-            shortRangeScopeRange = shortRangeScopeRange,
+            shortRangeScopeRange = template.shortRangeScopeRange,
             waypoints = waypoints.map { it.toWaypointMessage(this) },
-            scanProgress = scanHandler?.toMessage()
+            scanProgress = scanHandler?.toMessage(),
+            beams = template.beams.map { it.toMessage() }
         )
 
     fun toScopeContactMessage(relativeTo: Ship) =

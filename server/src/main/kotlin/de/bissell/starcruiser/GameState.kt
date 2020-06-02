@@ -147,7 +147,7 @@ class GameState {
             .map { it.value }
             .map { it.toScopeContactMessage(clientShip) }
             .filter {
-                it.relativePosition.length() < clientShip.shortRangeScopeRange * 1.1
+                it.relativePosition.length() < clientShip.template.shortRangeScopeRange * 1.1
             }
     }
 
