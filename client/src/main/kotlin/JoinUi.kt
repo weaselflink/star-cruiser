@@ -6,7 +6,6 @@ import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.asList
 import org.w3c.dom.events.MouseEvent
-import org.w3c.dom.get
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.math.max
@@ -77,7 +76,7 @@ class JoinUi {
     private fun selectPlayerShip(event: MouseEvent) {
         clientSocket.apply {
             val target = event.target as HTMLElement
-            val shipId = ShipId(target.attributes["id"]!!.value)
+            val shipId = ShipId(target.getAttribute("id")!!)
             send(Command.CommandJoinShip(shipId = shipId, station = Helm))
         }
     }
