@@ -90,8 +90,8 @@ class ShortRangeScope(
         drawHistory(ship)
         drawBeams(ship)
         drawWaypoints(ship)
-        drawLock(ship)
         drawContacts()
+        drawLockedContact(ship)
         restore()
         drawScopeEdge()
         drawShip(ship)
@@ -248,7 +248,27 @@ class ShortRangeScope(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawLock(ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.drawContacts() {
+        contacts.forEach {
+            if (!showLocks || !it.locked) {
+                drawContact(it)
+            }
+        }
+    }
+
+    private fun CanvasRenderingContext2D.drawContact(contact: ScopeContactMessage) {
+        val posOnScope = contact.relativePosition.adjustForScope()
+        save()
+        translate(posOnScope)
+        drawContactShipSymbol(contact)
+
+        rotate(-scopeRotation)
+        translate(0.0, -dim.vmin * 3)
+        fillText(contact.designation, 0.0, 0.0)
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawLockedContact(ship: ShipMessage) {
         if (showLocks) {
             when (val lock = ship.lockProgress) {
                 is LockInProgress -> drawLockProgress(lock.targetId, lock.progress)
@@ -268,42 +288,29 @@ class ShortRangeScope(
         val scale = 2.0 - progress
 
         save()
-        lockMarkerStyle(dim)
         translate(posOnScope)
+        drawContactShipSymbol(contact)
+
+        lockMarkerStyle(dim)
         rotate(-scopeRotation)
         drawLockMarker(dim.vmin * 3.2 * scale)
+        if (progress >= 1.0) {
+            save()
+            rotate(PI * 0.25)
+            drawLockMarker(dim.vmin * 3.2 * scale)
+            restore()
+        }
+        translate(0.0, -dim.vmin * 4)
+        fillText(contact.designation, 0.0, 0.0)
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawContacts() {
-        contacts.forEach {
-            drawContact(it)
-        }
-    }
-
-    private fun CanvasRenderingContext2D.drawContact(
-        contact: ScopeContactMessage
-    ) {
-        val posOnScope = contact.relativePosition.adjustForScope()
-        save()
+    private fun CanvasRenderingContext2D.drawContactShipSymbol(contact: ScopeContactMessage) {
         when (contact.type) {
             ContactType.Friendly -> friendlyContactStyle(dim)
             else -> unknownContactStyle(dim)
         }
-
-        translate(posOnScope)
-        beginPath()
         drawShipSymbol(contact.rotation, dim.vmin * 0.8)
-
-        rotate(-scopeRotation)
-        if (showLocks && contact.locked) {
-            lockMarkerStyle(dim)
-            translate(0.0, -dim.vmin * 4)
-        } else {
-            translate(0.0, -dim.vmin * 3)
-        }
-        fillText(contact.designation, 0.0, 0.0)
-        restore()
     }
 
     private fun CanvasRenderingContext2D.drawScopeEdge() {

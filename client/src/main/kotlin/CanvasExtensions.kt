@@ -140,7 +140,7 @@ fun CanvasRenderingContext2D.scanProgressStyle(dim: CanvasDimensions) {
 fun CanvasRenderingContext2D.lockMarkerStyle(dim: CanvasDimensions) {
     strokeStyle = "#dc143c"
     fillStyle = "#dc143c"
-    lineWidth = dim.vmin * 0.5
+    lineWidth = dim.vmin * 0.3
     val textSize = (dim.vmin * 3).toInt()
     font = "bold ${textSize.px} sans-serif"
     textAlign = CanvasTextAlign.CENTER
