@@ -299,23 +299,24 @@ class NavigationUi {
             lastEvent = null
         }
 
-        private fun getNearestWaypoint(mouseEvent: MouseEvent): WaypointMessage? {
-            val worldClick = mouseEvent.toWorld()
-            return waypoints
-                .map { it to (it.position - worldClick).length() }
-                .filter { it.second < 50 }
+        private fun getNearestWaypoint(mouseEvent: MouseEvent): WaypointMessage? =
+            getNearest(waypoints, mouseEvent)
+
+        private fun getNearestContact(mouseEvent: MouseEvent): ContactMessage? =
+            getNearest(contacts, mouseEvent)
+
+        private fun <T : Positional> getNearest(elements: Iterable<T>, mouseEvent: MouseEvent): T? {
+            val click = mouseEvent.toVector2() - canvasCenter()
+            return elements
+                .map { it to it.position.adjustForMap() }
+                .map { it.first to it.second - click }
+                .map { it.first to it.second.length() }
+                .filter { it.second <= 20.0 }
                 .minBy { it.second }
                 ?.first
         }
 
-        private fun getNearestContact(mouseEvent: MouseEvent): ContactMessage? {
-            val worldClick = mouseEvent.toWorld()
-            return contacts
-                .map { it to (it.position - worldClick).length() }
-                .filter { it.second < 50 }
-                .minBy { it.second }
-                ?.first
-        }
+        private fun canvasCenter() = Vector2(canvas.width * 0.5, canvas.height * 0.5)
 
         private fun Vector2.convert() = (this / scale).let { Vector2(-it.x, it.y) }
 
@@ -323,7 +324,9 @@ class NavigationUi {
             (fromCenterCanvas() / scale).let { Vector2(it.x, -it.y) } + center
 
         private fun MouseEvent.fromCenterCanvas() =
-            Vector2(offsetX, offsetY) - Vector2(canvas.width / 2.0, canvas.height / 2.0)
+            toVector2() - Vector2(canvas.width / 2.0, canvas.height / 2.0)
+
+        private fun MouseEvent.toVector2() = Vector2(offsetX, offsetY)
     }
 
     enum class ButtonState {

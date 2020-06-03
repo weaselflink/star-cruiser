@@ -115,14 +115,14 @@ data class ContactMessage(
     val type: ContactType,
     val scanLevel: ScanLevel,
     val designation: String,
-    val position: Vector2,
+    override val position: Vector2,
     val relativePosition: Vector2,
     val speed: Vector2,
     val rotation: Double,
     val heading: Double,
     val velocity: Double,
     val history: List<Pair<Double, Vector2>>
-)
+) : Positional
 
 @Serializable
 data class ScopeContactMessage(
@@ -181,9 +181,9 @@ data class Locked(
 data class WaypointMessage(
     val index: Int,
     val name: String,
-    val position: Vector2,
+    override val position: Vector2,
     val relativePosition: Vector2
-)
+) : Positional
 
 @Serializable
 data class BeamMessage(
@@ -193,3 +193,7 @@ data class BeamMessage(
     val leftArc: Double,
     val rightArc: Double
 )
+
+interface Positional {
+    val position: Vector2
+}
