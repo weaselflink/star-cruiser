@@ -167,7 +167,7 @@ fun Routing.webUi() {
                 }
                 script {
                     type = ScriptType.textJavaScript
-                    src = "/js/gltf-loader.js"
+                    src = "/js/gltf-loader.min.js"
                 }
                 script {
                     type = ScriptType.textJavaScript
