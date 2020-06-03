@@ -17,15 +17,17 @@ data class ShipTemplate(
     val beams: List<BeamWeapon> = listOf(
         BeamWeapon(
             position = Vector3(
-                y = -1.25,
-                z = -12.45
+                x = -1.9,
+                y = -4.8,
+                z = -12.2
             ),
             rightArc = -10
         ),
         BeamWeapon(
             position = Vector3(
-                y = -1.25,
-                z = -12.45
+                x = +1.9,
+                y = -4.8,
+                z = -12.2
             ),
             leftArc = 10
         )

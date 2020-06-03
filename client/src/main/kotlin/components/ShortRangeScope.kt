@@ -175,7 +175,7 @@ class ShortRangeScope(
 
         for (beam in ship.beams) {
             val x = -beam.position.z.adjustForScope()
-            val y = beam.position.y.adjustForScope()
+            val y = beam.position.x.adjustForScope()
             val left = -beam.leftArc.toRadians()
             val right = -beam.rightArc.toRadians()
             val minRange = beam.minRange.adjustForScope()
