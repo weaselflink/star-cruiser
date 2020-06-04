@@ -9,6 +9,7 @@ import three.lights.AmbientLight
 import three.lights.DirectionalLight
 import three.loaders.CubeTextureLoader
 import three.loaders.GLTFLoader
+import three.math.Euler
 import three.objects.Group
 import three.plusAssign
 import three.renderers.WebGLRenderer
@@ -33,15 +34,14 @@ class MainScreenUi {
         )
     )
     private val scene = Scene()
-    private val shipGroup = Group().also { scene.add(it) }
-    private val frontCamera = createFrontCamera().also { shipGroup.add(it) }
-    private val topCamera = createTopCamera().also { shipGroup.add(it) }
+    private val ownShip = ShipGroup().also { scene += it.rootNode }
+    private val frontCamera = createFrontCamera().also { ownShip += it }
+    private val topCamera = createTopCamera().also { ownShip += it }
     private var topView = false
 
     private val contactGroup = Object3D().also { scene += it }
-    private val beamGroup = Object3D().also { shipGroup += it }
+    private val beamGroup = Object3D().also { ownShip += it }
     private var model: Group? = null
-    private var ownModel: Object3D? = null
     private val contactNodes = mutableMapOf<ShipId, Object3D>()
 
     init {
@@ -70,7 +70,7 @@ class MainScreenUi {
     }
 
     fun draw(snapshot: SnapshotMessage.MainScreen) {
-        shipGroup.rotation.y = snapshot.ship.rotation
+        ownShip.rotation.y = snapshot.ship.rotation
 
         val contacts = snapshot.contacts
         val oldContactIds = contactNodes.keys.filter { true }
@@ -214,10 +214,26 @@ class MainScreenUi {
                 model = gltf.scene.also {
                     it.debugPrint()
                 }
-                ownModel = model?.clone(true)?.also { ownModel ->
-                    shipGroup.add(ownModel)
-                }
+                ownShip.model = model?.clone(true)
             }
         )
+    }
+
+    inner class ShipGroup {
+
+        val rootNode = Object3D()
+
+        var model: Object3D? = null
+            set(value) {
+                field?.also { rootNode.remove(it) }
+                field = value?.also {
+                    rootNode.add(it)
+                }
+            }
+
+        val rotation: Euler
+            get() = rootNode.rotation
+
+        operator fun plusAssign(value: Object3D) = rootNode.add(value)
     }
 }
