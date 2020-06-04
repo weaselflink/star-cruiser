@@ -37,5 +37,8 @@ data class BeamWeapon(
     val position: Vector3 = Vector3(),
     val range: IntRange = 25..200,
     val leftArc: Int = 45,
-    val rightArc: Int = -45
+    val rightArc: Int = -45,
+    val rechargeSpeed: Double = 0.2,
+    val firingSpeed: Double = 1.0
+
 )

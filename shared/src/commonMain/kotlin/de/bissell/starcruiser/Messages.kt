@@ -205,19 +205,15 @@ data class BeamMessage(
 sealed class BeamStatus {
 
     @Serializable
-    object Idle : BeamStatus() {
-        override fun update(delta: Double) = Idle
-    }
+    object Idle : BeamStatus()
 
     @Serializable
     data class Recharging(val progress: Double = 0.0) : BeamStatus() {
-        override fun update(delta: Double) = copy(progress = progress + delta)
+        fun update(change: Double) = copy(progress = progress + change)
     }
 
     @Serializable
     data class Firing(val progress: Double = 0.0) : BeamStatus() {
-        override fun update(delta: Double) = copy(progress = progress + delta)
+        fun update(change: Double) = copy(progress = progress + change)
     }
-
-    abstract fun update(delta: Double): BeamStatus
 }

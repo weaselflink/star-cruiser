@@ -249,17 +249,16 @@ class Ship(
     ) {
 
         fun update(time: GameTime) {
-            status = status.update(time.delta)
             when (val current = status) {
                 is BeamStatus.Idle -> Unit
                 is BeamStatus.Recharging -> {
-                    if (current.progress >= 1.0) {
-                        status = BeamStatus.Idle
+                    status = current.update(time.delta * beamWeapon.rechargeSpeed).let {
+                        if (current.progress >= 1.0) BeamStatus.Idle else it
                     }
                 }
                 is BeamStatus.Firing -> {
-                    if (current.progress >= 1.0) {
-                        status = BeamStatus.Recharging()
+                    status = current.update(time.delta * beamWeapon.firingSpeed).let {
+                        if (current.progress >= 1.0) BeamStatus.Recharging() else it
                     }
                 }
             }
