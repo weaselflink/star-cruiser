@@ -1,7 +1,4 @@
-import de.bissell.starcruiser.ContactMessage
-import de.bissell.starcruiser.LockStatus
-import de.bissell.starcruiser.ShipId
-import de.bissell.starcruiser.SnapshotMessage
+import de.bissell.starcruiser.*
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
@@ -42,7 +39,7 @@ class MainScreenUi {
     private var topView = false
 
     private val contactGroup = Object3D().also { scene += it }
-    private val beamGroup = Object3D().also { scene += it }
+    private val beamGroup = Object3D().also { shipGroup += it }
     private var model: Group? = null
     private var ownModel: Object3D? = null
     private val contactNodes = mutableMapOf<ShipId, Object3D>()
@@ -81,7 +78,7 @@ class MainScreenUi {
         addNewContacts(contacts)
         removeOldContacts(contacts, oldContactIds)
         updateContacts(contacts)
-        //updateBeams(snapshot)
+        updateBeams(snapshot)
 
         if (topView) {
             renderer.render(scene, topCamera)
@@ -92,31 +89,29 @@ class MainScreenUi {
 
     private fun updateBeams(snapshot: SnapshotMessage.MainScreen) {
         beamGroup.remove(*beamGroup.children)
-        beamGroup.rotation.y = snapshot.ship.rotation
 
         val lockProgress = snapshot.ship.lockProgress
         if (lockProgress !is LockStatus.Locked) return
         val target = snapshot.contacts.firstOrNull { it.id == lockProgress.targetId } ?: return
+        val targetPosition = Vector3(-target.relativePosition.y, 0.0, -target.relativePosition.x)
 
-        snapshot.ship.beams.forEach { beamMessage ->
+        snapshot.ship.beams.filter {
+            it.status is BeamStatus.Firing
+        }.forEach { beamMessage ->
+            val distance = (targetPosition - beamMessage.position).length()
             Object3D().apply {
+                beamGroup += this
+
                 position.x = beamMessage.position.x
                 position.y = beamMessage.position.y
                 position.z = beamMessage.position.z
-                /*lookAt(
-                    x = -target.relativePosition.y,
-                    y = 0,
-                    z = -target.relativePosition.x
-                )*/
-
-                add(
-                    LaserBeam().obj.also {
-                        it.rotation.y = PI * 0.5
-                        it.scale.x = 100.0
-                        it.scale.y = 5.0
-                    }
+                lookAt(
+                    x = targetPosition.x,
+                    y = targetPosition.y,
+                    z = targetPosition.z
                 )
-                beamGroup.add(this)
+
+                add(LaserBeam(length = distance, width = 2.0).obj)
             }
         }
     }

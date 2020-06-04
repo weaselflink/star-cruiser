@@ -1,6 +1,7 @@
 package de.bissell.starcruiser
 
 import kotlinx.serialization.Serializable
+import kotlin.math.sqrt
 
 @Serializable
 data class Vector3(
@@ -16,4 +17,13 @@ data class Vector3(
         y: Number = 0.0,
         z: Number = 0.0
     ) : this(x.toDouble(), y.toDouble(), z.toDouble())
+
+    operator fun plus(other: Vector3): Vector3 =
+        Vector3(x + other.x, y + other.y, z + other.z)
+
+    operator fun minus(other: Vector3): Vector3 =
+        Vector3(x - other.x, y - other.y, z - other.z)
+
+    fun length(): Double =
+        sqrt(x * x + y * y + z * z)
 }

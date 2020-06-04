@@ -13,8 +13,12 @@ import kotlin.browser.document
 import kotlin.math.PI
 
 class LaserBeam(
-    val obj: Object3D = Object3D()
+    length: Number = 1.0,
+    width: Number = 0.2
 ) {
+
+    val obj = Object3D()
+    private val beamRoot = Object3D()
 
     init {
         val canvas = laserCanvas()
@@ -31,15 +35,18 @@ class LaserBeam(
                 transparent = true
             )
         )
-        val geometry = PlaneGeometry(1.0, 0.1)
+        val geometry = PlaneGeometry(1.0, width)
         val planes = 16
         (0 until planes).forEach { n ->
             Mesh(geometry, material).also { mesh ->
                 mesh.position.x = 0.5
-                mesh.rotation.x = n / planes * PI
-                obj.add(mesh)
+                mesh.rotation.x = n.toDouble() / planes * PI
+                beamRoot.add(mesh)
             }
         }
+        beamRoot.rotation.y = -PI * 0.5
+        obj.add(beamRoot)
+        obj.scale.z = length.toDouble()
     }
 
     private fun laserCanvas(): HTMLCanvasElement {
