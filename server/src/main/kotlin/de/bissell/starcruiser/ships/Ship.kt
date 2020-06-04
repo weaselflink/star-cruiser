@@ -137,7 +137,7 @@ class Ship(
             shortRangeScopeRange = template.shortRangeScopeRange,
             waypoints = waypoints.map { it.toWaypointMessage(this) },
             scanProgress = scanHandler?.toMessage(),
-            lockProgress = lockHandler?.toMessage() ?: NoLock,
+            lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
             beams = template.beams.map { it.toMessage() }
         )
 
@@ -219,9 +219,9 @@ class Ship(
 
         fun toMessage(): LockStatus =
             if (isComplete) {
-                Locked(targetId)
+                LockStatus.Locked(targetId)
             } else {
-                LockInProgress(targetId, progress)
+                LockStatus.InProgress(targetId, progress)
             }
     }
 

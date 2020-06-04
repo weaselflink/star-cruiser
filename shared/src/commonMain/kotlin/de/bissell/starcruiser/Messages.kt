@@ -10,6 +10,10 @@ val jsonConfiguration = JsonConfiguration.Stable.copy(
     prettyPrint = true
 )
 
+interface Positional {
+    val position: Vector2
+}
+
 @Serializable
 data class ShipId(val id: String) {
 
@@ -157,25 +161,27 @@ data class ScanProgress(
 )
 
 @Serializable
-sealed class LockStatus
+sealed class LockStatus {
 
-@Serializable
-object NoLock : LockStatus()
+    interface LockedTarget {
+        val targetId: ShipId
+    }
 
-interface LockedTarget {
-    val targetId: ShipId
+    @Serializable
+    object NoLock : LockStatus()
+
+    @Serializable
+    data class InProgress(
+        override val targetId: ShipId,
+        val progress: Double
+    ) : LockStatus(), LockedTarget
+
+    @Serializable
+    data class Locked(
+        override val targetId: ShipId
+    ) : LockStatus(), LockedTarget
+
 }
-
-@Serializable
-data class LockInProgress(
-    override val targetId: ShipId,
-    val progress: Double
-) : LockStatus(), LockedTarget
-
-@Serializable
-data class Locked(
-    override val targetId: ShipId
-) : LockStatus(), LockedTarget
 
 @Serializable
 data class WaypointMessage(
@@ -191,9 +197,19 @@ data class BeamMessage(
     val minRange: Double,
     val maxRange: Double,
     val leftArc: Double,
-    val rightArc: Double
+    val rightArc: Double,
+    val beamStatus: BeamStatus = BeamStatus.Idle
 )
 
-interface Positional {
-    val position: Vector2
+@Serializable
+sealed class BeamStatus {
+
+    @Serializable
+    object Idle : BeamStatus()
+
+    @Serializable
+    data class Recharging(val progress: Double)
+
+    @Serializable
+    data class Firing(val progress: Double)
 }

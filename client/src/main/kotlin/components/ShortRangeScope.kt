@@ -271,8 +271,8 @@ class ShortRangeScope(
     private fun CanvasRenderingContext2D.drawLockedContact(ship: ShipMessage) {
         if (showLocks) {
             when (val lock = ship.lockProgress) {
-                is LockInProgress -> drawLockProgress(lock.targetId, lock.progress)
-                is Locked -> drawLockProgress(lock.targetId, 1.0)
+                is LockStatus.InProgress -> drawLockProgress(lock.targetId, lock.progress)
+                is LockStatus.Locked -> drawLockProgress(lock.targetId, 1.0)
             }
         }
     }
