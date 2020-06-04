@@ -22,8 +22,7 @@ class ShipTest {
     @Test
     fun `updates positive thrust`() {
         ship.changeThrottle(100)
-        time.update(Instant.EPOCH.plusSeconds(2))
-        ship.update(time, physicsEngine)
+        stepTimeTo(2)
 
         expectThat(ship.toMessage().thrust).isNear(ship.template.throttleResponsiveness * 2)
     }
@@ -31,8 +30,7 @@ class ShipTest {
     @Test
     fun `updates negative thrust`() {
         ship.changeThrottle(-100)
-        time.update(Instant.EPOCH.plusSeconds(2))
-        ship.update(time, physicsEngine)
+        stepTimeTo(2)
 
         expectThat(ship.toMessage().thrust).isNear(ship.template.throttleResponsiveness * -2)
     }
@@ -109,13 +107,11 @@ class ShipTest {
         val target = Ship()
 
         ship.startScan(target.id)
-        time.update(Instant.EPOCH.plusSeconds(4))
-        ship.update(time, physicsEngine)
+        stepTimeTo(4)
 
         expectThat(target.toContactMessage(ship).type).isEqualTo(ContactType.Unknown)
 
-        time.update(Instant.EPOCH.plusSeconds(6))
-        ship.update(time, physicsEngine)
+        stepTimeTo(6)
 
         expectThat(target.toContactMessage(ship).type).isEqualTo(ContactType.Friendly)
     }
@@ -125,8 +121,7 @@ class ShipTest {
         val target = Ship()
 
         ship.startScan(target.id)
-        time.update(Instant.EPOCH.plusSeconds(6))
-        ship.update(time, physicsEngine)
+        stepTimeTo(6)
 
         expectThat(target.toContactMessage(ship).type).isEqualTo(ContactType.Friendly)
 
@@ -139,8 +134,7 @@ class ShipTest {
     fun `updates physics engine`() {
         ship.changeThrottle(50)
         ship.changeRudder(50)
-        time.update(Instant.EPOCH.plusSeconds(2))
-        ship.update(time, physicsEngine)
+        stepTimeTo(2)
 
         verify(exactly = 1) {
             physicsEngine.updateShip(
@@ -168,6 +162,50 @@ class ShipTest {
             expectThat(it.speed).isEqualTo(Vector2(3, 4))
             expectThat(it.rotation).isEqualTo(5.0)
         }
+    }
 
+    @Test
+    fun `updates target lock`() {
+        val target = Ship()
+
+        ship.update(time, physicsEngine)
+
+        expectThat(ship.toMessage().lockProgress).isA<LockStatus.NoLock>()
+
+        ship.lockTarget(target.id)
+        stepTimeTo(1)
+
+        expectThat(ship.toMessage().lockProgress).isA<LockStatus.InProgress>()
+
+        stepTimeTo(10)
+
+        expectThat(ship.toMessage().lockProgress).isA<LockStatus.Locked>()
+    }
+
+    @Test
+    fun `updates beams`() {
+        val target = Ship()
+
+        stepTimeTo(1)
+
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
+
+        ship.lockTarget(target.id)
+        stepTimeTo(8)
+
+        expectThat(ship.toMessage().lockProgress).isA<LockStatus.Locked>()
+
+        stepTimeTo(8.5)
+
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Firing>()
+
+        stepTimeTo(10)
+
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Recharging>()
+    }
+
+    private fun stepTimeTo(seconds: Number) {
+        time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
+        ship.update(time, physicsEngine)
     }
 }

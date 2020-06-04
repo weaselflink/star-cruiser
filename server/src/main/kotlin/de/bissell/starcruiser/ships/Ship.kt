@@ -23,8 +23,6 @@ class Ship(
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
 
-
-
     fun update(time: GameTime, physicsEngine: PhysicsEngine) {
         beamHandlers.forEach { it.update(time) }
         updateScan(time)
@@ -188,6 +186,8 @@ class Ship(
             false
         }
 
+    private fun hasActiveLock() = lockHandler?.isComplete == true
+
     private inner class ScanHandler(
         val targetId: ShipId,
         private var progress: Double = 0.0
@@ -250,15 +250,23 @@ class Ship(
 
         fun update(time: GameTime) {
             when (val current = status) {
-                is BeamStatus.Idle -> Unit
+                is BeamStatus.Idle -> if (hasActiveLock()) {
+                    status = BeamStatus.Firing()
+                }
                 is BeamStatus.Recharging -> {
                     status = current.update(time.delta * beamWeapon.rechargeSpeed).let {
-                        if (current.progress >= 1.0) BeamStatus.Idle else it
+                        if (it.progress >= 1.0) {
+                            if (hasActiveLock()) {
+                                BeamStatus.Firing()
+                            } else {
+                                BeamStatus.Idle
+                            }
+                        } else it
                     }
                 }
                 is BeamStatus.Firing -> {
                     status = current.update(time.delta * beamWeapon.firingSpeed).let {
-                        if (current.progress >= 1.0) BeamStatus.Recharging() else it
+                        if (it.progress >= 1.0) BeamStatus.Recharging() else it
                     }
                 }
             }
