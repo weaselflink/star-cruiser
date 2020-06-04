@@ -2,6 +2,7 @@
 
 package three.loaders
 
+import three.cameras.Camera
 import three.objects.Group
 
 external class GLTFLoader(
@@ -18,4 +19,6 @@ external class GLTFLoader(
 
 external interface GLTF {
     var scene: Group
+    var scenes: Array<Group>
+    var cameras: Array<Camera>
 }

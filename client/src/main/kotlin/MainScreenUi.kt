@@ -181,9 +181,9 @@ class MainScreenUi {
     private fun loadShipModel() {
         GLTFLoader().load(
             url = "/assets/ships/carrier.glb",
-            onLoad = {
-                model = it.scene.apply {
-                    debugPrint()
+            onLoad = { gltf ->
+                model = gltf.scene.also {
+                    it.debugPrint()
                 }
                 ownModel = model?.clone(true)?.also { ownModel ->
                     shipGroup.add(ownModel)
