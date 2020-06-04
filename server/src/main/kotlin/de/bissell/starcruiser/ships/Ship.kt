@@ -299,13 +299,15 @@ class Ship(
             )
 
         private fun isLockedTargetInRange(shipProvider: (ShipId) -> Ship?) =
-            lockHandler?.targetId
-                ?.let(shipProvider)
-                ?.toScopeContactMessage(this@Ship)
-                ?.relativePosition
-                ?.rotate(-this@Ship.rotation)
-                ?.let { beamWeapon.isInRange(it) }
-                ?: false
+            if (lockHandler?.isComplete == true) {
+                lockHandler?.targetId
+                    ?.let(shipProvider)
+                    ?.toScopeContactMessage(this@Ship)
+                    ?.relativePosition
+                    ?.rotate(-this@Ship.rotation)
+                    ?.let { beamWeapon.isInRange(it) }
+                    ?: false
+            } else false
     }
 
     companion object {

@@ -21,5 +21,8 @@ open external class Object3D {
 
     fun clone(recursive: Boolean? = definedExternally): Object3D
 
+    fun lookAt(vector: Vector3)
+    fun lookAt(x: Number, y: Number, z: Number)
+
     fun traverse(callback: (Object3D) -> Unit)
 }
