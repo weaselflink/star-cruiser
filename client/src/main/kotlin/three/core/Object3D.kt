@@ -20,4 +20,6 @@ open external class Object3D {
     fun remove(vararg obj: Object3D)
 
     fun clone(recursive: Boolean? = definedExternally): Object3D
+
+    fun traverse(callback: (Object3D) -> Unit)
 }
