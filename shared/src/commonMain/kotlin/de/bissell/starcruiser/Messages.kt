@@ -198,18 +198,26 @@ data class BeamMessage(
     val maxRange: Double,
     val leftArc: Double,
     val rightArc: Double,
-    val beamStatus: BeamStatus = BeamStatus.Idle
+    val status: BeamStatus = BeamStatus.Idle
 )
 
 @Serializable
 sealed class BeamStatus {
 
     @Serializable
-    object Idle : BeamStatus()
+    object Idle : BeamStatus() {
+        override fun update(delta: Double) = Idle
+    }
 
     @Serializable
-    data class Recharging(val progress: Double)
+    data class Recharging(val progress: Double = 0.0) : BeamStatus() {
+        override fun update(delta: Double) = copy(progress = progress + delta)
+    }
 
     @Serializable
-    data class Firing(val progress: Double)
+    data class Firing(val progress: Double = 0.0) : BeamStatus() {
+        override fun update(delta: Double) = copy(progress = progress + delta)
+    }
+
+    abstract fun update(delta: Double): BeamStatus
 }

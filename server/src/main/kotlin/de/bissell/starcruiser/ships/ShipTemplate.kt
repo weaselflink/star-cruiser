@@ -1,6 +1,5 @@
 package de.bissell.starcruiser.ships
 
-import de.bissell.starcruiser.BeamMessage
 import de.bissell.starcruiser.Vector3
 
 data class ShipTemplate(
@@ -37,15 +36,6 @@ data class ShipTemplate(
 data class BeamWeapon(
     val position: Vector3 = Vector3(),
     val range: IntRange = 25..200,
-    var leftArc: Int = 45,
-    var rightArc: Int = -45
-) {
-    fun toMessage() =
-        BeamMessage(
-            position = position,
-            minRange = range.first.toDouble(),
-            maxRange = range.last.toDouble(),
-            leftArc = leftArc.toDouble(),
-            rightArc = rightArc.toDouble()
-        )
-}
+    val leftArc: Int = 45,
+    val rightArc: Int = -45
+)

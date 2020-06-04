@@ -19,10 +19,14 @@ class Ship(
     private val waypoints: MutableList<Waypoint> = mutableListOf()
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val scans = mutableMapOf<ShipId, ScanLevel>()
+    private val beamHandlers = template.beams.map { BeamHandler(it) }
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
 
+
+
     fun update(time: GameTime, physicsEngine: PhysicsEngine) {
+        beamHandlers.forEach { it.update(time) }
         updateScan(time)
         updateLock(time)
         updateThrust(time)
@@ -138,7 +142,7 @@ class Ship(
             waypoints = waypoints.map { it.toWaypointMessage(this) },
             scanProgress = scanHandler?.toMessage(),
             lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
-            beams = template.beams.map { it.toMessage() }
+            beams = beamHandlers.map { it.toMessage() }
         )
 
     fun toScopeContactMessage(relativeTo: Ship) =
@@ -236,6 +240,39 @@ class Ship(
                 name = "WP$index",
                 position = position,
                 relativePosition = (position - relativeTo.position)
+            )
+    }
+
+    private inner class BeamHandler(
+        val beamWeapon: BeamWeapon,
+        private var status: BeamStatus = BeamStatus.Idle
+    ) {
+
+        fun update(time: GameTime) {
+            status = status.update(time.delta)
+            when (val current = status) {
+                is BeamStatus.Idle -> Unit
+                is BeamStatus.Recharging -> {
+                    if (current.progress >= 1.0) {
+                        status = BeamStatus.Idle
+                    }
+                }
+                is BeamStatus.Firing -> {
+                    if (current.progress >= 1.0) {
+                        status = BeamStatus.Recharging()
+                    }
+                }
+            }
+        }
+
+        fun toMessage() =
+            BeamMessage(
+                position = beamWeapon.position,
+                minRange = beamWeapon.range.first.toDouble(),
+                maxRange = beamWeapon.range.last.toDouble(),
+                leftArc = beamWeapon.leftArc.toDouble(),
+                rightArc = beamWeapon.rightArc.toDouble(),
+                status = status
             )
     }
 
