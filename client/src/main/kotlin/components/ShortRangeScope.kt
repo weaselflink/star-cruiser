@@ -180,6 +180,11 @@ class ShortRangeScope(
             val right = -beam.rightArc.toRadians()
             val minRange = beam.minRange.adjustForScope()
             val maxRange = beam.maxRange.adjustForScope()
+            strokeStyle = when (beam.status) {
+                is BeamStatus.Idle -> "#dc143c"
+                is BeamStatus.Recharging -> "#750b20"
+                is BeamStatus.Firing -> "#fb8532"
+            }
 
             save()
             translate(x, y)
