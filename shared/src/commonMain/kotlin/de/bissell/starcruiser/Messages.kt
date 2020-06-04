@@ -125,7 +125,7 @@ data class ContactMessage(
     val rotation: Double,
     val heading: Double,
     val velocity: Double,
-    val history: List<Pair<Double, Vector2>>
+    val beams: List<BeamMessage>
 ) : Positional
 
 @Serializable

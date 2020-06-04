@@ -165,7 +165,7 @@ class Ship(
             rotation = rotation,
             heading = rotation.toHeading(),
             velocity = speed.length(),
-            history = history.map { it.first to it.second }
+            beams = beamHandlers.map { it.toMessage() }
         )
 
     private fun canIncreaseScanLevel(targetId: ShipId) = getScanLevel(targetId).let { it != it.next() }

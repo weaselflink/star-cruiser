@@ -11,6 +11,8 @@ import kotlinx.coroutines.channels.actor
 import java.time.Instant
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit
+import kotlin.math.PI
+import kotlin.random.Random
 
 sealed class GameStateChange
 
@@ -88,7 +90,8 @@ class GameState {
 
     fun spawnShip() =
         Ship(
-            position = Vector2.random(300)
+            position = Vector2.random(300),
+            rotation = Random.nextDouble(PI * 2.0)
         ).also {
             it.addWaypoint(Vector2.random(1000, 500))
             it.addWaypoint(Vector2.random(1000, 500))

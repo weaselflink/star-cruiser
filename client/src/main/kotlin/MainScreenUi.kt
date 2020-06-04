@@ -10,6 +10,7 @@ import three.lights.DirectionalLight
 import three.loaders.CubeTextureLoader
 import three.loaders.GLTFLoader
 import three.math.Euler
+import three.math.Vector3
 import three.objects.Group
 import three.plusAssign
 import three.renderers.WebGLRenderer
@@ -34,14 +35,14 @@ class MainScreenUi {
         )
     )
     private val scene = Scene()
-    private val ownShip = ShipGroup().also { scene += it }
+    private val ownShip = ShipGroup().also { scene.add(it) }
     private val frontCamera = createFrontCamera().also { ownShip += it }
     private val topCamera = createTopCamera().also { ownShip += it }
     private var topView = false
 
     private val contactGroup = Object3D().also { scene += it }
     private var model: Group? = null
-    private val contactNodes = mutableMapOf<ShipId, Object3D>()
+    private val contactNodes = mutableMapOf<ShipId, ShipGroup>()
 
     init {
         resize()
@@ -87,7 +88,12 @@ class MainScreenUi {
     }
 
     private fun updateBeams(snapshot: SnapshotMessage.MainScreen) {
-        ownShip.updateBeams(snapshot)
+        ownShip.updateBeams(snapshot, snapshot.ship.beams)
+        contactNodes.forEach { node ->
+            snapshot.contacts.firstOrNull { it.id == node.key }?.let {
+                node.value.updateBeams(snapshot, it.beams)
+            }
+        }
     }
 
     fun toggleTopView() {
@@ -102,12 +108,10 @@ class MainScreenUi {
         contacts.filter {
             !contactNodes.containsKey(it.id)
         }.forEach {
-            Object3D().also { contactNode ->
+            ShipGroup().also { contactNode ->
                 contactNodes[it.id] = contactNode
                 contactGroup.add(contactNode)
-                model?.clone(true)?.also { contactModel ->
-                    contactNode.add(contactModel)
-                }
+                contactNode.model = model?.clone(true)
             }
         }
     }
@@ -192,60 +196,67 @@ class MainScreenUi {
             }
         )
     }
+}
+
+private class ShipGroup {
+
+    val rootNode = Object3D()
+    private val beamNodes = mutableListOf<Object3D>()
+
+    var model: Object3D? = null
+        set(value) {
+            field?.also { rootNode.remove(it) }
+            field = value?.also {
+                rootNode.add(it)
+            }
+        }
+
+    val position: Vector3
+        get() = rootNode.position
+
+    val rotation: Euler
+        get() = rootNode.rotation
+
+    operator fun plusAssign(value: Object3D) = rootNode.add(value)
+
+    fun updateBeams(
+        snapshot: SnapshotMessage.MainScreen,
+        beams: List<BeamMessage>
+    ) {
+        beamNodes.forEach {
+            rootNode.remove(it)
+        }
+        beamNodes.clear()
+
+        beams.filter {
+            it.status is BeamStatus.Firing
+        }.forEach { beamMessage ->
+            val relativePosition = snapshot.getTargetPosition(beamMessage.targetId) ?: return
+            val targetPosition = relativePosition.toWorld()
+
+            Object3D().apply {
+                beamNodes += this
+                rootNode += this
+
+                position.x = beamMessage.position.x
+                position.y = beamMessage.position.y
+                position.z = beamMessage.position.z
+                lookAt(targetPosition)
+            }.apply {
+                val distance = targetPosition.clone().sub(getWorldPosition(Vector3())).length()
+                add(LaserBeam(length = distance, width = 2.0).obj)
+            }
+        }
+    }
 
     private fun SnapshotMessage.MainScreen.getTargetPosition(targetId: ShipId?): Vector2? {
         return contacts.firstOrNull { it.id == targetId }?.relativePosition
             ?: if (ship.id == targetId) Vector2() else null
     }
-
-    inner class ShipGroup {
-
-        val rootNode = Object3D()
-        private val beamNodes = mutableListOf<Object3D>()
-
-        var model: Object3D? = null
-            set(value) {
-                field?.also { rootNode.remove(it) }
-                field = value?.also {
-                    rootNode.add(it)
-                }
-            }
-
-        val rotation: Euler
-            get() = rootNode.rotation
-
-        operator fun plusAssign(value: Object3D) = rootNode.add(value)
-
-        fun updateBeams(snapshot: SnapshotMessage.MainScreen) {
-            beamNodes.forEach {
-                rootNode.remove(it)
-            }
-            beamNodes.clear()
-
-            snapshot.ship.beams.filter {
-                it.status is BeamStatus.Firing
-            }.forEach { beamMessage ->
-                val relativePosition = snapshot.getTargetPosition(beamMessage.targetId) ?: return
-                val targetPosition = Vector3(-relativePosition.y, 0.0, -relativePosition.x)
-                val distance = (targetPosition - beamMessage.position).length()
-                Object3D().apply {
-                    beamNodes += this
-                    rootNode += this
-
-                    position.x = beamMessage.position.x
-                    position.y = beamMessage.position.y
-                    position.z = beamMessage.position.z
-                    lookAt(
-                        x = targetPosition.x,
-                        y = targetPosition.y,
-                        z = targetPosition.z
-                    )
-
-                    add(LaserBeam(length = distance, width = 2.0).obj)
-                }
-            }
-        }
-    }
-
-    private operator fun Object3D.plusAssign(shipGroup: ShipGroup) = add(shipGroup.rootNode)
 }
+
+private fun Vector2.toWorld() = Vector3(-y, 0.0, -x)
+
+private fun Object3D.add(shipGroup: ShipGroup) = add(shipGroup.rootNode)
+
+private fun Object3D.remove(shipGroup: ShipGroup) = remove(shipGroup.rootNode)

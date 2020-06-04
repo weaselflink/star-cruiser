@@ -3,7 +3,9 @@ package three
 import three.cameras.PerspectiveCamera
 import three.core.Object3D
 
-operator fun Object3D.plusAssign(obj: Object3D) = this.add(obj)
+operator fun Object3D.plusAssign(obj: Object3D) = add(obj)
+
+operator fun Object3D.minusAssign(obj: Object3D) = remove(obj)
 
 fun PerspectiveCamera.updateSize(width: Number, height: Number) {
     aspect = width.toDouble() / height.toDouble()
