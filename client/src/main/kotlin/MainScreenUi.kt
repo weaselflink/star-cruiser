@@ -34,13 +34,12 @@ class MainScreenUi {
         )
     )
     private val scene = Scene()
-    private val ownShip = ShipGroup().also { scene += it.rootNode }
+    private val ownShip = ShipGroup().also { scene += it }
     private val frontCamera = createFrontCamera().also { ownShip += it }
     private val topCamera = createTopCamera().also { ownShip += it }
     private var topView = false
 
     private val contactGroup = Object3D().also { scene += it }
-    private val beamGroup = Object3D().also { ownShip += it }
     private var model: Group? = null
     private val contactNodes = mutableMapOf<ShipId, Object3D>()
 
@@ -88,32 +87,7 @@ class MainScreenUi {
     }
 
     private fun updateBeams(snapshot: SnapshotMessage.MainScreen) {
-        beamGroup.remove(*beamGroup.children)
-
-        val lockProgress = snapshot.ship.lockProgress
-        if (lockProgress !is LockStatus.Locked) return
-        val target = snapshot.contacts.firstOrNull { it.id == lockProgress.targetId } ?: return
-        val targetPosition = Vector3(-target.relativePosition.y, 0.0, -target.relativePosition.x)
-
-        snapshot.ship.beams.filter {
-            it.status is BeamStatus.Firing
-        }.forEach { beamMessage ->
-            val distance = (targetPosition - beamMessage.position).length()
-            Object3D().apply {
-                beamGroup += this
-
-                position.x = beamMessage.position.x
-                position.y = beamMessage.position.y
-                position.z = beamMessage.position.z
-                lookAt(
-                    x = targetPosition.x,
-                    y = targetPosition.y,
-                    z = targetPosition.z
-                )
-
-                add(LaserBeam(length = distance, width = 2.0).obj)
-            }
-        }
+        ownShip.updateBeams(snapshot)
     }
 
     fun toggleTopView() {
@@ -219,9 +193,15 @@ class MainScreenUi {
         )
     }
 
+    private fun SnapshotMessage.MainScreen.getTargetPosition(targetId: ShipId?): Vector2? {
+        return contacts.firstOrNull { it.id == targetId }?.relativePosition
+            ?: if (ship.id == targetId) Vector2() else null
+    }
+
     inner class ShipGroup {
 
         val rootNode = Object3D()
+        private val beamNodes = mutableListOf<Object3D>()
 
         var model: Object3D? = null
             set(value) {
@@ -235,5 +215,37 @@ class MainScreenUi {
             get() = rootNode.rotation
 
         operator fun plusAssign(value: Object3D) = rootNode.add(value)
+
+        fun updateBeams(snapshot: SnapshotMessage.MainScreen) {
+            beamNodes.forEach {
+                rootNode.remove(it)
+            }
+            beamNodes.clear()
+
+            snapshot.ship.beams.filter {
+                it.status is BeamStatus.Firing
+            }.forEach { beamMessage ->
+                val relativePosition = snapshot.getTargetPosition(beamMessage.targetId) ?: return
+                val targetPosition = Vector3(-relativePosition.y, 0.0, -relativePosition.x)
+                val distance = (targetPosition - beamMessage.position).length()
+                Object3D().apply {
+                    beamNodes += this
+                    rootNode += this
+
+                    position.x = beamMessage.position.x
+                    position.y = beamMessage.position.y
+                    position.z = beamMessage.position.z
+                    lookAt(
+                        x = targetPosition.x,
+                        y = targetPosition.y,
+                        z = targetPosition.z
+                    )
+
+                    add(LaserBeam(length = distance, width = 2.0).obj)
+                }
+            }
+        }
     }
+
+    private operator fun Object3D.plusAssign(shipGroup: ShipGroup) = add(shipGroup.rootNode)
 }

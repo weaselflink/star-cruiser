@@ -198,7 +198,8 @@ data class BeamMessage(
     val maxRange: Double,
     val leftArc: Double,
     val rightArc: Double,
-    val status: BeamStatus = BeamStatus.Idle
+    val status: BeamStatus,
+    val targetId: ShipId?
 )
 
 @Serializable
@@ -213,7 +214,9 @@ sealed class BeamStatus {
     }
 
     @Serializable
-    data class Firing(val progress: Double = 0.0) : BeamStatus() {
+    data class Firing(
+        val progress: Double = 0.0
+    ) : BeamStatus() {
         fun update(change: Double) = copy(progress = progress + change)
     }
 }
