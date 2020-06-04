@@ -4,6 +4,7 @@ import de.bissell.starcruiser.ships.Ship
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
@@ -18,6 +19,17 @@ class ShipTest {
         update(Instant.EPOCH)
     }
     private val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
+
+    @BeforeEach
+    fun setUp() {
+        every {
+            physicsEngine.getShipStats(ship.id)
+        } returns ShipParameters(
+            position = Vector2(3, -4),
+            speed = Vector2(),
+            rotation = 0.0
+        )
+    }
 
     @Test
     fun `updates positive thrust`() {
@@ -155,7 +167,7 @@ class ShipTest {
             rotation = 5.0
         )
 
-        ship.update(time, physicsEngine)
+        ship.update(time, physicsEngine) { null }
 
         ship.toMessage().also {
             expectThat(it.position).isEqualTo(Vector2(1, 2))
@@ -168,7 +180,7 @@ class ShipTest {
     fun `updates target lock`() {
         val target = Ship()
 
-        ship.update(time, physicsEngine)
+        ship.update(time, physicsEngine) { target }
 
         expectThat(ship.toMessage().lockProgress).isA<LockStatus.NoLock>()
 
@@ -184,28 +196,54 @@ class ShipTest {
 
     @Test
     fun `updates beams`() {
-        val target = Ship()
-
-        stepTimeTo(1)
-
-        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
+        val target = Ship(
+            position = Vector2(100, 0)
+        )
 
         ship.lockTarget(target.id)
-        stepTimeTo(8)
-
+        stepTimeTo(10)
         expectThat(ship.toMessage().lockProgress).isA<LockStatus.Locked>()
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
-        stepTimeTo(8.5)
-
+        stepTimeTo(10.5) { target }
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Firing>()
 
-        stepTimeTo(10)
-
+        stepTimeTo(12) { target }
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Recharging>()
     }
 
-    private fun stepTimeTo(seconds: Number) {
+    @Test
+    fun `does not fire if target outside arc`() {
+        val target = Ship(
+            position = Vector2(0, 100)
+        )
+
+        ship.lockTarget(target.id)
+        stepTimeTo(10)
+        expectThat(ship.toMessage().lockProgress).isA<LockStatus.Locked>()
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
+
+        stepTimeTo(10.5) { target }
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
+    }
+
+    @Test
+    fun `does not fire if target outside range`() {
+        val target = Ship(
+            position = Vector2(ship.template.beams.first().range.last + 100, 0)
+        )
+
+        ship.lockTarget(target.id)
+        stepTimeTo(10)
+        expectThat(ship.toMessage().lockProgress).isA<LockStatus.Locked>()
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
+
+        stepTimeTo(10.5) { target }
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
+    }
+
+    private fun stepTimeTo(seconds: Number, shipProvider: (ShipId) -> Ship? = { null }) {
         time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
-        ship.update(time, physicsEngine)
+        ship.update(time, physicsEngine, shipProvider)
     }
 }

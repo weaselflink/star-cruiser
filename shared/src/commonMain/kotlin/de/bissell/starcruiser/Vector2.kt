@@ -1,6 +1,7 @@
 package de.bissell.starcruiser
 
 import kotlinx.serialization.Serializable
+import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -52,6 +53,8 @@ data class Vector2(
         } else {
             this * (1.0 / length())
         }
+
+    fun angle() = atan2(y, x)
 
     companion object {
         fun random(maxLength: Number, minLength: Number = 0.001) =

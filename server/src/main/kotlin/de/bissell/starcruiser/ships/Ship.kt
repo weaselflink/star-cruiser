@@ -1,7 +1,25 @@
 package de.bissell.starcruiser.ships
 
-import de.bissell.starcruiser.*
-import java.util.*
+import de.bissell.starcruiser.BeamMessage
+import de.bissell.starcruiser.BeamStatus
+import de.bissell.starcruiser.ContactMessage
+import de.bissell.starcruiser.ContactType
+import de.bissell.starcruiser.GameTime
+import de.bissell.starcruiser.LockStatus
+import de.bissell.starcruiser.PhysicsEngine
+import de.bissell.starcruiser.PlayerShipMessage
+import de.bissell.starcruiser.ScanLevel
+import de.bissell.starcruiser.ScanProgress
+import de.bissell.starcruiser.ScopeContactMessage
+import de.bissell.starcruiser.ShipId
+import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.Vector2
+import de.bissell.starcruiser.WaypointMessage
+import de.bissell.starcruiser.clamp
+import de.bissell.starcruiser.randomShipName
+import de.bissell.starcruiser.toHeading
+import de.bissell.starcruiser.toRadians
+import java.util.UUID
 import kotlin.math.abs
 
 class Ship(
@@ -23,8 +41,8 @@ class Ship(
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
 
-    fun update(time: GameTime, physicsEngine: PhysicsEngine) {
-        beamHandlers.forEach { it.update(time) }
+    fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ShipId) -> Ship?) {
+        beamHandlers.forEach { it.update(time, shipProvider) }
         updateScan(time)
         updateLock(time)
         updateThrust(time)
@@ -186,8 +204,6 @@ class Ship(
             false
         }
 
-    private fun hasActiveLock() = lockHandler?.isComplete == true
-
     private inner class ScanHandler(
         val targetId: ShipId,
         private var progress: Double = 0.0
@@ -248,15 +264,15 @@ class Ship(
         private var status: BeamStatus = BeamStatus.Idle
     ) {
 
-        fun update(time: GameTime) {
+        fun update(time: GameTime, shipProvider: (ShipId) -> Ship?) {
             when (val current = status) {
-                is BeamStatus.Idle -> if (hasActiveLock()) {
+                is BeamStatus.Idle -> if (isLockedTargetInRange(shipProvider)) {
                     status = BeamStatus.Firing()
                 }
                 is BeamStatus.Recharging -> {
                     status = current.update(time.delta * beamWeapon.rechargeSpeed).let {
                         if (it.progress >= 1.0) {
-                            if (hasActiveLock()) {
+                            if (isLockedTargetInRange(shipProvider)) {
                                 BeamStatus.Firing()
                             } else {
                                 BeamStatus.Idle
@@ -281,6 +297,15 @@ class Ship(
                 rightArc = beamWeapon.rightArc.toDouble(),
                 status = status
             )
+
+        private fun isLockedTargetInRange(shipProvider: (ShipId) -> Ship?) =
+            lockHandler?.targetId
+                ?.let(shipProvider)
+                ?.toScopeContactMessage(this@Ship)
+                ?.relativePosition
+                ?.rotate(-this@Ship.rotation)
+                ?.let { beamWeapon.isInRange(it) }
+                ?: false
     }
 
     companion object {

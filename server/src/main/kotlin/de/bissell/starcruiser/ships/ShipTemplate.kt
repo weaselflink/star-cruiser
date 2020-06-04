@@ -1,6 +1,8 @@
 package de.bissell.starcruiser.ships
 
+import de.bissell.starcruiser.Vector2
 import de.bissell.starcruiser.Vector3
+import de.bissell.starcruiser.toRadians
 
 data class ShipTemplate(
     val className: String = "Infector",
@@ -40,5 +42,15 @@ data class BeamWeapon(
     val rightArc: Int = -45,
     val rechargeSpeed: Double = 0.2,
     val firingSpeed: Double = 1.0
+) {
 
-)
+    fun isInRange(relativePosition: Vector2): Boolean {
+        val pos = relativePosition - Vector2(-position.z, position.x)
+        val distance = pos.length()
+        if (distance < range.first || distance > range.last) {
+            return false
+        }
+        val angle = pos.angle()
+        return angle <= leftArc.toRadians() && angle >= rightArc.toRadians()
+    }
+}
