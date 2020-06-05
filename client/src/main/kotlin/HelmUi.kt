@@ -25,8 +25,8 @@ class HelmUi {
     private val shortRangeScope = ShortRangeScope(canvas)
     private val throttleSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { it.vmin * 5 },
-        yExpr = { it.min - it.vmin * 5 },
+        xExpr = { max(it.vmin * 5, (it.width - it.min) * 0.5 - it.vmin * 7) },
+        yExpr = { it.height - it.vmin * 5 },
         widthExpr = { it.vmin * 8 },
         heightExpr = { it.vmin * 40 },
         onChange = {
@@ -38,8 +38,8 @@ class HelmUi {
     )
     private val rudderSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { it.min - it.vmin * 5 - it.vmin * 40 },
-        yExpr = { it.min - it.vmin * 5 },
+        xExpr = { min(it.width - it.vmin * 45, it.width - (it.width - it.min) * 0.5 - it.min * 0.2) },
+        yExpr = { it.height - it.vmin * 5 },
         widthExpr = { it.vmin * 40 },
         heightExpr = { it.vmin * 8 },
         onChange = {
@@ -58,7 +58,7 @@ class HelmUi {
     }
 
     fun resize() {
-        canvas.updateSize(square = true)
+        canvas.updateSize()
     }
 
     fun show() {

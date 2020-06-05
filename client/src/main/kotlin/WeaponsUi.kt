@@ -26,7 +26,7 @@ class WeaponsUi {
     }
 
     fun resize() {
-        canvas.updateSize(square = true)
+        canvas.updateSize()
     }
 
     fun show() {
