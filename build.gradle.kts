@@ -10,7 +10,7 @@ plugins {
 
 allprojects {
     group = "de.bissell.starcruiser"
-    version = "0.8.0"
+    version = "0.9.0"
 
     apply(plugin = "com.github.ben-manes.versions")
 }
