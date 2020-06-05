@@ -7,13 +7,17 @@ import three.math.Vector3
 
 open external class Object3D {
 
+    var id: Number
     var name: String
+
+    var parent: Object3D?
+    var children: Array<Object3D>
 
     val position: Vector3
     val rotation: Euler
     val scale: Vector3
 
-    var children: Array<Object3D>
+    var layers: Layers
 
     fun add(vararg obj: Object3D)
 
