@@ -31,9 +31,7 @@ import kotlinx.html.head
 import kotlinx.html.id
 import kotlinx.html.link
 import kotlinx.html.meta
-import kotlinx.html.p
 import kotlinx.html.script
-import kotlinx.html.span
 
 fun Routing.webUi() {
     static("/js") {
@@ -89,12 +87,6 @@ fun Routing.webUi() {
                 }
                 ".topRightInfo" {
                     right = 0.px
-                }
-                ".info" {
-                    position = fixed
-                    bottom = 0.px
-                    zIndex = 10
-                    padding = 20.px.value
                 }
                 ".playerShips" {
                     display = grid
@@ -252,15 +244,6 @@ private fun BODY.helmUi() {
     div {
         id = "helm-ui"
         canvas {}
-        div(classes = "info") {
-            p {
-                +"Velocity: "
-                span {
-                    id = "velocity"
-                    +"unknown"
-                }
-            }
-        }
     }
 }
 

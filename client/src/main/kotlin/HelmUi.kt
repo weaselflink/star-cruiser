@@ -3,7 +3,6 @@ import components.ShortRangeScope
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.format
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -80,7 +79,6 @@ class HelmUi {
     fun draw(snapshot: SnapshotMessage.Helm) {
         val ship = snapshot.ship
 
-        updateInfo(ship)
         ctx.draw(snapshot, ship)
     }
 
@@ -92,10 +90,6 @@ class HelmUi {
 
         drawThrottle(ship)
         drawRudder(ship)
-    }
-
-    private fun updateInfo(ship: ShipMessage) {
-        document.getElementById("velocity")!!.innerHTML = ship.velocity.format(1)
     }
 
     private fun drawThrottle(ship: ShipMessage) =
