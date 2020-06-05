@@ -13,10 +13,11 @@ import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-class NavigationUi {
+class NavigationUi : StationUi {
+
+    override val station = Station.Navigation
 
     private val gridSize = 1000.0
-
     private val root = document.getElementById("navigation-ui")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
@@ -50,11 +51,11 @@ class NavigationUi {
         mouseEventDispatcher.addHandler(MapMouseEventHandler())
     }
 
-    fun show() {
+    override fun show() {
         root.style.visibility = "visible"
     }
 
-    fun hide() {
+    override fun hide() {
         root.style.visibility = "hidden"
     }
 

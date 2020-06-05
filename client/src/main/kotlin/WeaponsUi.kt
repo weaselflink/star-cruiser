@@ -2,6 +2,7 @@ import components.ShortRangeScope
 import de.bissell.starcruiser.Command.CommandLockTarget
 import de.bissell.starcruiser.ShipId
 import de.bissell.starcruiser.SnapshotMessage
+import de.bissell.starcruiser.Station
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -10,7 +11,9 @@ import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.dom.removeClass
 
-class WeaponsUi {
+class WeaponsUi : StationUi {
+
+    override val station = Station.Weapons
 
     private val root = document.getElementById("weapons-ui")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
@@ -29,11 +32,11 @@ class WeaponsUi {
         canvas.updateSize()
     }
 
-    fun show() {
+    override fun show() {
         root.style.visibility = "visible"
     }
 
-    fun hide() {
+    override fun hide() {
         root.style.visibility = "hidden"
     }
 

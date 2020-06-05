@@ -3,6 +3,7 @@ import components.ShortRangeScope
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
+import de.bissell.starcruiser.Station
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -14,7 +15,9 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class HelmUi {
+class HelmUi : StationUi {
+
+    override val station = Station.Helm
 
     private val root = document.getElementById("helm-ui")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
@@ -60,11 +63,11 @@ class HelmUi {
         canvas.updateSize()
     }
 
-    fun show() {
+    override fun show() {
         root.style.visibility = "visible"
     }
 
-    fun hide() {
+    override fun hide() {
         root.style.visibility = "hidden"
     }
 

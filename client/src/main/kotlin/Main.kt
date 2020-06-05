@@ -12,6 +12,7 @@ lateinit var navigationUi: NavigationUi
 lateinit var mainScreenUi: MainScreenUi
 var clientSocket: WebSocket? = null
 var state: GameStateMessage? = null
+lateinit var stationUiSwitcher: StationUiSwitcher
 
 fun main() {
     window.onload = { init() }
@@ -19,10 +20,20 @@ fun main() {
 
 fun init() {
     joinUi = JoinUi().apply { show() }
-    helmUi = HelmUi().apply { hide() }
-    weaponsUi = WeaponsUi().apply { hide() }
-    navigationUi = NavigationUi().apply { hide() }
-    mainScreenUi = MainScreenUi().apply { hide() }
+
+    helmUi = HelmUi()
+    weaponsUi = WeaponsUi()
+    navigationUi = NavigationUi()
+    mainScreenUi = MainScreenUi()
+    stationUiSwitcher = StationUiSwitcher(
+        listOf(
+            helmUi,
+            weaponsUi,
+            navigationUi,
+            mainScreenUi
+        )
+    )
+
     commonShipUi = CommonShipUi().apply {
         hide()
         addExtraButtons(
@@ -148,10 +159,7 @@ fun drawUi(stateCopy: GameStateMessage) {
     when (val snapshot = stateCopy.snapshot) {
         is SnapshotMessage.ShipSelection -> {
             commonShipUi.hide()
-            helmUi.hide()
-            weaponsUi.hide()
-            navigationUi.hide()
-            mainScreenUi.hide()
+            stationUiSwitcher.switchTo(null)
             joinUi.apply {
                 show()
                 draw(snapshot)
@@ -164,54 +172,56 @@ fun drawUi(stateCopy: GameStateMessage) {
 }
 
 fun drawShipUi(snapshot: SnapshotMessage.ShipSnapshot) {
+    joinUi.hide()
     commonShipUi.apply {
         show()
         draw(snapshot)
     }
     when (snapshot) {
         is SnapshotMessage.Helm -> {
-            joinUi.hide()
-            weaponsUi.hide()
-            navigationUi.hide()
-            mainScreenUi.hide()
-            helmUi.apply {
-                show()
-                draw(snapshot)
-            }
+            stationUiSwitcher.switchTo(Station.Helm)
+            helmUi.draw(snapshot)
         }
         is SnapshotMessage.Weapons -> {
-            joinUi.hide()
-            helmUi.hide()
-            navigationUi.hide()
-            mainScreenUi.hide()
-            weaponsUi.apply {
-                show()
-                draw(snapshot)
-            }
+            stationUiSwitcher.switchTo(Station.Weapons)
+            weaponsUi.draw(snapshot)
         }
         is SnapshotMessage.Navigation -> {
-            helmUi.hide()
-            weaponsUi.hide()
-            joinUi.hide()
-            mainScreenUi.hide()
-            navigationUi.apply {
-                show()
-                draw(snapshot)
-            }
+            stationUiSwitcher.switchTo(Station.Navigation)
+            navigationUi.draw(snapshot)
         }
         is SnapshotMessage.MainScreen -> {
-            helmUi.hide()
-            weaponsUi.hide()
-            joinUi.hide()
-            navigationUi.hide()
-            mainScreenUi.apply {
-                show()
-                draw(snapshot)
-            }
+            stationUiSwitcher.switchTo(Station.MainScreen)
+            mainScreenUi.draw(snapshot)
         }
     }
 }
 
 fun WebSocket?.send(command: Command) {
     this?.send(command.toJson())
+}
+
+interface StationUi {
+    val station: Station
+    fun show()
+    fun hide()
+}
+
+class StationUiSwitcher(
+    private val stations: List<StationUi>
+) {
+
+    init {
+        stations.forEach { it.hide() }
+    }
+
+    fun switchTo(station: Station?) {
+        stations.forEach {
+            if (it.station == station) {
+                it.show()
+            } else {
+                it.hide()
+            }
+        }
+    }
 }

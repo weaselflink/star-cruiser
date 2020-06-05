@@ -1,4 +1,5 @@
 import de.bissell.starcruiser.SnapshotMessage
+import de.bissell.starcruiser.Station
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
@@ -9,7 +10,9 @@ import kotlin.browser.window
 import kotlin.dom.addClass
 import kotlin.dom.removeClass
 
-class MainScreenUi {
+class MainScreenUi : StationUi {
+
+    override val station = Station.MainScreen
 
     private val root = document.getElementById("main-screen-ui")!! as HTMLElement
     private val topViewButton = document.querySelector(".topView")!! as HTMLButtonElement
@@ -35,11 +38,11 @@ class MainScreenUi {
         mainScene.updateSize(windowWidth, windowHeight)
     }
 
-    fun show() {
+    override fun show() {
         root.style.visibility = "visible"
     }
 
-    fun hide() {
+    override fun hide() {
         root.style.visibility = "hidden"
     }
 
