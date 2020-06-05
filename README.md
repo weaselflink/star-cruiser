@@ -1,5 +1,5 @@
 
-![](https://github.com/weaselflink/star-cruiser/workflows/CI%20with%20Gradle/badge.svg)
+![](https://github.com/weaselflink/star-cruiser/workflows/CI%20with%20Gradle/badge.svg?style=flat-square) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/weaselflink/star-cruiser?style=flat-square)
 
 ## Star Cruiser Crew Simulator
 
