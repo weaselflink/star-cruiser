@@ -17,6 +17,8 @@ import three.updateSize
 import kotlin.browser.window
 import kotlin.math.PI
 
+private const val shieldRadius = 17.0
+
 class MainScene {
 
     val scene = Scene()
@@ -24,6 +26,7 @@ class MainScene {
     private val ownShip = ShipGroup().also { scene.add(it) }
     private val contactGroup = Object3D().also { scene += it }
     private var model: Group? = null
+    private var shieldModel: Group? = null
     private val contactNodes = mutableMapOf<ShipId, ShipGroup>()
 
     val frontCamera = createFrontCamera().also { ownShip += it }
@@ -33,6 +36,7 @@ class MainScene {
         createLights()
         loadBackground()
         loadShipModel()
+        loadShieldModel()
     }
 
     fun updateSize(windowWidth: Int, windowHeight: Int) {
@@ -53,10 +57,24 @@ class MainScene {
     }
 
     private fun updateBeams(snapshot: SnapshotMessage.MainScreen) {
+        ownShip.hideShield()
+        contactNodes.values.forEach { it.hideShield() }
+
         ownShip.updateBeams(snapshot, snapshot.ship.beams)
+        snapshot.ship.beams.filter {
+            it.status is BeamStatus.Firing
+        }.map {
+            snapshot.getTarget(it.targetId)?.showShield()
+        }
+
         contactNodes.forEach { node ->
-            snapshot.contacts.firstOrNull { it.id == node.key }?.let {
-                node.value.updateBeams(snapshot, it.beams)
+            snapshot.contacts.firstOrNull { it.id == node.key }?.let { contact ->
+                node.value.updateBeams(snapshot, contact.beams)
+                contact.beams.filter {
+                    it.status is BeamStatus.Firing
+                }.map {
+                    snapshot.getTarget(it.targetId)?.showShield()
+                }
             }
         }
     }
@@ -69,6 +87,7 @@ class MainScene {
                 contactNodes[it.id] = contactNode
                 contactGroup.add(contactNode)
                 contactNode.model = model?.clone(true)
+                contactNode.shieldModel = shieldModel?.clone(true)
             }
         }
     }
@@ -154,6 +173,26 @@ class MainScene {
         )
     }
 
+    private fun loadShieldModel() {
+        GLTFLoader().load(
+            url = "/assets/ships/shield.glb",
+            onLoad = { gltf ->
+                shieldModel = gltf.scene.also {
+                    it.scale.x = shieldRadius
+                    it.scale.y = shieldRadius
+                    it.scale.z = shieldRadius
+                    it.debugPrint()
+                }
+                shieldModel?.clone(true)?.also {
+                    ownShip.shieldModel = it
+                }
+            }
+        )
+    }
+
+    private fun SnapshotMessage.MainScreen.getTarget(targetId: ShipId?): ShipGroup? =
+        contactNodes[targetId] ?: if (ship.id == targetId) ownShip else null
+
     private fun Object3D.add(shipGroup: ShipGroup) = add(shipGroup.rootNode)
 
     private fun Object3D.remove(shipGroup: ShipGroup) = remove(shipGroup.rootNode)
@@ -172,6 +211,15 @@ class ShipGroup {
             }
         }
 
+    var shieldModel: Object3D? = null
+        set(value) {
+            field?.also { rootNode.remove(it) }
+            field = value?.also {
+                it.visible = false
+                rootNode.add(it)
+            }
+        }
+
     val position: Vector3
         get() = rootNode.position
 
@@ -179,6 +227,14 @@ class ShipGroup {
         get() = rootNode.rotation
 
     operator fun plusAssign(value: Object3D) = rootNode.add(value)
+
+    fun showShield() {
+        shieldModel?.visible = true
+    }
+
+    fun hideShield() {
+        shieldModel?.visible = false
+    }
 
     fun updateBeams(
         snapshot: SnapshotMessage.MainScreen,
@@ -204,7 +260,7 @@ class ShipGroup {
                 position.z = beamMessage.position.z
                 lookAt(targetPosition)
             }.apply {
-                val distance = targetPosition.clone().sub(getWorldPosition(Vector3())).length()
+                val distance = targetPosition.clone().sub(getWorldPosition(Vector3())).length() - shieldRadius
                 add(LaserBeam(length = distance, width = 2.0).obj)
             }
         }

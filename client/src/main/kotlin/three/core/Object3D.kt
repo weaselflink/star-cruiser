@@ -18,6 +18,7 @@ open external class Object3D {
     val scale: Vector3
 
     var layers: Layers
+    var visible: Boolean
 
     fun add(vararg obj: Object3D)
 
