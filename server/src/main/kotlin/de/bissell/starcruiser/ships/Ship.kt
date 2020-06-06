@@ -97,6 +97,7 @@ class Ship(
         }?.also {
             waypoints += Waypoint(it, position)
         }
+        waypoints.sortBy { it.index }
     }
 
     fun deleteWaypoint(index: Int) {

@@ -20,6 +20,7 @@ import translateToCenter
 import unknownContactStyle
 import wayPointStyle
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.roundToInt
 
@@ -203,12 +204,13 @@ class ShortRangeScope(
         save()
         wayPointStyle(dim)
 
+        val waypointConflictHandler = WaypointConflictHandler()
         for (waypoint in ship.waypoints) {
             val distance = waypoint.relativePosition.length()
             if (distance < shortRangeScopeRange * 0.9) {
                 drawOnScopeWaypoint(waypoint)
             } else {
-                drawOffScopeWaypoint(waypoint)
+                drawOffScopeWaypoint(waypoint, waypointConflictHandler)
             }
         }
         restore()
@@ -233,7 +235,8 @@ class ShortRangeScope(
     }
 
     private fun CanvasRenderingContext2D.drawOffScopeWaypoint(
-        waypoint: WaypointMessage
+        waypoint: WaypointMessage,
+        waypointConflictHandler: WaypointConflictHandler
     ) {
         val rel = waypoint.relativePosition
         val angle = atan2(rel.y, rel.x)
@@ -247,7 +250,8 @@ class ShortRangeScope(
         closePath()
         stroke()
 
-        translate(0.0, -scopeRadius + scopeRadius * 0.14)
+        val offset = waypointConflictHandler.addWaypoint(angle)
+        translate(0.0, -scopeRadius + dim.vmin * 7 + dim.vmin * 2.8 * offset)
         fillText(waypoint.name, 0.0, 0.0)
 
         restore()
@@ -388,4 +392,17 @@ class ShortRangeScope(
 
     private val shortRangeScopeRange
         get() = ship?.shortRangeScopeRange ?: 100.0
+
+    private inner class WaypointConflictHandler {
+        private val added = mutableListOf<Pair<Double, Int>>()
+
+        fun addWaypoint(angle: Double): Int {
+            val offsets = added
+                .filter { abs(it.first - angle) < PI / 20 }
+                .map { it.second }
+            val freeOffset = (0..offsets.size + 1).first { !offsets.contains(it) }
+            added += angle to freeOffset
+            return freeOffset
+        }
+    }
 }
