@@ -97,8 +97,8 @@ class ShipTest {
         ship.addWaypoint(Vector2(15, -4))
 
         expectThat(ship.toMessage().waypoints).containsExactly(
-            WaypointMessage(2, "WP2", Vector2(10, -4), Vector2(7, 0)),
-            WaypointMessage(1, "WP1", Vector2(15, -4), Vector2(12, 0))
+            WaypointMessage(1, "WP1", Vector2(15, -4), Vector2(12, 0)),
+            WaypointMessage(2, "WP2", Vector2(10, -4), Vector2(7, 0))
         )
     }
 
