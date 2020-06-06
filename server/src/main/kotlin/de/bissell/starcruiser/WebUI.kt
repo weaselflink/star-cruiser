@@ -103,7 +103,9 @@ fun Routing.webUi() {
                     borderColor = darkGrey
                     cursor = pointer
                     fontWeight = bold
-                    fontSize = 16.px
+                    fontSize = 3.vmin
+                    paddingTop = 1.vmin
+                    paddingBottom = 1.5.vmin
                 }
                 "button.current" {
                     color = black
@@ -114,24 +116,22 @@ fun Routing.webUi() {
                     backgroundColor = darkGrey
                 }
                 "button.leftEdge" {
-                    paddingTop = 10.px
-                    paddingRight = 16.px
-                    paddingBottom = 12.px
-                    paddingLeft = 10.px
+                    paddingRight = 3.vmin
+                    paddingLeft = 2.vmin
                     borderTopLeftRadius = 0.px
-                    borderTopRightRadius = 21.px
-                    borderBottomRightRadius = 21.px
+                    borderTopRightRadius = 4.vmin
+                    borderBottomRightRadius = 4.vmin
                     borderBottomLeftRadius = 0.px
                 }
                 "button.rightEdge" {
-                    paddingTop = 10.px
-                    paddingRight = 10.px
-                    paddingBottom = 12.px
-                    paddingLeft = 16.px
-                    borderTopLeftRadius = 21.px
+                    paddingTop = 1.vmin
+                    paddingRight = 2.vmin
+                    paddingBottom = 1.5.vmin
+                    paddingLeft = 3.vmin
+                    borderTopLeftRadius = 4.vmin
                     borderTopRightRadius = 0.px
                     borderBottomRightRadius = 0.px
-                    borderBottomLeftRadius = 21.px
+                    borderBottomLeftRadius = 4.vmin
                 }
                 "button:hover" {
                     color = black
