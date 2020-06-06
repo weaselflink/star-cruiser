@@ -73,7 +73,7 @@ fun Routing.webUi() {
                     zIndex = 10
                     padding = 20.px.value
                 }
-                ".topLeftInfo, .topRightInfo" {
+                ".topLeftButtons, .topRightButtons" {
                     position = fixed
                     display = grid
                     gap = Gap(10.px.value)
@@ -82,10 +82,10 @@ fun Routing.webUi() {
                     zIndex = 10
                     padding(20.px, 0.px)
                 }
-                ".topLeftInfo" {
+                ".topLeftButtons" {
                     left = 0.px
                 }
-                ".topRightInfo" {
+                ".topRightButtons" {
                     right = 0.px
                 }
                 ".playerShips" {
@@ -185,7 +185,7 @@ fun Routing.webUi() {
 private fun BODY.joinUi() {
     div {
         id = "join-ui"
-        div(classes = "topLeftInfo") {
+        div(classes = "topLeftButtons") {
             button(classes = "spawn leftEdge") {
                 +"+ Spawn ship"
             }
@@ -197,7 +197,7 @@ private fun BODY.joinUi() {
 private fun BODY.commonShipUi() {
     div {
         id = "common-ship-ui"
-        div(classes = "topLeftInfo") {
+        div(classes = "topLeftButtons") {
             button(classes = "exit leftEdge") {
                 +"Exit ship"
             }
@@ -223,7 +223,7 @@ private fun BODY.commonShipUi() {
                 +"Top view"
             }
         }
-        div(classes = "topRightInfo") {
+        div(classes = "topRightButtons") {
             button(classes = "current switchToHelm rightEdge") {
                 +"Helm"
             }
