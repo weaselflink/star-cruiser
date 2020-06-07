@@ -27,7 +27,7 @@ import kotlin.math.roundToInt
 class ShortRangeScope(
     private val canvas: HTMLCanvasElement,
     private val showLocks: Boolean = false,
-    private val clickListener: ((ShipId) -> Unit)? = null
+    private val scopeClickListener: ((ShipId) -> Unit)? = null
 ) {
 
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
@@ -57,7 +57,7 @@ class ShortRangeScope(
     }
 
     private fun scopeClicked(mouseEvent: MouseEvent) {
-        if (clickListener == null) return
+        if (scopeClickListener == null) return
 
         val mouseOnScope = mouseEvent.adjustForScope()
 
@@ -68,7 +68,7 @@ class ShortRangeScope(
         }.minBy {
             it.second
         }?.also {
-            clickListener.invoke(it.first.id)
+            scopeClickListener.invoke(it.first.id)
         }
     }
 

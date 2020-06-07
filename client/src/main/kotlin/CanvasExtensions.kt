@@ -147,6 +147,16 @@ fun CanvasRenderingContext2D.lockMarkerStyle(dim: CanvasDimensions) {
     lineJoin = CanvasLineJoin.ROUND
 }
 
+fun CanvasRenderingContext2D.selectionMarkerStyle(dim: CanvasDimensions) {
+    strokeStyle = "#888"
+    fillStyle = "#888"
+    lineWidth = dim.vmin * 0.3
+    val textSize = (dim.vmin * 3).toInt()
+    font = "bold ${textSize.px} sans-serif"
+    textAlign = CanvasTextAlign.CENTER
+    lineJoin = CanvasLineJoin.ROUND
+}
+
 fun HTMLCanvasElement.updateSize(square: Boolean = false) {
     val windowWidth = window.innerWidth
     val windowHeight = window.innerHeight

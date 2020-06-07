@@ -1,14 +1,13 @@
 import components.CanvasSlider
+import components.MapClick
 import components.NavigationMap
 import de.bissell.starcruiser.Command.*
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
-import de.bissell.starcruiser.Vector2
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
-import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.dom.removeClass
@@ -19,7 +18,7 @@ class NavigationUi : StationUi {
 
     private val root = document.getElementById("navigation-ui")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
-    private val navigationMap = NavigationMap(canvas)
+    private val navigationMap = NavigationMap(canvas) { handleMapClick(it) }
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val mouseEventDispatcher = MouseEventDispatcher(canvas)
     private val addWaypointButton = document.querySelector(".addWaypoint")!! as HTMLButtonElement
@@ -40,7 +39,7 @@ class NavigationUi : StationUi {
     init {
         resize()
         mouseEventDispatcher.addHandler(zoomSlider)
-        mouseEventDispatcher.addHandler(MapMouseEventHandler())
+        mouseEventDispatcher.addHandler(navigationMap.MapMouseEventHandler())
     }
 
     override fun show() {
@@ -118,45 +117,28 @@ class NavigationUi : StationUi {
     private fun drawZoom() =
         zoomSlider.draw(1.0 - navigationMap.scaleSetting / 6.0)
 
-    inner class MapMouseEventHandler : MouseEventHandler {
-
-        private var lastEvent: Vector2? = null
-
-        override fun handleMouseDown(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-            when (buttonState) {
-                ButtonState.AddWaypoint -> {
-                    clientSocket.send(CommandAddWaypoint(navigationMap.toWorld(mouseEvent)))
-                    addWaypointButton.removeClass("current")
+    private fun handleMapClick(mapClick: MapClick) {
+        when (buttonState) {
+            ButtonState.Initial -> navigationMap.selectedContact = mapClick.contact
+            ButtonState.AddWaypoint -> {
+                clientSocket.send(CommandAddWaypoint(mapClick.world))
+                addWaypointButton.removeClass("current")
+                buttonState = ButtonState.Initial
+            }
+            ButtonState.DeleteWaypoint -> {
+                mapClick.waypoint?.also {
+                    clientSocket.send(CommandDeleteWaypoint(it.index))
+                    deleteWaypointButton.removeClass("current")
                     buttonState = ButtonState.Initial
                 }
-                ButtonState.DeleteWaypoint -> {
-                    navigationMap.getNearestWaypoint(mouseEvent)?.also {
-                        clientSocket.send(CommandDeleteWaypoint(it.index))
-                        deleteWaypointButton.removeClass("current")
-                        buttonState = ButtonState.Initial
-                    }
-                }
-                ButtonState.ScanShip -> {
-                    navigationMap.getNearestContact(mouseEvent)?.also {
-                        clientSocket.send(CommandScanShip(it.id))
-                        scanShipButton.removeClass("current")
-                        buttonState = ButtonState.Initial
-                    }
-                }
-                else -> lastEvent = Vector2(mouseEvent.offsetX, mouseEvent.offsetY)
             }
-        }
-
-        override fun handleMouseMove(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-            val currentEvent = Vector2(mouseEvent.offsetX, mouseEvent.offsetY)
-            lastEvent?.let {
-                navigationMap.center += navigationMap.convert(currentEvent - it)
+            ButtonState.ScanShip -> {
+                mapClick.contact?.also {
+                    clientSocket.send(CommandScanShip(it.id))
+                    scanShipButton.removeClass("current")
+                    buttonState = ButtonState.Initial
+                }
             }
-            lastEvent = currentEvent
-        }
-
-        override fun handleMouseUp(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-            lastEvent = null
         }
     }
 
@@ -166,5 +148,4 @@ class NavigationUi : StationUi {
         DeleteWaypoint,
         ScanShip
     }
-
 }

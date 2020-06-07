@@ -1,10 +1,12 @@
 package components
 
 import CanvasDimensions
+import MouseEventHandler
 import circle
 import clear
 import de.bissell.starcruiser.*
 import dimensions
+import drawLockMarker
 import drawShipSymbol
 import friendlyContactStyle
 import lineTo
@@ -13,6 +15,7 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.MouseEvent
 import scanProgressStyle
+import selectionMarkerStyle
 import shipStyle
 import translate
 import translateToCenter
@@ -23,7 +26,8 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 
 class NavigationMap(
-    private val canvas: HTMLCanvasElement
+    private val canvas: HTMLCanvasElement,
+    private val mapClickListener: (MapClick) -> Unit = {}
 ) {
 
     private val gridSize = 1000.0
@@ -36,6 +40,7 @@ class NavigationMap(
         private set
     private val scale: Double
         get() = 4.0 / 2.0.pow(scaleSetting.toDouble())
+    var selectedContact: ContactMessage? = null
 
     private var contacts: List<ContactMessage> = emptyList()
     private var waypoints: List<WaypointMessage> = emptyList()
@@ -66,6 +71,7 @@ class NavigationMap(
             drawHistory(ship)
             drawWaypoints(ship)
             drawContacts(snapshot)
+            drawSelectedMarker()
             drawShip(ship)
             drawScanProgress(ship)
         }
@@ -110,6 +116,17 @@ class NavigationMap(
         translate(0.0, -dim.vmin * 3)
         fillText(contact.designation, 0.0, 0.0)
         restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawSelectedMarker() {
+        selectedContact?.let {
+            save()
+            selectionMarkerStyle(dim)
+            translateToCenter()
+            translate(it.position.adjustForMap())
+            drawLockMarker(dim.vmin * 3)
+            restore()
+        }
     }
 
     private fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
@@ -177,32 +194,23 @@ class NavigationMap(
             dim.vmin * 38 * scanProgress.progress, dim.vmin * 4
         )
 
-        strokeStyle = "#fa807290"
+        strokeStyle = "#ff6347"
         translateToCenter()
         translate(contact.position.adjustForMap())
         beginPath()
-        circle(0.0, 0.0, dim.vmin * 2.3, 0.0, PI * scanProgress.progress * 2.0)
+        circle(0.0, 0.0, dim.vmin * 2.3,
+            -PI * 0.5, PI * scanProgress.progress * 2.0 - PI * 0.5)
         stroke()
 
         restore()
     }
 
-    fun toWorld(mouseEvent: MouseEvent) =
-        (mouseEvent.fromCenterCanvas() / scale).let { Vector2(it.x, -it.y) } + center
+    private fun getNearestWaypoint(vector: Vector2): WaypointMessage? = getNearest(waypoints, vector)
 
-    fun convert(vector: Vector2) = (vector / scale).let { Vector2(-it.x, it.y) }
+    private fun getNearestContact(vector: Vector2): ContactMessage? = getNearest(contacts, vector)
 
-    private fun Vector2.adjustForMap() =
-        ((this - center) * scale).let { Vector2(it.x, -it.y) }
-
-    fun getNearestWaypoint(mouseEvent: MouseEvent): WaypointMessage? =
-        getNearest(waypoints, mouseEvent)
-
-    fun getNearestContact(mouseEvent: MouseEvent): ContactMessage? =
-        getNearest(contacts, mouseEvent)
-
-    private fun <T : Positional> getNearest(elements: Iterable<T>, mouseEvent: MouseEvent): T? {
-        val click = mouseEvent.toVector2() - canvasCenter()
+    private fun <T : Positional> getNearest(elements: Iterable<T>, vector: Vector2): T? {
+        val click = vector - canvasCenter()
         return elements
             .map { it to it.position.adjustForMap() }
             .map { it.first to it.second - click }
@@ -212,10 +220,69 @@ class NavigationMap(
             ?.first
     }
 
+    private fun Vector2.toWorld() = (this - canvasCenter() / scale).let { Vector2(it.x, -it.y) } + center
+
+    private fun convert(vector: Vector2) = (vector / scale).let { Vector2(-it.x, it.y) }
+
+    private fun Vector2.adjustForMap() = ((this - center) * scale).let { Vector2(it.x, -it.y) }
+
     private fun canvasCenter() = Vector2(canvas.width * 0.5, canvas.height * 0.5)
 
-    private fun MouseEvent.fromCenterCanvas() =
-        toVector2() - Vector2(canvas.width / 2.0, canvas.height / 2.0)
-
     private fun MouseEvent.toVector2() = Vector2(offsetX, offsetY)
+
+    inner class MapMouseEventHandler : MouseEventHandler {
+
+        private var firstEvent: Vector2? = null
+        private var previousEvent: Vector2? = null
+        private var distance = 0.0
+
+        override fun handleMouseDown(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
+            firstEvent = mouseEvent.toVector2()
+            previousEvent = mouseEvent.toVector2()
+        }
+
+        override fun handleMouseMove(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
+            handleMove(mouseEvent)
+        }
+
+        override fun handleMouseUp(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
+            handleMove(mouseEvent)
+            if (distance <= 20.0) {
+                handleClick()
+            }
+            firstEvent = null
+            previousEvent = null
+            distance = 0.0
+        }
+
+        private fun handleMove(mouseEvent: MouseEvent) {
+            val currentEvent = mouseEvent.toVector2()
+            previousEvent?.let {
+                val move = currentEvent - it
+                center += convert(move)
+                distance += move.length()
+            }
+            previousEvent = currentEvent
+        }
+
+        private fun handleClick() {
+            firstEvent?.let {
+                mapClickListener(
+                    MapClick(
+                        screen = it,
+                        world = it.toWorld(),
+                        waypoint = getNearestWaypoint(it),
+                        contact = getNearestContact(it)
+                    )
+                )
+            }
+        }
+    }
 }
+
+data class MapClick(
+    val screen: Vector2,
+    val world: Vector2,
+    val waypoint: WaypointMessage?,
+    val contact: ContactMessage?
+)
