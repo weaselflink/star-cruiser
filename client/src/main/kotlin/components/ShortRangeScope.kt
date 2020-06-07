@@ -32,6 +32,7 @@ class ShortRangeScope(
 
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private var dim = canvas.dimensions()
+
     private var scopeRadius = dim.vmin * 47
     private var ship: ShipMessage? = null
     private var contacts: List<ScopeContactMessage> = emptyList()
