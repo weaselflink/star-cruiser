@@ -175,7 +175,7 @@ class MainScene {
 
     private fun loadShieldModel() {
         GLTFLoader().load(
-            url = "/assets/ships/shield.glb",
+            url = "/assets/ships/shield-cube.glb",
             onLoad = { gltf ->
                 shieldModel = gltf.scene.also {
                     it.scale.x = shieldRadius
