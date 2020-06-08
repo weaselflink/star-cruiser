@@ -21,17 +21,7 @@ import kotlinx.css.Display.block
 import kotlinx.css.Display.grid
 import kotlinx.css.FontWeight.Companion.bold
 import kotlinx.css.Position.fixed
-import kotlinx.html.BODY
-import kotlinx.html.ScriptType
-import kotlinx.html.body
-import kotlinx.html.button
-import kotlinx.html.canvas
-import kotlinx.html.div
-import kotlinx.html.head
-import kotlinx.html.id
-import kotlinx.html.link
-import kotlinx.html.meta
-import kotlinx.html.script
+import kotlinx.html.*
 
 fun Routing.webUi() {
     static("/js") {
@@ -54,7 +44,7 @@ fun Routing.webUi() {
                     padding = 0.px.value
                     backgroundColor = Color("#222")
                     color = white
-                    fontFamily = "\"Courier New\", Courier, monospace"
+                    fontFamily = "sans-serif"
                 }
                 "::backdrop" {
                     backgroundColor = Color("#222")
@@ -98,7 +88,7 @@ fun Routing.webUi() {
                     color = lightGrey
                     backgroundColor = black
                     textAlign = TextAlign.left
-                    borderWidth = 3.px
+                    borderWidth = 0.5.vmin
                     borderStyle = solid
                     borderColor = darkGrey
                     cursor = pointer
@@ -111,9 +101,13 @@ fun Routing.webUi() {
                     color = black
                     backgroundColor = darkGrey
                 }
-                "button.current::hover" {
+                "button:hover" {
                     color = black
-                    backgroundColor = darkGrey
+                    backgroundColor = dimGrey
+                }
+                "button.current:hover" {
+                    color = black
+                    backgroundColor = dimGrey
                 }
                 "button.leftEdge" {
                     paddingRight = 3.vmin
@@ -133,14 +127,37 @@ fun Routing.webUi() {
                     borderBottomRightRadius = 0.px
                     borderBottomLeftRadius = 4.vmin
                 }
-                "button:hover" {
-                    color = black
-                    backgroundColor = darkGrey
-                }
                 "button:active" {
                     color = black
                     backgroundColor = dimGrey
                     borderColor = dimGrey
+                }
+                "#selection-details" {
+                    position = fixed
+                    right = 0.px
+                    bottom = 0.px
+                    zIndex = 10
+                    display = grid
+                    gridTemplateColumns = GridTemplateColumns("auto 10vmin")
+                    gap = Gap("2vmin")
+                    padding = "3vmin"
+                    color = lightGrey
+                    backgroundColor = black
+                    borderWidth = 0.5.vmin
+                    borderStyle = solid
+                    borderColor = darkGrey
+                    borderTopLeftRadius = 4.vmin
+                    fontWeight = bold
+                    fontSize = 3.vmin
+                }
+                "#selection-details .designation" {
+                    gridColumn = GridColumn("1 / span 2")
+                }
+                "#selection-details .bearing" {
+                    textAlign = TextAlign.right
+                }
+                "#selection-details .range" {
+                    textAlign = TextAlign.right
                 }
             }.toString()
         }
@@ -258,6 +275,14 @@ private fun BODY.navigationUi() {
     div {
         id = "navigation-ui"
         canvas {}
+        div {
+            id = "selection-details"
+            div(classes = "designation") {}
+            div { +"Bearing" }
+            div(classes = "bearing") {}
+            div { +"Range" }
+            div(classes = "range") {}
+        }
     }
 }
 

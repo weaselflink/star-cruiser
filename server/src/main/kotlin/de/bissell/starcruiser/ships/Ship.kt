@@ -160,12 +160,10 @@ class Ship(
             type = getContactType(relativeTo),
             scanLevel = relativeTo.getScanLevel(id),
             designation = designation,
-            speed = speed,
             position = position,
             relativePosition = (position - relativeTo.position),
             rotation = rotation,
-            heading = rotation.toHeading(),
-            velocity = speed.length(),
+            bearing = (position - relativeTo.position).angle().toHeading(),
             beams = beamHandlers.map { it.toMessage() }
         )
 

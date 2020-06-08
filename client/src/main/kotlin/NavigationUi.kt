@@ -5,6 +5,7 @@ import de.bissell.starcruiser.Command.*
 import de.bissell.starcruiser.ScanLevel
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
+import de.bissell.starcruiser.pad
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -12,6 +13,7 @@ import org.w3c.dom.HTMLElement
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.dom.removeClass
+import kotlin.math.roundToInt
 
 class NavigationUi : StationUi {
 
@@ -25,6 +27,7 @@ class NavigationUi : StationUi {
     private val addWaypointButton = document.querySelector(".addWaypoint")!! as HTMLButtonElement
     private val deleteWaypointButton = document.querySelector(".deleteWaypoint")!! as HTMLButtonElement
     private val scanShipButton = document.querySelector(".scanShip")!! as HTMLButtonElement
+    private val selectionDetails = document.getElementById("selection-details")!! as HTMLElement
     private val zoomSlider = CanvasSlider(
         canvas = canvas,
         xExpr = { it.vmin * 5 },
@@ -39,6 +42,7 @@ class NavigationUi : StationUi {
 
     init {
         resize()
+        selectionDetails.style.display = "none"
         mouseEventDispatcher.addHandler(zoomSlider)
         mouseEventDispatcher.addHandler(navigationMap.MapMouseEventHandler())
     }
@@ -64,12 +68,29 @@ class NavigationUi : StationUi {
     }
 
     fun draw(snapshot: SnapshotMessage.Navigation) {
+        drawSelectedDetails()
+
         with(ctx) {
             resetTransform()
             clear("#000")
 
             navigationMap.draw(snapshot)
             drawZoom()
+        }
+    }
+
+    private fun drawSelectedDetails() {
+        val selectedContact = navigationMap.selectedContact
+        if (selectedContact != null) {
+            selectionDetails.style.display = "grid"
+            selectionDetails.querySelector(".designation")!!.innerHTML =
+                selectedContact.designation
+            selectionDetails.querySelector(".bearing")!!.innerHTML =
+                selectedContact.bearing.roundToInt().pad(3)
+            selectionDetails.querySelector(".range")!!.innerHTML =
+                selectedContact.relativePosition.length().roundToInt().toString()
+        } else {
+            selectionDetails.style.display = "none"
         }
     }
 

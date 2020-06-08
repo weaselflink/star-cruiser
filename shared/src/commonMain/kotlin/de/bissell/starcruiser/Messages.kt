@@ -121,10 +121,8 @@ data class ContactMessage(
     val designation: String,
     override val position: Vector2,
     val relativePosition: Vector2,
-    val speed: Vector2,
     val rotation: Double,
-    val heading: Double,
-    val velocity: Double,
+    val bearing: Double,
     val beams: List<BeamMessage>
 ) : Positional
 
