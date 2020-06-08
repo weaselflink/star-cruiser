@@ -39,6 +39,14 @@ class MapGrid(
         private fun CanvasRenderingContext2D.draw() {
             save()
             translateToCenter()
+            gridStyle()
+            visibleGridSquares().forEach {
+                drawSquare(it)
+            }
+            restore()
+        }
+
+        private fun CanvasRenderingContext2D.gridStyle() {
             lineWidth = dim.vmin * 0.3
             strokeStyle = "#1d3549"
             fillStyle = "#664400"
@@ -46,12 +54,6 @@ class MapGrid(
             font = "bold ${textSize.px} sans-serif"
             textBaseline = CanvasTextBaseline.TOP
             textAlign = CanvasTextAlign.LEFT
-
-            visibleGridSquares().forEach {
-                drawSquare(it)
-            }
-
-            restore()
         }
 
         private fun CanvasRenderingContext2D.drawSquare(gridSquare: GridSquare) {
