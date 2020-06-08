@@ -4,13 +4,18 @@ import CanvasDimensions
 import MouseEventHandler
 import circle
 import clear
-import de.bissell.starcruiser.*
+import de.bissell.starcruiser.ContactMessage
+import de.bissell.starcruiser.ContactType
+import de.bissell.starcruiser.Positional
+import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.SnapshotMessage
+import de.bissell.starcruiser.Vector2
+import de.bissell.starcruiser.WaypointMessage
+import de.bissell.starcruiser.clamp
 import dimensions
 import drawLockMarker
 import drawShipSymbol
 import friendlyContactStyle
-import lineTo
-import moveTo
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.MouseEvent
@@ -30,10 +35,9 @@ class NavigationMap(
     private val mapClickListener: (MapClick) -> Unit = {}
 ) {
 
-    private val gridSize = 1000.0
-
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private var dim = CanvasDimensions(100, 100)
+    private val mapGrid = MapGrid(canvas)
 
     var center = Vector2()
     var scaleSetting = 3
@@ -77,23 +81,8 @@ class NavigationMap(
         }
     }
 
-    private fun CanvasRenderingContext2D.drawGrid() {
-        save()
-        translateToCenter()
-        strokeStyle = "#4682b4"
-        (-20..20).forEach { gridX ->
-            beginPath()
-            moveTo(Vector2(gridX * gridSize, -20_000.0).adjustForMap())
-            lineTo(Vector2(gridX * gridSize, +20_000.0).adjustForMap())
-            stroke()
-        }
-        (-20..20).forEach { gridY ->
-            beginPath()
-            moveTo(Vector2(-20_000.0, gridY * gridSize).adjustForMap())
-            lineTo(Vector2(20_000.0, gridY * gridSize).adjustForMap())
-            stroke()
-        }
-        restore()
+    private fun drawGrid() {
+        mapGrid.draw(center, scale)
     }
 
     private fun CanvasRenderingContext2D.drawContacts(snapshot: SnapshotMessage.Navigation) {
@@ -198,8 +187,10 @@ class NavigationMap(
         translateToCenter()
         translate(contact.position.adjustForMap())
         beginPath()
-        circle(0.0, 0.0, dim.vmin * 2.3,
-            -PI * 0.5, PI * scanProgress.progress * 2.0 - PI * 0.5)
+        circle(
+            0.0, 0.0, dim.vmin * 2.3,
+            -PI * 0.5, PI * scanProgress.progress * 2.0 - PI * 0.5
+        )
         stroke()
 
         restore()
@@ -220,7 +211,7 @@ class NavigationMap(
             ?.first
     }
 
-    private fun Vector2.toWorld() = (this - canvasCenter() / scale).let { Vector2(it.x, -it.y) } + center
+    private fun Vector2.toWorld() = ((this - canvasCenter()) / scale).let { Vector2(it.x, -it.y) } + center
 
     private fun convert(vector: Vector2) = (vector / scale).let { Vector2(-it.x, it.y) }
 
