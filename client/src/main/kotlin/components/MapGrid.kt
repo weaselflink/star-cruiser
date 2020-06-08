@@ -25,8 +25,8 @@ class MapGrid(
         save()
         translateToCenter()
         lineWidth = dim.vmin * 0.3
-        strokeStyle = "#325d81"
-        fillStyle = "#805500"
+        strokeStyle = "#1d3549"
+        fillStyle = "#664400"
 
         visibleGridSquares(center, scale).forEach {
             drawSquare(it, center, scale)
