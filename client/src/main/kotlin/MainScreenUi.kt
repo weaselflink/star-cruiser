@@ -39,11 +39,11 @@ class MainScreenUi : StationUi {
     }
 
     override fun show() {
-        root.style.visibility = "visible"
+        root.visibility = Visibility.visible
     }
 
     override fun hide() {
-        root.style.visibility = "hidden"
+        root.visibility = Visibility.hidden
     }
 
     fun draw(snapshot: SnapshotMessage.MainScreen) {

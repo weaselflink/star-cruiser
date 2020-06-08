@@ -44,11 +44,11 @@ class CommonShipUi {
     }
 
     fun show() {
-        root.style.visibility = "visible"
+        root.visibility = Visibility.visible
     }
 
     fun hide() {
-        root.style.visibility = "hidden"
+        root.visibility = Visibility.hidden
     }
 
     fun draw(snapshot: SnapshotMessage.ShipSnapshot) {
@@ -65,9 +65,9 @@ class CommonShipUi {
 
             extraButtons.forEach {
                 if (it.isVisibleAtStation(newStation)) {
-                    it.element.style.display = "block"
+                    it.element.display = Display.block
                 } else {
-                    it.element.style.display = "none"
+                    it.element.display = Display.none
                 }
             }
 
@@ -81,7 +81,7 @@ class CommonShipUi {
 
             extraButton.element.apply {
                 if (!extraButton.isVisibleAtStation(Helm)) {
-                    style.display = "none"
+                    display = Display.none
                 }
                 onclick = { extraButton.callback() }
             }

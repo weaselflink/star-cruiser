@@ -28,6 +28,7 @@ class NavigationUi : StationUi {
     private val deleteWaypointButton = document.querySelector(".deleteWaypoint")!! as HTMLButtonElement
     private val scanShipButton = document.querySelector(".scanShip")!! as HTMLButtonElement
     private val selectionDetails = document.getElementById("selection-details")!! as HTMLElement
+    private val detailsScanShipButton = selectionDetails.querySelector(".detailsScanButton")!! as HTMLButtonElement
     private val zoomSlider = CanvasSlider(
         canvas = canvas,
         xExpr = { it.vmin * 5 },
@@ -42,17 +43,18 @@ class NavigationUi : StationUi {
 
     init {
         resize()
-        selectionDetails.style.display = "none"
+        selectionDetails.visibility = Visibility.hidden
+        detailsScanShipButton.onclick = { scanShipClicked() }
         mouseEventDispatcher.addHandler(zoomSlider)
         mouseEventDispatcher.addHandler(navigationMap.MapMouseEventHandler())
     }
 
     override fun show() {
-        root.style.visibility = "visible"
+        root.visibility = Visibility.visible
     }
 
     override fun hide() {
-        root.style.visibility = "hidden"
+        root.visibility = Visibility.hidden
     }
 
     fun zoomIn() {
@@ -82,15 +84,21 @@ class NavigationUi : StationUi {
     private fun drawSelectedDetails() {
         val selectedContact = navigationMap.selectedContact
         if (selectedContact != null) {
-            selectionDetails.style.display = "grid"
+            selectionDetails.visibility = Visibility.visible
             selectionDetails.querySelector(".designation")!!.innerHTML =
                 selectedContact.designation
             selectionDetails.querySelector(".bearing")!!.innerHTML =
                 selectedContact.bearing.roundToInt().pad(3)
             selectionDetails.querySelector(".range")!!.innerHTML =
                 selectedContact.relativePosition.length().roundToInt().toString()
+
+            if (selectedContact.scanLevel != ScanLevel.highest) {
+                detailsScanShipButton.visibility = Visibility.visible
+            } else {
+                detailsScanShipButton.visibility = Visibility.hidden
+            }
         } else {
-            selectionDetails.style.display = "none"
+            selectionDetails.visibility = Visibility.hidden
         }
     }
 
@@ -124,7 +132,7 @@ class NavigationUi : StationUi {
 
     fun scanShipClicked() {
         val selectedContact = navigationMap.selectedContact
-        if (selectedContact != null && selectedContact.scanLevel != ScanLevel.Faction) {
+        if (selectedContact != null && selectedContact.scanLevel != ScanLevel.highest) {
             println(1)
             clientSocket.send(CommandScanShip(selectedContact.id))
         } else {

@@ -150,6 +150,10 @@ enum class ScanLevel {
             None -> Faction
             Faction -> Faction
         }
+
+    companion object {
+        val highest = Faction
+    }
 }
 
 @Serializable

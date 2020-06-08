@@ -140,7 +140,7 @@ fun Routing.webUi() {
                     display = grid
                     gridTemplateColumns = GridTemplateColumns("auto 10vmin")
                     gap = Gap("2vmin")
-                    padding = "3vmin"
+                    padding(3.vmin, 6.vmin)
                     color = lightGrey
                     backgroundColor = black
                     borderWidth = 0.5.vmin
@@ -150,14 +150,23 @@ fun Routing.webUi() {
                     fontWeight = bold
                     fontSize = 3.vmin
                 }
+                "#selection-details button" {
+                    borderRadius = 4.vmin
+                    declarations["justifySelf"] = "center"
+                    paddingLeft = 4.vmin
+                    paddingRight = 4.vmin
+                }
                 "#selection-details .designation" {
-                    gridColumn = GridColumn("1 / span 2")
+                    gridColumn = GridColumn("span 2")
                 }
                 "#selection-details .bearing" {
                     textAlign = TextAlign.right
                 }
                 "#selection-details .range" {
                     textAlign = TextAlign.right
+                }
+                "#selection-details .detailsScanButton" {
+                    gridColumn = GridColumn("span 2")
                 }
             }.toString()
         }
@@ -282,6 +291,9 @@ private fun BODY.navigationUi() {
             div(classes = "bearing") {}
             div { +"Range" }
             div(classes = "range") {}
+            button(classes = "detailsScanButton") {
+                +"Scan"
+            }
         }
     }
 }
