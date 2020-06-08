@@ -2,6 +2,7 @@ import components.CanvasSlider
 import components.MapClick
 import components.NavigationMap
 import de.bissell.starcruiser.Command.*
+import de.bissell.starcruiser.ScanLevel
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import org.w3c.dom.CanvasRenderingContext2D
@@ -101,16 +102,23 @@ class NavigationUi : StationUi {
     }
 
     fun scanShipClicked() {
-        buttonState = if (buttonState != ButtonState.ScanShip) {
-            ButtonState.ScanShip
+        val selectedContact = navigationMap.selectedContact
+        if (selectedContact != null && selectedContact.scanLevel != ScanLevel.Faction) {
+            println(1)
+            clientSocket.send(CommandScanShip(selectedContact.id))
         } else {
-            ButtonState.Initial
-        }
-        addWaypointButton.removeClass("current")
-        deleteWaypointButton.removeClass("current")
-        scanShipButton.removeClass("current")
-        if (buttonState == ButtonState.ScanShip) {
-            scanShipButton.addClass("current")
+            println(2)
+            buttonState = if (buttonState != ButtonState.ScanShip) {
+                ButtonState.ScanShip
+            } else {
+                ButtonState.Initial
+            }
+            addWaypointButton.removeClass("current")
+            deleteWaypointButton.removeClass("current")
+            scanShipButton.removeClass("current")
+            if (buttonState == ButtonState.ScanShip) {
+                scanShipButton.addClass("current")
+            }
         }
     }
 

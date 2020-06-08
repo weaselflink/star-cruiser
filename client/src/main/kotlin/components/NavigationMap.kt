@@ -7,6 +7,7 @@ import clear
 import de.bissell.starcruiser.ContactMessage
 import de.bissell.starcruiser.ContactType
 import de.bissell.starcruiser.Positional
+import de.bissell.starcruiser.ShipId
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Vector2
@@ -44,7 +45,10 @@ class NavigationMap(
         private set
     private val scale: Double
         get() = 4.0 / 2.0.pow(scaleSetting.toDouble())
-    var selectedContact: ContactMessage? = null
+    var selectedId: ShipId? = null
+    var selectedContact: ContactMessage?
+        get() = contacts.firstOrNull { it.id == selectedId }
+        set(value) { selectedId = value?.id }
 
     private var contacts: List<ContactMessage> = emptyList()
     private var waypoints: List<WaypointMessage> = emptyList()
