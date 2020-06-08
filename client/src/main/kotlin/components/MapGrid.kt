@@ -2,9 +2,15 @@ package components
 
 import CanvasDimensions
 import de.bissell.starcruiser.Vector2
+import de.bissell.starcruiser.pad
 import dimensions
 import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.CanvasTextAlign
+import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.LEFT
+import org.w3c.dom.TOP
+import px
 import translateToCenter
 
 class MapGrid(
@@ -27,6 +33,10 @@ class MapGrid(
         lineWidth = dim.vmin * 0.3
         strokeStyle = "#1d3549"
         fillStyle = "#664400"
+        val textSize = 100.0.adjustForMap(scale).toInt()
+        font = "bold ${textSize.px} sans-serif"
+        textBaseline = CanvasTextBaseline.TOP
+        textAlign = CanvasTextAlign.LEFT
 
         visibleGridSquares(center, scale).forEach {
             drawSquare(it, center, scale)
@@ -38,6 +48,14 @@ class MapGrid(
     private fun CanvasRenderingContext2D.drawSquare(gridSquare: GridSquare, center: Vector2, scale: Double) {
         gridSquare.topLeft.adjustForMap(center, scale).let {
             strokeRect(it.x, it.y, majorGridSize.adjustForMap(scale), majorGridSize.adjustForMap(scale))
+
+            save()
+            if (majorGridSize * scale > dim.vmin * 10) {
+                val gap = 50.0.adjustForMap(scale).toInt()
+                fillStyle = "#332200"
+                fillText(gridSquare.label(), it.x + gap, it.y + gap)
+            }
+            restore()
 
             if (majorGridSize * scale > dim.vmin * 40) {
                 (1..9).map { minorX ->
@@ -63,7 +81,7 @@ class MapGrid(
         val centerX = 50
         val centerY = 13
 
-        return (0..100).flatMap { xIndex ->
+        return (0..99).flatMap { xIndex ->
             (0..25).map { yIndex ->
                 val topLeft = Vector2((xIndex - centerX) * majorGridSize, -(yIndex - centerY) * majorGridSize)
                 val bottomRight = topLeft + Vector2(majorGridSize, -majorGridSize)
@@ -89,4 +107,7 @@ private data class GridSquare(
     val yIndex: Int,
     val topLeft: Vector2,
     val bottomRight: Vector2
-)
+) {
+
+    fun label() = "${'A' + yIndex}${xIndex.pad(2)}"
+}
