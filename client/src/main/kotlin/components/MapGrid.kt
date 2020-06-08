@@ -24,7 +24,9 @@ class MapGrid(
     private fun CanvasRenderingContext2D.draw(center: Vector2, scale: Double) {
         save()
         translateToCenter()
-        strokeStyle = "#4682b4"
+        lineWidth = dim.vmin * 0.3
+        strokeStyle = "#325d81"
+        fillStyle = "#805500"
 
         visibleGridSquares(center, scale).forEach {
             drawSquare(it, center, scale)
@@ -36,6 +38,18 @@ class MapGrid(
     private fun CanvasRenderingContext2D.drawSquare(gridSquare: GridSquare, center: Vector2, scale: Double) {
         gridSquare.topLeft.adjustForMap(center, scale).let {
             strokeRect(it.x, it.y, majorGridSize.adjustForMap(scale), majorGridSize.adjustForMap(scale))
+
+            if (majorGridSize * scale > dim.vmin * 40) {
+                (1..9).map { minorX ->
+                    (1..9).map { minorY ->
+                        val pos = Vector2(
+                            it.x + minorX * scale * majorGridSize * 0.1 - dim.vmin * 0.15,
+                            it.y + minorY * scale * majorGridSize * 0.1 - dim.vmin * 0.15
+                        )
+                        fillRect(pos.x, pos.y, dim.vmin * 0.3, dim.vmin * 0.3)
+                    }
+                }
+            }
         }
     }
 
