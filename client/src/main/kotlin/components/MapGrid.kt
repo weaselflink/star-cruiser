@@ -78,11 +78,6 @@ class MapGrid(
                 val topLeft = square.topLeft.adjustForMap(center, scale) + canvasCenter
                 val bottomRight = square.bottomRight.adjustForMap(center, scale) + canvasCenter
 
-                if (square.xIndex == centerX && square.yIndex == centerY) {
-                    println(square)
-                    println("$topLeft $bottomRight")
-                }
-
                 topLeft.x <= dim.width && bottomRight.x >= 0.0 && topLeft.y <= dim.height && bottomRight.y >= 0.0
             }
         }
