@@ -166,7 +166,12 @@ fun Routing.webUi() {
                     textAlign = TextAlign.right
                 }
                 "#selection-details .detailsScanButton" {
-                    gridColumn = GridColumn("span 2")
+                    gridRow = GridRow("4")
+                    gridColumn = GridColumn("1 / span 2")
+                }
+                "#selection-details .detailsDeleteButton" {
+                    gridRow = GridRow("4")
+                    gridColumn = GridColumn("1 / span 2")
                 }
             }.toString()
         }
@@ -293,6 +298,9 @@ private fun BODY.navigationUi() {
             div(classes = "range") {}
             button(classes = "detailsScanButton") {
                 +"Scan"
+            }
+            button(classes = "detailsDeleteButton") {
+                +"Delete"
             }
         }
     }
