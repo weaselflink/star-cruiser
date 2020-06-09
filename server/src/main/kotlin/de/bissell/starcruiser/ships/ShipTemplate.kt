@@ -32,7 +32,8 @@ data class ShipTemplate(
             ),
             leftArc = 10
         )
-    )
+    ),
+    val shield: ShieldTemplate = ShieldTemplate()
 )
 
 data class BeamWeapon(
@@ -54,3 +55,8 @@ data class BeamWeapon(
         return angle <= leftArc.toRadians() && angle >= rightArc.toRadians()
     }
 }
+
+data class ShieldTemplate(
+    val strength: Double = 10.0,
+    val rechargeSpeed: Double = 0.25
+)
