@@ -190,7 +190,8 @@ data class WaypointMessage(
     val index: Int,
     val name: String,
     override val position: Vector2,
-    val relativePosition: Vector2
+    val relativePosition: Vector2,
+    val bearing: Double
 ) : Positional
 
 @Serializable

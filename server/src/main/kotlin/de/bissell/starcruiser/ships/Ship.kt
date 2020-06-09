@@ -236,7 +236,8 @@ class Ship(
                 index = index,
                 name = "WP$index",
                 position = position,
-                relativePosition = (position - relativeTo.position)
+                relativePosition = (position - relativeTo.position),
+                bearing = (position - relativeTo.position).angle().toHeading()
             )
     }
 

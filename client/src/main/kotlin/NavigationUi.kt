@@ -1,7 +1,9 @@
 import components.CanvasSlider
 import components.MapClick
 import components.NavigationMap
-import de.bissell.starcruiser.Command.*
+import de.bissell.starcruiser.Command.CommandAddWaypoint
+import de.bissell.starcruiser.Command.CommandDeleteWaypoint
+import de.bissell.starcruiser.Command.CommandScanShip
 import de.bissell.starcruiser.ScanLevel
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
@@ -82,23 +84,24 @@ class NavigationUi : StationUi {
     }
 
     private fun drawSelectedDetails() {
-        val selectedContact = navigationMap.selectedContact
-        if (selectedContact != null) {
-            selectionDetails.visibility = Visibility.visible
-            selectionDetails.querySelector(".designation")!!.innerHTML =
-                selectedContact.designation
-            selectionDetails.querySelector(".bearing")!!.innerHTML =
-                selectedContact.bearing.roundToInt().pad(3)
-            selectionDetails.querySelector(".range")!!.innerHTML =
-                selectedContact.relativePosition.length().roundToInt().toString()
+        val selection = selection()
+        if (selection != null) {
+            this.selectionDetails.visibility = Visibility.visible
+            this.selectionDetails.querySelector(".designation")!!.innerHTML =
+                selection.label
+            this.selectionDetails.querySelector(".bearing")!!.innerHTML =
+                selection.bearing.roundToInt().pad(3)
+            this.selectionDetails.querySelector(".range")!!.innerHTML =
+                selection.range.roundToInt().toString()
 
-            if (selectedContact.scanLevel != ScanLevel.highest) {
+            if (selection.canScan) {
                 detailsScanShipButton.visibility = Visibility.visible
             } else {
                 detailsScanShipButton.visibility = Visibility.hidden
             }
         } else {
             selectionDetails.visibility = Visibility.hidden
+            detailsScanShipButton.visibility = Visibility.hidden
         }
     }
 
@@ -156,7 +159,11 @@ class NavigationUi : StationUi {
 
     private fun handleMapClick(mapClick: MapClick) {
         when (buttonState) {
-            ButtonState.Initial -> navigationMap.selectedContact = mapClick.contacts.firstOrNull()
+            ButtonState.Initial -> mapClick.contacts.firstOrNull()?.also {
+                navigationMap.selectedContact = it
+            } ?: mapClick.waypoints.firstOrNull()?.also {
+                navigationMap.selectedWaypoint = it
+            } ?: clearMapSelections()
             ButtonState.AddWaypoint -> {
                 clientSocket.send(CommandAddWaypoint(mapClick.world))
                 addWaypointButton.removeClass("current")
@@ -179,10 +186,39 @@ class NavigationUi : StationUi {
         }
     }
 
+    private fun clearMapSelections() {
+        navigationMap.selectedContact = null
+        navigationMap.selectedWaypoint = null
+    }
+
+    private fun selection(): SelectionDetails? =
+        navigationMap.selectedContact?.let {
+            SelectionDetails(
+                label = it.designation,
+                bearing = it.bearing,
+                range = it.relativePosition.length(),
+                canScan = it.scanLevel != ScanLevel.highest
+            )
+        } ?: navigationMap.selectedWaypoint?.let {
+            SelectionDetails(
+                label = it.name,
+                bearing = it.bearing,
+                range = it.relativePosition.length(),
+                canScan = false
+            )
+        }
+
     enum class ButtonState {
         Initial,
         AddWaypoint,
         DeleteWaypoint,
         ScanShip
     }
+
+    data class SelectionDetails(
+        val label: String,
+        val bearing: Double,
+        val range: Double,
+        val canScan: Boolean
+    )
 }

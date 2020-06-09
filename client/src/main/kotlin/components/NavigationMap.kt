@@ -45,10 +45,16 @@ class NavigationMap(
         private set
     private val scale: Double
         get() = 4.0 / 2.0.pow(scaleSetting.toDouble())
-    var selectedId: ShipId? = null
+
+    private var selectedShipId: ShipId? = null
     var selectedContact: ContactMessage?
-        get() = contacts.firstOrNull { it.id == selectedId }
-        set(value) { selectedId = value?.id }
+        get() = contacts.firstOrNull { it.id == selectedShipId }
+        set(value) { selectedShipId = value?.id?.also { selectedWaypointIndex = null } }
+
+    private var selectedWaypointIndex: Int? = null
+    var selectedWaypoint: WaypointMessage?
+        get() = waypoints.firstOrNull { it.index == selectedWaypointIndex }
+        set(value) { selectedWaypointIndex = value?.index?.also { selectedShipId = null } }
 
     private var contacts: List<ContactMessage> = emptyList()
     private var waypoints: List<WaypointMessage> = emptyList()
@@ -112,11 +118,13 @@ class NavigationMap(
     }
 
     private fun CanvasRenderingContext2D.drawSelectedMarker() {
-        selectedContact?.let {
+        val pos = selectedContact?.position ?: selectedWaypoint?.position
+
+        pos?.also {
             save()
             selectionMarkerStyle(dim)
             translateToCenter()
-            translate(it.position.adjustForMap())
+            translate(pos.adjustForMap())
             drawLockMarker(dim.vmin * 3)
             restore()
         }
@@ -207,12 +215,14 @@ class NavigationMap(
     private fun <T : Positional> getNearest(elements: Iterable<T>, vector: Vector2): List<T> {
         val click = vector - canvasCenter()
         return elements
+            .asSequence()
             .map { it to it.position.adjustForMap() }
             .map { it.first to it.second - click }
             .map { it.first to it.second.length() }
             .filter { it.second <= 20.0 }
             .sortedBy { it.second }
             .map { it.first }
+            .toList()
     }
 
     private fun Vector2.toWorld() = ((this - canvasCenter()) / scale).let { Vector2(it.x, -it.y) } + center
