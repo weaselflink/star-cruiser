@@ -110,7 +110,8 @@ data class ShipMessage(
     val waypoints: List<WaypointMessage>,
     val scanProgress: ScanProgress?,
     val lockProgress: LockStatus,
-    val beams: List<BeamMessage>
+    val beams: List<BeamMessage>,
+    val shield: ShieldMessage
 )
 
 @Serializable
@@ -223,3 +224,9 @@ sealed class BeamStatus {
         fun update(change: Double) = copy(progress = progress + change)
     }
 }
+
+@Serializable
+data class ShieldMessage(
+    val strength: Double,
+    val max: Double
+)

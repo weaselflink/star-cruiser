@@ -3,6 +3,8 @@ package de.bissell.starcruiser.ships
 import de.bissell.starcruiser.*
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 class Ship(
     val id: ShipId = ShipId.random(),
@@ -20,11 +22,13 @@ class Ship(
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val scans = mutableMapOf<ShipId, ScanLevel>()
     private val beamHandlers = template.beams.map { BeamHandler(it) }
+    private val shieldHandler = ShieldHandler()
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ShipId) -> Ship?) {
         beamHandlers.forEach { it.update(time, shipProvider) }
+        shieldHandler.update(time)
         updateScan(time)
         updateLock(time)
         updateThrust(time)
@@ -116,6 +120,8 @@ class Ship(
         }
     }
 
+    fun takeDamage(amount: Double) = shieldHandler.takeDamage(amount)
+
     fun toPlayerShipMessage() =
         PlayerShipMessage(
             id = id,
@@ -141,7 +147,8 @@ class Ship(
             waypoints = waypoints.map { it.toWaypointMessage(this) },
             scanProgress = scanHandler?.toMessage(),
             lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
-            beams = beamHandlers.map { it.toMessage() }
+            beams = beamHandlers.map { it.toMessage() },
+            shield = shieldHandler.toMessage()
         )
 
     fun toScopeContactMessage(relativeTo: Ship) =
@@ -291,6 +298,31 @@ class Ship(
                 ?.rotate(-this@Ship.rotation)
                 ?.let { beamWeapon.isInRange(it) }
                 ?: false
+    }
+
+    private inner class ShieldHandler(
+        var currentStrength: Double = template.shield.strength
+    ) {
+
+        fun update(time: GameTime) {
+            currentStrength = min(
+                template.shield.strength,
+                currentStrength + template.shield.rechargeSpeed * time.delta
+            )
+        }
+
+        fun takeDamage(amount: Double) {
+            currentStrength = max(
+                0.0,
+                currentStrength - amount
+            )
+        }
+
+        fun toMessage() =
+            ShieldMessage(
+                strength = currentStrength,
+                max = template.shield.strength
+            )
     }
 
     companion object {

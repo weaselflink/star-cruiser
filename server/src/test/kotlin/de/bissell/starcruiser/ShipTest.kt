@@ -242,6 +242,18 @@ class ShipTest {
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
     }
 
+    @Test
+    fun `updates shields`() {
+        val damage = 5.0
+        ship.takeDamage(damage)
+        expectThat(ship.toMessage().shield.strength)
+            .isNear(ship.template.shield.strength - damage)
+
+        stepTimeTo(4)
+        expectThat(ship.toMessage().shield.strength)
+            .isNear(ship.template.shield.strength - damage + ship.template.shield.rechargeSpeed * 4.0)
+    }
+
     private fun stepTimeTo(seconds: Number, shipProvider: (ShipId) -> Ship? = { null }) {
         time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
         ship.update(time, physicsEngine, shipProvider)
