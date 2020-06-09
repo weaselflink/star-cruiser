@@ -156,21 +156,21 @@ class NavigationUi : StationUi {
 
     private fun handleMapClick(mapClick: MapClick) {
         when (buttonState) {
-            ButtonState.Initial -> navigationMap.selectedContact = mapClick.contact
+            ButtonState.Initial -> navigationMap.selectedContact = mapClick.contacts.firstOrNull()
             ButtonState.AddWaypoint -> {
                 clientSocket.send(CommandAddWaypoint(mapClick.world))
                 addWaypointButton.removeClass("current")
                 buttonState = ButtonState.Initial
             }
             ButtonState.DeleteWaypoint -> {
-                mapClick.waypoint?.also {
+                mapClick.waypoints.firstOrNull()?.also {
                     clientSocket.send(CommandDeleteWaypoint(it.index))
                     deleteWaypointButton.removeClass("current")
                     buttonState = ButtonState.Initial
                 }
             }
             ButtonState.ScanShip -> {
-                mapClick.contact?.also {
+                mapClick.contacts.firstOrNull()?.also {
                     clientSocket.send(CommandScanShip(it.id))
                     scanShipButton.removeClass("current")
                     buttonState = ButtonState.Initial

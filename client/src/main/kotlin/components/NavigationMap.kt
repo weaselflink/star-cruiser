@@ -200,19 +200,19 @@ class NavigationMap(
         restore()
     }
 
-    private fun getNearestWaypoint(vector: Vector2): WaypointMessage? = getNearest(waypoints, vector)
+    private fun getNearestWaypoints(vector: Vector2): List<WaypointMessage> = getNearest(waypoints, vector)
 
-    private fun getNearestContact(vector: Vector2): ContactMessage? = getNearest(contacts, vector)
+    private fun getNearestContacts(vector: Vector2): List<ContactMessage> = getNearest(contacts, vector)
 
-    private fun <T : Positional> getNearest(elements: Iterable<T>, vector: Vector2): T? {
+    private fun <T : Positional> getNearest(elements: Iterable<T>, vector: Vector2): List<T> {
         val click = vector - canvasCenter()
         return elements
             .map { it to it.position.adjustForMap() }
             .map { it.first to it.second - click }
             .map { it.first to it.second.length() }
             .filter { it.second <= 20.0 }
-            .minBy { it.second }
-            ?.first
+            .sortedBy { it.second }
+            .map { it.first }
     }
 
     private fun Vector2.toWorld() = ((this - canvasCenter()) / scale).let { Vector2(it.x, -it.y) } + center
@@ -266,8 +266,8 @@ class NavigationMap(
                     MapClick(
                         screen = it,
                         world = it.toWorld(),
-                        waypoint = getNearestWaypoint(it),
-                        contact = getNearestContact(it)
+                        waypoints = getNearestWaypoints(it),
+                        contacts = getNearestContacts(it)
                     )
                 )
             }
@@ -278,6 +278,6 @@ class NavigationMap(
 data class MapClick(
     val screen: Vector2,
     val world: Vector2,
-    val waypoint: WaypointMessage?,
-    val contact: ContactMessage?
+    val waypoints: List<WaypointMessage>,
+    val contacts: List<ContactMessage>
 )
