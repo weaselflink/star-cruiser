@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fweaselflink%2Fstar-cruiser%2Fbadge&style=flat-square)](https://actions-badge.atrox.dev/weaselflink/star-cruiser/goto) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/weaselflink/star-cruiser?style=flat-square)
+![Build master](https://github.com/weaselflink/star-cruiser/workflows/Build%20master/badge.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/weaselflink/star-cruiser?style=flat-square)
 
 ## Star Cruiser Crew Simulator
 
