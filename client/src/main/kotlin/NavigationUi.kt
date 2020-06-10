@@ -57,6 +57,9 @@ class NavigationUi : StationUi {
 
     override fun hide() {
         root.visibility = Visibility.hidden
+        selectionDetails.visibility = Visibility.hidden
+        detailsScanButton.visibility = Visibility.hidden
+        detailsDeleteButton.visibility = Visibility.hidden
     }
 
     fun zoomIn() {
@@ -86,12 +89,12 @@ class NavigationUi : StationUi {
     private fun drawSelectedDetails() {
         val selection = selection()
         if (selection != null) {
-            this.selectionDetails.visibility = Visibility.visible
-            this.selectionDetails.querySelector(".designation")!!.innerHTML =
+            selectionDetails.visibility = Visibility.visible
+            selectionDetails.querySelector(".designation")!!.innerHTML =
                 selection.label
-            this.selectionDetails.querySelector(".bearing")!!.innerHTML =
+            selectionDetails.querySelector(".bearing")!!.innerHTML =
                 selection.bearing.roundToInt().pad(3)
-            this.selectionDetails.querySelector(".range")!!.innerHTML =
+            selectionDetails.querySelector(".range")!!.innerHTML =
                 selection.range.roundToInt().toString()
 
             when {
@@ -111,6 +114,7 @@ class NavigationUi : StationUi {
         } else {
             selectionDetails.visibility = Visibility.hidden
             detailsScanButton.visibility = Visibility.hidden
+            detailsDeleteButton.visibility = Visibility.hidden
         }
     }
 
