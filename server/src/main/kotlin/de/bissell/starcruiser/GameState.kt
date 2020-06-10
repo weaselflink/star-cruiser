@@ -109,7 +109,12 @@ class GameState {
         time.update(now())
 
         physicsEngine.step(time)
-        ships.forEach { it.value.update(time, physicsEngine) { id -> ships[id] } }
+        ships.forEach {
+            it.value.apply {
+                update(time, physicsEngine) { id -> ships[id] }
+                endUpdate()
+            }
+        }
     }
 
     fun changeThrottle(clientId: ClientId, value: Int) {

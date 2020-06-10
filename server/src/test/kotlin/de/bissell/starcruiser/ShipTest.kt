@@ -1,6 +1,7 @@
 package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ships.Ship
+import de.bissell.starcruiser.ships.ShipTemplate
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -13,7 +14,10 @@ import java.time.Instant
 class ShipTest {
 
     private val ship = Ship(
-        position = Vector2(3, -4)
+        position = Vector2(3, -4),
+        template = ShipTemplate().let {
+            it.copy(beams = it.beams.subList(0, 1))
+        }
     )
     private val time = GameTime().apply {
         update(Instant.EPOCH)
@@ -207,6 +211,7 @@ class ShipTest {
 
         stepTimeTo(10.5) { target }
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Firing>()
+        expectThat(target.toMessage().shield.strength).isEqualTo(target.template.shield.strength - 0.5)
 
         stepTimeTo(12) { target }
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Recharging>()

@@ -49,6 +49,10 @@ class Ship(
         updateHistory(time)
     }
 
+    fun endUpdate() {
+        shieldHandler.endUpdate()
+    }
+
     private fun updateScan(time: GameTime) {
         scanHandler?.also {
             it.update(time)
@@ -171,7 +175,8 @@ class Ship(
             relativePosition = (position - relativeTo.position),
             rotation = rotation,
             bearing = (position - relativeTo.position).angle().toHeading(),
-            beams = beamHandlers.map { it.toMessage() }
+            beams = beamHandlers.map { it.toMessage() },
+            shield = shieldHandler.toMessage()
         )
 
     private fun canIncreaseScanLevel(targetId: ShipId) = getScanLevel(targetId).let { it != it.next() }
@@ -249,9 +254,10 @@ class Ship(
     }
 
     private inner class BeamHandler(
-        val beamWeapon: BeamWeapon,
-        private var status: BeamStatus = BeamStatus.Idle
+        val beamWeapon: BeamWeapon
     ) {
+
+        private var status: BeamStatus = BeamStatus.Idle
 
         fun update(time: GameTime, shipProvider: (ShipId) -> Ship?) {
             when (val current = status) {
@@ -275,6 +281,9 @@ class Ship(
                     }
                 }
             }
+            if (status is BeamStatus.Firing) {
+                getLockedTarget(shipProvider)?.takeDamage(time.delta)
+            }
         }
 
         fun toMessage() =
@@ -288,11 +297,14 @@ class Ship(
                 targetId = getLockedTargetId()
             )
 
-        private fun getLockedTargetId() = if (lockHandler?.isComplete == true) lockHandler?.targetId else null
+        private fun getLockedTargetId() =
+            if (lockHandler?.isComplete == true) lockHandler?.targetId else null
+
+        private fun getLockedTarget(shipProvider: (ShipId) -> Ship?) =
+            getLockedTargetId()?.let { shipProvider(it) }
 
         private fun isLockedTargetInRange(shipProvider: (ShipId) -> Ship?) =
-            getLockedTargetId()
-                ?.let(shipProvider)
+            getLockedTarget(shipProvider)
                 ?.toScopeContactMessage(this@Ship)
                 ?.relativePosition
                 ?.rotate(-this@Ship.rotation)
@@ -300,9 +312,11 @@ class Ship(
                 ?: false
     }
 
-    private inner class ShieldHandler(
-        var currentStrength: Double = template.shield.strength
-    ) {
+    private inner class ShieldHandler {
+
+        private var damageSinceLastUpdate: Double = 0.0
+        private var activated: Boolean = false
+        private var currentStrength: Double = template.shield.strength
 
         fun update(time: GameTime) {
             currentStrength = min(
@@ -311,7 +325,13 @@ class Ship(
             )
         }
 
+        fun endUpdate() {
+            activated = damageSinceLastUpdate > 0.0
+            damageSinceLastUpdate = 0.0
+        }
+
         fun takeDamage(amount: Double) {
+            damageSinceLastUpdate += amount
             currentStrength = max(
                 0.0,
                 currentStrength - amount
@@ -320,6 +340,7 @@ class Ship(
 
         fun toMessage() =
             ShieldMessage(
+                activated = activated,
                 strength = currentStrength,
                 max = template.shield.strength
             )

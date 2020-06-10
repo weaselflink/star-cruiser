@@ -124,7 +124,8 @@ data class ContactMessage(
     val relativePosition: Vector2,
     val rotation: Double,
     val bearing: Double,
-    val beams: List<BeamMessage>
+    val beams: List<BeamMessage>,
+    val shield: ShieldMessage
 ) : Positional
 
 @Serializable
@@ -227,6 +228,7 @@ sealed class BeamStatus {
 
 @Serializable
 data class ShieldMessage(
+    val activated: Boolean,
     val strength: Double,
     val max: Double
 )

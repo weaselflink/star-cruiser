@@ -54,26 +54,33 @@ class MainScene {
         removeOldContacts(contacts, oldContactIds)
         updateContacts(contacts)
         updateBeams(snapshot)
+        updateShields(snapshot)
     }
 
     private fun updateBeams(snapshot: SnapshotMessage.MainScreen) {
-        ownShip.hideShield()
-        contactNodes.values.forEach { it.hideShield() }
-
         ownShip.updateBeams(snapshot, snapshot.ship.beams)
-        snapshot.ship.beams.filter {
-            it.status is BeamStatus.Firing
-        }.map {
-            snapshot.getTarget(it.targetId)?.showShield()
-        }
 
         contactNodes.forEach { node ->
             snapshot.contacts.firstOrNull { it.id == node.key }?.let { contact ->
                 node.value.updateBeams(snapshot, contact.beams)
-                contact.beams.filter {
-                    it.status is BeamStatus.Firing
-                }.map {
-                    snapshot.getTarget(it.targetId)?.showShield()
+            }
+        }
+    }
+
+    private fun updateShields(snapshot: SnapshotMessage.MainScreen) {
+        contactNodes.values.forEach { it.hideShield() }
+
+        if (snapshot.ship.shield.activated) {
+            ownShip.showShield()
+        } else {
+            ownShip.hideShield()
+        }
+        contactNodes.forEach { node ->
+            snapshot.contacts.firstOrNull { it.id == node.key }?.let { contact ->
+                if (contact.shield.activated) {
+                    node.value.showShield()
+                } else {
+                    node.value.hideShield()
                 }
             }
         }
@@ -189,9 +196,6 @@ class MainScene {
             }
         )
     }
-
-    private fun SnapshotMessage.MainScreen.getTarget(targetId: ShipId?): ShipGroup? =
-        contactNodes[targetId] ?: if (ship.id == targetId) ownShip else null
 
     private fun Object3D.add(shipGroup: ShipGroup) = add(shipGroup.rootNode)
 
