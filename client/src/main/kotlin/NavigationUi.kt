@@ -1,11 +1,13 @@
 import components.CanvasSlider
 import components.MapClick
 import components.NavigationMap
-import de.bissell.starcruiser.Command.*
+import components.SelectionDetails
+import de.bissell.starcruiser.Command.CommandAddWaypoint
+import de.bissell.starcruiser.Command.CommandDeleteWaypoint
+import de.bissell.starcruiser.Command.CommandScanShip
 import de.bissell.starcruiser.ScanLevel
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
-import de.bissell.starcruiser.pad
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -13,7 +15,6 @@ import org.w3c.dom.HTMLElement
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.dom.removeClass
-import kotlin.math.roundToInt
 
 class NavigationUi : StationUi {
 
@@ -27,9 +28,10 @@ class NavigationUi : StationUi {
     private val addWaypointButton = document.querySelector(".addWaypoint")!! as HTMLButtonElement
     private val deleteWaypointButton = document.querySelector(".deleteWaypoint")!! as HTMLButtonElement
     private val scanShipButton = document.querySelector(".scanShip")!! as HTMLButtonElement
-    private val selectionDetails = document.getElementById("selection-details")!! as HTMLElement
-    private val detailsScanButton = selectionDetails.querySelector(".detailsScanButton")!! as HTMLButtonElement
-    private val detailsDeleteButton = selectionDetails.querySelector(".detailsDeleteButton")!! as HTMLButtonElement
+    private val selectionDetails = SelectionDetails(
+        onScan = { scanShipClicked() },
+        onDelete = { deleteWayPointClicked() }
+    )
     private val zoomSlider = CanvasSlider(
         canvas = canvas,
         xExpr = { it.vmin * 5 },
@@ -44,9 +46,6 @@ class NavigationUi : StationUi {
 
     init {
         resize()
-        selectionDetails.visibility = Visibility.hidden
-        detailsScanButton.onclick = { scanShipClicked() }
-        detailsDeleteButton.onclick = { deleteWayPointClicked() }
         mouseEventDispatcher.addHandler(zoomSlider)
         mouseEventDispatcher.addHandler(navigationMap.MapMouseEventHandler())
     }
@@ -57,9 +56,7 @@ class NavigationUi : StationUi {
 
     override fun hide() {
         root.visibility = Visibility.hidden
-        selectionDetails.visibility = Visibility.hidden
-        detailsScanButton.visibility = Visibility.hidden
-        detailsDeleteButton.visibility = Visibility.hidden
+        selectionDetails.hide()
     }
 
     fun zoomIn() {
@@ -75,7 +72,7 @@ class NavigationUi : StationUi {
     }
 
     fun draw(snapshot: SnapshotMessage.Navigation) {
-        drawSelectedDetails()
+        selectionDetails.draw(navigationMap.selection)
 
         with(ctx) {
             resetTransform()
@@ -83,38 +80,6 @@ class NavigationUi : StationUi {
 
             navigationMap.draw(snapshot)
             drawZoom()
-        }
-    }
-
-    private fun drawSelectedDetails() {
-        val selection = selection()
-        if (selection != null) {
-            selectionDetails.visibility = Visibility.visible
-            selectionDetails.querySelector(".designation")!!.innerHTML =
-                selection.label
-            selectionDetails.querySelector(".bearing")!!.innerHTML =
-                selection.bearing.roundToInt().pad(3)
-            selectionDetails.querySelector(".range")!!.innerHTML =
-                selection.range.roundToInt().toString()
-
-            when {
-                selection.canScan -> {
-                    detailsScanButton.visibility = Visibility.visible
-                    detailsDeleteButton.visibility = Visibility.hidden
-                }
-                selection.canDelete -> {
-                    detailsScanButton.visibility = Visibility.hidden
-                    detailsDeleteButton.visibility = Visibility.visible
-                }
-                else -> {
-                    detailsScanButton.visibility = Visibility.hidden
-                    detailsDeleteButton.visibility = Visibility.hidden
-                }
-            }
-        } else {
-            selectionDetails.visibility = Visibility.hidden
-            detailsScanButton.visibility = Visibility.hidden
-            detailsDeleteButton.visibility = Visibility.hidden
         }
     }
 
@@ -207,37 +172,10 @@ class NavigationUi : StationUi {
         navigationMap.selectedWaypoint = null
     }
 
-    private fun selection(): SelectionDetails? =
-        navigationMap.selectedContact?.let {
-            SelectionDetails(
-                label = it.designation,
-                bearing = it.bearing,
-                range = it.relativePosition.length(),
-                canScan = it.scanLevel != ScanLevel.highest,
-                canDelete = false
-            )
-        } ?: navigationMap.selectedWaypoint?.let {
-            SelectionDetails(
-                label = it.name,
-                bearing = it.bearing,
-                range = it.relativePosition.length(),
-                canScan = false,
-                canDelete = true
-            )
-        }
-
     enum class ButtonState {
         Initial,
         AddWaypoint,
         DeleteWaypoint,
         ScanShip
     }
-
-    data class SelectionDetails(
-        val label: String,
-        val bearing: Double,
-        val range: Double,
-        val canScan: Boolean,
-        val canDelete: Boolean
-    )
 }

@@ -7,6 +7,7 @@ import clear
 import de.bissell.starcruiser.ContactMessage
 import de.bissell.starcruiser.ContactType
 import de.bissell.starcruiser.Positional
+import de.bissell.starcruiser.ScanLevel
 import de.bissell.starcruiser.ShipId
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
@@ -58,6 +59,25 @@ class NavigationMap(
 
     private var contacts: List<ContactMessage> = emptyList()
     private var waypoints: List<WaypointMessage> = emptyList()
+
+    val selection: Selection?
+        get() = selectedContact?.let {
+            Selection(
+                label = it.designation,
+                bearing = it.bearing,
+                range = it.relativePosition.length(),
+                canScan = it.scanLevel != ScanLevel.highest,
+                canDelete = false
+            )
+        } ?: selectedWaypoint?.let {
+            Selection(
+                label = it.name,
+                bearing = it.bearing,
+                range = it.relativePosition.length(),
+                canScan = false,
+                canDelete = true
+            )
+        }
 
     fun zoomIn() {
         scaleSetting = (scaleSetting - 1).clamp(0, 6)
@@ -290,4 +310,12 @@ data class MapClick(
     val world: Vector2,
     val waypoints: List<WaypointMessage>,
     val contacts: List<ContactMessage>
+)
+
+data class Selection(
+    val label: String,
+    val bearing: Double,
+    val range: Double,
+    val canScan: Boolean,
+    val canDelete: Boolean
 )
