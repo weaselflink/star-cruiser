@@ -2,14 +2,29 @@
 
 ## Star Cruiser Crew Simulator
 
-An experiment with a browser based game.
+A cooperative game in which players man the stations of a sci-fi spaceship. Each player can only
+control a small part of the ship and relies heavily on information given by the other players.
 
-Client/Server communication is handled via websocket. 
-All code ist written in Kotlin (client/server/shared).
+This project is heavily inspired by games such as 
+[Artemis Spaceship Bridge Simulator](https://artemisspaceshipbridge.com/)(commercial software), 
+[Empty Epsilon](https://daid.github.io/EmptyEpsilon/) (open source, source at https://github.com/daid/EmptyEpsilon)
+and [Space Nerds In Space](https://smcameron.github.io/space-nerds-in-space/) 
+(open source, source at https://github.com/smcameron/space-nerds-in-space/).
+
+However, this project has some special goals:
+* Clients run inside a browser, therefore should support most platforms, especially mobile devices.
+* Server runs an any platform that can run a JVM.
+
+There are also some technical goals:
+* All code is written in [Kotlin](https://kotlinlang.org/) (client/server/shared).
+* Server runs on [Ktor](https://ktor.io/servers/index.html) using coroutines.
+* Client/server communication uses [WebSocket](https://javascript.info/websocket) with JSON payloads.
+* Client code is independent of the server.
+* No game logic runs on the clients, they only send commands and receive state updates.
 
 ### Preconditions
 
-* Java 9+ (e.g. https://www.azul.com/downloads/zulu-community/)
+* Java 8+, tested with 8,13 and 14 (e.g. [OpenJDK Azul](https://www.azul.com/downloads/zulu-community/?version=java-14&package=jdk))
 
 ### How to run
 
