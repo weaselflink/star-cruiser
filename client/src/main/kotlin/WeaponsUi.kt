@@ -1,4 +1,5 @@
 import components.ShortRangeScope
+import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.Command.CommandLockTarget
 import de.bissell.starcruiser.ShipId
 import de.bissell.starcruiser.SnapshotMessage
@@ -20,8 +21,10 @@ class WeaponsUi : StationUi {
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
     private val rotateScopeButton = document.querySelector(".rotateScope")!! as HTMLButtonElement
     private val lockTargetButton = document.querySelector(".lockTarget")!! as HTMLButtonElement
+    private val toggleShieldsButton = document.querySelector(".toggleShields")!! as HTMLButtonElement
     private val shortRangeScope = ShortRangeScope(canvas, true) { contactSelected(it) }
 
+    private var shieldsUp = false
     private var selectingTarget = false
 
     init {
@@ -56,7 +59,18 @@ class WeaponsUi : StationUi {
         }
     }
 
+    fun toggleShields() {
+        clientSocket.send(Command.CommandSetShieldsUp(!shieldsUp))
+    }
+
     fun draw(snapshot: SnapshotMessage.Weapons) {
+        shieldsUp = snapshot.ship.shield.up
+        if (shieldsUp) {
+            toggleShieldsButton.innerHTML = "Shields down"
+        } else {
+            toggleShieldsButton.innerHTML = "Shields up"
+        }
+
         ctx.draw(snapshot)
     }
 

@@ -31,6 +31,7 @@ class AddWaypoint(val clientId: ClientId, val position: Vector2) : GameStateChan
 class DeleteWaypoint(val clientId: ClientId, val index: Int) : GameStateChange()
 class ScanShip(val clientId: ClientId, val targetId: ShipId) : GameStateChange()
 class LockTarget(val clientId: ClientId, val targetId: ShipId) : GameStateChange()
+class SetShieldsUp(val clientId: ClientId, val activated: Boolean) : GameStateChange()
 
 class GameState {
 
@@ -145,6 +146,10 @@ class GameState {
         }
     }
 
+    fun setShieldsUp(clientId: ClientId, value: Boolean) {
+        getClientShip(clientId)?.setShieldsUp(value)
+    }
+
     private fun getClient(clientId: ClientId) =
         clients.computeIfAbsent(clientId) { Client(clientId) }
 
@@ -188,6 +193,7 @@ class GameState {
                     is DeleteWaypoint -> gameState.deleteWaypoint(change.clientId, change.index)
                     is ScanShip -> gameState.scanShip(change.clientId, change.targetId)
                     is LockTarget -> gameState.lockTarget(change.clientId, change.targetId)
+                    is SetShieldsUp -> gameState.setShieldsUp(change.clientId, change.activated)
                 }
             }
         }

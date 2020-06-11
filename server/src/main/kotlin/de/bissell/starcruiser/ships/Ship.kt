@@ -124,6 +124,10 @@ class Ship(
         }
     }
 
+    fun setShieldsUp(value: Boolean) {
+        shieldHandler.setUp(value)
+    }
+
     fun takeDamage(amount: Double) = shieldHandler.takeDamage(amount)
 
     fun toPlayerShipMessage() =
@@ -314,6 +318,7 @@ class Ship(
 
     private inner class ShieldHandler {
 
+        private var up: Boolean = true
         private var damageSinceLastUpdate: Double = 0.0
         private var activated: Boolean = false
         private var currentStrength: Double = template.shield.strength
@@ -331,15 +336,23 @@ class Ship(
         }
 
         fun takeDamage(amount: Double) {
-            damageSinceLastUpdate += amount
-            currentStrength = max(
-                0.0,
-                currentStrength - amount
-            )
+            if (up) {
+                damageSinceLastUpdate += amount
+                currentStrength = max(
+                    0.0,
+                    currentStrength - amount
+                )
+            }
+        }
+
+        fun setUp(value: Boolean) {
+            up = value
         }
 
         fun toMessage() =
             ShieldMessage(
+                radius = template.shieldRadius,
+                up = up,
                 activated = activated,
                 strength = currentStrength,
                 max = template.shield.strength

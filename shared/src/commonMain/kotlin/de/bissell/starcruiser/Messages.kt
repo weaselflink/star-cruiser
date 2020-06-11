@@ -228,6 +228,8 @@ sealed class BeamStatus {
 
 @Serializable
 data class ShieldMessage(
+    val radius: Double,
+    val up: Boolean,
     val activated: Boolean,
     val strength: Double,
     val max: Double

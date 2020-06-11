@@ -52,6 +52,11 @@ fun init() {
                 Station.Weapons
             ),
             ExtraButton(
+                ".toggleShields",
+                weaponsUi::toggleShields,
+                Station.Weapons
+            ),
+            ExtraButton(
                 ".addWaypoint",
                 navigationUi::addWayPointClicked,
                 Station.Navigation

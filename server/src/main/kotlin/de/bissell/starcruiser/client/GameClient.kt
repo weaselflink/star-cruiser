@@ -67,6 +67,9 @@ class GameClient(
                 is Command.CommandLockTarget -> gameStateActor.send(
                     LockTarget(id, command.targetId)
                 )
+                is Command.CommandSetShieldsUp -> gameStateActor.send(
+                    SetShieldsUp(id, command.value)
+                )
             }
         }
 

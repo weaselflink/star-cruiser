@@ -17,8 +17,6 @@ import three.updateSize
 import kotlin.browser.window
 import kotlin.math.PI
 
-private const val shieldRadius = 17.0
-
 class MainScene {
 
     val scene = Scene()
@@ -71,14 +69,14 @@ class MainScene {
         contactNodes.values.forEach { it.hideShield() }
 
         if (snapshot.ship.shield.activated) {
-            ownShip.showShield()
+            ownShip.showShield(snapshot.ship.shield.radius)
         } else {
             ownShip.hideShield()
         }
         contactNodes.forEach { node ->
             snapshot.contacts.firstOrNull { it.id == node.key }?.let { contact ->
                 if (contact.shield.activated) {
-                    node.value.showShield()
+                    node.value.showShield(contact.shield.radius)
                 } else {
                     node.value.hideShield()
                 }
@@ -185,9 +183,6 @@ class MainScene {
             url = "/assets/ships/shield-cube.glb",
             onLoad = { gltf ->
                 shieldModel = gltf.scene.also {
-                    it.scale.x = shieldRadius
-                    it.scale.y = shieldRadius
-                    it.scale.z = shieldRadius
                     it.debugPrint()
                 }
                 shieldModel?.clone(true)?.also {
@@ -232,8 +227,13 @@ class ShipGroup {
 
     operator fun plusAssign(value: Object3D) = rootNode.add(value)
 
-    fun showShield() {
-        shieldModel?.visible = true
+    fun showShield(shieldRadius: Double) {
+        shieldModel?.apply {
+            visible = true
+            scale.x = shieldRadius
+            scale.y = shieldRadius
+            scale.z = shieldRadius
+        }
     }
 
     fun hideShield() {
@@ -253,6 +253,9 @@ class ShipGroup {
             it.status is BeamStatus.Firing
         }.forEach { beamMessage ->
             val relativePosition = snapshot.getTargetPosition(beamMessage.targetId) ?: return
+            val shieldRadius = snapshot.getTargetShield(beamMessage.targetId)?.let {
+                if (it.up) it.radius else 0.0
+            } ?: 0.0
             val targetPosition = relativePosition.toWorld()
 
             Object3D().apply {
@@ -273,6 +276,11 @@ class ShipGroup {
     private fun SnapshotMessage.MainScreen.getTargetPosition(targetId: ShipId?): Vector2? {
         return contacts.firstOrNull { it.id == targetId }?.relativePosition
             ?: if (ship.id == targetId) Vector2() else null
+    }
+
+    private fun SnapshotMessage.MainScreen.getTargetShield(targetId: ShipId?): ShieldMessage? {
+        return contacts.firstOrNull { it.id == targetId }?.shield
+            ?: if (ship.id == targetId) ship.shield else null
     }
 
     private fun Vector2.toWorld() = Vector3(-y, 0.0, -x)
