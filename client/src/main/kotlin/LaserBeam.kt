@@ -5,6 +5,7 @@ import three.DoubleSide
 import three.core.Color
 import three.core.Object3D
 import three.geometries.PlaneGeometry
+import three.lights.PointLight
 import three.materials.MaterialParameters
 import three.materials.MeshBasicMaterial
 import three.objects.Mesh
@@ -13,14 +14,28 @@ import kotlin.browser.document
 import kotlin.math.PI
 
 class LaserBeam(
-    length: Number = 1.0,
-    width: Number = 0.2
+    private val length: Number = 1.0,
+    private val width: Number = 0.2
 ) {
 
     val obj = Object3D()
-    private val beamRoot = Object3D()
 
     init {
+        createBeam()
+        createLight()
+    }
+
+    private fun createLight() {
+        val light = PointLight(
+            color = Color(0xff9900),
+            intensity = 10.0,
+            distance = 20.0
+        )
+        obj.add(light)
+    }
+
+    private fun createBeam() {
+        val beam = Object3D()
         val canvas = laserCanvas()
         val texture = Texture(canvas).apply {
             needsUpdate = true
@@ -41,12 +56,14 @@ class LaserBeam(
             Mesh(geometry, material).also { mesh ->
                 mesh.position.x = 0.5
                 mesh.rotation.x = n.toDouble() / planes * PI
-                beamRoot.add(mesh)
+                beam.add(mesh)
             }
         }
-        beamRoot.rotation.y = -PI * 0.5
+        beam.rotation.y = -PI * 0.5
+        val beamRoot = Object3D()
+        beamRoot.add(beam)
+        beamRoot.scale.z = length.toDouble()
         obj.add(beamRoot)
-        obj.scale.z = length.toDouble()
     }
 
     private fun laserCanvas(): HTMLCanvasElement {
