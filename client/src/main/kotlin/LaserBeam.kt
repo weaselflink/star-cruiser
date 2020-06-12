@@ -26,12 +26,15 @@ class LaserBeam(
     }
 
     private fun createLight() {
-        val light = PointLight(
+        PointLight(
             color = Color(0xff9900),
             intensity = 10.0,
-            distance = 20.0
-        )
-        obj.add(light)
+            distance = 5.0
+        ).apply {
+            position.z = 1.0
+        }.also {
+            obj.add(it)
+        }
     }
 
     private fun createBeam() {
@@ -60,10 +63,12 @@ class LaserBeam(
             }
         }
         beam.rotation.y = -PI * 0.5
-        val beamRoot = Object3D()
-        beamRoot.add(beam)
-        beamRoot.scale.z = length.toDouble()
-        obj.add(beamRoot)
+        Object3D().apply {
+            add(beam)
+            scale.z = length.toDouble()
+        }.also {
+            obj.add(it)
+        }
     }
 
     private fun laserCanvas(): HTMLCanvasElement {
