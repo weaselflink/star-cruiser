@@ -1,4 +1,5 @@
 import de.bissell.starcruiser.Command
+import de.bissell.starcruiser.PlayerShipMessage
 import de.bissell.starcruiser.ShipId
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station.Helm
@@ -9,10 +10,18 @@ import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.math.max
+import kotlin.math.min
 
 class JoinUi {
 
     private val root = document.getElementById("join-ui")!! as HTMLElement
+    private val playerShipsList = root.querySelector(".playerShips")!! as HTMLElement
+    private val prevButton = root.querySelector(".playerShipsPrev")!! as HTMLButtonElement
+    private val nextButton = root.querySelector(".playerShipsNext")!! as HTMLButtonElement
+    private var playerShips = emptyList<PlayerShipMessage>()
+    private val pageCount
+        get() = playerShips.chunked(6).size
+    private var page = 0
 
     init {
         document.getElementsByClassName("spawn").asList()
@@ -21,6 +30,8 @@ class JoinUi {
             }.forEach {
                 it.onclick = { clientSocket.send(Command.CommandSpawnShip) }
             }
+        prevButton.onclick = { prev() }
+        nextButton.onclick = { next() }
     }
 
     fun show() {
@@ -32,45 +43,55 @@ class JoinUi {
     }
 
     fun draw(snapshot: SnapshotMessage.ShipSelection) {
-        document.getElementsByClassName("playerShips").asList().forEach { playerShipsList ->
-            val listElements = playerShipsList.getElementsByTagName("button")
+        playerShips = snapshot.playerShips
+        page = max(0, min(page, pageCount - 1))
 
-            val max = max(snapshot.playerShips.size, listElements.length)
+        if (page > 0) {
+            prevButton.display = Display.block
+        } else {
+            prevButton.display = Display.none
+        }
 
-            for (index in 0 until max) {
-                if (index < snapshot.playerShips.size) {
-                    val playerShip = snapshot.playerShips[index]
+        if (page < pageCount - 1) {
+            nextButton.display = Display.block
+        } else {
+            nextButton.display = Display.none
+        }
+
+        drawShipList()
+    }
+
+    private fun drawShipList() {
+        playerShipsList.querySelectorAll("button").asList().forEach {
+            (it as HTMLButtonElement).remove()
+        }
+
+        if (pageCount < 1) return
+
+        playerShips.chunked(6)[page]
+            .forEach { playerShip ->
+                document.createElement("button").let {
+                    it as HTMLElement
+                }.apply {
+                    shipId = playerShip.id
+                    addClass("leftEdge")
                     val buttonText = playerShip.name + (playerShip.shipClass?.let { " ($it class)" } ?: "")
-                    if (index < listElements.length) {
-                        listElements.item(index)!!.let {
-                            it as HTMLElement
-                        }.apply {
-                            if (shipId != playerShip.id) {
-                                shipId = playerShip.id
-                                innerHTML = buttonText
-                            }
-                        }
-                    } else {
-                        document.createElement("button").let {
-                            it as HTMLElement
-                        }.apply {
-                            shipId = playerShip.id
-                            addClass("leftEdge")
-                            innerHTML = buttonText
-                            onclick = { selectPlayerShip(it) }
-                        }.also {
-                            playerShipsList.appendChild(it)
-                        }
-                    }
-                } else {
-                    if (index < listElements.length) {
-                        listElements.item(index)?.apply {
-                            remove()
-                        }
-                    }
+                    innerHTML = buttonText
+                    onclick = { selectPlayerShip(it) }
+                }.also {
+                    playerShipsList.appendChild(it)
                 }
             }
-        }
+    }
+
+    private fun prev() {
+        page = max(page - 1, 0)
+        drawShipList()
+    }
+
+    private fun next() {
+        page = min(page + 1, pageCount - 1)
+        drawShipList()
     }
 
     private fun selectPlayerShip(event: MouseEvent) {

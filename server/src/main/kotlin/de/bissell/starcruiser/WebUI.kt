@@ -20,7 +20,6 @@ import kotlinx.css.Cursor.pointer
 import kotlinx.css.Display.block
 import kotlinx.css.Display.grid
 import kotlinx.css.FontWeight.Companion.bold
-import kotlinx.css.Position.absolute
 import kotlinx.css.Position.fixed
 import kotlinx.html.*
 
@@ -41,8 +40,8 @@ fun Routing.webUi() {
         call.respondText(contentType = ContentType.Text.CSS) {
             CSSBuilder(indent = "\t").apply {
                 body {
-                    margin = 0.px.value
-                    padding = 0.px.value
+                    margin = 0.vmin.value
+                    padding = 0.vmin.value
                     backgroundColor = Color("#222")
                     color = white
                     fontFamily = "sans-serif"
@@ -52,46 +51,32 @@ fun Routing.webUi() {
                 }
                 canvas {
                     position = fixed
-                    top = 0.px
-                    left = 0.px
+                    top = 0.vmin
+                    left = 0.vmin
                     width = 100.pct
                     height = 100.pct
-                }
-                ".conn" {
-                    position = fixed
-                    top = 0.px
-                    right = 0.px
-                    zIndex = 10
-                    padding = 20.px.value
-                }
-                ".leftButtons" {
-                    position = absolute
-                    display = grid
-                    gap = Gap(10.px.value)
-                    marginTop = 20.px
-                    top = 0.px
-                    zIndex = 10
-                    padding(20.px, 0.px)
                 }
                 ".topLeftButtons, .topRightButtons" {
                     position = fixed
                     display = grid
-                    gap = Gap(10.px.value)
-                    marginTop = 20.px
-                    top = 0.px
+                    gap = Gap(1.vmin.value)
+                    marginTop = 1.vmin
+                    top = 0.vmin
                     zIndex = 10
-                    padding(20.px, 0.px)
+                    padding(4.vmin, 0.vmin)
                 }
                 ".topLeftButtons" {
-                    left = 0.px
+                    left = 0.vmin
                 }
                 ".topRightButtons" {
-                    right = 0.px
+                    right = 0.vmin
                 }
                 ".playerShips" {
                     display = grid
-                    gap = Gap(10.px.value)
-                    marginTop = 20.px
+                    gap = Gap(1.vmin.value)
+                    marginTop = 3.vmin
+                    marginBottom = 3.vmin
+                    alignSelf = Align.flexStart
                 }
                 "button" {
                     display = block
@@ -122,10 +107,10 @@ fun Routing.webUi() {
                 "button.leftEdge" {
                     paddingRight = 3.vmin
                     paddingLeft = 2.vmin
-                    borderTopLeftRadius = 0.px
+                    borderTopLeftRadius = 0.vmin
                     borderTopRightRadius = 4.vmin
                     borderBottomRightRadius = 4.vmin
-                    borderBottomLeftRadius = 0.px
+                    borderBottomLeftRadius = 0.vmin
                 }
                 "button.rightEdge" {
                     paddingTop = 1.vmin
@@ -133,8 +118,8 @@ fun Routing.webUi() {
                     paddingBottom = 1.5.vmin
                     paddingLeft = 3.vmin
                     borderTopLeftRadius = 4.vmin
-                    borderTopRightRadius = 0.px
-                    borderBottomRightRadius = 0.px
+                    borderTopRightRadius = 0.vmin
+                    borderBottomRightRadius = 0.vmin
                     borderBottomLeftRadius = 4.vmin
                 }
                 "button:active" {
@@ -142,10 +127,13 @@ fun Routing.webUi() {
                     backgroundColor = dimGrey
                     borderColor = dimGrey
                 }
+                "#join-ui .topLeftButtons" {
+                    gridTemplateRows = GridTemplateRows(LinearDimension.auto, 52.vmin, LinearDimension.auto)
+                }
                 "#selection-details" {
                     position = fixed
-                    right = 0.px
-                    bottom = 0.px
+                    right = 0.vmin
+                    bottom = 0.vmin
                     zIndex = 10
                     display = grid
                     gridTemplateColumns = GridTemplateColumns("auto 10vmin")
@@ -226,11 +214,13 @@ fun Routing.webUi() {
 private fun BODY.joinUi() {
     div {
         id = "join-ui"
-        div(classes = "leftButtons") {
+        div(classes = "topLeftButtons") {
             button(classes = "spawn leftEdge") {
                 +"+ Spawn ship"
             }
             div(classes = "playerShips") {}
+            button(classes = "playerShipsPrev leftEdge") { +"Prev"}
+            button(classes = "playerShipsNext leftEdge") { +"Next"}
         }
     }
 }
