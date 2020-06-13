@@ -20,6 +20,7 @@ import kotlinx.css.Cursor.pointer
 import kotlinx.css.Display.block
 import kotlinx.css.Display.grid
 import kotlinx.css.FontWeight.Companion.bold
+import kotlinx.css.Position.absolute
 import kotlinx.css.Position.fixed
 import kotlinx.html.*
 
@@ -62,6 +63,15 @@ fun Routing.webUi() {
                     right = 0.px
                     zIndex = 10
                     padding = 20.px.value
+                }
+                ".leftButtons" {
+                    position = absolute
+                    display = grid
+                    gap = Gap(10.px.value)
+                    marginTop = 20.px
+                    top = 0.px
+                    zIndex = 10
+                    padding(20.px, 0.px)
                 }
                 ".topLeftButtons, .topRightButtons" {
                     position = fixed
@@ -216,7 +226,7 @@ fun Routing.webUi() {
 private fun BODY.joinUi() {
     div {
         id = "join-ui"
-        div(classes = "topLeftButtons") {
+        div(classes = "leftButtons") {
             button(classes = "spawn leftEdge") {
                 +"+ Spawn ship"
             }
