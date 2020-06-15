@@ -5,9 +5,11 @@ import circle
 import de.bissell.starcruiser.*
 import de.bissell.starcruiser.SnapshotMessage.ShortRangeScopeStation
 import dimensions
+import drawAsteroidSymbol
 import drawLockMarker
 import drawPill
 import drawShipSymbol
+import environmentContactStyle
 import friendlyContactStyle
 import historyStyle
 import lockMarkerStyle
@@ -36,6 +38,7 @@ class ShortRangeScope(
     private var scopeRadius = dim.vmin * 47
     private var ship: ShipMessage? = null
     private var contacts: List<ScopeContactMessage> = emptyList()
+    private var asteroids: List<ScopeAsteroidMessage> = emptyList()
     var rotating = false
         private set
 
@@ -52,6 +55,7 @@ class ShortRangeScope(
         scopeRadius = dim.vmin * 47
         ship = snapshot.ship
         contacts = snapshot.contacts
+        asteroids = snapshot.asteroids
 
         ctx.draw(snapshot.ship)
     }
@@ -91,6 +95,7 @@ class ShortRangeScope(
 
         drawHistory(ship)
         drawBeams(ship)
+        drawAsteroids()
         drawWaypoints(ship)
         drawContacts()
         drawLockedContact(ship)
@@ -198,6 +203,25 @@ class ShortRangeScope(
             restore()
         }
 
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawAsteroids() {
+        save()
+        environmentContactStyle(dim)
+
+        asteroids.forEach {
+            drawAsteroid(it)
+        }
+
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawAsteroid(asteroid: ScopeAsteroidMessage) {
+        val posOnScope = asteroid.relativePosition.adjustForScope()
+        save()
+        translate(posOnScope)
+        drawAsteroidSymbol(asteroid.rotation, dim.vmin * 0.8 * asteroid.radius * 0.1)
         restore()
     }
 

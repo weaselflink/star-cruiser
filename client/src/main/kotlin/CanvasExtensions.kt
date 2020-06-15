@@ -14,12 +14,6 @@ fun CanvasRenderingContext2D.translateToCenter() {
     translate(canvas.width / 2.0, canvas.height / 2.0)
 }
 
-fun CanvasRenderingContext2D.moveTo(vector: Vector2) =
-    moveTo(vector.x, vector.y)
-
-fun CanvasRenderingContext2D.lineTo(vector: Vector2) =
-    lineTo(vector.x, vector.y)
-
 fun CanvasRenderingContext2D.translate(vector: Vector2) =
     translate(vector.x, vector.y)
 
@@ -39,10 +33,31 @@ fun CanvasRenderingContext2D.drawShipSymbol(rot: Double, baseUnit: Double) {
     save()
     rotate(-rot)
     beginPath()
-    moveTo(-baseUnit * 1.4, -baseUnit)
-    lineTo(baseUnit * 1.6, 0.0)
-    lineTo(-baseUnit * 1.4, baseUnit)
-    lineTo(-baseUnit * 0.9, 0.0)
+    moveTo(baseUnit * -1.4, baseUnit * -1.0)
+    lineTo(baseUnit * 1.6, baseUnit * 0.0)
+    lineTo(baseUnit * -1.4, baseUnit * 1.0)
+    lineTo(baseUnit * -0.9, baseUnit * 0.0)
+    closePath()
+    stroke()
+    restore()
+}
+
+fun CanvasRenderingContext2D.drawAsteroidSymbol(rot: Double, baseUnit: Double) {
+    save()
+    rotate(-rot)
+    beginPath()
+    moveTo(baseUnit * 0.0, baseUnit * -1.4)
+    lineTo(baseUnit * 1.0, baseUnit * -1.2)
+    lineTo(baseUnit * 1.4, baseUnit * -0.4)
+    lineTo(baseUnit * 1.2, baseUnit * 0.2)
+    lineTo(baseUnit * 1.2, baseUnit * 0.2)
+    lineTo(baseUnit * 1.4, baseUnit * 0.9)
+    lineTo(baseUnit * 0.0, baseUnit * 1.5)
+    lineTo(baseUnit * -0.5, baseUnit * 1.0)
+    lineTo(baseUnit * -1.1, baseUnit * 1.0)
+    lineTo(baseUnit * -1.4, baseUnit * -0.2)
+    lineTo(baseUnit * -1.0, baseUnit * -0.7)
+    lineTo(baseUnit * -0.8, baseUnit * -1.2)
     closePath()
     stroke()
     restore()
@@ -99,6 +114,12 @@ fun CanvasRenderingContext2D.beamStyle(dim: CanvasDimensions) {
 fun CanvasRenderingContext2D.unknownContactStyle(dim: CanvasDimensions) {
     strokeStyle = "#555"
     fillStyle = "#555"
+    contactStyle(dim)
+}
+
+fun CanvasRenderingContext2D.environmentContactStyle(dim: CanvasDimensions) {
+    strokeStyle = "#997300"
+    fillStyle = "#997300"
     contactStyle(dim)
 }
 

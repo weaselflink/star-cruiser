@@ -42,6 +42,12 @@ class GameState {
 
     private val physicsEngine = PhysicsEngine()
 
+    init {
+        repeat(50) {
+            spawnAsteroid()
+        }
+    }
+
     fun toMessage(clientId: ClientId): SnapshotMessage {
         val client = getClient(clientId)
         val clientShip = getClientShip(clientId)
@@ -52,19 +58,23 @@ class GameState {
             InShip -> when (client.station!!) {
                 Helm -> SnapshotMessage.Helm(
                     ship = clientShip!!.toMessage(),
-                    contacts = getScopeContacts(clientShip)
+                    contacts = getScopeContacts(clientShip),
+                    asteroids = getScopeAsteroids(clientShip)
                 )
                 Weapons -> SnapshotMessage.Weapons(
                     ship = clientShip!!.toMessage(),
-                    contacts = getScopeContacts(clientShip)
+                    contacts = getScopeContacts(clientShip),
+                    asteroids = getScopeAsteroids(clientShip)
                 )
                 Navigation -> SnapshotMessage.Navigation(
                     ship = clientShip!!.toMessage(),
-                    contacts = getContacts(clientShip)
+                    contacts = getContacts(clientShip),
+                    asteroids = getAsteroids(clientShip)
                 )
                 MainScreen -> SnapshotMessage.MainScreen(
                     ship = clientShip!!.toMessage(),
-                    contacts = getContacts(clientShip)
+                    contacts = getContacts(clientShip),
+                    asteroids = getAsteroids(clientShip)
                 )
             }
         }
@@ -102,9 +112,10 @@ class GameState {
         }
     }
 
-    fun spawnAsteroid() {
+    private fun spawnAsteroid() {
         Asteroid(
-            position = Vector2.random(1000, 200),
+            position = Vector2.random(800, 200),
+            rotation = Random.nextDouble(PI * 2.0),
             radius = Random.nextDouble(10.0, 20.0)
         ).also {
             asteroids += it
@@ -178,11 +189,24 @@ class GameState {
             .map { it.toContactMessage(clientShip) }
     }
 
+    private fun getAsteroids(clientShip: Ship): List<AsteroidMessage> {
+        return asteroids
+            .map { it.toMessage(clientShip) }
+    }
+
     private fun getScopeContacts(clientShip: Ship): List<ScopeContactMessage> {
         return ships
             .filter { it.key != clientShip.id }
             .map { it.value }
             .map { it.toScopeContactMessage(clientShip) }
+            .filter {
+                it.relativePosition.length() < clientShip.template.shortRangeScopeRange * 1.1
+            }
+    }
+
+    private fun getScopeAsteroids(clientShip: Ship): List<ScopeAsteroidMessage> {
+        return asteroids
+            .map { it.toScopeMessage(clientShip) }
             .filter {
                 it.relativePosition.length() < clientShip.template.shortRangeScopeRange * 1.1
             }

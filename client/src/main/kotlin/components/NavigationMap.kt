@@ -6,8 +6,10 @@ import circle
 import clear
 import de.bissell.starcruiser.*
 import dimensions
+import drawAsteroidSymbol
 import drawLockMarker
 import drawShipSymbol
+import environmentContactStyle
 import friendlyContactStyle
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
@@ -49,6 +51,7 @@ class NavigationMap(
         set(value) { selectedWaypointIndex = value?.index?.also { selectedObjectId = null } }
 
     private var contacts: List<ContactMessage> = emptyList()
+    private var asteroids: List<AsteroidMessage> = emptyList()
     private var waypoints: List<WaypointMessage> = emptyList()
 
     val selection: Selection?
@@ -85,6 +88,7 @@ class NavigationMap(
     fun draw(snapshot: SnapshotMessage.Navigation) {
         val ship = snapshot.ship
         contacts = snapshot.contacts
+        asteroids = snapshot.asteroids
         waypoints = ship.waypoints
         dim = canvas.dimensions()
 
@@ -94,8 +98,9 @@ class NavigationMap(
 
             drawGrid()
             drawHistory(ship)
+            drawAsteroids()
             drawWaypoints(ship)
-            drawContacts(snapshot)
+            drawContacts()
             drawSelectedMarker()
             drawShip(ship)
             drawScanProgress(ship)
@@ -106,8 +111,24 @@ class NavigationMap(
         mapGrid.draw(center, scale)
     }
 
-    private fun CanvasRenderingContext2D.drawContacts(snapshot: SnapshotMessage.Navigation) {
-        snapshot.contacts.forEach {
+    private fun CanvasRenderingContext2D.drawAsteroids() {
+        asteroids.forEach {
+            drawAsteroid(it)
+        }
+    }
+
+    private fun CanvasRenderingContext2D.drawAsteroid(asteroid: AsteroidMessage) {
+        save()
+        translateToCenter()
+        environmentContactStyle(dim)
+
+        translate(asteroid.position.adjustForMap())
+        drawAsteroidSymbol(asteroid.rotation, dim.vmin * 0.8 * asteroid.radius * 0.1)
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawContacts() {
+        contacts.forEach {
             drawContact(it)
         }
     }

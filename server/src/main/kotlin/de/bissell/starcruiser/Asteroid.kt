@@ -1,5 +1,6 @@
 package de.bissell.starcruiser
 
+import de.bissell.starcruiser.ships.Ship
 import java.util.*
 
 class Asteroid(
@@ -15,6 +16,23 @@ class Asteroid(
             rotation = it.rotation
         }
     }
+
+    fun toMessage(relativeTo: Ship) =
+        AsteroidMessage(
+            id = id,
+            radius = radius,
+            position = position,
+            relativePosition = position - relativeTo.position,
+            rotation = rotation
+        )
+
+    fun toScopeMessage(relativeTo: Ship) =
+        ScopeAsteroidMessage(
+            id = id,
+            radius = radius,
+            relativePosition = position - relativeTo.position,
+            rotation = rotation
+        )
 
     companion object {
         private fun ObjectId.Companion.random() = ObjectId(UUID.randomUUID().toString())

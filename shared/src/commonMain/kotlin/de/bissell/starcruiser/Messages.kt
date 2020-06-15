@@ -53,6 +53,7 @@ sealed class SnapshotMessage {
     interface ShortRangeScopeStation {
         val ship: ShipMessage
         val contacts: List<ScopeContactMessage>
+        val asteroids: List<ScopeAsteroidMessage>
     }
 
     @Serializable
@@ -63,25 +64,29 @@ sealed class SnapshotMessage {
     @Serializable
     data class Helm(
         override val ship: ShipMessage,
-        override val contacts: List<ScopeContactMessage>
+        override val contacts: List<ScopeContactMessage>,
+        override val asteroids: List<ScopeAsteroidMessage>
     ) : SnapshotMessage(), ShipSnapshot, ShortRangeScopeStation
 
     @Serializable
     data class Weapons(
         override val ship: ShipMessage,
-        override val contacts: List<ScopeContactMessage>
+        override val contacts: List<ScopeContactMessage>,
+        override val asteroids: List<ScopeAsteroidMessage>
     ) : SnapshotMessage(), ShipSnapshot, ShortRangeScopeStation
 
     @Serializable
     data class Navigation(
         override val ship: ShipMessage,
-        val contacts: List<ContactMessage>
+        val contacts: List<ContactMessage>,
+        val asteroids: List<AsteroidMessage>
     ) : SnapshotMessage(), ShipSnapshot
 
     @Serializable
     data class MainScreen(
         override val ship: ShipMessage,
-        val contacts: List<ContactMessage>
+        val contacts: List<ContactMessage>,
+        val asteroids: List<AsteroidMessage>
     ) : SnapshotMessage(), ShipSnapshot
 }
 
@@ -129,6 +134,15 @@ data class ContactMessage(
 ) : Positional
 
 @Serializable
+data class AsteroidMessage(
+    val id: ObjectId,
+    val radius: Double,
+    override val position: Vector2,
+    val relativePosition: Vector2,
+    val rotation: Double
+) : Positional
+
+@Serializable
 data class ScopeContactMessage(
     val id: ObjectId,
     val type: ContactType,
@@ -136,6 +150,14 @@ data class ScopeContactMessage(
     val relativePosition: Vector2,
     val rotation: Double,
     val locked: Boolean
+)
+
+@Serializable
+data class ScopeAsteroidMessage(
+    val id: ObjectId,
+    val radius: Double,
+    val relativePosition: Vector2,
+    val rotation: Double
 )
 
 enum class ContactType {
