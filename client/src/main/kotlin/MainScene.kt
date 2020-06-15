@@ -168,7 +168,7 @@ class MainScene {
 
     private fun loadShipModel() {
         GLTFLoader().load(
-            url = "/assets/ships/carrier.glb",
+            url = "/assets/models/carrier.glb",
             onLoad = { gltf ->
                 model = gltf.scene.also {
                     it.debugPrint()
@@ -180,7 +180,7 @@ class MainScene {
 
     private fun loadShieldModel() {
         GLTFLoader().load(
-            url = "/assets/ships/shield-cube.glb",
+            url = "/assets/models/shield-cube.glb",
             onLoad = { gltf ->
                 shieldModel = gltf.scene.also {
                     it.debugPrint()
