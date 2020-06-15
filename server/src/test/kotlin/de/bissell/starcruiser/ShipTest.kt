@@ -27,8 +27,8 @@ class ShipTest {
     @BeforeEach
     fun setUp() {
         every {
-            physicsEngine.getShipStats(ship.id)
-        } returns ShipParameters(
+            physicsEngine.getBodyParameters(ship.id)
+        } returns BodyParameters(
             position = Vector2(3, -4),
             speed = Vector2(),
             rotation = 0.0
@@ -164,8 +164,8 @@ class ShipTest {
     @Test
     fun `takes values from physics engine`() {
         every {
-            physicsEngine.getShipStats(ship.id)
-        } returns ShipParameters(
+            physicsEngine.getBodyParameters(ship.id)
+        } returns BodyParameters(
             position = Vector2(1, 2),
             speed = Vector2(3, 4),
             rotation = 5.0

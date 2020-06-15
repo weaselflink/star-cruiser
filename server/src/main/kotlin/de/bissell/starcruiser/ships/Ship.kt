@@ -40,7 +40,7 @@ class Ship(
         val effectiveRudder = rudder * template.rudderFactor
         physicsEngine.updateShip(id, effectiveThrust, effectiveRudder)
 
-        physicsEngine.getShipStats(id)?.let {
+        physicsEngine.getBodyParameters(id)?.let {
             position = it.position
             speed = it.speed
             rotation = it.rotation

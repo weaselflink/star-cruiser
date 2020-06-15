@@ -12,16 +12,16 @@ import org.jbox2d.dynamics.World
 class PhysicsEngine {
 
     private val world = World(Vec2())
-    private val ships: MutableMap<ShipId, Body> = mutableMapOf()
+    private val bodies: MutableMap<BodyId, Body> = mutableMapOf()
 
     fun step(time: GameTime) = world.step(time.delta.toFloat(), 6, 2)
 
     fun addShip(ship: Ship) {
-        ships[ship.id] = ship.toBody()
+        bodies[ship.id.toBodyId()] = ship.toBody()
     }
 
-    fun updateShip(id: ShipId, thrust: Double, rudder: Double) {
-        ships[id]?.apply {
+    fun updateShip(shipId: ShipId, thrust: Double, rudder: Double) {
+        bodies[shipId.toBodyId()]?.apply {
             applyForceToCenter(
                 Mat22.createRotationalTransform(angle).mul(Vec2(thrust.toFloat(), 0f))
             )
@@ -29,9 +29,9 @@ class PhysicsEngine {
         }
     }
 
-    fun getShipStats(id: ShipId) =
-        ships[id]?.let {
-            ShipParameters(
+    fun getBodyParameters(shipId: ShipId) =
+        bodies[shipId.toBodyId()]?.let {
+            BodyParameters(
                 position = it.position.toVector2(),
                 speed = it.linearVelocity.toVector2(),
                 rotation = it.angle.toDouble()
@@ -101,9 +101,13 @@ class PhysicsEngine {
     private fun Vector2.toVec2(): Vec2 = Vec2(x.toFloat(), y.toFloat())
 
     private fun World.createBody(block: BodyDef.() -> Unit): Body = createBody(BodyDef().apply(block))
+
+    private fun ShipId.toBodyId() = BodyId(this.id)
 }
 
-data class ShipParameters(
+data class BodyId(val id: String)
+
+data class BodyParameters(
     val position: Vector2,
     val speed: Vector2,
     val rotation: Double
