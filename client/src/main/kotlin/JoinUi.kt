@@ -24,14 +24,14 @@ class JoinUi {
     private var page = 0
 
     init {
-        document.getElementsByClassName("spawn").asList()
-            .map {
-                it as HTMLButtonElement
-            }.forEach {
-                it.onclick = { clientSocket.send(Command.CommandSpawnShip) }
-            }
+        root.querySelector(".spawn")!!.let {
+            it as HTMLButtonElement
+        }.also {
+            it.onclick = { clientSocket.send(Command.CommandSpawnShip) }
+        }
         prevButton.onclick = { prev() }
         nextButton.onclick = { next() }
+        drawShipList()
     }
 
     fun show() {
@@ -43,9 +43,39 @@ class JoinUi {
     }
 
     fun draw(snapshot: SnapshotMessage.ShipSelection) {
+        if (snapshot.playerShips == playerShips) return
         playerShips = snapshot.playerShips
+
+        drawShipList()
+    }
+
+    private fun drawShipList() {
         page = max(0, min(page, pageCount - 1))
 
+        updatePagination()
+
+        playerShipsList.querySelectorAll("button").asList().forEach {
+            (it as HTMLButtonElement).remove()
+        }
+
+        if (pageCount < 1) return
+
+        playerShips.chunked(6)[page]
+            .forEach { playerShip ->
+                document.createElement("button").let {
+                    it as HTMLButtonElement
+                }.apply {
+                    shipId = playerShip.id
+                    addClass("leftEdge")
+                    innerHTML = playerShip.name + (playerShip.shipClass?.let { " ($it class)" } ?: "")
+                    onclick = { selectPlayerShip(it) }
+                }.also {
+                    playerShipsList.appendChild(it)
+                }
+            }
+    }
+
+    private fun updatePagination() {
         if (page > 0) {
             prevButton.display = Display.block
         } else {
@@ -57,31 +87,6 @@ class JoinUi {
         } else {
             nextButton.display = Display.none
         }
-
-        drawShipList()
-    }
-
-    private fun drawShipList() {
-        playerShipsList.querySelectorAll("button").asList().forEach {
-            (it as HTMLButtonElement).remove()
-        }
-
-        if (pageCount < 1) return
-
-        playerShips.chunked(6)[page]
-            .forEach { playerShip ->
-                document.createElement("button").let {
-                    it as HTMLElement
-                }.apply {
-                    shipId = playerShip.id
-                    addClass("leftEdge")
-                    val buttonText = playerShip.name + (playerShip.shipClass?.let { " ($it class)" } ?: "")
-                    innerHTML = buttonText
-                    onclick = { selectPlayerShip(it) }
-                }.also {
-                    playerShipsList.appendChild(it)
-                }
-            }
     }
 
     private fun prev() {
