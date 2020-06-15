@@ -27,7 +27,7 @@ import kotlin.math.roundToInt
 class ShortRangeScope(
     private val canvas: HTMLCanvasElement,
     private val showLocks: Boolean = false,
-    private val scopeClickListener: ((ShipId) -> Unit)? = null
+    private val scopeClickListener: ((ObjectId) -> Unit)? = null
 ) {
 
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
@@ -288,7 +288,7 @@ class ShortRangeScope(
     }
 
     private fun CanvasRenderingContext2D.drawLockProgress(
-        targetId: ShipId,
+        targetId: ObjectId,
         progress: Double
     ) {
         val contact = contacts.firstOrNull {

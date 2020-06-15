@@ -15,18 +15,18 @@ interface Positional {
 }
 
 @Serializable
-data class ShipId(val id: String) {
+data class ObjectId(val id: String) {
 
-    @Serializer(forClass = ShipId::class)
-    companion object : KSerializer<ShipId> {
+    @Serializer(forClass = ObjectId::class)
+    companion object : KSerializer<ObjectId> {
         override val descriptor: SerialDescriptor = PrimitiveDescriptor("ShipId", PrimitiveKind.STRING)
 
-        override fun serialize(encoder: Encoder, value: ShipId) {
+        override fun serialize(encoder: Encoder, value: ObjectId) {
             encoder.encodeString(value.id)
         }
 
-        override fun deserialize(decoder: Decoder): ShipId {
-            return ShipId(decoder.decodeString())
+        override fun deserialize(decoder: Decoder): ObjectId {
+            return ObjectId(decoder.decodeString())
         }
     }
 }
@@ -87,14 +87,14 @@ sealed class SnapshotMessage {
 
 @Serializable
 data class PlayerShipMessage(
-    val id: ShipId,
+    val id: ObjectId,
     val name: String,
     val shipClass: String?
 )
 
 @Serializable
 data class ShipMessage(
-    val id: ShipId,
+    val id: ObjectId,
     val designation: String,
     val shipClass: String?,
     val position: Vector2,
@@ -116,7 +116,7 @@ data class ShipMessage(
 
 @Serializable
 data class ContactMessage(
-    val id: ShipId,
+    val id: ObjectId,
     val type: ContactType,
     val scanLevel: ScanLevel,
     val designation: String,
@@ -130,7 +130,7 @@ data class ContactMessage(
 
 @Serializable
 data class ScopeContactMessage(
-    val id: ShipId,
+    val id: ObjectId,
     val type: ContactType,
     val designation: String,
     val relativePosition: Vector2,
@@ -160,7 +160,7 @@ enum class ScanLevel {
 
 @Serializable
 data class ScanProgress(
-    val targetId: ShipId,
+    val targetId: ObjectId,
     val progress: Double
 )
 
@@ -168,7 +168,7 @@ data class ScanProgress(
 sealed class LockStatus {
 
     interface LockedTarget {
-        val targetId: ShipId
+        val targetId: ObjectId
     }
 
     @Serializable
@@ -176,13 +176,13 @@ sealed class LockStatus {
 
     @Serializable
     data class InProgress(
-        override val targetId: ShipId,
+        override val targetId: ObjectId,
         val progress: Double
     ) : LockStatus(), LockedTarget
 
     @Serializable
     data class Locked(
-        override val targetId: ShipId
+        override val targetId: ObjectId
     ) : LockStatus(), LockedTarget
 
 }
@@ -204,7 +204,7 @@ data class BeamMessage(
     val leftArc: Double,
     val rightArc: Double,
     val status: BeamStatus,
-    val targetId: ShipId?
+    val targetId: ObjectId?
 )
 
 @Serializable

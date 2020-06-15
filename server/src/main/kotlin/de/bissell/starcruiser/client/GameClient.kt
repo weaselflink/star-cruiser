@@ -41,7 +41,7 @@ class GameClient(
                     SpawnShip
                 )
                 is Command.CommandJoinShip -> gameStateActor.send(
-                    JoinShip(id, command.shipId, command.station)
+                    JoinShip(id, command.objectId, command.station)
                 )
                 is Command.CommandChangeStation -> gameStateActor.send(
                     ChangeStation(id, command.station)

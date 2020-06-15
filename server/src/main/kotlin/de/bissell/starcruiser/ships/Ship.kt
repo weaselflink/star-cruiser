@@ -7,7 +7,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class Ship(
-    val id: ShipId = ShipId.random(),
+    val id: ObjectId = ObjectId.random(),
     val template: ShipTemplate = ShipTemplate(),
     private val designation: String = randomShipName(),
     var position: Vector2 = Vector2(),
@@ -20,13 +20,13 @@ class Ship(
     private var thrust = 0.0
     private val waypoints: MutableList<Waypoint> = mutableListOf()
     private val history = mutableListOf<Pair<Double, Vector2>>()
-    private val scans = mutableMapOf<ShipId, ScanLevel>()
+    private val scans = mutableMapOf<ObjectId, ScanLevel>()
     private val beamHandlers = template.beams.map { BeamHandler(it) }
     private val shieldHandler = ShieldHandler()
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
 
-    fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ShipId) -> Ship?) {
+    fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
         beamHandlers.forEach { it.update(time, shipProvider) }
         shieldHandler.update(time)
         updateScan(time)
@@ -112,13 +112,13 @@ class Ship(
         waypoints.removeIf { it.index == index }
     }
 
-    fun startScan(targetId: ShipId) {
+    fun startScan(targetId: ObjectId) {
         if (scanHandler == null && canIncreaseScanLevel(targetId)) {
             scanHandler = ScanHandler(targetId)
         }
     }
 
-    fun lockTarget(targetId: ShipId) {
+    fun lockTarget(targetId: ObjectId) {
         if (lockHandler?.targetId != targetId) {
             lockHandler = LockHandler(targetId)
         }
@@ -183,9 +183,9 @@ class Ship(
             shield = shieldHandler.toMessage()
         )
 
-    private fun canIncreaseScanLevel(targetId: ShipId) = getScanLevel(targetId).let { it != it.next() }
+    private fun canIncreaseScanLevel(targetId: ObjectId) = getScanLevel(targetId).let { it != it.next() }
 
-    private fun getScanLevel(targetId: ShipId) = scans[targetId] ?: ScanLevel.None
+    private fun getScanLevel(targetId: ObjectId) = scans[targetId] ?: ScanLevel.None
 
     private fun getContactType(relativeTo: Ship) =
         if (relativeTo.getScanLevel(id) == ScanLevel.Faction) {
@@ -194,7 +194,7 @@ class Ship(
             ContactType.Unknown
         }
 
-    private fun isLocking(targetId: ShipId) =
+    private fun isLocking(targetId: ObjectId) =
         if (lockHandler != null) {
             lockHandler?.targetId == targetId
         } else {
@@ -202,7 +202,7 @@ class Ship(
         }
 
     private inner class ScanHandler(
-        val targetId: ShipId,
+        val targetId: ObjectId,
         private var progress: Double = 0.0
     ) {
 
@@ -222,7 +222,7 @@ class Ship(
     }
 
     private inner class LockHandler(
-        val targetId: ShipId,
+        val targetId: ObjectId,
         private var progress: Double = 0.0
     ) {
 
@@ -263,7 +263,7 @@ class Ship(
 
         private var status: BeamStatus = BeamStatus.Idle
 
-        fun update(time: GameTime, shipProvider: (ShipId) -> Ship?) {
+        fun update(time: GameTime, shipProvider: (ObjectId) -> Ship?) {
             when (val current = status) {
                 is BeamStatus.Idle -> if (isLockedTargetInRange(shipProvider)) {
                     status = BeamStatus.Firing()
@@ -304,10 +304,10 @@ class Ship(
         private fun getLockedTargetId() =
             if (lockHandler?.isComplete == true) lockHandler?.targetId else null
 
-        private fun getLockedTarget(shipProvider: (ShipId) -> Ship?) =
+        private fun getLockedTarget(shipProvider: (ObjectId) -> Ship?) =
             getLockedTargetId()?.let { shipProvider(it) }
 
-        private fun isLockedTargetInRange(shipProvider: (ShipId) -> Ship?) =
+        private fun isLockedTargetInRange(shipProvider: (ObjectId) -> Ship?) =
             getLockedTarget(shipProvider)
                 ?.toScopeContactMessage(this@Ship)
                 ?.relativePosition
@@ -360,6 +360,6 @@ class Ship(
     }
 
     companion object {
-        private fun ShipId.Companion.random() = ShipId(UUID.randomUUID().toString())
+        private fun ObjectId.Companion.random() = ObjectId(UUID.randomUUID().toString())
     }
 }

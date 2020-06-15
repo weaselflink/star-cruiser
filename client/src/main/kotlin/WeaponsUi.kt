@@ -1,7 +1,7 @@
 import components.ShortRangeScope
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.Command.CommandLockTarget
-import de.bissell.starcruiser.ShipId
+import de.bissell.starcruiser.ObjectId
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import org.w3c.dom.CanvasRenderingContext2D
@@ -81,7 +81,7 @@ class WeaponsUi : StationUi {
         shortRangeScope.draw(snapshot)
     }
 
-    private fun contactSelected(targetId: ShipId) {
+    private fun contactSelected(targetId: ObjectId) {
         if (selectingTarget) {
             toggleLockTarget()
             clientSocket.send(CommandLockTarget(targetId))

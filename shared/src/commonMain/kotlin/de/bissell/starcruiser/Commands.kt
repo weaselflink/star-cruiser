@@ -16,7 +16,7 @@ sealed class Command {
     object CommandSpawnShip: Command()
 
     @Serializable
-    data class CommandJoinShip(val shipId: ShipId, val station: Station) : Command()
+    data class CommandJoinShip(val objectId: ObjectId, val station: Station) : Command()
 
     @Serializable
     data class CommandChangeStation(val station: Station) : Command()
@@ -37,10 +37,10 @@ sealed class Command {
     data class CommandDeleteWaypoint(val index: Int) : Command()
 
     @Serializable
-    data class CommandScanShip(val targetId: ShipId) : Command()
+    data class CommandScanShip(val targetId: ObjectId) : Command()
 
     @Serializable
-    data class CommandLockTarget(val targetId: ShipId) : Command()
+    data class CommandLockTarget(val targetId: ObjectId) : Command()
 
     @Serializable
     data class CommandSetShieldsUp(val value: Boolean) : Command()

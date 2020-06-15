@@ -25,7 +25,7 @@ class MainScene {
     private val contactGroup = Object3D().also { scene += it }
     private var model: Group? = null
     private var shieldModel: Group? = null
-    private val contactNodes = mutableMapOf<ShipId, ShipGroup>()
+    private val contactNodes = mutableMapOf<ObjectId, ShipGroup>()
 
     val frontCamera = createFrontCamera().also { ownShip += it }
     val topCamera = createTopCamera().also { ownShip += it }
@@ -99,7 +99,7 @@ class MainScene {
 
     private fun removeOldContacts(
         contacts: List<ContactMessage>,
-        oldContactIds: List<ShipId>
+        oldContactIds: List<ObjectId>
     ) {
         val currentIds = contacts.map { it.id }
         oldContactIds.filter {
@@ -273,12 +273,12 @@ class ShipGroup {
         }
     }
 
-    private fun SnapshotMessage.MainScreen.getTargetPosition(targetId: ShipId?): Vector2? {
+    private fun SnapshotMessage.MainScreen.getTargetPosition(targetId: ObjectId?): Vector2? {
         return contacts.firstOrNull { it.id == targetId }?.relativePosition
             ?: if (ship.id == targetId) Vector2() else null
     }
 
-    private fun SnapshotMessage.MainScreen.getTargetShield(targetId: ShipId?): ShieldMessage? {
+    private fun SnapshotMessage.MainScreen.getTargetShield(targetId: ObjectId?): ShieldMessage? {
         return contacts.firstOrNull { it.id == targetId }?.shield
             ?: if (ship.id == targetId) ship.shield else null
     }

@@ -259,7 +259,7 @@ class ShipTest {
             .isNear(ship.template.shield.strength - damage + ship.template.shield.rechargeSpeed * 4.0)
     }
 
-    private fun stepTimeTo(seconds: Number, shipProvider: (ShipId) -> Ship? = { null }) {
+    private fun stepTimeTo(seconds: Number, shipProvider: (ObjectId) -> Ship? = { null }) {
         time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
         ship.update(time, physicsEngine, shipProvider)
     }

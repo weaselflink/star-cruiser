@@ -20,8 +20,8 @@ class PhysicsEngine {
         bodies[ship.id.toBodyId()] = ship.toBody()
     }
 
-    fun updateShip(shipId: ShipId, thrust: Double, rudder: Double) {
-        bodies[shipId.toBodyId()]?.apply {
+    fun updateShip(objectId: ObjectId, thrust: Double, rudder: Double) {
+        bodies[objectId.toBodyId()]?.apply {
             applyForceToCenter(
                 Mat22.createRotationalTransform(angle).mul(Vec2(thrust.toFloat(), 0f))
             )
@@ -29,8 +29,8 @@ class PhysicsEngine {
         }
     }
 
-    fun getBodyParameters(shipId: ShipId) =
-        bodies[shipId.toBodyId()]?.let {
+    fun getBodyParameters(objectId: ObjectId) =
+        bodies[objectId.toBodyId()]?.let {
             BodyParameters(
                 position = it.position.toVector2(),
                 speed = it.linearVelocity.toVector2(),
@@ -102,7 +102,7 @@ class PhysicsEngine {
 
     private fun World.createBody(block: BodyDef.() -> Unit): Body = createBody(BodyDef().apply(block))
 
-    private fun ShipId.toBodyId() = BodyId(this.id)
+    private fun ObjectId.toBodyId() = BodyId(this.id)
 }
 
 data class BodyId(val id: String)

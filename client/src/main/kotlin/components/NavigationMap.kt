@@ -4,16 +4,7 @@ import CanvasDimensions
 import MouseEventHandler
 import circle
 import clear
-import de.bissell.starcruiser.ContactMessage
-import de.bissell.starcruiser.ContactType
-import de.bissell.starcruiser.Positional
-import de.bissell.starcruiser.ScanLevel
-import de.bissell.starcruiser.ShipId
-import de.bissell.starcruiser.ShipMessage
-import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.Vector2
-import de.bissell.starcruiser.WaypointMessage
-import de.bissell.starcruiser.clamp
+import de.bissell.starcruiser.*
 import dimensions
 import drawLockMarker
 import drawShipSymbol
@@ -47,15 +38,15 @@ class NavigationMap(
     private val scale: Double
         get() = 4.0 / 2.0.pow(scaleSetting.toDouble())
 
-    private var selectedShipId: ShipId? = null
+    private var selectedObjectId: ObjectId? = null
     var selectedContact: ContactMessage?
-        get() = contacts.firstOrNull { it.id == selectedShipId }
-        set(value) { selectedShipId = value?.id?.also { selectedWaypointIndex = null } }
+        get() = contacts.firstOrNull { it.id == selectedObjectId }
+        set(value) { selectedObjectId = value?.id?.also { selectedWaypointIndex = null } }
 
     private var selectedWaypointIndex: Int? = null
     var selectedWaypoint: WaypointMessage?
         get() = waypoints.firstOrNull { it.index == selectedWaypointIndex }
-        set(value) { selectedWaypointIndex = value?.index?.also { selectedShipId = null } }
+        set(value) { selectedWaypointIndex = value?.index?.also { selectedObjectId = null } }
 
     private var contacts: List<ContactMessage> = emptyList()
     private var waypoints: List<WaypointMessage> = emptyList()
