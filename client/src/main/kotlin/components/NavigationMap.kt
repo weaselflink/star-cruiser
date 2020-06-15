@@ -123,7 +123,7 @@ class NavigationMap(
         environmentContactStyle(dim)
 
         translate(asteroid.position.adjustForMap())
-        drawAsteroidSymbol(asteroid.rotation, dim.vmin * 0.8 * asteroid.radius * 0.1)
+        drawAsteroidSymbol(asteroid.rotation, dim.vmin * 0.8 * asteroid.radius * 0.1 * scale)
         restore()
     }
 
