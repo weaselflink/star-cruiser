@@ -37,6 +37,7 @@ class GameState {
 
     private var time = GameTime()
     private val ships = mutableMapOf<ObjectId, Ship>()
+    private val asteroids = mutableListOf<Asteroid>()
     private val clients = mutableMapOf<ClientId, Client>()
 
     private val physicsEngine = PhysicsEngine()
@@ -89,7 +90,7 @@ class GameState {
         getClient(clientId).exitShip()
     }
 
-    fun spawnShip() =
+    fun spawnShip() {
         Ship(
             position = Vector2.random(300),
             rotation = Random.nextDouble(PI * 2.0)
@@ -98,7 +99,18 @@ class GameState {
             it.addWaypoint(Vector2.random(1000, 500))
             ships[it.id] = it
             physicsEngine.addShip(it)
-        }.id
+        }
+    }
+
+    fun spawnAsteroid() {
+        Asteroid(
+            position = Vector2.random(1000, 200),
+            radius = Random.nextDouble(10.0, 20.0)
+        ).also {
+            asteroids += it
+            physicsEngine.addAsteroid(it)
+        }
+    }
 
     fun togglePaused() {
         time.paused = !time.paused
@@ -115,6 +127,9 @@ class GameState {
                 update(time, physicsEngine) { id -> ships[id] }
                 endUpdate()
             }
+        }
+        asteroids.forEach {
+            it.update(physicsEngine)
         }
     }
 

@@ -1,6 +1,7 @@
 package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ships.Ship
+import org.jbox2d.collision.shapes.CircleShape
 import org.jbox2d.collision.shapes.PolygonShape
 import org.jbox2d.common.Mat22
 import org.jbox2d.common.Vec2
@@ -18,6 +19,10 @@ class PhysicsEngine {
 
     fun addShip(ship: Ship) {
         bodies[ship.id.toBodyId()] = ship.toBody()
+    }
+
+    fun addAsteroid(asteroid: Asteroid) {
+        bodies[asteroid.id.toBodyId()] = asteroid.toBody()
     }
 
     fun updateShip(objectId: ObjectId, thrust: Double, rudder: Double) {
@@ -43,8 +48,6 @@ class PhysicsEngine {
             type = BodyType.DYNAMIC
             position.set(this@toBody.position.toVec2())
             angle = this@toBody.rotation.toFloat()
-            allowSleep = false
-            awake = true
             linearDamping = 0.4f
             angularDamping = 0.95f
         }.apply {
@@ -93,6 +96,25 @@ class PhysicsEngine {
                 set(points, points.size)
             },
             ship.template.density.toFloat()
+        )
+    }
+
+    private fun Asteroid.toBody() =
+        world.createBody {
+            type = BodyType.DYNAMIC
+            position.set(this@toBody.position.toVec2())
+            linearDamping = 0.4f
+            angularDamping = 0.95f
+        }.apply {
+            createFixture(this@toBody)
+        }
+
+    private fun Body.createFixture(asteroid: Asteroid) {
+        createFixture(
+            CircleShape().apply {
+                radius = asteroid.radius.toFloat()
+            },
+            0.02f
         )
     }
 
