@@ -16,7 +16,13 @@ external class Vector3(
 
     fun clone(): Vector3
 
+    fun copy(v: Vector3): Vector3
+
     fun length() : Double
+
+    fun set(x: Number, y: Number, z: Number): Vector3
+
+    fun setScalar(scalar: Number): Vector3
 
     fun sub(a: Vector3): Vector3
 }

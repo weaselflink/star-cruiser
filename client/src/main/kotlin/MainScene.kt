@@ -1,5 +1,10 @@
-import de.bissell.starcruiser.*
-import three.cameras.Camera
+import de.bissell.starcruiser.BeamMessage
+import de.bissell.starcruiser.BeamStatus
+import de.bissell.starcruiser.ContactMessage
+import de.bissell.starcruiser.ObjectId
+import de.bissell.starcruiser.ShieldMessage
+import de.bissell.starcruiser.SnapshotMessage
+import de.bissell.starcruiser.Vector2
 import three.cameras.PerspectiveCamera
 import three.core.Object3D
 import three.debugPrint
@@ -11,8 +16,8 @@ import three.math.Euler
 import three.math.Vector3
 import three.objects.Group
 import three.plusAssign
-import three.renderers.WebGLRenderer
 import three.scenes.Scene
+import three.set
 import three.updateSize
 import kotlin.browser.window
 import kotlin.math.PI
@@ -114,8 +119,7 @@ class MainScene {
     private fun updateContacts(contacts: List<ContactMessage>) {
         contacts.forEach { contact ->
             contactNodes[contact.id]?.apply {
-                position.z = -contact.relativePosition.x
-                position.x = -contact.relativePosition.y
+                position.copy(contact.relativePosition.toWorld())
                 rotation.y = contact.rotation
             }
         }
@@ -230,9 +234,7 @@ class ShipGroup {
     fun showShield(shieldRadius: Double) {
         shieldModel?.apply {
             visible = true
-            scale.x = shieldRadius
-            scale.y = shieldRadius
-            scale.z = shieldRadius
+            scale.setScalar(shieldRadius)
         }
     }
 
@@ -262,9 +264,7 @@ class ShipGroup {
                 beamNodes += this
                 rootNode += this
 
-                position.x = beamMessage.position.x
-                position.y = beamMessage.position.y
-                position.z = beamMessage.position.z
+                position.set(beamMessage.position)
                 lookAt(targetPosition)
             }.apply {
                 val distance = targetPosition.clone().sub(getWorldPosition(Vector3())).length() - shieldRadius
@@ -282,8 +282,6 @@ class ShipGroup {
         return contacts.firstOrNull { it.id == targetId }?.shield
             ?: if (ship.id == targetId) ship.shield else null
     }
-
-    private fun Vector2.toWorld() = Vector3(-y, 0.0, -x)
 }
 
-fun WebGLRenderer.render(mainScene: MainScene, camera: Camera) = render(mainScene.scene, camera)
+private fun Vector2.toWorld() = Vector3(-y, 0.0, -x)

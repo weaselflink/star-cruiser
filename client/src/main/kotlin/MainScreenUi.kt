@@ -3,6 +3,7 @@ import de.bissell.starcruiser.Station
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
+import three.cameras.Camera
 import three.renderers.WebGLRenderer
 import three.renderers.WebGLRendererParams
 import kotlin.browser.document
@@ -64,3 +65,5 @@ class MainScreenUi : StationUi {
         }
     }
 }
+
+private fun WebGLRenderer.render(mainScene: MainScene, camera: Camera) = render(mainScene.scene, camera)
