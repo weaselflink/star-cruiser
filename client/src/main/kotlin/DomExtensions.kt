@@ -1,14 +1,21 @@
-import org.w3c.dom.HTMLElement
+@file:Suppress("EnumEntryName")
 
-var HTMLElement.visibility: Visibility
-    get() = Visibility.valueOf(style.visibility)
-    set(value) {
-        style.visibility = value.name
-    }
+import org.w3c.dom.HTMLElement
 
 enum class Visibility {
     visible,
     hidden
+}
+
+var HTMLElement.visibility: Visibility
+    get() = Visibility.values().firstOrNull { it.name == style.visibility } ?: Visibility.visible
+    set(value) {
+        style.visibility = value.name
+    }
+
+enum class Display {
+    none,
+    block
 }
 
 var HTMLElement.display: Display
@@ -16,8 +23,3 @@ var HTMLElement.display: Display
     set(value) {
         style.display = value.name
     }
-
-enum class Display {
-    none,
-    block
-}

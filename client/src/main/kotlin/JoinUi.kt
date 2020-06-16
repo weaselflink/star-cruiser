@@ -35,18 +35,27 @@ class JoinUi {
     }
 
     fun show() {
-        root.visibility = Visibility.visible
+        if (root.visibility != Visibility.visible) {
+            root.visibility = Visibility.visible
+
+            drawShipList()
+        }
     }
 
     fun hide() {
-        root.visibility = Visibility.hidden
+        if (root.visibility != Visibility.hidden) {
+            root.visibility = Visibility.hidden
+            prevButton.visibility = Visibility.hidden
+            nextButton.visibility = Visibility.hidden
+        }
     }
 
     fun draw(snapshot: SnapshotMessage.ShipSelection) {
-        if (snapshot.playerShips == playerShips) return
-        playerShips = snapshot.playerShips
+        if (snapshot.playerShips != playerShips) {
+            playerShips = snapshot.playerShips
 
-        drawShipList()
+            drawShipList()
+        }
     }
 
     private fun drawShipList() {
