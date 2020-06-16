@@ -77,15 +77,15 @@ class JoinUi {
 
     private fun updatePagination() {
         if (page > 0) {
-            prevButton.display = Display.block
+            prevButton.visibility = Visibility.visible
         } else {
-            prevButton.display = Display.none
+            prevButton.visibility = Visibility.hidden
         }
 
         if (page < pageCount - 1) {
-            nextButton.display = Display.block
+            nextButton.visibility = Visibility.visible
         } else {
-            nextButton.display = Display.none
+            nextButton.visibility = Visibility.hidden
         }
     }
 

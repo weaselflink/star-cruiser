@@ -71,11 +71,12 @@ fun Routing.webUi() {
                 ".topRightButtons" {
                     right = 0.vmin
                 }
+                ".spawn" {
+                    marginBottom = 2.vmin
+                }
                 ".playerShips" {
                     display = grid
                     gap = Gap(1.vmin.value)
-                    marginTop = 3.vmin
-                    marginBottom = 3.vmin
                     alignSelf = Align.flexStart
                 }
                 "button" {
@@ -126,9 +127,6 @@ fun Routing.webUi() {
                     color = black
                     backgroundColor = dimGrey
                     borderColor = dimGrey
-                }
-                "#join-ui .topLeftButtons" {
-                    gridTemplateRows = GridTemplateRows(LinearDimension.auto, 52.vmin, LinearDimension.auto)
                 }
                 "#selection-details" {
                     position = fixed
@@ -218,8 +216,8 @@ private fun BODY.joinUi() {
             button(classes = "spawn leftEdge") {
                 +"+ Spawn ship"
             }
-            div(classes = "playerShips") {}
             button(classes = "playerShipsPrev leftEdge") { +"Prev"}
+            div(classes = "playerShips") {}
             button(classes = "playerShipsNext leftEdge") { +"Next"}
         }
     }
