@@ -1,10 +1,4 @@
-import de.bissell.starcruiser.BeamMessage
-import de.bissell.starcruiser.BeamStatus
-import de.bissell.starcruiser.ContactMessage
-import de.bissell.starcruiser.ObjectId
-import de.bissell.starcruiser.ShieldMessage
-import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.Vector2
+import de.bissell.starcruiser.*
 import three.cameras.PerspectiveCamera
 import three.core.Object3D
 import three.debugPrint
@@ -28,9 +22,12 @@ class MainScene {
 
     private val ownShip = ShipGroup().also { scene.add(it) }
     private val contactGroup = Object3D().also { scene += it }
+    private val asteroidGroup = Object3D().also { scene += it }
     private var model: Group? = null
     private var shieldModel: Group? = null
+    private var asteroidModel: Group? = null
     private val contactNodes = mutableMapOf<ObjectId, ShipGroup>()
+    private val asteroidNodes = mutableMapOf<ObjectId, AsteroidGroup>()
 
     val frontCamera = createFrontCamera().also { ownShip += it }
     val topCamera = createTopCamera().also { ownShip += it }
@@ -40,6 +37,7 @@ class MainScene {
         loadBackground()
         loadShipModel()
         loadShieldModel()
+        loadAsteroidModel()
     }
 
     fun updateSize(windowWidth: Int, windowHeight: Int) {
@@ -51,11 +49,18 @@ class MainScene {
         ownShip.rotation.y = snapshot.ship.rotation
 
         val contacts = snapshot.contacts
+        val asteroids = snapshot.asteroids
         val oldContactIds = contactNodes.keys.filter { true }
+        val oldAsteroidIds = asteroidNodes.keys.filter { true }
 
         addNewContacts(contacts)
         removeOldContacts(contacts, oldContactIds)
         updateContacts(contacts)
+
+        addNewAsteroids(asteroids)
+        removeOldAsteroids(asteroids, oldAsteroidIds)
+        updateAsteroids(asteroids)
+
         updateBeams(snapshot)
         updateShields(snapshot)
     }
@@ -93,11 +98,11 @@ class MainScene {
         contacts.filter {
             !contactNodes.containsKey(it.id)
         }.forEach {
-            ShipGroup().also { contactNode ->
-                contactNodes[it.id] = contactNode
-                contactGroup.add(contactNode)
-                contactNode.model = model?.clone(true)
-                contactNode.shieldModel = shieldModel?.clone(true)
+            ShipGroup().also { node ->
+                contactNodes[it.id] = node
+                contactGroup.add(node)
+                node.model = model?.clone(true)
+                node.shieldModel = shieldModel?.clone(true)
             }
         }
     }
@@ -121,6 +126,41 @@ class MainScene {
             contactNodes[contact.id]?.apply {
                 position.copy(contact.relativePosition.toWorld())
                 rotation.y = contact.rotation
+            }
+        }
+    }
+
+    private fun addNewAsteroids(asteroids: List<AsteroidMessage>) {
+        asteroids.filter {
+            !asteroidNodes.containsKey(it.id)
+        }.forEach {
+            AsteroidGroup(it.radius).also { node ->
+                asteroidNodes[it.id] = node
+                asteroidGroup.add(node)
+                node.model = asteroidModel?.clone(true)
+            }
+        }
+    }
+
+    private fun removeOldAsteroids(
+        asteroids: List<AsteroidMessage>,
+        oldAsteroidIds: List<ObjectId>
+    ) {
+        val currentIds = asteroids.map { it.id }
+        oldAsteroidIds.filter {
+            !currentIds.contains(it)
+        }.forEach { id ->
+            asteroidNodes.remove(id)?.also {
+                asteroidGroup.remove(it)
+            }
+        }
+    }
+
+    private fun updateAsteroids(asteroids: List<AsteroidMessage>) {
+        asteroids.forEach { asteroid ->
+            asteroidNodes[asteroid.id]?.apply {
+                position.copy(asteroid.relativePosition.toWorld())
+                rotation.y = asteroid.rotation
             }
         }
     }
@@ -196,9 +236,24 @@ class MainScene {
         )
     }
 
-    private fun Object3D.add(shipGroup: ShipGroup) = add(shipGroup.rootNode)
+    private fun loadAsteroidModel() {
+        GLTFLoader().load(
+            url = "/assets/models/asteroid01.glb",
+            onLoad = { gltf ->
+                asteroidModel = gltf.scene.also {
+                    it.debugPrint()
+                }
+            }
+        )
+    }
 
-    private fun Object3D.remove(shipGroup: ShipGroup) = remove(shipGroup.rootNode)
+    private fun Object3D.add(group: ShipGroup) = add(group.rootNode)
+
+    private fun Object3D.remove(group: ShipGroup) = remove(group.rootNode)
+
+    private fun Object3D.add(group: AsteroidGroup) = add(group.rootNode)
+
+    private fun Object3D.remove(group: AsteroidGroup) = remove(group.rootNode)
 }
 
 class ShipGroup {
@@ -281,6 +336,31 @@ class ShipGroup {
     private fun SnapshotMessage.MainScreen.getTargetShield(targetId: ObjectId?): ShieldMessage? {
         return contacts.firstOrNull { it.id == targetId }?.shield
             ?: if (ship.id == targetId) ship.shield else null
+    }
+}
+
+class AsteroidGroup(
+    radius: Double
+) {
+
+    val rootNode = Object3D()
+
+    var model: Object3D? = null
+        set(value) {
+            field?.also { rootNode.remove(it) }
+            field = value?.also {
+                rootNode.add(it)
+            }
+        }
+
+    val position: Vector3
+        get() = rootNode.position
+
+    val rotation: Euler
+        get() = rootNode.rotation
+
+    init {
+        rootNode.scale.setScalar(radius)
     }
 }
 
