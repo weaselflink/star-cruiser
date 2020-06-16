@@ -10,6 +10,10 @@ val jsonConfiguration = JsonConfiguration.Stable.copy(
     prettyPrint = true
 )
 
+interface Identifiable {
+    val id: ObjectId
+}
+
 interface Positional {
     val position: Vector2
 }
@@ -121,7 +125,7 @@ data class ShipMessage(
 
 @Serializable
 data class ContactMessage(
-    val id: ObjectId,
+    override val id: ObjectId,
     val type: ContactType,
     val scanLevel: ScanLevel,
     val designation: String,
@@ -131,16 +135,16 @@ data class ContactMessage(
     val bearing: Double,
     val beams: List<BeamMessage>,
     val shield: ShieldMessage
-) : Positional
+) : Identifiable, Positional
 
 @Serializable
 data class AsteroidMessage(
-    val id: ObjectId,
+    override val id: ObjectId,
     val radius: Double,
     override val position: Vector2,
     val relativePosition: Vector2,
     val rotation: Double
-) : Positional
+) : Identifiable, Positional
 
 @Serializable
 data class ScopeContactMessage(

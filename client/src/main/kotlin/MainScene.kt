@@ -24,13 +24,32 @@ class MainScene {
     val scene = Scene()
 
     private val ownShip = ShipGroup().also { scene.add(it) }
-    private val contactGroup = Object3D().also { scene += it }
-    private val asteroidGroup = Object3D().also { scene += it }
+    private val contactHandler = GroupHandler<ShipGroup, ContactMessage>(
+        factory = {
+            ShipGroup().also { node ->
+                node.model = model?.clone(true)
+                node.shieldModel = shieldModel?.clone(true)
+            }
+        },
+        update = { contact ->
+            position.copy(contact.relativePosition.toWorld())
+            rotation.y = contact.rotation
+        }
+    )
+    private val asteroidHandler = GroupHandler<AsteroidGroup, AsteroidMessage>(
+        factory = { message ->
+            AsteroidGroup(message.radius).also { node ->
+                node.model = asteroidModel?.clone(true)
+            }
+        },
+        update = { asteroid ->
+            position.copy(asteroid.relativePosition.toWorld())
+            rotation.y = asteroid.rotation
+        }
+    )
     private var model: Group? = null
     private var shieldModel: Group? = null
     private var asteroidModel: Group? = null
-    private val contactNodes = mutableMapOf<ObjectId, ShipGroup>()
-    private val asteroidNodes = mutableMapOf<ObjectId, AsteroidGroup>()
 
     val frontCamera = createFrontCamera().also { ownShip += it }
     val topCamera = createTopCamera().also { ownShip += it }
@@ -53,16 +72,19 @@ class MainScene {
 
         val contacts = snapshot.contacts
         val asteroids = snapshot.asteroids
-        val oldContactIds = contactNodes.keys.filter { true }
-        val oldAsteroidIds = asteroidNodes.keys.filter { true }
+        val oldContactIds = contactHandler.nodes.keys.filter { true }
+        val oldAsteroidIds = asteroidHandler.nodes.keys.filter { true }
 
-        addNewContacts(contacts)
-        removeOldContacts(contacts, oldContactIds)
-        updateContacts(contacts)
-
-        addNewAsteroids(asteroids)
-        removeOldAsteroids(asteroids, oldAsteroidIds)
-        updateAsteroids(asteroids)
+        with (contactHandler) {
+            addNew(contacts)
+            removeOld(contacts, oldContactIds)
+            update(contacts)
+        }
+        with (asteroidHandler) {
+            addNew(asteroids)
+            removeOld(asteroids, oldAsteroidIds)
+            update(asteroids)
+        }
 
         updateBeams(snapshot)
         updateShields(snapshot)
@@ -71,7 +93,7 @@ class MainScene {
     private fun updateBeams(snapshot: SnapshotMessage.MainScreen) {
         ownShip.updateBeams(snapshot, snapshot.ship.beams)
 
-        contactNodes.forEach { node ->
+        contactHandler.nodes.forEach { node ->
             snapshot.contacts.firstOrNull { it.id == node.key }?.let { contact ->
                 node.value.updateBeams(snapshot, contact.beams)
             }
@@ -79,91 +101,20 @@ class MainScene {
     }
 
     private fun updateShields(snapshot: SnapshotMessage.MainScreen) {
-        contactNodes.values.forEach { it.hideShield() }
+        contactHandler.nodes.values.forEach { it.hideShield() }
 
         if (snapshot.ship.shield.activated) {
             ownShip.showShield(snapshot.ship.shield.radius)
         } else {
             ownShip.hideShield()
         }
-        contactNodes.forEach { node ->
+        contactHandler.nodes.forEach { node ->
             snapshot.contacts.firstOrNull { it.id == node.key }?.let { contact ->
                 if (contact.shield.activated) {
                     node.value.showShield(contact.shield.radius)
                 } else {
                     node.value.hideShield()
                 }
-            }
-        }
-    }
-
-    private fun addNewContacts(contacts: List<ContactMessage>) {
-        contacts.filter {
-            !contactNodes.containsKey(it.id)
-        }.forEach {
-            ShipGroup().also { node ->
-                contactNodes[it.id] = node
-                contactGroup.add(node)
-                node.model = model?.clone(true)
-                node.shieldModel = shieldModel?.clone(true)
-            }
-        }
-    }
-
-    private fun removeOldContacts(
-        contacts: List<ContactMessage>,
-        oldContactIds: List<ObjectId>
-    ) {
-        val currentIds = contacts.map { it.id }
-        oldContactIds.filter {
-            !currentIds.contains(it)
-        }.forEach { id ->
-            contactNodes.remove(id)?.also {
-                contactGroup.remove(it)
-            }
-        }
-    }
-
-    private fun updateContacts(contacts: List<ContactMessage>) {
-        contacts.forEach { contact ->
-            contactNodes[contact.id]?.apply {
-                position.copy(contact.relativePosition.toWorld())
-                rotation.y = contact.rotation
-            }
-        }
-    }
-
-    private fun addNewAsteroids(asteroids: List<AsteroidMessage>) {
-        asteroids.filter {
-            !asteroidNodes.containsKey(it.id)
-        }.forEach {
-            AsteroidGroup(it.radius).also { node ->
-                asteroidNodes[it.id] = node
-                asteroidGroup.add(node)
-                node.model = asteroidModel?.clone(true)
-            }
-        }
-    }
-
-    private fun removeOldAsteroids(
-        asteroids: List<AsteroidMessage>,
-        oldAsteroidIds: List<ObjectId>
-    ) {
-        val currentIds = asteroids.map { it.id }
-        oldAsteroidIds.filter {
-            !currentIds.contains(it)
-        }.forEach { id ->
-            asteroidNodes.remove(id)?.also {
-                asteroidGroup.remove(it)
-            }
-        }
-    }
-
-    private fun updateAsteroids(asteroids: List<AsteroidMessage>) {
-        asteroids.forEach { asteroid ->
-            asteroidNodes[asteroid.id]?.apply {
-                position.copy(asteroid.relativePosition.toWorld())
-                rotation.y = asteroid.rotation
             }
         }
     }
@@ -250,18 +201,61 @@ class MainScene {
         )
     }
 
-    private fun Object3D.add(group: ShipGroup) = add(group.rootNode)
+    private fun Object3D.add(group: ObjectGroup) = add(group.rootNode)
 
-    private fun Object3D.remove(group: ShipGroup) = remove(group.rootNode)
+    private fun Object3D.remove(group: ObjectGroup) = remove(group.rootNode)
 
-    private fun Object3D.add(group: AsteroidGroup) = add(group.rootNode)
+    inner class GroupHandler<G : ObjectGroup, M : Identifiable>(
+        val factory: (M) -> G,
+        val update: G.(M) -> Unit
+    ) {
 
-    private fun Object3D.remove(group: AsteroidGroup) = remove(group.rootNode)
+        val nodes = mutableMapOf<ObjectId, G>()
+        private val holder = Object3D().also { scene += it }
+
+        fun addNew(messages: List<M>) {
+            messages.filter {
+                !nodes.containsKey(it.id)
+            }.forEach {
+                factory(it).also { node ->
+                    nodes[it.id] = node
+                    holder.add(node)
+                }
+            }
+        }
+
+        fun update(messages: List<M>) {
+            messages.forEach { message ->
+                nodes[message.id]?.apply {
+                    this.update(message)
+                }
+            }
+
+        }
+
+        fun removeOld(
+            messages: List<M>,
+            oldIds: List<ObjectId>
+        ) {
+            val currentIds = messages.map { it.id }
+            oldIds.filter {
+                !currentIds.contains(it)
+            }.forEach { id ->
+                nodes.remove(id)?.also {
+                    holder.remove(it)
+                }
+            }
+        }
+    }
 }
 
-class ShipGroup {
+interface ObjectGroup {
+    val rootNode: Object3D
+}
 
-    val rootNode = Object3D()
+class ShipGroup : ObjectGroup {
+
+    override val rootNode = Object3D()
     private val beamNodes = mutableListOf<Object3D>()
 
     var model: Object3D? = null
@@ -342,9 +336,9 @@ class ShipGroup {
     }
 }
 
-class AsteroidGroup(radius: Double) {
+class AsteroidGroup(radius: Double) : ObjectGroup {
 
-    val rootNode = Object3D()
+    override val rootNode = Object3D()
     private val transformNode = Object3D().also {
         rootNode += it
         it.scale.setScalar(radius)
