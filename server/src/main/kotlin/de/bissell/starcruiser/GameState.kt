@@ -116,7 +116,7 @@ class GameState {
         Asteroid(
             position = Vector2.random(800, 200),
             rotation = Random.nextDouble(PI * 2.0),
-            radius = Random.nextDouble(5.0, 20.0)
+            radius = Random.nextDouble(8.0, 32.0)
         ).also {
             asteroids += it
             physicsEngine.addAsteroid(it)

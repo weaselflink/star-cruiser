@@ -3,6 +3,7 @@
 package three.core
 
 import three.math.Euler
+import three.math.Quaternion
 import three.math.Vector3
 
 open external class Object3D {
@@ -15,6 +16,7 @@ open external class Object3D {
 
     val position: Vector3
     val rotation: Euler
+    val quaternion: Quaternion
     val scale: Vector3
 
     var layers: Layers
