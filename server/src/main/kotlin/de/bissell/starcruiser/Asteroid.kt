@@ -33,8 +33,4 @@ class Asteroid(
             relativePosition = position - relativeTo.position,
             rotation = rotation
         )
-
-    companion object {
-        private fun ObjectId.Companion.random() = ObjectId(UUID.randomUUID().toString())
-    }
 }

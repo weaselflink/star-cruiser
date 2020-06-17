@@ -32,6 +32,8 @@ data class ObjectId(val id: String) {
         override fun deserialize(decoder: Decoder): ObjectId {
             return ObjectId(decoder.decodeString())
         }
+
+        fun random() = ObjectId(Uuid().toString())
     }
 }
 
