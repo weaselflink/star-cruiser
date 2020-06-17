@@ -1,4 +1,12 @@
-import de.bissell.starcruiser.*
+import de.bissell.starcruiser.AsteroidMessage
+import de.bissell.starcruiser.BeamMessage
+import de.bissell.starcruiser.BeamStatus
+import de.bissell.starcruiser.ContactMessage
+import de.bissell.starcruiser.Identifiable
+import de.bissell.starcruiser.ObjectId
+import de.bissell.starcruiser.ShieldMessage
+import de.bissell.starcruiser.SnapshotMessage
+import de.bissell.starcruiser.Vector2
 import three.cameras.PerspectiveCamera
 import three.core.Object3D
 import three.debugPrint
@@ -75,12 +83,12 @@ class MainScene {
         val oldContactIds = contactHandler.nodes.keys.filter { true }
         val oldAsteroidIds = asteroidHandler.nodes.keys.filter { true }
 
-        with (contactHandler) {
+        with(contactHandler) {
             addNew(contacts)
             removeOld(contacts, oldContactIds)
             update(contacts)
         }
-        with (asteroidHandler) {
+        with(asteroidHandler) {
             addNew(asteroids)
             removeOld(asteroids, oldAsteroidIds)
             update(asteroids)
@@ -165,39 +173,52 @@ class MainScene {
     }
 
     private fun loadShipModel() {
-        GLTFLoader().load(
-            url = "/assets/models/carrier.glb",
-            onLoad = { gltf ->
-                model = gltf.scene.also {
-                    it.debugPrint()
-                }
-                ownShip.model = model?.clone(true)
-            }
-        )
+        loadModel("carrier.glb") { group ->
+            model = group
+            group.debugPrint()
+            assignModel(group, { model }, { model = it })
+        }
     }
 
     private fun loadShieldModel() {
-        GLTFLoader().load(
-            url = "/assets/models/shield-cube.glb",
-            onLoad = { gltf ->
-                shieldModel = gltf.scene.also {
-                    it.debugPrint()
-                }
-                shieldModel?.clone(true)?.also {
-                    ownShip.shieldModel = it
-                }
+        loadModel("shield-cube.glb") { group ->
+            shieldModel = group
+            group.debugPrint()
+            assignModel(group, { shieldModel }, { shieldModel = it })
+        }
+    }
+
+    private fun assignModel(
+        group: Group,
+        getter: ShipGroup.() -> Object3D?,
+        setter: ShipGroup.(Object3D) -> Unit
+    ) {
+        if (ownShip.getter() == null) {
+            ownShip.setter(group.clone(true))
+        }
+        contactHandler.nodes.values.forEach {
+            if (it.getter() == null) {
+                it.setter(group.clone(true))
             }
-        )
+        }
     }
 
     private fun loadAsteroidModel() {
-        GLTFLoader().load(
-            url = "/assets/models/asteroid01.glb",
-            onLoad = { gltf ->
-                asteroidModel = gltf.scene.also {
-                    it.debugPrint()
+        loadModel("asteroid01.glb") { group ->
+            asteroidModel = group
+            group.debugPrint()
+            asteroidHandler.nodes.values.forEach {
+                if (it.model == null) {
+                    it.model = group.clone(true)
                 }
             }
+        }
+    }
+
+    private fun loadModel(name: String, onLoad: (Group) -> Unit) {
+        GLTFLoader().load(
+            url = "/assets/models/$name",
+            onLoad = { onLoad(it.scene) }
         )
     }
 
