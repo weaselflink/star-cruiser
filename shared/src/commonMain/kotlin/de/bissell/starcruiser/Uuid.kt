@@ -27,10 +27,10 @@ class Uuid {
 
         private fun version4RandomBytes() =
             Random.nextUBytes(16).also {
-                it[6] = it[6].and(0x0fu) // clear version
-                it[6] = it[6].or(0x40u) // set to version 4
-                it[8] = it[8].and(0x3fu) // clear variant
-                it[8] = it[8].or(0x80u) // set to IETF variant
+                it[6] = it[6] and 0x0fu // clear version
+                it[6] = it[6] or 0x40u // set to version 4
+                it[8] = it[8] and 0x3fu // clear variant
+                it[8] = it[8] or 0x80u // set to IETF variant
             }
     }
 
