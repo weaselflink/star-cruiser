@@ -1,8 +1,10 @@
 package de.bissell.starcruiser
 
 import org.junit.jupiter.api.Test
+import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isFailure
 import kotlin.math.PI
 
 class NumberExtensionsTest {
@@ -60,7 +62,9 @@ class NumberExtensionsTest {
     @Test
     fun `no padding if target is invalid`() {
         expectThat(456.pad(0)).isEqualTo("456")
-        expectThat(1.pad(-5)).isEqualTo("1")
+        expectCatching {
+            1.pad(-5)
+        }.isFailure()
     }
 
     @Test
