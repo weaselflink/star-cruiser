@@ -4,9 +4,13 @@ import kotlin.random.Random
 import kotlin.random.nextUBytes
 
 @OptIn(ExperimentalUnsignedTypes::class)
-class Uuid(
-    private val bytes: UByteArray = version4RandomBytes()
-) {
+class Uuid {
+
+    private val bytes: UByteArray
+
+    constructor() { bytes = version4RandomBytes() }
+
+    private constructor(customBytes: UByteArray) { bytes = customBytes }
 
     override fun toString() =
         bytes.copyOfRange(0, 4).toHex() + "-" +
