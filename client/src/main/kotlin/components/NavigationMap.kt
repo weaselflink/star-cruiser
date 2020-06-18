@@ -17,6 +17,7 @@ import org.w3c.dom.events.MouseEvent
 import scanProgressStyle
 import selectionMarkerStyle
 import shipStyle
+import transformReset
 import translate
 import translateToCenter
 import unknownContactStyle
@@ -93,7 +94,7 @@ class NavigationMap(
         dim = canvas.dimensions()
 
         with(ctx) {
-            resetTransform()
+            transformReset()
             clear("#000")
 
             drawGrid()

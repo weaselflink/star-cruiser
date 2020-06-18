@@ -75,7 +75,7 @@ class NavigationUi : StationUi {
         selectionDetails.draw(navigationMap.selection)
 
         with(ctx) {
-            resetTransform()
+            transformReset()
             clear("#000")
 
             navigationMap.draw(snapshot)

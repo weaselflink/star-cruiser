@@ -214,3 +214,5 @@ data class CanvasDimensions(
         height: Number
     ) : this(width.toDouble(), height.toDouble())
 }
+
+fun CanvasRenderingContext2D.transformReset() = setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)

@@ -75,7 +75,7 @@ class WeaponsUi : StationUi {
     }
 
     private fun CanvasRenderingContext2D.draw(snapshot: SnapshotMessage.Weapons) {
-        resetTransform()
+        transformReset()
         clear("#222")
 
         shortRangeScope.draw(snapshot)
