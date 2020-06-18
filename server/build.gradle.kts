@@ -38,7 +38,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization:$ktor_version")
     implementation("org.jbox2d:jbox2d-library:2.2.1.1")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.0-M1")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("io.strikt:strikt-core:0.26.1")
     testImplementation("io.mockk:mockk:1.10.0")
