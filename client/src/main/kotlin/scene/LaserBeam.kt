@@ -1,3 +1,5 @@
+package scene
+
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import three.AdditiveBlending

@@ -1,10 +1,7 @@
+package scene
+
 import de.bissell.starcruiser.AsteroidMessage
-import de.bissell.starcruiser.BeamMessage
-import de.bissell.starcruiser.BeamStatus
 import de.bissell.starcruiser.ContactMessage
-import de.bissell.starcruiser.Identifiable
-import de.bissell.starcruiser.ObjectId
-import de.bissell.starcruiser.ShieldMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Vector2
 import three.cameras.PerspectiveCamera
@@ -14,18 +11,13 @@ import three.lights.AmbientLight
 import three.lights.DirectionalLight
 import three.loaders.CubeTextureLoader
 import three.loaders.GLTFLoader
-import three.math.Euler
-import three.math.Quaternion
 import three.math.Vector3
 import three.objects.Group
 import three.plusAssign
 import three.scenes.Scene
-import three.set
 import three.updateSize
 import kotlin.browser.window
 import kotlin.math.PI
-import kotlin.math.sqrt
-import kotlin.random.Random
 
 class MainScene {
 
@@ -33,6 +25,7 @@ class MainScene {
 
     private val ownShip = ShipGroup().also { scene.add(it) }
     private val contactHandler = GroupHandler<ShipGroup, ContactMessage>(
+        scene = scene,
         factory = {
             ShipGroup().also { node ->
                 node.model = model?.clone(true)
@@ -45,6 +38,7 @@ class MainScene {
         }
     )
     private val asteroidHandler = GroupHandler<AsteroidGroup, AsteroidMessage>(
+        scene = scene,
         factory = { message ->
             AsteroidGroup(message.radius).also { node ->
                 node.model = asteroidModel?.clone(true)
@@ -221,186 +215,6 @@ class MainScene {
             onLoad = { onLoad(it.scene) }
         )
     }
-
-    private fun Object3D.add(group: ObjectGroup) = add(group.rootNode)
-
-    private fun Object3D.remove(group: ObjectGroup) = remove(group.rootNode)
-
-    inner class GroupHandler<G : ObjectGroup, M : Identifiable>(
-        val factory: (M) -> G,
-        val update: G.(M) -> Unit
-    ) {
-
-        val nodes = mutableMapOf<ObjectId, G>()
-        private val holder = Object3D().also { scene += it }
-
-        fun addNew(messages: List<M>) {
-            messages.filter {
-                !nodes.containsKey(it.id)
-            }.forEach {
-                factory(it).also { node ->
-                    nodes[it.id] = node
-                    holder.add(node)
-                }
-            }
-        }
-
-        fun update(messages: List<M>) {
-            messages.forEach { message ->
-                nodes[message.id]?.apply {
-                    this.update(message)
-                }
-            }
-
-        }
-
-        fun removeOld(
-            messages: List<M>,
-            oldIds: List<ObjectId>
-        ) {
-            val currentIds = messages.map { it.id }
-            oldIds.filter {
-                !currentIds.contains(it)
-            }.forEach { id ->
-                nodes.remove(id)?.also {
-                    holder.remove(it)
-                }
-            }
-        }
-    }
 }
 
-interface ObjectGroup {
-    val rootNode: Object3D
-}
-
-class ShipGroup : ObjectGroup {
-
-    override val rootNode = Object3D()
-    private val beamNodes = mutableListOf<Object3D>()
-
-    var model: Object3D? = null
-        set(value) {
-            field?.also { rootNode.remove(it) }
-            field = value?.also {
-                rootNode.add(it)
-            }
-        }
-
-    var shieldModel: Object3D? = null
-        set(value) {
-            field?.also { rootNode.remove(it) }
-            field = value?.also {
-                it.visible = false
-                rootNode.add(it)
-            }
-        }
-
-    val position: Vector3
-        get() = rootNode.position
-
-    val rotation: Euler
-        get() = rootNode.rotation
-
-    operator fun plusAssign(value: Object3D) = rootNode.add(value)
-
-    fun showShield(shieldRadius: Double) {
-        shieldModel?.apply {
-            visible = true
-            scale.setScalar(shieldRadius)
-        }
-    }
-
-    fun hideShield() {
-        shieldModel?.visible = false
-    }
-
-    fun updateBeams(
-        snapshot: SnapshotMessage.MainScreen,
-        beams: List<BeamMessage>
-    ) {
-        beamNodes.forEach {
-            rootNode.remove(it)
-        }
-        beamNodes.clear()
-
-        beams.filter {
-            it.status is BeamStatus.Firing
-        }.forEach { beamMessage ->
-            val relativePosition = snapshot.getTargetPosition(beamMessage.targetId) ?: return
-            val shieldRadius = snapshot.getTargetShield(beamMessage.targetId)?.let {
-                if (it.up) it.radius else 0.0
-            } ?: 0.0
-            val targetPosition = relativePosition.toWorld()
-
-            Object3D().apply {
-                beamNodes += this
-                rootNode += this
-
-                position.set(beamMessage.position)
-                lookAt(targetPosition)
-            }.apply {
-                val distance = targetPosition.clone().sub(getWorldPosition(Vector3())).length() - shieldRadius
-                add(LaserBeam(length = distance, width = 2.0).obj)
-            }
-        }
-    }
-
-    private fun SnapshotMessage.MainScreen.getTargetPosition(targetId: ObjectId?): Vector2? {
-        return contacts.firstOrNull { it.id == targetId }?.relativePosition
-            ?: if (ship.id == targetId) Vector2() else null
-    }
-
-    private fun SnapshotMessage.MainScreen.getTargetShield(targetId: ObjectId?): ShieldMessage? {
-        return contacts.firstOrNull { it.id == targetId }?.shield
-            ?: if (ship.id == targetId) ship.shield else null
-    }
-}
-
-class AsteroidGroup(radius: Double) : ObjectGroup {
-
-    override val rootNode = Object3D()
-    private val transformNode = Object3D().also {
-        rootNode += it
-        it.scale.setScalar(radius)
-        it.position.y = Random.nextDouble(-8.0, 8.0)
-        it.quaternion.copy(randomQuaternion())
-    }
-
-    var model: Object3D? = null
-        set(value) {
-            field?.also { rootNode.remove(it) }
-            field = value?.also {
-                transformNode.add(it)
-            }
-        }
-
-    val position: Vector3
-        get() = rootNode.position
-
-    val rotation: Euler
-        get() = rootNode.rotation
-}
-
-private fun Vector2.toWorld() = Vector3(-y, 0.0, -x)
-
-private fun randomQuaternion(): Quaternion {
-    var x: Double
-    var y: Double
-    var z: Double
-    var u: Double
-    var v: Double
-    var w: Double
-    do {
-        x = Random.nextDouble(-1.0, 1.0)
-        y = Random.nextDouble(-1.0, 1.0)
-        z = x * x + y * y
-    } while (z > 1.0)
-    do {
-        u = Random.nextDouble(-1.0, 1.0)
-        v = Random.nextDouble(-1.0, 1.0)
-        w = u * u + v * v
-    } while (w > 1.0)
-    val s = sqrt((1 - z) / w)
-    return Quaternion(x, y, s * u, s * v)
-}
+fun Vector2.toWorld() = Vector3(-y, 0.0, -x)
