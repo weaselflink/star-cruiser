@@ -18,12 +18,12 @@ class ShieldHandler(
     fun update(time: GameTime) {
         currentStrength = min(
             shieldTemplate.strength,
-            currentStrength + shieldTemplate.rechargeSpeed * time.delta
+            currentStrength + rechargeAmount(time)
         )
     }
 
     fun endUpdate() {
-        if (currentStrength <= shieldTemplate.failureStrength) {
+        if (shieldFailing()) {
             up = false
         }
         activated = up && damageSinceLastUpdate > 0.0
@@ -32,13 +32,7 @@ class ShieldHandler(
 
     fun takeDamageAndReportHullDamage(amount: Double): Double {
         return if (up) {
-            val hullDamage = max(0.0, amount - currentStrength)
-            damageSinceLastUpdate += amount
-            currentStrength = max(
-                0.0,
-                currentStrength - amount
-            )
-            hullDamage
+            takeDamageToShieldAndThenHull(amount)
         } else {
             amount
         }
@@ -46,13 +40,15 @@ class ShieldHandler(
 
     fun setUp(value: Boolean) {
         if (value) {
-            if (currentStrength >= shieldTemplate.activationStrength) {
+            if (activationAllowed()) {
                 up = true
             }
         } else {
             up = false
         }
     }
+
+    private fun activationAllowed() = currentStrength >= shieldTemplate.activationStrength
 
     fun toMessage() =
         ShieldMessage(
@@ -62,4 +58,18 @@ class ShieldHandler(
             strength = currentStrength,
             max = shieldTemplate.strength
         )
+
+    private fun shieldFailing() = currentStrength <= shieldTemplate.failureStrength
+
+    private fun rechargeAmount(time: GameTime) = shieldTemplate.rechargeSpeed * time.delta
+
+    private fun takeDamageToShieldAndThenHull(amount: Double): Double {
+        val hullDamage = max(0.0, amount - currentStrength)
+        damageSinceLastUpdate += amount
+        currentStrength = max(
+            0.0,
+            currentStrength - amount
+        )
+        return hullDamage
+    }
 }
