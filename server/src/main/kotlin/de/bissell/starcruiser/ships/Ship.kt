@@ -11,7 +11,6 @@ import de.bissell.starcruiser.PhysicsEngine
 import de.bissell.starcruiser.PlayerShipMessage
 import de.bissell.starcruiser.ScanLevel
 import de.bissell.starcruiser.ScopeContactMessage
-import de.bissell.starcruiser.ShieldMessage
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.Vector2
 import de.bissell.starcruiser.WaypointMessage
@@ -20,8 +19,6 @@ import de.bissell.starcruiser.randomShipName
 import de.bissell.starcruiser.toHeading
 import de.bissell.starcruiser.toRadians
 import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 
 class Ship(
     val id: ObjectId = ObjectId.random(),
@@ -39,7 +36,7 @@ class Ship(
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val scans = mutableMapOf<ObjectId, ScanLevel>()
     private val beamHandlers = template.beams.map { BeamHandler(it) }
-    private val shieldHandler = ShieldHandler()
+    private val shieldHandler = ShieldHandler(template.shield)
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
     private var hull = template.hull
@@ -160,7 +157,9 @@ class Ship(
         shieldHandler.setUp(value)
     }
 
-    fun takeDamage(amount: Double) = shieldHandler.takeDamage(amount)
+    fun takeDamage(amount: Double) {
+        hull -= shieldHandler.takeDamageAndReportHullDamage(amount)
+    }
 
     fun toPlayerShipMessage() =
         PlayerShipMessage(
@@ -308,61 +307,6 @@ class Ship(
                 ?: false
     }
 
-    private inner class ShieldHandler {
-
-        private var up: Boolean = true
-        private var damageSinceLastUpdate: Double = 0.0
-        private var activated: Boolean = false
-        private var currentStrength: Double = template.shield.strength
-
-        fun update(time: GameTime) {
-            currentStrength = min(
-                template.shield.strength,
-                currentStrength + template.shield.rechargeSpeed * time.delta
-            )
-        }
-
-        fun endUpdate() {
-            if (currentStrength <= template.shield.failureStrength) {
-                up = false
-            }
-            activated = up && damageSinceLastUpdate > 0.0
-            damageSinceLastUpdate = 0.0
-        }
-
-        fun takeDamage(amount: Double) {
-            if (up) {
-                val hullDamage = max(0.0, amount - currentStrength)
-                hull -= hullDamage
-                damageSinceLastUpdate += amount
-                currentStrength = max(
-                    0.0,
-                    currentStrength - amount
-                )
-            } else {
-                hull -= amount
-            }
-        }
-
-        fun setUp(value: Boolean) {
-            if (value) {
-                if (currentStrength >= template.shield.activationStrength) {
-                    up = true
-                }
-            } else {
-                up = false
-            }
-        }
-
-        fun toMessage() =
-            ShieldMessage(
-                radius = template.shieldRadius,
-                up = up,
-                activated = activated,
-                strength = currentStrength,
-                max = template.shield.strength
-            )
-    }
 }
 
 data class ShipUpdateResult(
