@@ -267,8 +267,33 @@ class ShipTest {
             .isNear(ship.template.shield.strength - damage + ship.template.shield.rechargeSpeed * 4.0)
     }
 
-    private fun stepTimeTo(seconds: Number, shipProvider: (ObjectId) -> Ship? = { null }) {
+    @Test
+    fun `takes hull damage when shields depleted`() {
+        val damage = ship.template.shield.strength + 5.0
+        ship.takeDamage(damage)
+        expectThat(ship.toMessage().shield.strength)
+            .isNear(0.0)
+        expectThat(ship.toMessage().hull)
+            .isNear(ship.template.hull - 5.0)
+        expectThat(stepTimeTo(0.1).destroyed)
+            .isFalse()
+    }
+
+    @Test
+    fun `ship can be destroyed`() {
+        val damage = ship.template.shield.strength + ship.template.hull + 5.0
+        ship.takeDamage(damage)
+        expectThat(ship.toMessage().shield.strength)
+            .isNear(0.0)
+        expectThat(ship.toMessage().hull)
+            .isNear(-5.0)
+        expectThat(stepTimeTo(0.1).destroyed)
+            .isTrue()
+    }
+
+    private fun stepTimeTo(seconds: Number, shipProvider: (ObjectId) -> Ship? = { null }): ShipUpdateResult {
         time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
         ship.update(time, physicsEngine, shipProvider)
+        return ship.endUpdate()
     }
 }

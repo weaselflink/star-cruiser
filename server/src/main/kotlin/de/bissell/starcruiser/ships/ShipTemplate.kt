@@ -33,7 +33,8 @@ data class ShipTemplate(
             leftArc = 10
         )
     ),
-    val shield: ShieldTemplate = ShieldTemplate()
+    val shield: ShieldTemplate = ShieldTemplate(),
+    val hull: Double = 10.0
 )
 
 data class BeamWeapon(

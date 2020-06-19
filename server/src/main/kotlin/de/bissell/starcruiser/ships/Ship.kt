@@ -23,7 +23,6 @@ import de.bissell.starcruiser.toRadians
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 class Ship(
     val id: ObjectId = ObjectId.random(),
@@ -44,7 +43,7 @@ class Ship(
     private val shieldHandler = ShieldHandler()
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
-    private var hull = 10.0
+    private var hull = template.hull
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
         beamHandlers.forEach { it.update(time, shipProvider) }
@@ -190,7 +189,8 @@ class Ship(
             scanProgress = scanHandler?.toMessage(),
             lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
             beams = beamHandlers.map { it.toMessage() },
-            shield = shieldHandler.toMessage()
+            shield = shieldHandler.toMessage(),
+            hull = hull
         )
 
     fun toScopeContactMessage(relativeTo: Ship) =

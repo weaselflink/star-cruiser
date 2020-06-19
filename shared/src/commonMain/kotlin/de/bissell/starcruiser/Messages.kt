@@ -122,7 +122,8 @@ data class ShipMessage(
     val scanProgress: ScanProgress?,
     val lockProgress: LockStatus,
     val beams: List<BeamMessage>,
-    val shield: ShieldMessage
+    val shield: ShieldMessage,
+    val hull: Double
 )
 
 @Serializable
