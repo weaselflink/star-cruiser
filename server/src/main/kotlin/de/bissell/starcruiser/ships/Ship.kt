@@ -10,7 +10,6 @@ import de.bissell.starcruiser.ObjectId
 import de.bissell.starcruiser.PhysicsEngine
 import de.bissell.starcruiser.PlayerShipMessage
 import de.bissell.starcruiser.ScanLevel
-import de.bissell.starcruiser.ScanProgress
 import de.bissell.starcruiser.ScopeContactMessage
 import de.bissell.starcruiser.ShieldMessage
 import de.bissell.starcruiser.ShipMessage
@@ -147,13 +146,13 @@ class Ship(
 
     fun startScan(targetId: ObjectId) {
         if (scanHandler == null && canIncreaseScanLevel(targetId)) {
-            scanHandler = ScanHandler(targetId)
+            scanHandler = ScanHandler(targetId, template.scanSpeed)
         }
     }
 
     fun lockTarget(targetId: ObjectId) {
         if (lockHandler?.targetId != targetId) {
-            lockHandler = LockHandler(targetId)
+            lockHandler = LockHandler(targetId, template.lockingSpeed)
         }
     }
 
@@ -234,47 +233,6 @@ class Ship(
         } else {
             false
         }
-
-    private inner class ScanHandler(
-        val targetId: ObjectId,
-        private var progress: Double = 0.0
-    ) {
-
-        var isComplete: Boolean = false
-            get() = progress >= 1.0
-            private set
-
-        fun update(time: GameTime) {
-            progress += time.delta * template.scanSpeed
-        }
-
-        fun toMessage() =
-            ScanProgress(
-                targetId = targetId,
-                progress = progress
-            )
-    }
-
-    private inner class LockHandler(
-        val targetId: ObjectId,
-        private var progress: Double = 0.0
-    ) {
-
-        var isComplete: Boolean = false
-            get() = progress >= 1.0
-            private set
-
-        fun update(time: GameTime) {
-            progress += time.delta * template.lockingSpeed
-        }
-
-        fun toMessage(): LockStatus =
-            if (isComplete) {
-                LockStatus.Locked(targetId)
-            } else {
-                LockStatus.InProgress(targetId, progress)
-            }
-    }
 
     private inner class Waypoint(
         val index: Int,
