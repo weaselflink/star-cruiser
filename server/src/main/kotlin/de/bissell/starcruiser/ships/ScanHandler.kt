@@ -10,9 +10,9 @@ class ScanHandler(
 ) {
 
     private var progress: Double = 0.0
-    var isComplete: Boolean = false
+
+    val isComplete: Boolean
         get() = progress >= 1.0
-        private set
 
     fun update(time: GameTime) {
         progress += time.delta * scanningSpeed
