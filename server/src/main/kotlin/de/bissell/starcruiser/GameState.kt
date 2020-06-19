@@ -133,12 +133,26 @@ class GameState {
         time.update(now())
 
         physicsEngine.step(time)
+        updateShips()
+        updateAsteroids()
+    }
+
+    private fun updateShips() {
         ships.forEach {
             it.value.apply {
                 update(time, physicsEngine) { id -> ships[id] }
-                endUpdate()
             }
         }
+        ships.map {
+            it.value.endUpdate()
+        }.filter {
+            it.destroyed
+        }.forEach {
+            destroyShip(it.id)
+        }
+    }
+
+    private fun updateAsteroids() {
         asteroids.forEach {
             it.update(physicsEngine)
         }
@@ -180,7 +194,7 @@ class GameState {
         clients.computeIfAbsent(clientId) { Client(clientId) }
 
     private fun getClientShip(clientId: ClientId): Ship? =
-        getClient(clientId).objectId?.let { ships[it] }
+        getClient(clientId).shipId?.let { ships[it] }
 
     private fun getContacts(clientShip: Ship): List<ContactMessage> {
         return ships
@@ -210,6 +224,18 @@ class GameState {
             .filter {
                 it.relativePosition.length() < clientShip.template.shortRangeScopeRange * 1.1
             }
+    }
+
+    private fun destroyShip(shipId: ObjectId) {
+        clients.values.filter {
+            it.shipId == shipId
+        }.forEach {
+            it.exitShip()
+        }
+        ships.values.forEach {
+            it.targetDestroyed(shipId)
+        }
+        ships.remove(shipId)
     }
 
     companion object {
@@ -269,27 +295,31 @@ class GameTime {
 }
 
 data class Client(
-    val id: ClientId,
-    var state: ClientState = ShipSelection,
-    var objectId: ObjectId? = null,
-    var station: Station? = null
+    val id: ClientId
 ) {
+
+    var state: ClientState = ShipSelection
+        private set
+    var shipId: ObjectId? = null
+        private set
+    var station: Station? = null
+        private set
 
     fun joinShip(objectId: ObjectId, station: Station) {
         state = InShip
-        this.objectId = objectId
+        this.shipId = objectId
         this.station = station
     }
 
     fun changeStation(station: Station) {
-        if (objectId != null) {
+        if (shipId != null) {
             this.station = station
         }
     }
 
     fun exitShip() {
         state = ShipSelection
-        objectId = null
+        shipId = null
         station = null
     }
 }
