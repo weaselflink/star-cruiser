@@ -365,7 +365,10 @@ class Ship(
         }
 
         fun endUpdate() {
-            activated = damageSinceLastUpdate > 0.0
+            if (currentStrength <= template.shield.failureStrength) {
+                up = false
+            }
+            activated = up && damageSinceLastUpdate > 0.0
             damageSinceLastUpdate = 0.0
         }
 
@@ -384,7 +387,13 @@ class Ship(
         }
 
         fun setUp(value: Boolean) {
-            up = value
+            if (value) {
+                if (currentStrength >= template.shield.activationStrength) {
+                    up = true
+                }
+            } else {
+                up = false
+            }
         }
 
         fun toMessage() =

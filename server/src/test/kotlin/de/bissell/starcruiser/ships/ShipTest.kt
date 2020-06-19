@@ -260,16 +260,16 @@ class ShipTest {
         val damage = 5.0
         ship.takeDamage(damage)
         expectThat(ship.toMessage().shield.strength)
-            .isNear(ship.template.shield.strength - damage)
+            .isNear(shieldTemplate.strength - damage)
 
         stepTimeTo(4)
         expectThat(ship.toMessage().shield.strength)
-            .isNear(ship.template.shield.strength - damage + ship.template.shield.rechargeSpeed * 4.0)
+            .isNear(shieldTemplate.strength - damage + shieldTemplate.rechargeSpeed * 4.0)
     }
 
     @Test
     fun `takes hull damage when shields depleted`() {
-        val damage = ship.template.shield.strength + 5.0
+        val damage = shieldTemplate.strength + 5.0
         ship.takeDamage(damage)
         expectThat(ship.toMessage().shield.strength)
             .isNear(0.0)
@@ -281,7 +281,7 @@ class ShipTest {
 
     @Test
     fun `ship can be destroyed`() {
-        val damage = ship.template.shield.strength + ship.template.hull + 5.0
+        val damage = shieldTemplate.strength + ship.template.hull + 5.0
         ship.takeDamage(damage)
         expectThat(ship.toMessage().shield.strength)
             .isNear(0.0)
@@ -291,9 +291,46 @@ class ShipTest {
             .isTrue()
     }
 
+    @Test
+    fun `shield can be activated when above activation strength`() {
+        val damage = shieldTemplate.strength - shieldTemplate.activationStrength * 2.0
+        ship.takeDamage(damage)
+        ship.setShieldsUp(false)
+
+        expectThat(ship.toMessage().shield.up)
+            .isFalse()
+
+        ship.setShieldsUp(true)
+        expectThat(ship.toMessage().shield.up)
+            .isTrue()
+    }
+
+    @Test
+    fun `shield fails when below failure strength and cannot be activated again`() {
+        val damage = shieldTemplate.strength - shieldTemplate.failureStrength * 0.5
+        ship.takeDamage(damage)
+        stepTimeTo(0.1)
+
+        expectThat(ship.toMessage().shield.up)
+            .isFalse()
+
+        ship.setShieldsUp(true)
+        expectThat(ship.toMessage().shield.up)
+            .isFalse()
+
+        stepTimeTo(1000.0)
+        ship.setShieldsUp(true)
+
+        expectThat(ship.toMessage().shield.up)
+            .isTrue()
+    }
+
     private fun stepTimeTo(seconds: Number, shipProvider: (ObjectId) -> Ship? = { null }): ShipUpdateResult {
         time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
         ship.update(time, physicsEngine, shipProvider)
         return ship.endUpdate()
     }
+
+    private val shieldTemplate
+        get() = ship.template.shield
 }

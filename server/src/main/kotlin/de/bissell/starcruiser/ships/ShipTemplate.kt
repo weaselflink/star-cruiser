@@ -59,5 +59,7 @@ data class BeamWeapon(
 
 data class ShieldTemplate(
     val strength: Double = 10.0,
-    val rechargeSpeed: Double = 0.1
+    val rechargeSpeed: Double = 0.1,
+    val failureStrength: Double = 0.5,
+    val activationStrength: Double = 2.0
 )
