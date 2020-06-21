@@ -10,8 +10,8 @@ import drawLockMarker
 import drawShipSymbol
 import environmentContactStyle
 import friendlyContactStyle
-import input.MouseEventHandler
 import input.PointerEvent
+import input.PointerEventHandler
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import scanProgressStyle
@@ -266,7 +266,7 @@ class NavigationMap(
 
     private fun canvasCenter() = Vector2(canvas.width * 0.5, canvas.height * 0.5)
 
-    inner class MapMouseEventHandler : MouseEventHandler {
+    inner class MapPointerEventHandler : PointerEventHandler {
 
         private var firstEvent: Vector2? = null
         private var previousEvent: Vector2? = null

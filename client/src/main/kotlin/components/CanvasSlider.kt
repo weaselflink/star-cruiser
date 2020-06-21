@@ -6,8 +6,8 @@ import de.bissell.starcruiser.Vector2
 import de.bissell.starcruiser.clamp
 import dimensions
 import drawPill
-import input.MouseEventHandler
 import input.PointerEvent
+import input.PointerEventHandler
 import org.w3c.dom.*
 import px
 import kotlin.math.PI
@@ -23,7 +23,7 @@ class CanvasSlider(
     private val lines: List<Double> = emptyList(),
     private val leftText: String? = null,
     private val reverseValue: Boolean = false
-) : MouseEventHandler {
+) : PointerEventHandler {
 
     fun draw(value: Double) {
         val dim = currentDimensions(canvas)

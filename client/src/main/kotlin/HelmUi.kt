@@ -4,7 +4,7 @@ import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
-import input.MouseEventDispatcher
+import input.PointerEventDispatcher
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -23,7 +23,7 @@ class HelmUi : StationUi {
     private val root = document.getElementById("helm-ui")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
-    private val mouseEventDispatcher = MouseEventDispatcher(canvas)
+    private val pointerEventDispatcher = PointerEventDispatcher(canvas)
     private val rotateScopeButton = document.querySelector(".rotateScope")!! as HTMLButtonElement
     private val shortRangeScope = ShortRangeScope(canvas)
     private val throttleSlider = CanvasSlider(
@@ -56,8 +56,8 @@ class HelmUi : StationUi {
 
     init {
         resize()
-        mouseEventDispatcher.addHandler(throttleSlider)
-        mouseEventDispatcher.addHandler(rudderSlider)
+        pointerEventDispatcher.addHandler(throttleSlider)
+        pointerEventDispatcher.addHandler(rudderSlider)
     }
 
     fun resize() {

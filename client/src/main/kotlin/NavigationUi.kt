@@ -6,7 +6,7 @@ import de.bissell.starcruiser.Command.*
 import de.bissell.starcruiser.ScanLevel
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
-import input.MouseEventDispatcher
+import input.PointerEventDispatcher
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -23,7 +23,7 @@ class NavigationUi : StationUi {
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val navigationMap = NavigationMap(canvas) { handleMapClick(it) }
     private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
-    private val mouseEventDispatcher = MouseEventDispatcher(canvas)
+    private val pointerEventDispatcher = PointerEventDispatcher(canvas)
     private val addWaypointButton = document.querySelector(".addWaypoint")!! as HTMLButtonElement
     private val deleteWaypointButton = document.querySelector(".deleteWaypoint")!! as HTMLButtonElement
     private val scanShipButton = document.querySelector(".scanShip")!! as HTMLButtonElement
@@ -45,8 +45,8 @@ class NavigationUi : StationUi {
 
     init {
         resize()
-        mouseEventDispatcher.addHandler(zoomSlider)
-        mouseEventDispatcher.addHandler(navigationMap.MapMouseEventHandler())
+        pointerEventDispatcher.addHandler(zoomSlider)
+        pointerEventDispatcher.addHandler(navigationMap.MapPointerEventHandler())
     }
 
     override fun show() {
