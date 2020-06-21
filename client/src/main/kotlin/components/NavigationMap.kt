@@ -2,6 +2,7 @@ package components
 
 import CanvasDimensions
 import MouseEventHandler
+import PointerEvent
 import circle
 import clear
 import de.bissell.starcruiser.*
@@ -13,11 +14,9 @@ import environmentContactStyle
 import friendlyContactStyle
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.events.MouseEvent
 import scanProgressStyle
 import selectionMarkerStyle
 import shipStyle
-import toVector2
 import transformReset
 import translate
 import translateToCenter
@@ -273,17 +272,17 @@ class NavigationMap(
         private var previousEvent: Vector2? = null
         private var distance = 0.0
 
-        override fun handleMouseDown(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-            firstEvent = mouseEvent.toVector2()
-            previousEvent = mouseEvent.toVector2()
+        override fun handlePointerDown(pointerEvent: PointerEvent) {
+            firstEvent = pointerEvent.point
+            previousEvent = pointerEvent.point
         }
 
-        override fun handleMouseMove(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-            handleMove(mouseEvent)
+        override fun handlePointerMove(pointerEvent: PointerEvent) {
+            handleMove(pointerEvent.point)
         }
 
-        override fun handleMouseUp(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-            handleMove(mouseEvent)
+        override fun handlePointerUp(pointerEvent: PointerEvent) {
+            handleMove(pointerEvent.point)
             if (distance <= 20.0) {
                 handleClick()
             }
@@ -292,8 +291,7 @@ class NavigationMap(
             distance = 0.0
         }
 
-        private fun handleMove(mouseEvent: MouseEvent) {
-            val currentEvent = mouseEvent.toVector2()
+        private fun handleMove(currentEvent: Vector2) {
             previousEvent?.let {
                 val move = currentEvent - it
                 center += convert(move)

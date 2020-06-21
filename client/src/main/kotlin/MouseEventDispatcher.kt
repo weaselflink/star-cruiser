@@ -3,47 +3,57 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.MouseEvent
 
 interface MouseEventHandler {
-    fun isInterestedIn(canvas: HTMLCanvasElement, mouseEvent: MouseEvent): Boolean = true
+    fun isInterestedIn(pointerEvent: PointerEvent): Boolean = true
 
-    fun handleMouseDown(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {}
+    fun handlePointerDown(pointerEvent: PointerEvent) {}
 
-    fun handleMouseMove(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {}
+    fun handlePointerMove(pointerEvent: PointerEvent) {}
 
-    fun handleMouseUp(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {}
+    fun handlePointerUp(pointerEvent: PointerEvent) {}
 }
 
 class MouseEventDispatcher(
-    private val canvas: HTMLCanvasElement
-) : MouseEventHandler {
+    canvas: HTMLCanvasElement
+) {
 
     private val handlers = mutableListOf<MouseEventHandler>()
-    private var currentHandler: MouseEventHandler? = null
+    private var currentMouseHandler: MouseEventHandler? = null
 
     init {
-        canvas.onmousedown = { handleMouseDown(canvas, it) }
-        canvas.onmousemove = { handleMouseMove(canvas, it) }
-        canvas.onmouseup = { handleMouseUp(canvas, it) }
-        canvas.onmouseleave = { handleMouseUp(canvas, it) }
+        canvas.onmousedown = { handleMouseDown(it) }
+        canvas.onmousemove = { handleMouseMove(it) }
+        canvas.onmouseup = { handleMouseUp(it) }
+        canvas.onmouseleave = { handleMouseUp(it) }
     }
 
     fun addHandler(handler: MouseEventHandler) {
         handlers += handler
     }
 
-    override fun handleMouseDown(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-        currentHandler = handlers.firstOrNull { it.isInterestedIn(canvas, mouseEvent) }?.apply {
-            handleMouseDown(canvas, mouseEvent)
-        }
+    private fun handleMouseDown(mouseEvent: MouseEvent) {
+        currentMouseHandler = handlers
+            .firstOrNull { it.isInterestedIn(PointerEvent(mouseEvent.toVector2())) }
+            ?.apply {
+                handlePointerDown(
+                    PointerEvent(mouseEvent.toVector2())
+                )
+            }
     }
 
-    override fun handleMouseMove(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-        currentHandler?.handleMouseMove(canvas, mouseEvent)
+    private fun handleMouseMove(mouseEvent: MouseEvent) {
+        currentMouseHandler?.handlePointerMove(mouseEvent.toPointerEvent())
     }
 
-    override fun handleMouseUp(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-        currentHandler?.handleMouseUp(canvas, mouseEvent)
-        currentHandler = null
+    private fun handleMouseUp(mouseEvent: MouseEvent) {
+        currentMouseHandler?.handlePointerUp(mouseEvent.toPointerEvent())
+        currentMouseHandler = null
     }
 }
+
+data class PointerEvent(
+    val point: Vector2
+)
+
+private fun MouseEvent.toPointerEvent() = PointerEvent(toVector2())
 
 fun MouseEvent.toVector2() = Vector2(offsetX, offsetY)

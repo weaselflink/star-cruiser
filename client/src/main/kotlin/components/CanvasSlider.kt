@@ -2,14 +2,14 @@ package components
 
 import CanvasDimensions
 import MouseEventHandler
+import PointerEvent
 import circle
+import de.bissell.starcruiser.Vector2
 import de.bissell.starcruiser.clamp
 import dimensions
 import drawPill
 import org.w3c.dom.*
-import org.w3c.dom.events.MouseEvent
 import px
-import toVector2
 import kotlin.math.PI
 
 class CanvasSlider(
@@ -41,29 +41,28 @@ class CanvasSlider(
         }
     }
 
-    override fun isInterestedIn(canvas: HTMLCanvasElement, mouseEvent: MouseEvent): Boolean {
+    override fun isInterestedIn(pointerEvent: PointerEvent): Boolean {
         val dim = currentDimensions(canvas)
-        val point = mouseEvent.toVector2()
+        val point = pointerEvent.point
 
         return point.x > dim.bottomX && point.x < dim.bottomX + dim.width
                 && point.y > dim.bottomY - dim.height && point.y < dim.bottomY
     }
 
-    override fun handleMouseDown(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-        onChange(clickValue(canvas, mouseEvent))
+    override fun handlePointerDown(pointerEvent: PointerEvent) {
+        onChange(clickValue(pointerEvent.point))
     }
 
-    override fun handleMouseMove(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-        onChange(clickValue(canvas, mouseEvent))
+    override fun handlePointerMove(pointerEvent: PointerEvent) {
+        onChange(clickValue(pointerEvent.point))
     }
 
-    override fun handleMouseUp(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
-        onChange(clickValue(canvas, mouseEvent))
+    override fun handlePointerUp(pointerEvent: PointerEvent) {
+        onChange(clickValue(pointerEvent.point))
     }
 
-    private fun clickValue(canvas: HTMLCanvasElement, mouseEvent: MouseEvent): Double {
+    private fun clickValue(point: Vector2): Double {
         val dim = currentDimensions(canvas)
-        val point = mouseEvent.toVector2()
 
         return if (dim.isHorizontal) {
             (point.x - (dim.bottomX + dim.radius)) / (dim.width - dim.radius * 2.0)
