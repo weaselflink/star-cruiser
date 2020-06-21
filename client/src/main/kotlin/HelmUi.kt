@@ -28,10 +28,10 @@ class HelmUi : StationUi {
     private val shortRangeScope = ShortRangeScope(canvas)
     private val throttleSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { max(it.vmin * 5, (it.width - it.min) * 0.5 - it.vmin * 7) },
-        yExpr = { it.height - it.vmin * 5 },
-        widthExpr = { it.vmin * 8 },
-        heightExpr = { it.vmin * 40 },
+        xExpr = { max(it.vmin * 3, (it.width - it.min) * 0.5 - it.vmin * 9) },
+        yExpr = { it.height - it.vmin * 3 },
+        widthExpr = { it.vmin * 10 },
+        heightExpr = { it.vmin * 50 },
         onChange = {
             val throttle = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
             clientSocket.send(Command.CommandChangeThrottle(throttle))
@@ -41,10 +41,10 @@ class HelmUi : StationUi {
     )
     private val rudderSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { min(it.width - it.vmin * 45, it.width - (it.width - it.min) * 0.5 - it.min * 0.2) },
-        yExpr = { it.height - it.vmin * 5 },
-        widthExpr = { it.vmin * 40 },
-        heightExpr = { it.vmin * 8 },
+        xExpr = { min(it.width - it.vmin * 53, it.width - (it.width - it.min) * 0.5 - it.min * 0.2) },
+        yExpr = { it.height - it.vmin * 3 },
+        widthExpr = { it.vmin * 50 },
+        heightExpr = { it.vmin * 10 },
         onChange = {
             val rudder = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
             clientSocket.send(Command.CommandChangeRudder(rudder))

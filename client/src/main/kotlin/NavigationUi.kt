@@ -33,10 +33,10 @@ class NavigationUi : StationUi {
     )
     private val zoomSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { it.vmin * 5 },
-        yExpr = { it.height - it.vmin * 5 },
-        widthExpr = { it.vmin * 40 },
-        heightExpr = { it.vmin * 8 },
+        xExpr = { it.vmin * 3 },
+        yExpr = { it.height - it.vmin * 3 },
+        widthExpr = { it.vmin * 50 },
+        heightExpr = { it.vmin * 10 },
         onChange = { navigationMap.changeZoom(it) },
         leftText = "Zoom"
     )
