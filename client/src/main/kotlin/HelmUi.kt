@@ -4,6 +4,7 @@ import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
+import input.MouseEventDispatcher
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement

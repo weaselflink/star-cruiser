@@ -1,13 +1,13 @@
 package components
 
 import CanvasDimensions
-import MouseEventHandler
-import PointerEvent
 import circle
 import de.bissell.starcruiser.Vector2
 import de.bissell.starcruiser.clamp
 import dimensions
 import drawPill
+import input.MouseEventHandler
+import input.PointerEvent
 import org.w3c.dom.*
 import px
 import kotlin.math.PI

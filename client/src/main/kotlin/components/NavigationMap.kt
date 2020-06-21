@@ -1,8 +1,6 @@
 package components
 
 import CanvasDimensions
-import MouseEventHandler
-import PointerEvent
 import circle
 import clear
 import de.bissell.starcruiser.*
@@ -12,6 +10,8 @@ import drawLockMarker
 import drawShipSymbol
 import environmentContactStyle
 import friendlyContactStyle
+import input.MouseEventHandler
+import input.PointerEvent
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import scanProgressStyle

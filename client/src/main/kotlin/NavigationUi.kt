@@ -2,12 +2,11 @@ import components.CanvasSlider
 import components.MapClick
 import components.NavigationMap
 import components.SelectionDetails
-import de.bissell.starcruiser.Command.CommandAddWaypoint
-import de.bissell.starcruiser.Command.CommandDeleteWaypoint
-import de.bissell.starcruiser.Command.CommandScanShip
+import de.bissell.starcruiser.Command.*
 import de.bissell.starcruiser.ScanLevel
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
+import input.MouseEventDispatcher
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement

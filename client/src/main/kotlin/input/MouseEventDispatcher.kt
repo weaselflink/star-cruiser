@@ -1,3 +1,5 @@
+package input
+
 import de.bissell.starcruiser.Vector2
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.MouseEvent

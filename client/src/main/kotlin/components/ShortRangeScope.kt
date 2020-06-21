@@ -12,12 +12,12 @@ import drawShipSymbol
 import environmentContactStyle
 import friendlyContactStyle
 import historyStyle
+import input.toVector2
 import lockMarkerStyle
 import org.w3c.dom.*
 import org.w3c.dom.events.MouseEvent
 import px
 import shipStyle
-import toVector2
 import translate
 import translateToCenter
 import unknownContactStyle
