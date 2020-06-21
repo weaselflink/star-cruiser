@@ -9,6 +9,7 @@ import drawPill
 import org.w3c.dom.*
 import org.w3c.dom.events.MouseEvent
 import px
+import toVector2
 import kotlin.math.PI
 
 class CanvasSlider(
@@ -42,9 +43,10 @@ class CanvasSlider(
 
     override fun isInterestedIn(canvas: HTMLCanvasElement, mouseEvent: MouseEvent): Boolean {
         val dim = currentDimensions(canvas)
+        val point = mouseEvent.toVector2()
 
-        return mouseEvent.offsetX > dim.bottomX && mouseEvent.offsetX < dim.bottomX + dim.width
-                && mouseEvent.offsetY > dim.bottomY - dim.height && mouseEvent.offsetY < dim.bottomY
+        return point.x > dim.bottomX && point.x < dim.bottomX + dim.width
+                && point.y > dim.bottomY - dim.height && point.y < dim.bottomY
     }
 
     override fun handleMouseDown(canvas: HTMLCanvasElement, mouseEvent: MouseEvent) {
@@ -61,11 +63,12 @@ class CanvasSlider(
 
     private fun clickValue(canvas: HTMLCanvasElement, mouseEvent: MouseEvent): Double {
         val dim = currentDimensions(canvas)
+        val point = mouseEvent.toVector2()
 
         return if (dim.isHorizontal) {
-            (mouseEvent.offsetX - (dim.bottomX + dim.radius)) / (dim.width - dim.radius * 2.0)
+            (point.x - (dim.bottomX + dim.radius)) / (dim.width - dim.radius * 2.0)
         } else {
-            -(mouseEvent.offsetY - (dim.bottomY - dim.radius)) / (dim.height - dim.radius * 2.0)
+            -(point.y - (dim.bottomY - dim.radius)) / (dim.height - dim.radius * 2.0)
         }.clamp(0.0, 1.0).let {
             if (reverseValue) 1.0 - it else it
         }

@@ -1,3 +1,4 @@
+import de.bissell.starcruiser.Vector2
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.MouseEvent
 
@@ -44,3 +45,5 @@ class MouseEventDispatcher(
         currentHandler = null
     }
 }
+
+fun MouseEvent.toVector2() = Vector2(offsetX, offsetY)

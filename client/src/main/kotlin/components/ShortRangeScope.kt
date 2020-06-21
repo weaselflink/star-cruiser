@@ -17,6 +17,7 @@ import org.w3c.dom.*
 import org.w3c.dom.events.MouseEvent
 import px
 import shipStyle
+import toVector2
 import translate
 import translateToCenter
 import unknownContactStyle
@@ -78,7 +79,7 @@ class ShortRangeScope(
 
     private fun MouseEvent.adjustForScope(): Vector2 {
         val center = Vector2(dim.width * 0.5, dim.height * 0.5)
-        return (Vector2(offsetX, offsetY) - center).rotate(-scopeRotation)
+        return (toVector2() - center).rotate(-scopeRotation)
     }
 
     private fun CanvasRenderingContext2D.draw(ship: ShipMessage) {

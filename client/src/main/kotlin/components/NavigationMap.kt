@@ -17,6 +17,7 @@ import org.w3c.dom.events.MouseEvent
 import scanProgressStyle
 import selectionMarkerStyle
 import shipStyle
+import toVector2
 import transformReset
 import translate
 import translateToCenter
@@ -265,8 +266,6 @@ class NavigationMap(
     private fun Vector2.adjustForMap() = ((this - center) * scale).let { Vector2(it.x, -it.y) }
 
     private fun canvasCenter() = Vector2(canvas.width * 0.5, canvas.height * 0.5)
-
-    private fun MouseEvent.toVector2() = Vector2(offsetX, offsetY)
 
     inner class MapMouseEventHandler : MouseEventHandler {
 
