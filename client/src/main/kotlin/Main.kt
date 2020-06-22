@@ -6,6 +6,7 @@ import kotlin.browser.window
 
 lateinit var commonShipUi: CommonShipUi
 lateinit var joinUi: JoinUi
+lateinit var destroyedUi: DestroyedUi
 lateinit var helmUi: HelmUi
 lateinit var weaponsUi: WeaponsUi
 lateinit var navigationUi: NavigationUi
@@ -21,6 +22,7 @@ fun main() {
 fun init() {
     joinUi = JoinUi().apply { show() }
 
+    destroyedUi = DestroyedUi().apply { hide() }
     helmUi = HelmUi()
     weaponsUi = WeaponsUi()
     navigationUi = NavigationUi()
@@ -163,12 +165,19 @@ fun step() {
 fun drawUi(stateCopy: GameStateMessage) {
     when (val snapshot = stateCopy.snapshot) {
         is SnapshotMessage.ShipSelection -> {
+            destroyedUi.hide()
             commonShipUi.hide()
             stationUiSwitcher.switchTo(null)
             joinUi.apply {
                 show()
                 draw(snapshot)
             }
+        }
+        is SnapshotMessage.ShipDestroyed -> {
+            joinUi.hide()
+            commonShipUi.hide()
+            stationUiSwitcher.switchTo(null)
+            destroyedUi.show()
         }
         is SnapshotMessage.ShipSnapshot -> {
             drawShipUi(snapshot)
@@ -178,6 +187,7 @@ fun drawUi(stateCopy: GameStateMessage) {
 
 fun drawShipUi(snapshot: SnapshotMessage.ShipSnapshot) {
     joinUi.hide()
+    destroyedUi.hide()
     commonShipUi.apply {
         show()
         draw(snapshot)

@@ -68,6 +68,9 @@ sealed class SnapshotMessage {
     ) : SnapshotMessage()
 
     @Serializable
+    object ShipDestroyed : SnapshotMessage()
+
+    @Serializable
     data class Helm(
         override val ship: ShipMessage,
         override val contacts: List<ScopeContactMessage>,

@@ -26,9 +26,11 @@ import kotlinx.css.Gap
 import kotlinx.css.GridColumn
 import kotlinx.css.GridRow
 import kotlinx.css.GridTemplateColumns
+import kotlinx.css.JustifyContent
 import kotlinx.css.Outline
 import kotlinx.css.Position.fixed
 import kotlinx.css.TextAlign
+import kotlinx.css.alignContent
 import kotlinx.css.alignSelf
 import kotlinx.css.backgroundColor
 import kotlinx.css.body
@@ -53,10 +55,12 @@ import kotlinx.css.gridColumn
 import kotlinx.css.gridRow
 import kotlinx.css.gridTemplateColumns
 import kotlinx.css.height
+import kotlinx.css.justifyContent
 import kotlinx.css.left
 import kotlinx.css.margin
 import kotlinx.css.marginBottom
 import kotlinx.css.marginTop
+import kotlinx.css.minHeight
 import kotlinx.css.outline
 import kotlinx.css.padding
 import kotlinx.css.paddingBottom
@@ -68,6 +72,7 @@ import kotlinx.css.position
 import kotlinx.css.right
 import kotlinx.css.textAlign
 import kotlinx.css.top
+import kotlinx.css.vh
 import kotlinx.css.vmin
 import kotlinx.css.width
 import kotlinx.css.zIndex
@@ -81,6 +86,7 @@ import kotlinx.html.head
 import kotlinx.html.id
 import kotlinx.html.link
 import kotlinx.html.meta
+import kotlinx.html.p
 import kotlinx.html.script
 
 fun Routing.webUi() {
@@ -230,6 +236,32 @@ fun Routing.webUi() {
                     gridRow = GridRow("4")
                     gridColumn = GridColumn("1 / span 2")
                 }
+                "#destroyed-ui" {
+                    display = grid
+                    minHeight = 100.vh
+                    alignContent = Align.center
+                    justifyContent = JustifyContent.center
+                }
+                ".popup" {
+                    zIndex = 10
+                    display = grid
+                    gap = Gap("2vmin")
+                    padding(3.vmin, 6.vmin)
+                    color = lightGrey
+                    backgroundColor = black
+                    borderWidth = 0.5.vmin
+                    borderStyle = solid
+                    borderColor = darkGrey
+                    borderRadius = 4.vmin
+                    fontWeight = bold
+                    fontSize = 4.vmin
+                    justifyContent = JustifyContent.center
+                }
+                ".popup button" {
+                    borderRadius = 4.vmin
+                    paddingLeft = 4.vmin
+                    paddingRight = 4.vmin
+                }
             }.toString()
         }
     }
@@ -260,6 +292,7 @@ fun Routing.webUi() {
             }
             body {
                 joinUi()
+                destroyedUi()
                 commonShipUi()
                 helmUi()
                 weaponsUI()
@@ -280,6 +313,20 @@ private fun BODY.joinUi() {
             button(classes = "playerShipsPrev leftEdge") { +"Prev"}
             div(classes = "playerShips") {}
             button(classes = "playerShipsNext leftEdge") { +"Next"}
+        }
+    }
+}
+
+private fun BODY.destroyedUi() {
+    div {
+        id = "destroyed-ui"
+        div(classes = "popup") {
+            p {
+                +"Your ship was destroyed"
+            }
+            button(classes = "toSelection") {
+                +"To Selection"
+            }
         }
     }
 }

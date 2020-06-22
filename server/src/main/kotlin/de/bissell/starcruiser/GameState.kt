@@ -1,6 +1,7 @@
 package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ClientState.InShip
+import de.bissell.starcruiser.ClientState.ShipDestroyed
 import de.bissell.starcruiser.ClientState.ShipSelection
 import de.bissell.starcruiser.Station.*
 import de.bissell.starcruiser.client.ClientId
@@ -55,6 +56,7 @@ class GameState {
             ShipSelection -> SnapshotMessage.ShipSelection(
                 playerShips = ships.values.map(Ship::toPlayerShipMessage)
             )
+            ShipDestroyed -> SnapshotMessage.ShipDestroyed
             InShip -> when (client.station!!) {
                 Helm -> SnapshotMessage.Helm(
                     ship = clientShip!!.toMessage(),
@@ -230,7 +232,7 @@ class GameState {
         clients.values.filter {
             it.shipId == shipId
         }.forEach {
-            it.exitShip()
+            it.shipDestroyed()
         }
         ships.values.forEach {
             it.targetDestroyed(shipId)
@@ -317,6 +319,12 @@ data class Client(
         }
     }
 
+    fun shipDestroyed() {
+        state = ShipDestroyed
+        shipId = null
+        station = null
+    }
+
     fun exitShip() {
         state = ShipSelection
         shipId = null
@@ -326,5 +334,6 @@ data class Client(
 
 enum class ClientState {
     ShipSelection,
+    ShipDestroyed,
     InShip
 }
