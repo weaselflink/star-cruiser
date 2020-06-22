@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
+import strikt.assertions.isFalse
+import strikt.assertions.isTrue
 import java.time.Instant
 
 class LockHandlerTest {
@@ -21,6 +23,7 @@ class LockHandlerTest {
 
     @Test
     fun `starts with zero progress`() {
+        expectThat(lockHandler.isComplete).isFalse()
         expectThat(lockHandler.toMessage())
             .isA<LockStatus.InProgress>()
             .and {
@@ -33,6 +36,7 @@ class LockHandlerTest {
     fun `still in progress after insufficient time passed`() {
         stepTimeTo(3)
 
+        expectThat(lockHandler.isComplete).isFalse()
         expectThat(lockHandler.toMessage())
             .isA<LockStatus.InProgress>()
             .and {
@@ -45,6 +49,7 @@ class LockHandlerTest {
     fun `locked after sufficient time passed`() {
         stepTimeTo(5)
 
+        expectThat(lockHandler.isComplete).isTrue()
         expectThat(lockHandler.toMessage())
             .isA<LockStatus.Locked>()
             .and {
