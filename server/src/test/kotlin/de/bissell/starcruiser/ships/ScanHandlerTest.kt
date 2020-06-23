@@ -1,12 +1,10 @@
 package de.bissell.starcruiser.ships
 
 import de.bissell.starcruiser.GameTime
-import de.bissell.starcruiser.LockStatus
 import de.bissell.starcruiser.ObjectId
 import de.bissell.starcruiser.isNear
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
-import strikt.assertions.isA
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
