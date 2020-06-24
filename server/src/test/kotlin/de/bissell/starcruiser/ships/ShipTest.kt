@@ -88,6 +88,27 @@ class ShipTest {
     }
 
     @Test
+    fun `sets jump distance`() {
+        ship.changeJumpDistance(3_000)
+
+        expectThat(ship.toMessage().jumpDistance).isEqualTo(3_000)
+    }
+
+    @Test
+    fun `clamps jump distance to lower bound`() {
+        ship.changeJumpDistance(500)
+
+        expectThat(ship.toMessage().jumpDistance).isEqualTo(1_000)
+    }
+
+    @Test
+    fun `clamps jump distance to upper bound`() {
+        ship.changeJumpDistance(20_000)
+
+        expectThat(ship.toMessage().jumpDistance).isEqualTo(10_000)
+    }
+
+    @Test
     fun `sets positive rudder`() {
         ship.changeRudder(50)
 
