@@ -103,6 +103,7 @@ class PhysicsEngine {
         world.createBody {
             type = BodyType.DYNAMIC
             position.set(this@toBody.position.toVec2())
+            angle = this@toBody.rotation.toFloat()
             linearDamping = 0.4f
             angularDamping = 0.95f
         }.apply {
