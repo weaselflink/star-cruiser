@@ -60,6 +60,34 @@ class ShipTest {
     }
 
     @Test
+    fun `sets positive throttle`() {
+        ship.changeThrottle(50)
+
+        expectThat(ship.toMessage().throttle).isEqualTo(50)
+    }
+
+    @Test
+    fun `sets negative throttle`() {
+        ship.changeThrottle(-50)
+
+        expectThat(ship.toMessage().throttle).isEqualTo(-50)
+    }
+
+    @Test
+    fun `clamps throttle to lower bound`() {
+        ship.changeThrottle(-150)
+
+        expectThat(ship.toMessage().throttle).isEqualTo(-100)
+    }
+
+    @Test
+    fun `clamps throttle to upper bound`() {
+        ship.changeThrottle(150)
+
+        expectThat(ship.toMessage().throttle).isEqualTo(100)
+    }
+
+    @Test
     fun `sets positive rudder`() {
         ship.changeRudder(50)
 
@@ -71,6 +99,20 @@ class ShipTest {
         ship.changeRudder(-50)
 
         expectThat(ship.toMessage().rudder).isEqualTo(-50)
+    }
+
+    @Test
+    fun `clamps rudder to lower bound`() {
+        ship.changeRudder(-150)
+
+        expectThat(ship.toMessage().rudder).isEqualTo(-100)
+    }
+
+    @Test
+    fun `clamps rudder to upper bound`() {
+        ship.changeRudder(150)
+
+        expectThat(ship.toMessage().rudder).isEqualTo(100)
     }
 
     @Test
