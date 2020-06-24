@@ -28,6 +28,9 @@ sealed class Command {
     data class CommandChangeThrottle(val value: Int) : Command()
 
     @Serializable
+    data class CommandChangeJumpDistance(val value: Int) : Command()
+
+    @Serializable
     data class CommandChangeRudder(val value: Int) : Command()
 
     @Serializable

@@ -117,6 +117,7 @@ data class ShipMessage(
     val heading: Double,
     val velocity: Double,
     val throttle: Int,
+    val jumpDistance: Int,
     val thrust: Double,
     val rudder: Int,
     val history: List<Pair<Double, Vector2>>,

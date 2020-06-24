@@ -26,6 +26,7 @@ class ExitShip(val clientId: ClientId) : GameStateChange()
 class NewGameClient(val clientId: ClientId) : GameStateChange()
 class GameClientDisconnected(val clientId: ClientId) : GameStateChange()
 class ChangeThrottle(val clientId: ClientId, val value: Int) : GameStateChange()
+class ChangeJumpDistance(val clientId: ClientId, val value: Int) : GameStateChange()
 class ChangeRudder(val clientId: ClientId, val value: Int) : GameStateChange()
 class GetGameStateSnapshot(val clientId: ClientId, val response: CompletableDeferred<SnapshotMessage>) : GameStateChange()
 class AddWaypoint(val clientId: ClientId, val position: Vector2) : GameStateChange()
@@ -164,6 +165,10 @@ class GameState {
         getClientShip(clientId)?.changeThrottle(value)
     }
 
+    fun changeJumpDistance(clientId: ClientId, value: Int) {
+        getClientShip(clientId)?.changeJumpDistance(value)
+    }
+
     fun changeRudder(clientId: ClientId, value: Int) {
         getClientShip(clientId)?.changeRudder(value)
     }
@@ -255,6 +260,7 @@ class GameState {
                     is ExitShip -> gameState.exitShip(change.clientId)
                     is SpawnShip -> gameState.spawnShip()
                     is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.value)
+                    is ChangeJumpDistance -> gameState.changeJumpDistance(change.clientId, change.value)
                     is ChangeRudder -> gameState.changeRudder(change.clientId, change.value)
                     is AddWaypoint -> gameState.addWaypoint(change.clientId, change.position)
                     is DeleteWaypoint -> gameState.deleteWaypoint(change.clientId, change.index)

@@ -28,6 +28,7 @@ class Ship(
     private var speed: Vector2 = Vector2(),
     var rotation: Double = 90.0.toRadians(),
     private var throttle: Int = 0,
+    private var jumpDistance: Int = 1_000,
     private var rudder: Int = 0
 ) {
 
@@ -124,6 +125,10 @@ class Ship(
         throttle = value.clamp(-100, 100)
     }
 
+    fun changeJumpDistance(value: Int) {
+        jumpDistance = value.clamp(1_000, 10_000)
+    }
+
     fun changeRudder(value: Int) {
         rudder = value.clamp(-100, 100)
     }
@@ -179,6 +184,7 @@ class Ship(
             heading = rotation.toHeading(),
             velocity = speed.length(),
             throttle = throttle,
+            jumpDistance = jumpDistance,
             thrust = thrust,
             rudder = rudder,
             history = history.map { it.first to it.second },

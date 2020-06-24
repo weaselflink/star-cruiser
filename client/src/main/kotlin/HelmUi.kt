@@ -28,7 +28,7 @@ class HelmUi : StationUi {
     private val shortRangeScope = ShortRangeScope(canvas)
     private val throttleSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { max(it.vmin * 3, (it.width - it.min) * 0.5 - it.vmin * 9) },
+        xExpr = { max(it.vmin * 3, (it.width - it.min) * 0.5 - it.vmin * 21) },
         yExpr = { it.height - it.vmin * 3 },
         widthExpr = { it.vmin * 10 },
         heightExpr = { it.vmin * 50 },
@@ -38,6 +38,18 @@ class HelmUi : StationUi {
         },
         lines = listOf(0.5),
         leftText = "Impulse"
+    )
+    private val jumpSlider = CanvasSlider(
+        canvas = canvas,
+        xExpr = { max(it.vmin * 15, (it.width - it.min) * 0.5 - it.vmin * 9) },
+        yExpr = { it.height - it.vmin * 3 },
+        widthExpr = { it.vmin * 10 },
+        heightExpr = { it.vmin * 50 },
+        onChange = {
+            val jumpDistance = min(20.0, max(2.0, it * 18.0 + 2.0)).roundToInt() * 500
+            clientSocket.send(Command.CommandChangeJumpDistance(jumpDistance))
+        },
+        leftText = "Jump"
     )
     private val rudderSlider = CanvasSlider(
         canvas = canvas,
@@ -57,6 +69,7 @@ class HelmUi : StationUi {
     init {
         resize()
         pointerEventDispatcher.addHandler(throttleSlider)
+        pointerEventDispatcher.addHandler(jumpSlider)
         pointerEventDispatcher.addHandler(rudderSlider)
     }
 
@@ -93,11 +106,15 @@ class HelmUi : StationUi {
         shortRangeScope.draw(snapshot)
 
         drawThrottle(ship)
+        drawJump(ship)
         drawRudder(ship)
     }
 
     private fun drawThrottle(ship: ShipMessage) =
         throttleSlider.draw((ship.throttle + 100) / 200.0)
+
+    private fun drawJump(ship: ShipMessage) =
+        jumpSlider.draw((ship.jumpDistance - 1_000) / 9_000.0)
 
     private fun drawRudder(ship: ShipMessage) =
         rudderSlider.draw((ship.rudder + 100) / 200.0)
