@@ -1,3 +1,4 @@
+import components.CanvasButton
 import components.CanvasSlider
 import components.ShortRangeScope
 import de.bissell.starcruiser.Command
@@ -49,7 +50,7 @@ class HelmUi : StationUi {
             val jumpDistance = min(20.0, max(2.0, it * 18.0 + 2.0)).roundToInt() * 500
             clientSocket.send(Command.CommandChangeJumpDistance(jumpDistance))
         },
-        leftText = "Jump"
+        leftText = "Distance"
     )
     private val rudderSlider = CanvasSlider(
         canvas = canvas,
@@ -65,12 +66,21 @@ class HelmUi : StationUi {
         leftText = "Rudder",
         reverseValue = true
     )
+    private val jumpButton = CanvasButton(
+        canvas = canvas,
+        xExpr = { max(it.vmin * 27, (it.width - it.min) * 0.5 + it.vmin * 3) },
+        yExpr = { it.height - if (it.width >= it.vmin * 102) it.vmin * 3 else it.vmin * 15 },
+        widthExpr = { it.vmin * 20 },
+        heightExpr = { it.vmin * 10 },
+        text = "Jump"
+    )
 
     init {
         resize()
         pointerEventDispatcher.addHandler(throttleSlider)
         pointerEventDispatcher.addHandler(jumpSlider)
         pointerEventDispatcher.addHandler(rudderSlider)
+        pointerEventDispatcher.addHandler(jumpButton)
     }
 
     fun resize() {
@@ -113,8 +123,10 @@ class HelmUi : StationUi {
     private fun drawThrottle(ship: ShipMessage) =
         throttleSlider.draw((ship.throttle + 100) / 200.0)
 
-    private fun drawJump(ship: ShipMessage) =
+    private fun drawJump(ship: ShipMessage) {
         jumpSlider.draw((ship.jumpDistance - 1_000) / 9_000.0)
+        jumpButton.draw()
+    }
 
     private fun drawRudder(ship: ShipMessage) =
         rudderSlider.draw((ship.rudder + 100) / 200.0)
