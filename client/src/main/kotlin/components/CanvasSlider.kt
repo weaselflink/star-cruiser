@@ -35,6 +35,7 @@ class CanvasSlider(
             drawText(dim)
             val effectiveValue = if (reverseValue) 1.0 - value else value
             drawKnob(dim, effectiveValue)
+            drawKnobText(dim, effectiveValue)
             drawLines(dim)
 
             restore()
@@ -128,6 +129,47 @@ class CanvasSlider(
             )
         }
         fill()
+    }
+
+    private fun CanvasRenderingContext2D.drawKnobText(dim: SliderDimensions, value: Double) {
+        if (leftText != null) {
+            save()
+
+            beginPath()
+            if (dim.isHorizontal) {
+                circle(
+                    dim.bottomX + dim.radius + value.clamp(0.0, 1.0) * (dim.length - dim.radius * 2.0),
+                    dim.bottomY - dim.radius,
+                    dim.radius * 0.8
+                )
+            } else {
+                circle(
+                    dim.bottomX + dim.radius,
+                    dim.bottomY - dim.radius - value.clamp(0.0, 1.0) * (dim.length - dim.radius * 2.0),
+                    dim.radius * 0.8
+                )
+            }
+            clip()
+
+            fillStyle = "#fff"
+            textAlign = CanvasTextAlign.LEFT
+            textBaseline = CanvasTextBaseline.ALPHABETIC
+            translate(dim.bottomX, dim.bottomY)
+            if (dim.isHorizontal) {
+                val textSize = (dim.height * 0.5).toInt()
+                font = "${textSize.px} sans-serif"
+                translate(dim.height * 0.4, -dim.height * 0.35)
+                fillText(leftText, 0.0, 0.0, dim.width - dim.height)
+            } else {
+                val textSize = (dim.width * 0.5).toInt()
+                font = "${textSize.px} sans-serif"
+                translate(dim.width * 0.65, -dim.width * 0.4)
+                rotate(-PI * 0.5)
+                fillText(leftText, 0.0, 0.0, dim.height - dim.width)
+            }
+
+            restore()
+        }
     }
 
     private fun CanvasRenderingContext2D.drawLines(dim: SliderDimensions) {

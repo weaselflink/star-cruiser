@@ -32,7 +32,7 @@ class HelmUi : StationUi {
         xExpr = { max(it.vmin * 3, (it.width - it.min) * 0.5 - it.vmin * 21) },
         yExpr = { it.height - it.vmin * 3 },
         widthExpr = { it.vmin * 10 },
-        heightExpr = { it.vmin * 50 },
+        heightExpr = { it.vmin * 60 },
         onChange = {
             val throttle = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
             clientSocket.send(Command.CommandChangeThrottle(throttle))
@@ -45,7 +45,7 @@ class HelmUi : StationUi {
         xExpr = { max(it.vmin * 15, (it.width - it.min) * 0.5 - it.vmin * 9) },
         yExpr = { it.height - it.vmin * 3 },
         widthExpr = { it.vmin * 10 },
-        heightExpr = { it.vmin * 50 },
+        heightExpr = { it.vmin * 60 },
         onChange = {
             val jumpDistance = min(20.0, max(2.0, it * 18.0 + 2.0)).roundToInt() * 500
             clientSocket.send(Command.CommandChangeJumpDistance(jumpDistance))
@@ -54,9 +54,9 @@ class HelmUi : StationUi {
     )
     private val rudderSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { min(it.width - it.vmin * 53, it.width - (it.width - it.min) * 0.5 - it.min * 0.2) },
+        xExpr = { min(it.width - it.vmin * 63, it.width - (it.width - it.min) * 0.5 - it.min * 0.2) },
         yExpr = { it.height - it.vmin * 3 },
-        widthExpr = { it.vmin * 50 },
+        widthExpr = { it.vmin * 60 },
         heightExpr = { it.vmin * 10 },
         onChange = {
             val rudder = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
@@ -69,7 +69,7 @@ class HelmUi : StationUi {
     private val jumpButton = CanvasButton(
         canvas = canvas,
         xExpr = { max(it.vmin * 27, (it.width - it.min) * 0.5 + it.vmin * 3) },
-        yExpr = { it.height - if (it.width >= it.vmin * 102) it.vmin * 3 else it.vmin * 15 },
+        yExpr = { it.height - if (it.width >= it.vmin * 115) it.vmin * 3 else it.vmin * 15 },
         widthExpr = { it.vmin * 20 },
         heightExpr = { it.vmin * 10 },
         text = "Jump"
