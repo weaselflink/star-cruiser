@@ -33,7 +33,15 @@ data class ShipTemplate(
         )
     ),
     val shield: ShieldTemplate = ShieldTemplate(),
-    val hull: Double = 10.0
+    val hull: Double = 10.0,
+    val jumpDrive: JumpDrive = JumpDrive()
+)
+
+data class JumpDrive(
+    val minDistance: Int = 1_000,
+    val maxDistance: Int = 10_000,
+    val executionSpeed: Double = 0.25,
+    val rechargeSpeed: Double = 0.1
 )
 
 data class BeamWeapon(

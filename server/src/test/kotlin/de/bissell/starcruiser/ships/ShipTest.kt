@@ -1,15 +1,6 @@
 package de.bissell.starcruiser.ships
 
-import de.bissell.starcruiser.BeamStatus
-import de.bissell.starcruiser.BodyParameters
-import de.bissell.starcruiser.ContactType
-import de.bissell.starcruiser.GameTime
-import de.bissell.starcruiser.LockStatus
-import de.bissell.starcruiser.ObjectId
-import de.bissell.starcruiser.PhysicsEngine
-import de.bissell.starcruiser.Vector2
-import de.bissell.starcruiser.WaypointMessage
-import de.bissell.starcruiser.isNear
+import de.bissell.starcruiser.*
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -98,14 +89,14 @@ class ShipTest {
     fun `clamps jump distance to lower bound`() {
         ship.changeJumpDistance(500)
 
-        expectThat(ship.toMessage().jumpDistance).isEqualTo(1_000)
+        expectThat(ship.toMessage().jumpDistance).isEqualTo(jumpDrive.minDistance)
     }
 
     @Test
     fun `clamps jump distance to upper bound`() {
         ship.changeJumpDistance(20_000)
 
-        expectThat(ship.toMessage().jumpDistance).isEqualTo(10_000)
+        expectThat(ship.toMessage().jumpDistance).isEqualTo(jumpDrive.maxDistance)
     }
 
     @Test
@@ -396,4 +387,7 @@ class ShipTest {
 
     private val shieldTemplate
         get() = ship.template.shield
+
+    private val jumpDrive
+        get() = ship.template.jumpDrive
 }
