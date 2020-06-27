@@ -269,7 +269,28 @@ data class ShieldMessage(
 )
 
 @Serializable
-data class JumpDriveMessage(
-    val ratio: Double,
-    val distance: Int
-)
+sealed class JumpDriveMessage {
+
+    abstract val ratio: Double
+    abstract val distance: Int
+
+    @Serializable
+    data class Ready(
+        override val ratio: Double,
+        override val distance: Int
+    ): JumpDriveMessage()
+
+    @Serializable
+    data class Jumping(
+        override val ratio: Double,
+        override val distance: Int,
+        val progress: Double
+    ): JumpDriveMessage()
+
+    @Serializable
+    data class Recharging(
+        override val ratio: Double,
+        override val distance: Int,
+        val progress: Double
+    ): JumpDriveMessage()
+}

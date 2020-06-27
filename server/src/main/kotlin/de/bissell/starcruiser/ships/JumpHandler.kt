@@ -9,10 +9,17 @@ class JumpHandler(
     private val jumpDrive: JumpDrive
 ) {
 
-    private var jumping: Boolean = false
-    private var jumpDistance: Int = jumpDrive.minDistance
+    var jumping: Boolean = false
+        private set
+    var jumpDistance: Int = jumpDrive.minDistance
+        private set
     private var jumpProgress: Double = 0.0
     private var rechargeProgress: Double = 1.0
+
+    val ready: Boolean
+        get() = rechargeProgress >= 1.0
+    val jumpComplete: Boolean
+        get() = jumping && jumpProgress >= 1.0
 
     fun update(time: GameTime) {
         if (jumping) {
@@ -37,8 +44,20 @@ class JumpHandler(
     }
 
     fun toMessage() =
-        JumpDriveMessage(
-            ratio = jumpDrive.distanceToRatio(jumpDistance),
-            distance = jumpDistance
-        )
+        when {
+            jumping -> JumpDriveMessage.Jumping(
+                ratio = jumpDrive.distanceToRatio(jumpDistance),
+                distance = jumpDistance,
+                progress = jumpProgress
+            )
+            rechargeProgress < 1.0 -> JumpDriveMessage.Recharging(
+                ratio = jumpDrive.distanceToRatio(jumpDistance),
+                distance = jumpDistance,
+                progress = rechargeProgress
+            )
+            else -> JumpDriveMessage.Ready(
+                ratio = jumpDrive.distanceToRatio(jumpDistance),
+                distance = jumpDistance
+            )
+        }
 }

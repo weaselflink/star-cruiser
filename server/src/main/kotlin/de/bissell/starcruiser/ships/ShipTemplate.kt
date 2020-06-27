@@ -42,8 +42,8 @@ data class JumpDrive(
     val minDistance: Int = 1_000,
     val maxDistance: Int = 11_000,
     val increment: Int = 500,
-    val jumpingSpeed: Double = 0.25,
-    val rechargeSpeed: Double = 0.1
+    val jumpingSpeed: Double = 0.2,
+    val rechargeSpeed: Double = 0.05
 ) {
 
     private val distanceRange: Int

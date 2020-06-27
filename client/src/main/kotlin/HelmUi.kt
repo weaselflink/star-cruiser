@@ -1,7 +1,7 @@
 import components.CanvasButton
 import components.CanvasSlider
 import components.ShortRangeScope
-import de.bissell.starcruiser.Command
+import de.bissell.starcruiser.Command.*
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
@@ -35,7 +35,7 @@ class HelmUi : StationUi {
         heightExpr = { it.vmin * 60 },
         onChange = {
             val throttle = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
-            clientSocket.send(Command.CommandChangeThrottle(throttle))
+            clientSocket.send(CommandChangeThrottle(throttle))
         },
         lines = listOf(0.5),
         leftText = "Impulse"
@@ -47,7 +47,7 @@ class HelmUi : StationUi {
         widthExpr = { it.vmin * 10 },
         heightExpr = { it.vmin * 60 },
         onChange = {
-            clientSocket.send(Command.CommandChangeJumpDistance(it))
+            clientSocket.send(CommandChangeJumpDistance(it))
         },
         leftText = "Distance"
     )
@@ -59,7 +59,7 @@ class HelmUi : StationUi {
         heightExpr = { it.vmin * 10 },
         onChange = {
             val rudder = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
-            clientSocket.send(Command.CommandChangeRudder(rudder))
+            clientSocket.send(CommandChangeRudder(rudder))
         },
         lines = listOf(0.5),
         leftText = "Rudder",
@@ -71,6 +71,7 @@ class HelmUi : StationUi {
         yExpr = { it.height - if (it.width >= it.vmin * 115) it.vmin * 3 else it.vmin * 15 },
         widthExpr = { it.vmin * 20 },
         heightExpr = { it.vmin * 10 },
+        onClick = { clientSocket.send(CommandStartJump) },
         text = "Jump"
     )
 

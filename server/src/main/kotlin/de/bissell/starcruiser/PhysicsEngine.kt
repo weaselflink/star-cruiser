@@ -34,6 +34,15 @@ class PhysicsEngine {
         }
     }
 
+    fun jumpShip(objectId: ObjectId, distance: Int) {
+        bodies[objectId.toBodyId()]?.apply {
+            setTransform(
+                position.add(Mat22.createRotationalTransform(angle).mul(Vec2(distance.toFloat(), 0f))),
+                angle
+            )
+        }
+    }
+
     fun getBodyParameters(objectId: ObjectId) =
         bodies[objectId.toBodyId()]?.let {
             BodyParameters(

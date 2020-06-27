@@ -140,6 +140,7 @@ fun keyHandler(event: KeyboardEvent) {
                 weaponsUi.toggleRotateScope()
             }
             "KeyC" -> mainScreenUi.toggleTopView()
+            "KeyJ" -> send(Command.CommandStartJump)
             else -> println("not bound: ${event.code}")
         }
     }

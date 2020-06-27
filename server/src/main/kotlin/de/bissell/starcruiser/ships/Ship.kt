@@ -28,6 +28,7 @@ class Ship(
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
         beamHandlers.forEach { it.update(time, shipProvider) }
         shieldHandler.update(time)
+        jumpHandler.update(time)
         updateScan(time)
         updateLock(time)
         updateThrust(time)
@@ -48,9 +49,13 @@ class Ship(
         updateHistory(time)
     }
 
-    fun endUpdate(): ShipUpdateResult {
+    fun endUpdate(physicsEngine: PhysicsEngine): ShipUpdateResult {
         shieldHandler.endUpdate()
         val destroyed = hull <= 0.0
+        if (!destroyed && jumpHandler.jumpComplete) {
+            physicsEngine.jumpShip(id, jumpHandler.jumpDistance)
+            jumpHandler.endJump()
+        }
         return ShipUpdateResult(
             id = id,
             destroyed = destroyed
@@ -105,15 +110,29 @@ class Ship(
     }
 
     fun changeThrottle(value: Int) {
-        throttle = value.clamp(-100, 100)
+        if (!jumpHandler.jumping) {
+            throttle = value.clamp(-100, 100)
+        }
     }
 
     fun changeJumpDistance(value: Double) {
-        jumpHandler.changeJumpDistance(value)
+        if (!jumpHandler.jumping) {
+            jumpHandler.changeJumpDistance(value)
+        }
+    }
+
+    fun startJump() {
+        if (jumpHandler.ready) {
+            jumpHandler.startJump()
+            throttle = 0
+            rudder = 0
+        }
     }
 
     fun changeRudder(value: Int) {
-        rudder = value.clamp(-100, 100)
+        if (!jumpHandler.jumping) {
+            rudder = value.clamp(-100, 100)
+        }
     }
 
     fun addWaypoint(position: Vector2) {

@@ -55,6 +55,9 @@ class GameClient(
                 is Command.CommandChangeJumpDistance -> gameStateActor.send(
                     ChangeJumpDistance(id, command.value)
                 )
+                is Command.CommandStartJump -> gameStateActor.send(
+                    StartJump(id)
+                )
                 is Command.CommandChangeRudder -> gameStateActor.send(
                     ChangeRudder(id, command.value)
                 )

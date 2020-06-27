@@ -31,6 +31,9 @@ sealed class Command {
     data class CommandChangeJumpDistance(val value: Double) : Command()
 
     @Serializable
+    object CommandStartJump : Command()
+
+    @Serializable
     data class CommandChangeRudder(val value: Int) : Command()
 
     @Serializable
