@@ -3,6 +3,7 @@ package de.bissell.starcruiser.ships
 import de.bissell.starcruiser.Vector2
 import de.bissell.starcruiser.Vector3
 import de.bissell.starcruiser.toRadians
+import kotlin.math.roundToInt
 
 data class ShipTemplate(
     val className: String = "Infector",
@@ -39,10 +40,21 @@ data class ShipTemplate(
 
 data class JumpDrive(
     val minDistance: Int = 1_000,
-    val maxDistance: Int = 10_000,
+    val maxDistance: Int = 11_000,
+    val increment: Int = 500,
     val executionSpeed: Double = 0.25,
     val rechargeSpeed: Double = 0.1
-)
+) {
+
+    private val distanceRange: Int
+        get() = maxDistance - minDistance
+
+    fun ratioToDistance(ratio: Double): Int =
+        ((distanceRange * ratio + minDistance) / increment).roundToInt() * increment
+
+    fun distanceToRatio(distance: Int): Double =
+        (distance - minDistance).toDouble() / distanceRange
+}
 
 data class BeamWeapon(
     val position: Vector3 = Vector3(),

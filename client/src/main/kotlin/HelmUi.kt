@@ -47,8 +47,7 @@ class HelmUi : StationUi {
         widthExpr = { it.vmin * 10 },
         heightExpr = { it.vmin * 60 },
         onChange = {
-            val jumpDistance = min(20.0, max(2.0, it * 18.0 + 2.0)).roundToInt() * 500
-            clientSocket.send(Command.CommandChangeJumpDistance(jumpDistance))
+            clientSocket.send(Command.CommandChangeJumpDistance(it))
         },
         leftText = "Distance"
     )

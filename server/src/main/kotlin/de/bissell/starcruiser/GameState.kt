@@ -1,8 +1,6 @@
 package de.bissell.starcruiser
 
-import de.bissell.starcruiser.ClientState.InShip
-import de.bissell.starcruiser.ClientState.ShipDestroyed
-import de.bissell.starcruiser.ClientState.ShipSelection
+import de.bissell.starcruiser.ClientState.*
 import de.bissell.starcruiser.Station.*
 import de.bissell.starcruiser.client.ClientId
 import de.bissell.starcruiser.ships.Ship
@@ -26,7 +24,7 @@ class ExitShip(val clientId: ClientId) : GameStateChange()
 class NewGameClient(val clientId: ClientId) : GameStateChange()
 class GameClientDisconnected(val clientId: ClientId) : GameStateChange()
 class ChangeThrottle(val clientId: ClientId, val value: Int) : GameStateChange()
-class ChangeJumpDistance(val clientId: ClientId, val value: Int) : GameStateChange()
+class ChangeJumpDistance(val clientId: ClientId, val value: Double) : GameStateChange()
 class ChangeRudder(val clientId: ClientId, val value: Int) : GameStateChange()
 class GetGameStateSnapshot(val clientId: ClientId, val response: CompletableDeferred<SnapshotMessage>) : GameStateChange()
 class AddWaypoint(val clientId: ClientId, val position: Vector2) : GameStateChange()
@@ -165,7 +163,7 @@ class GameState {
         getClientShip(clientId)?.changeThrottle(value)
     }
 
-    fun changeJumpDistance(clientId: ClientId, value: Int) {
+    fun changeJumpDistance(clientId: ClientId, value: Double) {
         getClientShip(clientId)?.changeJumpDistance(value)
     }
 

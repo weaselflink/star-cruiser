@@ -127,7 +127,8 @@ data class ShipMessage(
     val lockProgress: LockStatus,
     val beams: List<BeamMessage>,
     val shield: ShieldMessage,
-    val hull: Double
+    val hull: Double,
+    val jumpDrive: JumpDriveMessage
 )
 
 @Serializable
@@ -266,4 +267,10 @@ data class ShieldMessage(
     val activated: Boolean,
     val strength: Double,
     val max: Double
+)
+
+@Serializable
+data class JumpDriveMessage(
+    val ratio: Double,
+    val distance: Int
 )

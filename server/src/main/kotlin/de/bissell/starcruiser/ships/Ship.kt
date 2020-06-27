@@ -108,8 +108,8 @@ class Ship(
         throttle = value.clamp(-100, 100)
     }
 
-    fun changeJumpDistance(value: Int) {
-        jumpDistance = value.clamp(template.jumpDrive.minDistance, template.jumpDrive.maxDistance)
+    fun changeJumpDistance(value: Double) {
+        jumpDistance = template.jumpDrive.ratioToDistance(value.clamp(0.0, 1.0))
     }
 
     fun changeRudder(value: Int) {
@@ -177,7 +177,11 @@ class Ship(
             lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
             beams = beamHandlers.map { it.toMessage() },
             shield = shieldHandler.toMessage(),
-            hull = hull
+            hull = hull,
+            jumpDrive = JumpDriveMessage(
+                ratio = template.jumpDrive.distanceToRatio(jumpDistance),
+                distance = jumpDistance
+            )
         )
 
     fun toScopeContactMessage(relativeTo: Ship) =
