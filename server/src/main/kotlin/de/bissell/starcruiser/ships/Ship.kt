@@ -11,7 +11,6 @@ class Ship(
     private var speed: Vector2 = Vector2(),
     var rotation: Double = 90.0.toRadians(),
     private var throttle: Int = 0,
-    private var jumpDistance: Int = 1_000,
     private var rudder: Int = 0
 ) {
 
@@ -24,6 +23,7 @@ class Ship(
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
     private var hull = template.hull
+    private val jumpHandler = JumpHandler(template.jumpDrive)
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
         beamHandlers.forEach { it.update(time, shipProvider) }
@@ -109,7 +109,7 @@ class Ship(
     }
 
     fun changeJumpDistance(value: Double) {
-        jumpDistance = template.jumpDrive.ratioToDistance(value.clamp(0.0, 1.0))
+        jumpHandler.changeJumpDistance(value)
     }
 
     fun changeRudder(value: Int) {
@@ -167,7 +167,6 @@ class Ship(
             heading = rotation.toHeading(),
             velocity = speed.length(),
             throttle = throttle,
-            jumpDistance = jumpDistance,
             thrust = thrust,
             rudder = rudder,
             history = history.map { it.first to it.second },
@@ -178,10 +177,7 @@ class Ship(
             beams = beamHandlers.map { it.toMessage() },
             shield = shieldHandler.toMessage(),
             hull = hull,
-            jumpDrive = JumpDriveMessage(
-                ratio = template.jumpDrive.distanceToRatio(jumpDistance),
-                distance = jumpDistance
-            )
+            jumpDrive = jumpHandler.toMessage()
         )
 
     fun toScopeContactMessage(relativeTo: Ship) =

@@ -123,7 +123,7 @@ class HelmUi : StationUi {
         throttleSlider.draw((ship.throttle + 100) / 200.0)
 
     private fun drawJump(ship: ShipMessage) {
-        jumpSlider.draw((ship.jumpDistance - 1_000) / 9_000.0)
+        jumpSlider.draw(ship.jumpDrive.ratio)
         jumpButton.draw()
     }
 

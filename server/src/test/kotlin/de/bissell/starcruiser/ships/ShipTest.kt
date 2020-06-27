@@ -82,28 +82,28 @@ class ShipTest {
     fun `sets jump distance`() {
         ship.changeJumpDistance(0.2)
 
-        expectThat(ship.toMessage().jumpDistance).isEqualTo(3_000)
+        expectThat(ship.toMessage().jumpDrive.distance).isEqualTo(3_000)
     }
 
     @Test
     fun `sets jump distance adjusting to increments`() {
         ship.changeJumpDistance(0.24)
 
-        expectThat(ship.toMessage().jumpDistance).isEqualTo(3_500)
+        expectThat(ship.toMessage().jumpDrive.distance).isEqualTo(3_500)
     }
 
     @Test
     fun `clamps jump distance to lower bound`() {
         ship.changeJumpDistance(-0.5)
 
-        expectThat(ship.toMessage().jumpDistance).isEqualTo(jumpDrive.minDistance)
+        expectThat(ship.toMessage().jumpDrive.distance).isEqualTo(jumpDrive.minDistance)
     }
 
     @Test
     fun `clamps jump distance to upper bound`() {
         ship.changeJumpDistance(1.5)
 
-        expectThat(ship.toMessage().jumpDistance).isEqualTo(jumpDrive.maxDistance)
+        expectThat(ship.toMessage().jumpDrive.distance).isEqualTo(jumpDrive.maxDistance)
     }
 
     @Test
