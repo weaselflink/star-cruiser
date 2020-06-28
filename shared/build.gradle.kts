@@ -42,20 +42,11 @@ kotlin {
         }
 
         val main by compilations.getting {
-            kotlinOptions {
-                jvmTarget = "1.8"
-                freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
-            }
-
             compileKotlinTask
             output
         }
 
         val test by compilations.getting {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-
             compileKotlinTask
             output
         }
@@ -75,7 +66,29 @@ kotlin {
 
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions {
+            jvmTarget = "1.8"
+            freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+        }
+    }
+
+    withType<org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompile>().configureEach {
+        kotlinOptions {
+            freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+        }
+    }
+
+    withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = "1.8"
+            freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+        }
+    }
+
+    withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>().configureEach {
+        kotlinOptions {
+            freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+        }
     }
 
     withType<Test>().configureEach {
