@@ -4,7 +4,6 @@ import CanvasDimensions
 import circle
 import de.bissell.starcruiser.Vector2
 import de.bissell.starcruiser.clamp
-import dimensions
 import drawPill
 import input.PointerEvent
 import input.PointerEventHandler
@@ -74,7 +73,7 @@ class CanvasSlider(
         }
     }
 
-    private fun CanvasRenderingContext2D.drawPill(dim: SliderDimensions) {
+    private fun CanvasRenderingContext2D.drawPill(dim: ComponentDimensions) {
         lineWidth = dim.lineWidth
         fillStyle = "#111"
         beginPath()
@@ -87,7 +86,7 @@ class CanvasSlider(
         stroke()
     }
 
-    private fun CanvasRenderingContext2D.drawText(dim: SliderDimensions) {
+    private fun CanvasRenderingContext2D.drawText(dim: ComponentDimensions) {
         if (leftText != null) {
             save()
 
@@ -112,7 +111,7 @@ class CanvasSlider(
         }
     }
 
-    private fun CanvasRenderingContext2D.drawKnob(dim: SliderDimensions, value: Double) {
+    private fun CanvasRenderingContext2D.drawKnob(dim: ComponentDimensions, value: Double) {
         fillStyle = "#999"
         beginPath()
         if (dim.isHorizontal) {
@@ -131,7 +130,7 @@ class CanvasSlider(
         fill()
     }
 
-    private fun CanvasRenderingContext2D.drawKnobText(dim: SliderDimensions, value: Double) {
+    private fun CanvasRenderingContext2D.drawKnobText(dim: ComponentDimensions, value: Double) {
         if (leftText != null) {
             save()
 
@@ -172,7 +171,7 @@ class CanvasSlider(
         }
     }
 
-    private fun CanvasRenderingContext2D.drawLines(dim: SliderDimensions) {
+    private fun CanvasRenderingContext2D.drawLines(dim: ComponentDimensions) {
         strokeStyle = "#666"
         lines.forEach {
             beginPath()
@@ -188,28 +187,7 @@ class CanvasSlider(
     }
 
     private fun currentDimensions(canvas: HTMLCanvasElement) =
-        canvas.dimensions().let { dim ->
-            val width = widthExpr(dim)
-            val height = heightExpr(dim)
-            SliderDimensions(
-                bottomX = xExpr(dim),
-                bottomY = yExpr(dim),
-                width = width,
-                height = height,
-                radius = if (width > height) height * 0.5 else width * 0.5,
-                length = if (width > height) width else height,
-                lineWidth = dim.vmin * 0.4
-            )
-        }
+        ComponentDimensions.calculate(
+            canvas, xExpr, yExpr, widthExpr, heightExpr
+        )
 }
-
-private data class SliderDimensions(
-    val bottomX: Double,
-    val bottomY: Double,
-    val width: Double,
-    val height: Double,
-    val radius: Double,
-    val length: Double,
-    val lineWidth: Double,
-    val isHorizontal: Boolean = width > height
-)

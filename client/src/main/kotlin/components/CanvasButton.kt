@@ -1,7 +1,6 @@
 package components
 
 import CanvasDimensions
-import dimensions
 import drawPill
 import input.PointerEvent
 import input.PointerEventHandler
@@ -51,7 +50,7 @@ class CanvasButton(
         pressed = false
     }
 
-    private fun CanvasRenderingContext2D.drawPill(dim: ButtonDimensions) {
+    private fun CanvasRenderingContext2D.drawPill(dim: ComponentDimensions) {
         lineWidth = dim.lineWidth
         fillStyle = if (pressed) "#333" else "#111"
         beginPath()
@@ -64,7 +63,7 @@ class CanvasButton(
         stroke()
     }
 
-    private fun CanvasRenderingContext2D.drawText(dim: ButtonDimensions) {
+    private fun CanvasRenderingContext2D.drawText(dim: ComponentDimensions) {
         if (text != null) {
             save()
 
@@ -80,27 +79,8 @@ class CanvasButton(
     }
 
     private fun currentDimensions(canvas: HTMLCanvasElement) =
-        canvas.dimensions().let { dim ->
-            val width = widthExpr(dim)
-            val height = heightExpr(dim)
-            ButtonDimensions(
-                bottomX = xExpr(dim),
-                bottomY = yExpr(dim),
-                width = width,
-                height = height,
-                radius = if (width > height) height * 0.5 else width * 0.5,
-                length = if (width > height) width else height,
-                lineWidth = dim.vmin * 0.4
-            )
-        }
+        ComponentDimensions.calculate(
+            canvas, xExpr, yExpr, widthExpr, heightExpr
+        )
 }
 
-private data class ButtonDimensions(
-    val bottomX: Double,
-    val bottomY: Double,
-    val width: Double,
-    val height: Double,
-    val radius: Double,
-    val length: Double,
-    val lineWidth: Double
-)
