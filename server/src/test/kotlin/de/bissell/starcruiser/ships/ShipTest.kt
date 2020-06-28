@@ -389,7 +389,7 @@ class ShipTest {
     private fun stepTimeTo(seconds: Number, shipProvider: (ObjectId) -> Ship? = { null }): ShipUpdateResult {
         time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
         ship.update(time, physicsEngine, shipProvider)
-        return ship.endUpdate()
+        return ship.endUpdate(physicsEngine)
     }
 
     private val shieldTemplate
