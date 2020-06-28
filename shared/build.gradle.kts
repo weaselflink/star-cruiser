@@ -68,26 +68,26 @@ tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs = freeCompilerArgs + listOf("-Xopt-in=kotlin.RequiresOptIn")
         }
     }
 
     withType<org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompile>().configureEach {
         kotlinOptions {
-            freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs = freeCompilerArgs + listOf("-Xopt-in=kotlin.RequiresOptIn")
         }
     }
 
     withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile>().configureEach {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs = freeCompilerArgs + listOf("-Xopt-in=kotlin.RequiresOptIn")
         }
     }
 
     withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>().configureEach {
         kotlinOptions {
-            freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs = freeCompilerArgs + listOf("-Xopt-in=kotlin.RequiresOptIn")
         }
     }
 
