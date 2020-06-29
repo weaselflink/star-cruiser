@@ -18,7 +18,7 @@ class WeaponsUi : StationUi {
 
     private val root = document.getElementById("weapons-ui")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
-    private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
+    private val ctx = canvas.context2D
     private val rotateScopeButton = document.querySelector(".rotateScope")!! as HTMLButtonElement
     private val lockTargetButton = document.querySelector(".lockTarget")!! as HTMLButtonElement
     private val toggleShieldsButton = document.querySelector(".toggleShields")!! as HTMLButtonElement

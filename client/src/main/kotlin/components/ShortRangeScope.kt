@@ -2,6 +2,7 @@ package components
 
 import beamStyle
 import circle
+import context2D
 import de.bissell.starcruiser.BeamStatus
 import de.bissell.starcruiser.ContactType
 import de.bissell.starcruiser.LockStatus
@@ -51,7 +52,7 @@ class ShortRangeScope(
     private val scopeClickListener: ((ObjectId) -> Unit)? = null
 ) {
 
-    private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
+    private val ctx = canvas.context2D
     private var dim = canvas.dimensions()
 
     private var scopeRadius = dim.vmin * 47

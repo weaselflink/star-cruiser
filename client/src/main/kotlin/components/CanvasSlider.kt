@@ -2,6 +2,7 @@ package components
 
 import CanvasDimensions
 import circle
+import context2D
 import de.bissell.starcruiser.Vector2
 import de.bissell.starcruiser.clamp
 import drawPill
@@ -18,7 +19,6 @@ import kotlin.math.PI
 
 class CanvasSlider(
     private val canvas: HTMLCanvasElement,
-    private val ctx: CanvasRenderingContext2D = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D,
     private val xExpr: (CanvasDimensions) -> Double,
     private val yExpr: (CanvasDimensions) -> Double,
     private val widthExpr: (CanvasDimensions) -> Double,
@@ -28,6 +28,8 @@ class CanvasSlider(
     private val leftText: String? = null,
     private val reverseValue: Boolean = false
 ) : PointerEventHandler {
+
+    private val ctx: CanvasRenderingContext2D = canvas.context2D
 
     fun draw(value: Double) {
         val dim = currentDimensions(canvas)

@@ -3,6 +3,7 @@ package components
 import CanvasDimensions
 import circle
 import clear
+import context2D
 import de.bissell.starcruiser.AsteroidMessage
 import de.bissell.starcruiser.ContactMessage
 import de.bissell.starcruiser.ContactType
@@ -41,7 +42,7 @@ class NavigationMap(
     private val mapClickListener: (MapClick) -> Unit = {}
 ) {
 
-    private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
+    private val ctx = canvas.context2D
     private var dim = CanvasDimensions(100, 100)
     private val mapGrid = MapGrid(canvas)
 

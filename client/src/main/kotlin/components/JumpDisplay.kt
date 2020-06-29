@@ -1,6 +1,7 @@
 package components
 
 import CanvasDimensions
+import context2D
 import de.bissell.starcruiser.JumpDriveMessage
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextAlign
@@ -13,12 +14,13 @@ import px
 
 class JumpDisplay(
     private val canvas: HTMLCanvasElement,
-    private val ctx: CanvasRenderingContext2D = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D,
     private val xExpr: (CanvasDimensions) -> Double,
     private val yExpr: (CanvasDimensions) -> Double,
     private val widthExpr: (CanvasDimensions) -> Double = { it.vmin * 34 },
     private val heightExpr: (CanvasDimensions) -> Double = { it.vmin * 6 }
 ) {
+
+    private val ctx: CanvasRenderingContext2D = canvas.context2D
 
     fun draw(jumpDriveMessage: JumpDriveMessage) {
         val dim = currentDimensions(canvas)

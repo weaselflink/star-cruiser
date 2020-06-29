@@ -1,6 +1,7 @@
 package components
 
 import CanvasDimensions
+import context2D
 import de.bissell.starcruiser.Vector2
 import de.bissell.starcruiser.pad
 import dimensions
@@ -20,7 +21,7 @@ class MapGrid(
     private val centerIndexY: Int = 13
 ) {
 
-    private val ctx = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D
+    private val ctx = canvas.context2D
 
     fun draw(center: Vector2, scale: Double) {
         MapGridRenderer(canvas.dimensions(), center, scale).render()

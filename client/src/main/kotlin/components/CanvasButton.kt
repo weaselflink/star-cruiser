@@ -1,6 +1,7 @@
 package components
 
 import CanvasDimensions
+import context2D
 import drawPill
 import input.PointerEvent
 import input.PointerEventHandler
@@ -14,7 +15,6 @@ import px
 
 class CanvasButton(
     private val canvas: HTMLCanvasElement,
-    private val ctx: CanvasRenderingContext2D = canvas.getContext(contextId = "2d")!! as CanvasRenderingContext2D,
     private val xExpr: (CanvasDimensions) -> Double,
     private val yExpr: (CanvasDimensions) -> Double,
     private val widthExpr: (CanvasDimensions) -> Double,
@@ -22,6 +22,8 @@ class CanvasButton(
     private val onClick: () -> Unit = {},
     private val text: String? = null
 ) : PointerEventHandler {
+
+    private val ctx: CanvasRenderingContext2D = canvas.context2D
 
     private var pressed = false
 
