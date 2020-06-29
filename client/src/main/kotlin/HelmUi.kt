@@ -1,5 +1,6 @@
 import components.CanvasButton
 import components.CanvasSlider
+import components.JumpDisplay
 import components.ShortRangeScope
 import de.bissell.starcruiser.Command.CommandChangeJumpDistance
 import de.bissell.starcruiser.Command.CommandChangeRudder
@@ -68,10 +69,15 @@ class HelmUi : StationUi {
         leftText = "Rudder",
         reverseValue = true
     )
-    private val jumpButton = CanvasButton(
+    private val jumpDisplay = JumpDisplay(
         canvas = canvas,
         xExpr = { max(it.vmin * 27, (it.width - it.min) * 0.5 + it.vmin * 3) },
-        yExpr = { it.height - if (it.width >= it.vmin * 115) it.vmin * 3 else it.vmin * 15 },
+        yExpr = { it.height - if (it.width >= it.vmin * 125) it.vmin * 15 else it.vmin * 27 }
+    )
+    private val jumpButton = CanvasButton(
+        canvas = canvas,
+        xExpr = { max(it.vmin * 34, (it.width - it.min) * 0.5 + it.vmin * 10) },
+        yExpr = { it.height - if (it.width >= it.vmin * 125) it.vmin * 3 else it.vmin * 15 },
         widthExpr = { it.vmin * 20 },
         heightExpr = { it.vmin * 10 },
         onClick = { clientSocket.send(CommandStartJump) },
@@ -128,6 +134,7 @@ class HelmUi : StationUi {
 
     private fun drawJump(ship: ShipMessage) {
         jumpSlider.draw(ship.jumpDrive.ratio)
+        jumpDisplay.draw(ship.jumpDrive)
         jumpButton.draw()
     }
 
