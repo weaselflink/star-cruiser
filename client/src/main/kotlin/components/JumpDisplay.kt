@@ -3,13 +3,7 @@ package components
 import CanvasDimensions
 import context2D
 import de.bissell.starcruiser.JumpDriveMessage
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.CanvasTextAlign
-import org.w3c.dom.CanvasTextBaseline
-import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.LEFT
-import org.w3c.dom.MIDDLE
-import org.w3c.dom.RIGHT
+import org.w3c.dom.*
 import px
 
 class JumpDisplay(
@@ -34,8 +28,18 @@ class JumpDisplay(
 
             drawBackground(dim)
             drawBorder(dim)
+            fillStyle = "#888"
+            textBaseline = CanvasTextBaseline.MIDDLE
             drawStatusText(dim, jumpDriveMessage)
             drawDistanceText(dim, jumpDriveMessage)
+            barWidth(jumpDriveMessage)?.also {
+                drawBar(dim, it)
+                clipBar(dim, it)
+                fillStyle = "#111"
+                drawStatusText(dim, jumpDriveMessage)
+                drawDistanceText(dim, jumpDriveMessage)
+            }
+
 
             restore()
         }
@@ -59,9 +63,7 @@ class JumpDisplay(
             is JumpDriveMessage.Recharging -> "Charging"
         }
 
-        fillStyle = "#888"
         textAlign = CanvasTextAlign.LEFT
-        textBaseline = CanvasTextBaseline.MIDDLE
         fillText(statusText, dim.bottomX + margin, dim.bottomY - dim.height * 0.5)
     }
 
@@ -69,11 +71,32 @@ class JumpDisplay(
         val margin = marginExpr(dim)
         val distanceText = jumpDriveMessage.distance.toString()
 
-        fillStyle = "#888"
         textAlign = CanvasTextAlign.RIGHT
-        textBaseline = CanvasTextBaseline.MIDDLE
         fillText(distanceText, dim.bottomX + dim.width - margin, dim.bottomY - dim.height * 0.5)
     }
+
+    private fun CanvasRenderingContext2D.drawBar(dim: ComponentDimensions, barWidth: Double) {
+        fillStyle = "#888"
+        drawBarRect(dim, barWidth)
+        fill()
+    }
+
+    private fun CanvasRenderingContext2D.clipBar(dim: ComponentDimensions, barWidth: Double) {
+        drawBarRect(dim, barWidth)
+        clip()
+    }
+
+    private fun CanvasRenderingContext2D.drawBarRect(dim: ComponentDimensions, barWidth: Double) {
+        beginPath()
+        rect(dim.bottomX, dim.bottomY, dim.width * barWidth, -dim.height)
+    }
+
+    private fun barWidth(jumpDriveMessage: JumpDriveMessage) =
+        when (jumpDriveMessage) {
+            is JumpDriveMessage.Jumping -> jumpDriveMessage.progress
+            is JumpDriveMessage.Recharging -> jumpDriveMessage.progress
+            else -> null
+        }
 
     private fun marginExpr(dim: ComponentDimensions) = dim.height * 0.2
 
