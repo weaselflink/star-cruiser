@@ -33,7 +33,7 @@ class HelmUi : StationUi {
     private val shortRangeScope = ShortRangeScope(canvas)
     private val throttleSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { max(it.vmin * 3, (it.width - it.min) * 0.5 - it.vmin * 21) },
+        xExpr = { it.vmin * 3 },
         yExpr = { it.height - it.vmin * 3 },
         widthExpr = { it.vmin * 10 },
         heightExpr = { it.vmin * 60 },
@@ -46,7 +46,7 @@ class HelmUi : StationUi {
     )
     private val jumpSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { max(it.vmin * 15, (it.width - it.min) * 0.5 - it.vmin * 9) },
+        xExpr = { it.vmin * 15 },
         yExpr = { it.height - it.vmin * 3 },
         widthExpr = { it.vmin * 10 },
         heightExpr = { it.vmin * 60 },
@@ -57,7 +57,7 @@ class HelmUi : StationUi {
     )
     private val rudderSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { min(it.width - it.vmin * 63, it.width - (it.width - it.min) * 0.5 - it.min * 0.2) },
+        xExpr = { it.width - it.vmin * 63 },
         yExpr = { it.height - it.vmin * 3 },
         widthExpr = { it.vmin * 60 },
         heightExpr = { it.vmin * 10 },
@@ -71,12 +71,12 @@ class HelmUi : StationUi {
     )
     private val jumpDisplay = JumpDisplay(
         canvas = canvas,
-        xExpr = { max(it.vmin * 27, (it.width - it.min) * 0.5 + it.vmin * 3) },
+        xExpr = { it.vmin * 27 },
         yExpr = { it.height - if (it.width >= it.vmin * 125) it.vmin * 15 else it.vmin * 27 }
     )
     private val jumpButton = CanvasButton(
         canvas = canvas,
-        xExpr = { max(it.vmin * 34, (it.width - it.min) * 0.5 + it.vmin * 10) },
+        xExpr = { it.vmin * 34 },
         yExpr = { it.height - if (it.width >= it.vmin * 125) it.vmin * 3 else it.vmin * 15 },
         widthExpr = { it.vmin * 20 },
         heightExpr = { it.vmin * 10 },
