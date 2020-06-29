@@ -46,13 +46,8 @@ class CanvasSlider(
         }
     }
 
-    override fun isInterestedIn(pointerEvent: PointerEvent): Boolean {
-        val dim = currentDimensions(canvas)
-        val point = pointerEvent.point
-
-        return point.x > dim.bottomX && point.x < dim.bottomX + dim.width
-                && point.y > dim.bottomY - dim.height && point.y < dim.bottomY
-    }
+    override fun isInterestedIn(pointerEvent: PointerEvent) =
+        currentDimensions(canvas).isInside(pointerEvent)
 
     override fun handlePointerDown(pointerEvent: PointerEvent) {
         onChange(clickValue(pointerEvent.point))

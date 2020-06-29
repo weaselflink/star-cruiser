@@ -2,6 +2,7 @@ package components
 
 import CanvasDimensions
 import dimensions
+import input.PointerEvent
 import org.w3c.dom.HTMLCanvasElement
 
 data class ComponentDimensions(
@@ -14,6 +15,13 @@ data class ComponentDimensions(
     val lineWidth: Double,
     val isHorizontal: Boolean = width > height
 ) {
+
+    fun isInside(pointerEvent: PointerEvent): Boolean {
+        val point = pointerEvent.point
+
+        return point.x > bottomX && point.x < bottomX + width
+                && point.y > bottomY - height && point.y < bottomY
+    }
 
     companion object {
         fun calculate(
