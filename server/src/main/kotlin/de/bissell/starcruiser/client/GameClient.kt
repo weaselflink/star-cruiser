@@ -1,14 +1,42 @@
 package de.bissell.starcruiser.client
 
-import de.bissell.starcruiser.*
+import de.bissell.starcruiser.AddWaypoint
 import de.bissell.starcruiser.ApplicationConfig.gameClientMaxInflightMessages
 import de.bissell.starcruiser.ApplicationConfig.gameClientUpdateIntervalMillis
-import de.bissell.starcruiser.client.ThrottleMessage.*
+import de.bissell.starcruiser.ChangeJumpDistance
+import de.bissell.starcruiser.ChangeRudder
+import de.bissell.starcruiser.ChangeStation
+import de.bissell.starcruiser.ChangeThrottle
+import de.bissell.starcruiser.Command
+import de.bissell.starcruiser.DeleteWaypoint
+import de.bissell.starcruiser.ExitShip
+import de.bissell.starcruiser.GameClientDisconnected
+import de.bissell.starcruiser.GameStateChange
+import de.bissell.starcruiser.GameStateMessage
+import de.bissell.starcruiser.GetGameStateSnapshot
+import de.bissell.starcruiser.JoinShip
+import de.bissell.starcruiser.LockTarget
+import de.bissell.starcruiser.NewGameClient
+import de.bissell.starcruiser.ScanShip
+import de.bissell.starcruiser.SetShieldsUp
+import de.bissell.starcruiser.SnapshotMessage
+import de.bissell.starcruiser.SpawnShip
+import de.bissell.starcruiser.StartJump
+import de.bissell.starcruiser.TogglePause
+import de.bissell.starcruiser.client.ThrottleMessage.AcknowledgeInflightMessage
+import de.bissell.starcruiser.client.ThrottleMessage.AddInflightMessage
+import de.bissell.starcruiser.client.ThrottleMessage.GetInflightMessageCount
 import io.ktor.http.cio.websocket.Frame
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
-import java.util.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import java.util.UUID
 
 data class ClientId(private val id: String) {
 

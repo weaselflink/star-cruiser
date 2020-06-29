@@ -1,6 +1,10 @@
 package de.bissell.starcruiser
 
-import kotlin.math.*
+import kotlin.math.absoluteValue
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 const val degreesToRadians = 0.017453292519943295
 const val radiansToDegrees = 57.29577951308232

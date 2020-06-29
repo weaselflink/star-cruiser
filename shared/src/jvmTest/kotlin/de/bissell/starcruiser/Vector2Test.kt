@@ -1,12 +1,10 @@
 package de.bissell.starcruiser
 
 import org.junit.jupiter.api.Test
-import strikt.api.Assertion
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
 import kotlin.math.PI
-import kotlin.math.abs
 import kotlin.math.sqrt
 
 class Vector2Test {

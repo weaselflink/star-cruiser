@@ -2,8 +2,19 @@ package components
 
 import beamStyle
 import circle
-import de.bissell.starcruiser.*
+import de.bissell.starcruiser.BeamStatus
+import de.bissell.starcruiser.ContactType
+import de.bissell.starcruiser.LockStatus
+import de.bissell.starcruiser.ObjectId
+import de.bissell.starcruiser.ScopeAsteroidMessage
+import de.bissell.starcruiser.ScopeContactMessage
+import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage.ShortRangeScopeStation
+import de.bissell.starcruiser.Vector2
+import de.bissell.starcruiser.WaypointMessage
+import de.bissell.starcruiser.pad
+import de.bissell.starcruiser.toHeading
+import de.bissell.starcruiser.toRadians
 import dimensions
 import drawAsteroidSymbol
 import drawLockMarker
@@ -14,7 +25,14 @@ import friendlyContactStyle
 import historyStyle
 import input.toVector2
 import lockMarkerStyle
-import org.w3c.dom.*
+import org.w3c.dom.CENTER
+import org.w3c.dom.CanvasLineCap
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.CanvasTextAlign
+import org.w3c.dom.CanvasTextBaseline
+import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.MIDDLE
+import org.w3c.dom.ROUND
 import org.w3c.dom.events.MouseEvent
 import px
 import shipStyle

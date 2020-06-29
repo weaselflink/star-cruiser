@@ -1,7 +1,6 @@
 package de.bissell.starcruiser
 
 import de.bissell.starcruiser.ships.Ship
-import java.util.*
 
 class Asteroid(
     val id: ObjectId = ObjectId.random(),

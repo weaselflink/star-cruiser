@@ -1,6 +1,23 @@
 package de.bissell.starcruiser.ships
 
-import de.bissell.starcruiser.*
+import de.bissell.starcruiser.BeamMessage
+import de.bissell.starcruiser.BeamStatus
+import de.bissell.starcruiser.ContactMessage
+import de.bissell.starcruiser.ContactType
+import de.bissell.starcruiser.GameTime
+import de.bissell.starcruiser.LockStatus
+import de.bissell.starcruiser.ObjectId
+import de.bissell.starcruiser.PhysicsEngine
+import de.bissell.starcruiser.PlayerShipMessage
+import de.bissell.starcruiser.ScanLevel
+import de.bissell.starcruiser.ScopeContactMessage
+import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.Vector2
+import de.bissell.starcruiser.WaypointMessage
+import de.bissell.starcruiser.clamp
+import de.bissell.starcruiser.randomShipName
+import de.bissell.starcruiser.toHeading
+import de.bissell.starcruiser.toRadians
 import kotlin.math.abs
 
 class Ship(

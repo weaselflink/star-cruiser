@@ -1,4 +1,8 @@
-import de.bissell.starcruiser.*
+import de.bissell.starcruiser.Command
+import de.bissell.starcruiser.GameStateMessage
+import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.SnapshotMessage
+import de.bissell.starcruiser.Station
 import org.w3c.dom.WebSocket
 import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document

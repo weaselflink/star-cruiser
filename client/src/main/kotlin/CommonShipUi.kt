@@ -1,7 +1,10 @@
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
-import de.bissell.starcruiser.Station.*
+import de.bissell.starcruiser.Station.Helm
+import de.bissell.starcruiser.Station.MainScreen
+import de.bissell.starcruiser.Station.Navigation
+import de.bissell.starcruiser.Station.Weapons
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
 import kotlin.browser.document

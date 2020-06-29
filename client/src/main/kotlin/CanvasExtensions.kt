@@ -1,5 +1,12 @@
 import de.bissell.starcruiser.Vector2
-import org.w3c.dom.*
+import org.w3c.dom.CENTER
+import org.w3c.dom.CanvasLineJoin
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.CanvasTextAlign
+import org.w3c.dom.CanvasTextBaseline
+import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.ROUND
+import org.w3c.dom.TOP
 import kotlin.browser.window
 import kotlin.math.PI
 import kotlin.math.max

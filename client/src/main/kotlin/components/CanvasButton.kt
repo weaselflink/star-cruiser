@@ -4,7 +4,12 @@ import CanvasDimensions
 import drawPill
 import input.PointerEvent
 import input.PointerEventHandler
-import org.w3c.dom.*
+import org.w3c.dom.ALPHABETIC
+import org.w3c.dom.CENTER
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.CanvasTextAlign
+import org.w3c.dom.CanvasTextBaseline
+import org.w3c.dom.HTMLCanvasElement
 import px
 
 class CanvasButton(

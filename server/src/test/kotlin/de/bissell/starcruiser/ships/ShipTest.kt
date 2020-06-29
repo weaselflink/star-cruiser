@@ -1,13 +1,29 @@
 package de.bissell.starcruiser.ships
 
-import de.bissell.starcruiser.*
+import de.bissell.starcruiser.BeamStatus
+import de.bissell.starcruiser.BodyParameters
+import de.bissell.starcruiser.ContactType
+import de.bissell.starcruiser.GameTime
+import de.bissell.starcruiser.LockStatus
+import de.bissell.starcruiser.ObjectId
+import de.bissell.starcruiser.PhysicsEngine
+import de.bissell.starcruiser.Vector2
+import de.bissell.starcruiser.WaypointMessage
+import de.bissell.starcruiser.isNear
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
-import strikt.assertions.*
+import strikt.assertions.containsExactly
+import strikt.assertions.isA
+import strikt.assertions.isEmpty
+import strikt.assertions.isEqualTo
+import strikt.assertions.isFalse
+import strikt.assertions.isNotNull
+import strikt.assertions.isNull
+import strikt.assertions.isTrue
 import java.time.Instant
 
 class ShipTest {

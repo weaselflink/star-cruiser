@@ -1,7 +1,12 @@
 package de.bissell.starcruiser
 
-import de.bissell.starcruiser.ClientState.*
-import de.bissell.starcruiser.Station.*
+import de.bissell.starcruiser.ClientState.InShip
+import de.bissell.starcruiser.ClientState.ShipDestroyed
+import de.bissell.starcruiser.ClientState.ShipSelection
+import de.bissell.starcruiser.Station.Helm
+import de.bissell.starcruiser.Station.MainScreen
+import de.bissell.starcruiser.Station.Navigation
+import de.bissell.starcruiser.Station.Weapons
 import de.bissell.starcruiser.client.ClientId
 import de.bissell.starcruiser.ships.Ship
 import kotlinx.coroutines.CompletableDeferred

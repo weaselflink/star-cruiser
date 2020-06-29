@@ -1,7 +1,10 @@
 import components.CanvasButton
 import components.CanvasSlider
 import components.ShortRangeScope
-import de.bissell.starcruiser.Command.*
+import de.bissell.starcruiser.Command.CommandChangeJumpDistance
+import de.bissell.starcruiser.Command.CommandChangeRudder
+import de.bissell.starcruiser.Command.CommandChangeThrottle
+import de.bissell.starcruiser.Command.CommandStartJump
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
