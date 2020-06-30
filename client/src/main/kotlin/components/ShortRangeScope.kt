@@ -1,21 +1,11 @@
 package components
 
+import ClientState
 import beamStyle
 import circle
 import context2D
-import de.bissell.starcruiser.BeamStatus
-import de.bissell.starcruiser.ContactType
-import de.bissell.starcruiser.LockStatus
-import de.bissell.starcruiser.ObjectId
-import de.bissell.starcruiser.ScopeAsteroidMessage
-import de.bissell.starcruiser.ScopeContactMessage
-import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.*
 import de.bissell.starcruiser.SnapshotMessage.ShortRangeScopeStation
-import de.bissell.starcruiser.Vector2
-import de.bissell.starcruiser.WaypointMessage
-import de.bissell.starcruiser.pad
-import de.bissell.starcruiser.toHeading
-import de.bissell.starcruiser.toRadians
 import dimensions
 import drawAsteroidSymbol
 import drawLockMarker
@@ -26,14 +16,7 @@ import friendlyContactStyle
 import historyStyle
 import input.toVector2
 import lockMarkerStyle
-import org.w3c.dom.CENTER
-import org.w3c.dom.CanvasLineCap
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.CanvasTextAlign
-import org.w3c.dom.CanvasTextBaseline
-import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.MIDDLE
-import org.w3c.dom.ROUND
+import org.w3c.dom.*
 import org.w3c.dom.events.MouseEvent
 import px
 import shipStyle
@@ -59,15 +42,19 @@ class ShortRangeScope(
     private var ship: ShipMessage? = null
     private var contacts: List<ScopeContactMessage> = emptyList()
     private var asteroids: List<ScopeAsteroidMessage> = emptyList()
-    var rotating = false
-        private set
+
+    val rotateButton = CanvasButton(
+        canvas = canvas,
+        xExpr = { it.width * 0.5 + it.vmin * 20 },
+        yExpr = { it.height * 0.5 - it.vmin * 38 },
+        widthExpr = { it.vmin * 20 },
+        heightExpr = { it.vmin * 10 },
+        onClick = { ClientState.toggleRotateScope() },
+        text = "Rotate"
+    )
 
     init {
         canvas.onclick = { scopeClicked(it) }
-    }
-
-    fun toggleRotating() {
-        rotating = !rotating
     }
 
     fun draw(snapshot: ShortRangeScopeStation) {
@@ -126,6 +113,7 @@ class ShortRangeScope(
         restore()
 
         drawHeading(ship)
+        rotateButton.draw()
     }
 
     private fun CanvasRenderingContext2D.drawCompass() {
@@ -429,7 +417,7 @@ class ShortRangeScope(
         (this * (scopeRadius / shortRangeScopeRange)).let { Vector2(it.x, -it.y) }
 
     private val scopeRotation
-        get() = if (rotating) {
+        get() = if (ClientState.rotateScope) {
             (ship?.rotation ?: 0.0) - PI / 2.0
         } else {
             0.0

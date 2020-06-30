@@ -4,6 +4,7 @@ import de.bissell.starcruiser.Command.CommandLockTarget
 import de.bissell.starcruiser.ObjectId
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
+import input.PointerEventDispatcher
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -19,7 +20,7 @@ class WeaponsUi : StationUi {
     private val root = document.getElementById("weapons-ui")!! as HTMLElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.context2D
-    private val rotateScopeButton = document.querySelector(".rotateScope")!! as HTMLButtonElement
+    private val pointerEventDispatcher = PointerEventDispatcher(canvas)
     private val lockTargetButton = document.querySelector(".lockTarget")!! as HTMLButtonElement
     private val toggleShieldsButton = document.querySelector(".toggleShields")!! as HTMLButtonElement
     private val shortRangeScope = ShortRangeScope(canvas, true) { contactSelected(it) }
@@ -29,6 +30,7 @@ class WeaponsUi : StationUi {
 
     init {
         resize()
+        pointerEventDispatcher.addHandler(shortRangeScope.rotateButton)
     }
 
     fun resize() {
@@ -41,14 +43,6 @@ class WeaponsUi : StationUi {
 
     override fun hide() {
         root.visibility = Visibility.hidden
-    }
-
-    fun toggleRotateScope() {
-        shortRangeScope.toggleRotating()
-        rotateScopeButton.removeClass("current")
-        if (shortRangeScope.rotating) {
-            rotateScopeButton.addClass("current")
-        }
     }
 
     fun toggleLockTarget() {

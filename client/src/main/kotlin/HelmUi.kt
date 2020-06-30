@@ -2,21 +2,15 @@ import components.CanvasButton
 import components.CanvasSlider
 import components.JumpDisplay
 import components.ShortRangeScope
-import de.bissell.starcruiser.Command.CommandChangeJumpDistance
-import de.bissell.starcruiser.Command.CommandChangeRudder
-import de.bissell.starcruiser.Command.CommandChangeThrottle
-import de.bissell.starcruiser.Command.CommandStartJump
+import de.bissell.starcruiser.Command.*
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import input.PointerEventDispatcher
 import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import kotlin.browser.document
-import kotlin.dom.addClass
-import kotlin.dom.removeClass
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -29,7 +23,6 @@ class HelmUi : StationUi {
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.context2D
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
-    private val rotateScopeButton = document.querySelector(".rotateScope")!! as HTMLButtonElement
     private val shortRangeScope = ShortRangeScope(canvas)
     private val throttleSlider = CanvasSlider(
         canvas = canvas,
@@ -90,6 +83,7 @@ class HelmUi : StationUi {
         pointerEventDispatcher.addHandler(jumpSlider)
         pointerEventDispatcher.addHandler(rudderSlider)
         pointerEventDispatcher.addHandler(jumpButton)
+        pointerEventDispatcher.addHandler(shortRangeScope.rotateButton)
     }
 
     fun resize() {
@@ -102,14 +96,6 @@ class HelmUi : StationUi {
 
     override fun hide() {
         root.visibility = Visibility.hidden
-    }
-
-    fun toggleRotateScope() {
-        shortRangeScope.toggleRotating()
-        rotateScopeButton.removeClass("current")
-        if (shortRangeScope.rotating) {
-            rotateScopeButton.addClass("current")
-        }
     }
 
     fun draw(snapshot: SnapshotMessage.Helm) {

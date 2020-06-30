@@ -1,8 +1,4 @@
-import de.bissell.starcruiser.Command
-import de.bissell.starcruiser.GameStateMessage
-import de.bissell.starcruiser.ShipMessage
-import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.Station
+import de.bissell.starcruiser.*
 import org.w3c.dom.WebSocket
 import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document
@@ -18,6 +14,14 @@ lateinit var mainScreenUi: MainScreenUi
 var clientSocket: WebSocket? = null
 var state: GameStateMessage? = null
 lateinit var stationUiSwitcher: StationUiSwitcher
+
+object ClientState {
+    var rotateScope = false
+
+    fun toggleRotateScope() {
+        rotateScope = !rotateScope
+    }
+}
 
 fun main() {
     window.onload = { init() }
@@ -43,15 +47,6 @@ fun init() {
     commonShipUi = CommonShipUi().apply {
         hide()
         addExtraButtons(
-            ExtraButton(
-                ".rotateScope",
-                {
-                    helmUi.toggleRotateScope()
-                    weaponsUi.toggleRotateScope()
-                },
-                Station.Helm,
-                Station.Weapons
-            ),
             ExtraButton(
                 ".lockTarget",
                 weaponsUi::toggleLockTarget,
@@ -140,8 +135,7 @@ fun keyHandler(event: KeyboardEvent) {
             "KeyX" -> navigationUi.zoomIn()
             "KeyZ" -> navigationUi.zoomOut()
             "KeyR" -> {
-                helmUi.toggleRotateScope()
-                weaponsUi.toggleRotateScope()
+                ClientState.toggleRotateScope()
             }
             "KeyC" -> mainScreenUi.toggleTopView()
             "KeyJ" -> send(Command.CommandStartJump)
