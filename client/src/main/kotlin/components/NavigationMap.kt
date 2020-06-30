@@ -10,6 +10,7 @@ import de.bissell.starcruiser.ContactType
 import de.bissell.starcruiser.ObjectId
 import de.bissell.starcruiser.Positional
 import de.bissell.starcruiser.ScanLevel
+import de.bissell.starcruiser.ScanProgress
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Vector2
@@ -45,7 +46,15 @@ class NavigationMap(
     private val ctx = canvas.context2D
     private var dim = CanvasDimensions(100, 100)
     private val mapGrid = MapGrid(canvas)
-
+    private val scanProgressComponent = CanvasProgress(
+        canvas = canvas,
+        xExpr = { dim.width * 0.5 - dim.vmin * 20 },
+        yExpr = { dim.vmin * 10 },
+        widthExpr = { dim.vmin * 40 },
+        heightExpr = { dim.vmin * 6 },
+        backgroundColor = "#111",
+        foregroundColor = "#ff6347"
+    )
     var center = Vector2()
     var scaleSetting = 3
         private set
@@ -221,23 +230,23 @@ class NavigationMap(
     }
 
     private fun CanvasRenderingContext2D.drawScanProgress(ship: ShipMessage) {
-        val scanProgress = ship.scanProgress ?: return
-        val contact = contacts.firstOrNull { it.id == scanProgress.targetId } ?: return
-
-        save()
-        scanProgressStyle(dim)
+        val progress = ship.scanProgress ?: return
+        val contact = contacts.firstOrNull { it.id == progress.targetId } ?: return
 
         val designation = contact.designation
-        fillText("Scanning $designation", dim.width * 0.5, dim.vmin * 4)
+        drawScanProgressBar(designation, progress)
+        drawScanProgressMarker(contact, progress)
+    }
 
-        strokeRect(
-            dim.width * 0.5 - dim.vmin * 20, dim.vmin * 10,
-            dim.vmin * 40, dim.vmin * 6
-        )
-        fillRect(
-            dim.width * 0.5 - dim.vmin * 19, dim.vmin * 11,
-            dim.vmin * 38 * scanProgress.progress, dim.vmin * 4
-        )
+    private fun drawScanProgressBar(designation: String, progress: ScanProgress) {
+        scanProgressComponent.centerText = "Scanning $designation"
+        scanProgressComponent.progress = progress.progress
+        scanProgressComponent.draw()
+    }
+
+    private fun CanvasRenderingContext2D.drawScanProgressMarker(contact: ContactMessage, progress: ScanProgress) {
+        save()
+        scanProgressStyle(dim)
 
         strokeStyle = "#ff6347"
         translateToCenter()
@@ -245,7 +254,7 @@ class NavigationMap(
         beginPath()
         circle(
             0.0, 0.0, dim.vmin * 2.3,
-            -PI * 0.5, PI * scanProgress.progress * 2.0 - PI * 0.5
+            -PI * 0.5, PI * progress.progress * 2.0 - PI * 0.5
         )
         stroke()
 
