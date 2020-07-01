@@ -286,9 +286,6 @@ private fun BODY.commonShipUi() {
             button(classes = "fullscreen leftEdge") {
                 +"Fullscreen"
             }
-            button(classes = "extraButton lockTarget leftEdge") {
-                +"Lock target"
-            }
             button(classes = "extraButton toggleShields leftEdge") {
                 +"Shields down"
             }

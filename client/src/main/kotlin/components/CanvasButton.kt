@@ -20,6 +20,7 @@ class CanvasButton(
     private val widthExpr: (CanvasDimensions) -> Double,
     private val heightExpr: (CanvasDimensions) -> Double,
     private val onClick: () -> Unit = {},
+    private val activated: () -> Boolean = { false },
     private val text: String? = null
 ) : PointerEventHandler {
 
@@ -54,7 +55,15 @@ class CanvasButton(
 
     private fun CanvasRenderingContext2D.drawPill(dim: ComponentDimensions) {
         lineWidth = dim.lineWidth
-        fillStyle = if (pressed) "#333" else "#111"
+        fillStyle = if (pressed) {
+            "#333"
+        } else {
+            if (activated()) {
+                "#888"
+            } else {
+                "#111"
+            }
+        }
         beginPath()
         drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
         fill()
@@ -69,7 +78,11 @@ class CanvasButton(
         if (text != null) {
             save()
 
-            fillStyle = "#888"
+            fillStyle = if (activated()) {
+                "#111"
+            } else {
+                "#888"
+            }
             textAlign = CanvasTextAlign.CENTER
             textBaseline = CanvasTextBaseline.ALPHABETIC
             translate(dim.bottomX, dim.bottomY)

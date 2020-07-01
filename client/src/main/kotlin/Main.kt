@@ -48,11 +48,6 @@ fun init() {
         hide()
         addExtraButtons(
             ExtraButton(
-                ".lockTarget",
-                weaponsUi::toggleLockTarget,
-                Station.Weapons
-            ),
-            ExtraButton(
                 ".toggleShields",
                 weaponsUi::toggleShields,
                 Station.Weapons

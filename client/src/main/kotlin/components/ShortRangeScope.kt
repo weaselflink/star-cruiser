@@ -47,9 +47,10 @@ class ShortRangeScope(
         canvas = canvas,
         xExpr = { it.width * 0.5 + it.vmin * 20 },
         yExpr = { it.height * 0.5 - it.vmin * 38 },
-        widthExpr = { it.vmin * 20 },
+        widthExpr = { it.vmin * 22 },
         heightExpr = { it.vmin * 10 },
         onClick = { ClientState.toggleRotateScope() },
+        activated = { ClientState.rotateScope },
         text = "Rotate"
     )
 

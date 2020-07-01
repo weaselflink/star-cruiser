@@ -1,3 +1,4 @@
+import components.CanvasButton
 import components.ShortRangeScope
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.Command.CommandLockTarget
@@ -10,8 +11,6 @@ import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import kotlin.browser.document
-import kotlin.dom.addClass
-import kotlin.dom.removeClass
 
 class WeaponsUi : StationUi {
 
@@ -21,9 +20,18 @@ class WeaponsUi : StationUi {
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.context2D
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
-    private val lockTargetButton = document.querySelector(".lockTarget")!! as HTMLButtonElement
     private val toggleShieldsButton = document.querySelector(".toggleShields")!! as HTMLButtonElement
     private val shortRangeScope = ShortRangeScope(canvas, true) { contactSelected(it) }
+    private val lockTargetButton = CanvasButton(
+        canvas = canvas,
+        xExpr = { it.width * 0.5 - it.vmin * 45 },
+        yExpr = { it.height * 0.5 - it.vmin * 38 },
+        widthExpr = { it.vmin * 25 },
+        heightExpr = { it.vmin * 10 },
+        onClick = { toggleLockTarget() },
+        activated = { selectingTarget },
+        text = "Lock on"
+    )
 
     private var shieldsUp = false
     private var selectingTarget = false
@@ -31,6 +39,7 @@ class WeaponsUi : StationUi {
     init {
         resize()
         pointerEventDispatcher.addHandler(shortRangeScope.rotateButton)
+        pointerEventDispatcher.addHandler(lockTargetButton)
     }
 
     fun resize() {
@@ -43,14 +52,6 @@ class WeaponsUi : StationUi {
 
     override fun hide() {
         root.visibility = Visibility.hidden
-    }
-
-    fun toggleLockTarget() {
-        selectingTarget = !selectingTarget
-        lockTargetButton.removeClass("current")
-        if (selectingTarget) {
-            lockTargetButton.addClass("current")
-        }
     }
 
     fun toggleShields() {
@@ -73,6 +74,7 @@ class WeaponsUi : StationUi {
         clear("#222")
 
         shortRangeScope.draw(snapshot)
+        lockTargetButton.draw()
     }
 
     private fun contactSelected(targetId: ObjectId) {
@@ -80,5 +82,9 @@ class WeaponsUi : StationUi {
             toggleLockTarget()
             clientSocket.send(CommandLockTarget(targetId))
         }
+    }
+
+    private fun toggleLockTarget() {
+        selectingTarget = !selectingTarget
     }
 }
