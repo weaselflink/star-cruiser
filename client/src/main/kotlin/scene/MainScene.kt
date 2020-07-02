@@ -18,6 +18,7 @@ import three.scenes.Scene
 import three.updateSize
 import kotlin.browser.window
 import kotlin.math.PI
+import kotlin.math.max
 
 class MainScene {
 
@@ -35,6 +36,9 @@ class MainScene {
         update = { contact ->
             position.copy(contact.relativePosition.toWorld())
             rotation.y = contact.rotation
+            jumpAnimationScale(contact.jumpAnimation).also {
+                scale.set(it, it, it)
+            }
         }
     )
     private val asteroidHandler = GroupHandler<AsteroidGroup, AsteroidMessage>(
@@ -71,6 +75,9 @@ class MainScene {
 
     fun update(snapshot: SnapshotMessage.MainScreen) {
         ownShip.rotation.y = snapshot.ship.rotation
+        jumpAnimationScale(snapshot.ship.jumpDrive.animation).also {
+            ownShip.scale.set(it, it, it)
+        }
 
         val contacts = snapshot.contacts
         val asteroids = snapshot.asteroids
@@ -152,6 +159,14 @@ class MainScene {
             position.y = 1000.0
         }
     }
+
+    private fun jumpAnimationScale(animation: Double?) =
+        max(0.01, when {
+            animation == null -> 1.0
+            animation > -0.2 && animation <= 0.0 -> -animation / 0.2
+            animation > 0.0 && animation < 0.2 -> animation / 0.2
+            else -> 1.0
+        })
 
     private fun loadBackground() {
         CubeTextureLoader().load(

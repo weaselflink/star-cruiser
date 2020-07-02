@@ -148,7 +148,8 @@ data class ContactMessage(
     val rotation: Double,
     val bearing: Double,
     val beams: List<BeamMessage>,
-    val shield: ShieldMessage
+    val shield: ShieldMessage,
+    val jumpAnimation: Double?
 ) : Identifiable, Positional
 
 @Serializable
@@ -280,17 +281,20 @@ sealed class JumpDriveMessage {
 
     abstract val ratio: Double
     abstract val distance: Int
+    abstract val animation: Double?
 
     @Serializable
     data class Ready(
         override val ratio: Double,
-        override val distance: Int
+        override val distance: Int,
+        override val animation: Double?
     ): JumpDriveMessage()
 
     @Serializable
     data class Jumping(
         override val ratio: Double,
         override val distance: Int,
+        override val animation: Double?,
         val progress: Double
     ): JumpDriveMessage()
 
@@ -298,6 +302,7 @@ sealed class JumpDriveMessage {
     data class Recharging(
         override val ratio: Double,
         override val distance: Int,
+        override val animation: Double?,
         val progress: Double
     ): JumpDriveMessage()
 }

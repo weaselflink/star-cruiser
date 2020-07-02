@@ -237,7 +237,8 @@ class Ship(
             rotation = rotation,
             bearing = (position - relativeTo.position).angle().toHeading(),
             beams = beamHandlers.map { it.toMessage() },
-            shield = shieldHandler.toMessage()
+            shield = shieldHandler.toMessage(),
+            jumpAnimation = jumpHandler.toMessage().animation
         )
 
     private fun canIncreaseScanLevel(targetId: ObjectId) = getScanLevel(targetId).let { it != it.next() }

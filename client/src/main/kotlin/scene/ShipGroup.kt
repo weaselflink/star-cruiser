@@ -40,6 +40,9 @@ class ShipGroup : ObjectGroup {
     val rotation: Euler
         get() = rootNode.rotation
 
+    val scale: Vector3
+        get() = rootNode.scale
+
     operator fun plusAssign(value: Object3D) = rootNode.add(value)
 
     fun showShield(shieldRadius: Double) {

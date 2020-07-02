@@ -3,6 +3,7 @@ package de.bissell.starcruiser.ships
 import de.bissell.starcruiser.GameTime
 import de.bissell.starcruiser.JumpDriveMessage
 import de.bissell.starcruiser.clamp
+import kotlin.math.max
 import kotlin.math.min
 
 class JumpHandler(
@@ -15,6 +16,7 @@ class JumpHandler(
         private set
     private var jumpProgress: Double = 0.0
     private var rechargeProgress: Double = 1.0
+    private var animation: Double? = null
 
     val ready: Boolean
         get() = rechargeProgress >= 1.0
@@ -27,6 +29,7 @@ class JumpHandler(
         } else {
             rechargeProgress = min(1.0, rechargeProgress + time.delta * jumpDrive.rechargeSpeed)
         }
+        updateAnimation(time)
     }
 
     fun changeJumpDistance(value: Double) {
@@ -41,6 +44,7 @@ class JumpHandler(
     fun endJump() {
         jumping = false
         jumpProgress = 0.0
+        animation = 0.0
     }
 
     fun toMessage() =
@@ -48,16 +52,36 @@ class JumpHandler(
             jumping -> JumpDriveMessage.Jumping(
                 ratio = jumpDrive.distanceToRatio(jumpDistance),
                 distance = jumpDistance,
+                animation = animation,
                 progress = jumpProgress
             )
             rechargeProgress < 1.0 -> JumpDriveMessage.Recharging(
                 ratio = jumpDrive.distanceToRatio(jumpDistance),
                 distance = jumpDistance,
+                animation = animation,
                 progress = rechargeProgress
             )
             else -> JumpDriveMessage.Ready(
                 ratio = jumpDrive.distanceToRatio(jumpDistance),
-                distance = jumpDistance
+                distance = jumpDistance,
+                animation = animation
             )
         }
+
+    private fun updateAnimation(time: GameTime) {
+        animation = if (jumping) {
+            secondsToJump().unaryMinus().let {
+                if (it < -1.0) null else it
+            }
+        } else {
+            animation?.let {
+                it + time.delta
+            }?.let {
+                if (it > 1.0) null else it
+            }
+        }
+    }
+
+    private fun secondsToJump() =
+        max(0.0, ((1.0 - jumpProgress) / jumpDrive.jumpingSpeed))
 }
