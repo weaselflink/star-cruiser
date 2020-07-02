@@ -1,6 +1,6 @@
 package scene
 
-import org.w3c.dom.CanvasRenderingContext2D
+import context2D
 import org.w3c.dom.HTMLCanvasElement
 import three.AdditiveBlending
 import three.DoubleSide
@@ -82,7 +82,7 @@ class LaserBeam(
 
         val cw = canvas.width.toDouble()
         val ch = canvas.height.toDouble()
-        val ctx = canvas.getContext("2d")!! as CanvasRenderingContext2D
+        val ctx = canvas.context2D
 
         ctx.fillStyle = ctx.createLinearGradient(0.0, 0.0, cw, ch).apply {
             addColorStop(0.0, "rgba(0, 0, 0, 0.1)")

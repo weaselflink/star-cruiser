@@ -92,8 +92,8 @@ class Ship(
         scanHandler?.also {
             it.update(time)
             if (it.isComplete) {
-                val scan = scans[scanHandler!!.targetId] ?: ScanLevel.None
-                scans[scanHandler!!.targetId] = scan.next()
+                val scan = scans[it.targetId] ?: ScanLevel.None
+                scans[it.targetId] = scan.next()
                 scanHandler = null
             }
         }
