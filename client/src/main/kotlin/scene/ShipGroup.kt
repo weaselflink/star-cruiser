@@ -64,23 +64,31 @@ class ShipGroup : ObjectGroup {
 
         beams.filter {
             it.status is BeamStatus.Firing
-        }.forEach { beamMessage ->
-            val relativePosition = snapshot.getTargetPosition(beamMessage.targetId) ?: return
-            val shieldRadius = snapshot.getTargetShield(beamMessage.targetId)?.let {
-                if (it.up) it.radius else 0.0
-            } ?: 0.0
-            val targetPosition = relativePosition.toWorld()
+        }.forEach {
+            updateBeam(snapshot, it)
+        }
+    }
 
-            Object3D().apply {
-                beamNodes += this
-                rootNode += this
+    private fun updateBeam(snapshot: SnapshotMessage.MainScreen, beamMessage: BeamMessage) {
+        val relativePosition = snapshot.getTargetPosition(beamMessage.targetId) ?: return
+        val shieldRadius = snapshot.getTargetShield(beamMessage.targetId)?.let {
+            if (it.up) it.radius else 0.0
+        } ?: 0.0
+        val targetPosition = relativePosition.toWorld()
 
-                position.set(beamMessage.position)
-                lookAt(targetPosition)
-            }.apply {
-                val distance = targetPosition.clone().sub(getWorldPosition(Vector3())).length() - shieldRadius
-                add(LaserBeam(length = distance, width = 2.0).obj)
-            }
+        createBeamGroup(beamMessage, targetPosition, shieldRadius)
+    }
+
+    private fun createBeamGroup(beamMessage: BeamMessage, targetPosition: Vector3, shieldRadius: Double) {
+        Object3D().apply {
+            beamNodes += this
+            rootNode += this
+
+            position.set(beamMessage.position)
+            lookAt(targetPosition)
+        }.apply {
+            val distance = targetPosition.clone().sub(getWorldPosition(Vector3())).length() - shieldRadius
+            add(LaserBeam(length = distance, width = 2.0).obj)
         }
     }
 
