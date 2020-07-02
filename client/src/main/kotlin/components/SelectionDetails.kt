@@ -2,8 +2,8 @@ package components
 
 import Visibility
 import de.bissell.starcruiser.pad
+import getHtmlElementById
 import org.w3c.dom.HTMLButtonElement
-import org.w3c.dom.HTMLElement
 import visibility
 import kotlin.browser.document
 import kotlin.math.roundToInt
@@ -13,7 +13,7 @@ class SelectionDetails(
     private val onDelete: () -> Unit
 ) {
 
-    private val root = document.getElementById("selection-details")!! as HTMLElement
+    private val root = document.getHtmlElementById("selection-details")
     private val scanButton = root.querySelector(".detailsScanButton")!! as HTMLButtonElement
     private val deleteButton = root.querySelector(".detailsDeleteButton")!! as HTMLButtonElement
 

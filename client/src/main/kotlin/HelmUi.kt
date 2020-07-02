@@ -2,14 +2,16 @@ import components.CanvasButton
 import components.CanvasSlider
 import components.JumpDisplay
 import components.ShortRangeScope
-import de.bissell.starcruiser.Command.*
+import de.bissell.starcruiser.Command.CommandChangeJumpDistance
+import de.bissell.starcruiser.Command.CommandChangeRudder
+import de.bissell.starcruiser.Command.CommandChangeThrottle
+import de.bissell.starcruiser.Command.CommandStartJump
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import input.PointerEventDispatcher
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.HTMLElement
 import kotlin.browser.document
 import kotlin.math.max
 import kotlin.math.min
@@ -19,7 +21,7 @@ class HelmUi : StationUi {
 
     override val station = Station.Helm
 
-    private val root = document.getElementById("helm-ui")!! as HTMLElement
+    private val root = document.getHtmlElementById("helm-ui")
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.context2D
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)

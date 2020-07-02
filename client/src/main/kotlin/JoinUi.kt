@@ -14,7 +14,7 @@ import kotlin.math.min
 
 class JoinUi {
 
-    private val root = document.getElementById("join-ui")!! as HTMLElement
+    private val root = document.getHtmlElementById("join-ui")
     private val playerShipsList = root.querySelector(".playerShips")!! as HTMLElement
     private val prevButton = root.querySelector(".playerShipsPrev")!! as HTMLButtonElement
     private val nextButton = root.querySelector(".playerShipsNext")!! as HTMLButtonElement

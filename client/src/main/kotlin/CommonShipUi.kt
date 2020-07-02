@@ -13,7 +13,7 @@ import kotlin.dom.removeClass
 
 class CommonShipUi {
 
-    private val root = document.getElementById("common-ship-ui")!! as HTMLElement
+    private val root = document.getHtmlElementById("common-ship-ui")
     private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
     private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
     private val stationButtons = mapOf(

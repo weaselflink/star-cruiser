@@ -1,11 +1,10 @@
 import de.bissell.starcruiser.Command.CommandExitShip
 import org.w3c.dom.HTMLButtonElement
-import org.w3c.dom.HTMLElement
 import kotlin.browser.document
 
 class DestroyedUi {
 
-    private val root = document.getElementById("destroyed-ui")!! as HTMLElement
+    private val root = document.getHtmlElementById("destroyed-ui")
     private val toSelectionButton = root.querySelector(".toSelection")!! as HTMLButtonElement
 
     init {

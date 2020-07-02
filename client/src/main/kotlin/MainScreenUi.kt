@@ -2,7 +2,6 @@ import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.HTMLElement
 import scene.MainScene
 import three.cameras.Camera
 import three.renderers.WebGLRenderer
@@ -16,7 +15,7 @@ class MainScreenUi : StationUi {
 
     override val station = Station.MainScreen
 
-    private val root = document.getElementById("main-screen-ui")!! as HTMLElement
+    private val root = document.getHtmlElementById("main-screen-ui")
     private val topViewButton = document.querySelector(".topView")!! as HTMLButtonElement
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val renderer = WebGLRenderer(

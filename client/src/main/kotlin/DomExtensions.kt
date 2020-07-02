@@ -1,5 +1,6 @@
 @file:Suppress("EnumEntryName")
 
+import org.w3c.dom.Document
 import org.w3c.dom.HTMLElement
 
 enum class Visibility {
@@ -23,3 +24,5 @@ var HTMLElement.display: Display
     set(value) {
         style.display = value.name
     }
+
+fun Document.getHtmlElementById(id: String): HTMLElement = getElementById(id)!! as HTMLElement

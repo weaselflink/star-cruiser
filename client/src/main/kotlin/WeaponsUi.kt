@@ -9,14 +9,13 @@ import input.PointerEventDispatcher
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.HTMLElement
 import kotlin.browser.document
 
 class WeaponsUi : StationUi {
 
     override val station = Station.Weapons
 
-    private val root = document.getElementById("weapons-ui")!! as HTMLElement
+    private val root = document.getHtmlElementById("weapons-ui")
     private val canvas = root.querySelector("canvas") as HTMLCanvasElement
     private val ctx = canvas.context2D
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
