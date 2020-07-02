@@ -56,33 +56,35 @@ class GameState {
 
     fun toMessage(clientId: ClientId): SnapshotMessage {
         val client = getClient(clientId)
-        val clientShip = getClientShip(clientId)
-        return when (client.state) {
-            ShipSelection -> SnapshotMessage.ShipSelection(
+        return when (val state = client.state) {
+            is ShipSelection -> SnapshotMessage.ShipSelection(
                 playerShips = ships.values.map(Ship::toPlayerShipMessage)
             )
-            ShipDestroyed -> SnapshotMessage.ShipDestroyed
-            InShip -> when (client.station!!) {
-                Helm -> SnapshotMessage.Helm(
-                    ship = clientShip!!.toMessage(),
-                    contacts = getScopeContacts(clientShip),
-                    asteroids = getScopeAsteroids(clientShip)
-                )
-                Weapons -> SnapshotMessage.Weapons(
-                    ship = clientShip!!.toMessage(),
-                    contacts = getScopeContacts(clientShip),
-                    asteroids = getScopeAsteroids(clientShip)
-                )
-                Navigation -> SnapshotMessage.Navigation(
-                    ship = clientShip!!.toMessage(),
-                    contacts = getContacts(clientShip),
-                    asteroids = getAsteroids(clientShip)
-                )
-                MainScreen -> SnapshotMessage.MainScreen(
-                    ship = clientShip!!.toMessage(),
-                    contacts = getContacts(clientShip),
-                    asteroids = getAsteroids(clientShip)
-                )
+            is ShipDestroyed -> SnapshotMessage.ShipDestroyed
+            is InShip -> {
+                val ship = state.ship
+                when (state.station) {
+                    Helm -> SnapshotMessage.Helm(
+                        ship = ship.toMessage(),
+                        contacts = getScopeContacts(ship),
+                        asteroids = getScopeAsteroids(ship)
+                    )
+                    Weapons -> SnapshotMessage.Weapons(
+                        ship = ship.toMessage(),
+                        contacts = getScopeContacts(ship),
+                        asteroids = getScopeAsteroids(ship)
+                    )
+                    Navigation -> SnapshotMessage.Navigation(
+                        ship = ship.toMessage(),
+                        contacts = getContacts(ship),
+                        asteroids = getAsteroids(ship)
+                    )
+                    MainScreen -> SnapshotMessage.MainScreen(
+                        ship = ship.toMessage(),
+                        contacts = getContacts(ship),
+                        asteroids = getAsteroids(ship)
+                    )
+                }
             }
         }
     }
@@ -96,7 +98,9 @@ class GameState {
     }
 
     fun joinShip(clientId: ClientId, objectId: ObjectId, station: Station) {
-        getClient(clientId).joinShip(objectId, station)
+        ships[objectId]?.also {
+            getClient(clientId).joinShip(it, station)
+        }
     }
 
     fun changeStation(clientId: ClientId, station: Station) {
@@ -209,7 +213,9 @@ class GameState {
         clients.computeIfAbsent(clientId) { Client(clientId) }
 
     private fun getClientShip(clientId: ClientId): Ship? =
-        getClient(clientId).shipId?.let { ships[it] }
+        getClient(clientId).state.let {
+            if (it is InShip) it.ship else null
+        }
 
     private fun getContacts(clientShip: Ship): List<ContactMessage> {
         return ships
@@ -242,8 +248,8 @@ class GameState {
     }
 
     private fun destroyShip(shipId: ObjectId) {
-        clients.values.filter {
-            it.shipId == shipId
+        clients.values.filter { client ->
+            client.state.let { it is InShip && it.ship.id == shipId }
         }.forEach {
             it.shipDestroyed()
         }
@@ -301,11 +307,9 @@ class GameTime {
         }
 
     fun update(now: Instant) {
-        delta = if (lastUpdate == null) {
-            0.001
-        } else {
-            (lastUpdate!!.until(now, ChronoUnit.MILLIS)) / 1000.0
-        }
+        delta = lastUpdate?.let {
+            (it.until(now, ChronoUnit.MILLIS)) / 1000.0
+        } ?: 0.001
         current += delta
         lastUpdate = now
     }
@@ -317,38 +321,41 @@ data class Client(
 
     var state: ClientState = ShipSelection
         private set
-    var shipId: ObjectId? = null
-        private set
-    var station: Station? = null
-        private set
 
-    fun joinShip(objectId: ObjectId, station: Station) {
-        state = InShip
-        this.shipId = objectId
-        this.station = station
+    fun joinShip(ship: Ship, station: Station) {
+        state = InShip(
+            ship = ship,
+            station = station
+        )
     }
 
     fun changeStation(station: Station) {
-        if (shipId != null) {
-            this.station = station
+        val currentState = state
+        if (currentState is InShip) {
+            state = InShip(
+                ship = currentState.ship,
+                station = station
+            )
         }
     }
 
     fun shipDestroyed() {
         state = ShipDestroyed
-        shipId = null
-        station = null
     }
 
     fun exitShip() {
         state = ShipSelection
-        shipId = null
-        station = null
     }
 }
 
-enum class ClientState {
-    ShipSelection,
-    ShipDestroyed,
-    InShip
+sealed class ClientState {
+
+    object ShipSelection: ClientState()
+
+    object ShipDestroyed: ClientState()
+
+    data class InShip(
+        val ship: Ship,
+        val station: Station
+    ): ClientState()
 }

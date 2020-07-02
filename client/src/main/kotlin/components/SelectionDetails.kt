@@ -33,9 +33,9 @@ class SelectionDetails(
     fun draw(selection: Selection?) {
         if (selection != null) {
             root.visibility = Visibility.visible
-            root.querySelector(".designation")!!.innerHTML = selection.label
-            root.querySelector(".bearing")!!.innerHTML = selection.bearing.roundToInt().pad(3)
-            root.querySelector(".range")!!.innerHTML = selection.range.roundToInt().toString()
+            root.querySelector(".designation")?.apply { innerHTML = selection.label }
+            root.querySelector(".bearing")?.apply { innerHTML = selection.bearing.roundToInt().pad(3) }
+            root.querySelector(".range")?.apply { innerHTML = selection.range.roundToInt().toString() }
 
             when {
                 selection.canScan -> {
