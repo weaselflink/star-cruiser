@@ -5,6 +5,7 @@ import byQuery
 import de.bissell.starcruiser.pad
 import getHtmlElementById
 import org.w3c.dom.HTMLButtonElement
+import org.w3c.dom.HTMLElement
 import visibility
 import kotlin.browser.document
 import kotlin.math.roundToInt
@@ -17,6 +18,9 @@ class SelectionDetails(
     private val root = document.getHtmlElementById("selection-details")
     private val scanButton: HTMLButtonElement = root.byQuery(".detailsScanButton")
     private val deleteButton: HTMLButtonElement = root.byQuery(".detailsDeleteButton")
+    private val designationLabel: HTMLElement = root.byQuery(".designation")
+    private val bearingLabel: HTMLElement = root.byQuery(".bearing")
+    private val rangeLabel: HTMLElement = root.byQuery(".range")
 
     init {
         hide()
@@ -33,9 +37,9 @@ class SelectionDetails(
     fun draw(selection: Selection?) {
         if (selection != null) {
             root.visibility = Visibility.visible
-            root.querySelector(".designation")?.apply { innerHTML = selection.label }
-            root.querySelector(".bearing")?.apply { innerHTML = selection.bearing.roundToInt().pad(3) }
-            root.querySelector(".range")?.apply { innerHTML = selection.range.roundToInt().toString() }
+            designationLabel.innerHTML = selection.label
+            bearingLabel.innerHTML = selection.bearing.roundToInt().pad(3)
+            rangeLabel.innerHTML = selection.range.roundToInt().toString()
 
             when {
                 selection.canScan -> {
@@ -52,9 +56,7 @@ class SelectionDetails(
                 }
             }
         } else {
-            root.visibility = Visibility.hidden
-            scanButton.visibility = Visibility.hidden
-            deleteButton.visibility = Visibility.hidden
+            hide()
         }
     }
 }
