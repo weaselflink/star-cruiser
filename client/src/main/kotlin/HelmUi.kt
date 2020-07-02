@@ -11,7 +11,6 @@ import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import input.PointerEventDispatcher
 import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document
 import kotlin.math.max
 import kotlin.math.min
@@ -22,7 +21,7 @@ class HelmUi : StationUi {
     override val station = Station.Helm
 
     private val root = document.getHtmlElementById("helm-ui")
-    private val canvas = root.querySelector("canvas") as HTMLCanvasElement
+    private val canvas = root.canvas
     private val ctx = canvas.context2D
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
     private val shortRangeScope = ShortRangeScope(canvas)

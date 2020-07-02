@@ -10,7 +10,6 @@ import de.bissell.starcruiser.ScanLevel
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import input.PointerEventDispatcher
-import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document
 
 class NavigationUi : StationUi {
@@ -18,7 +17,7 @@ class NavigationUi : StationUi {
     override val station = Station.Navigation
 
     private val root = document.getHtmlElementById("navigation-ui")
-    private val canvas = root.querySelector("canvas") as HTMLCanvasElement
+    private val canvas = root.canvas
     private val navigationMap = NavigationMap(canvas) { handleMapClick(it) }
     private val ctx = canvas.context2D
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)

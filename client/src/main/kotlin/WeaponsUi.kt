@@ -8,7 +8,6 @@ import de.bissell.starcruiser.Station
 import input.PointerEventDispatcher
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
-import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document
 
 class WeaponsUi : StationUi {
@@ -16,7 +15,7 @@ class WeaponsUi : StationUi {
     override val station = Station.Weapons
 
     private val root = document.getHtmlElementById("weapons-ui")
-    private val canvas = root.querySelector("canvas") as HTMLCanvasElement
+    private val canvas = root.canvas
     private val ctx = canvas.context2D
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
     private val toggleShieldsButton = document.querySelector(".toggleShields")!! as HTMLButtonElement

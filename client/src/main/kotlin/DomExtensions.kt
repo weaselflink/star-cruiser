@@ -1,6 +1,7 @@
 @file:Suppress("EnumEntryName")
 
 import org.w3c.dom.Document
+import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 
 enum class Visibility {
@@ -24,5 +25,8 @@ var HTMLElement.display: Display
     set(value) {
         style.display = value.name
     }
+
+val HTMLElement.canvas: HTMLCanvasElement
+    get() = querySelector("canvas") as HTMLCanvasElement
 
 fun Document.getHtmlElementById(id: String): HTMLElement = getElementById(id)!! as HTMLElement
