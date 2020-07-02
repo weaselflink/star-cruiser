@@ -1,6 +1,7 @@
 @file:Suppress("EnumEntryName")
 
 import org.w3c.dom.Document
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 
@@ -29,4 +30,11 @@ var HTMLElement.display: Display
 val HTMLElement.canvas: HTMLCanvasElement
     get() = querySelector("canvas") as HTMLCanvasElement
 
-fun Document.getHtmlElementById(id: String): HTMLElement = getElementById(id)!! as HTMLElement
+inline fun Document.getHtmlElementById(id: String): HTMLElement =
+    getElementById(id)!! as HTMLElement
+
+inline fun <reified ElementType: Element> Document.byQuery(query: String): ElementType =
+    querySelector(query)!! as ElementType
+
+inline fun <reified ElementType: Element> HTMLElement.byQuery(query: String): ElementType =
+    querySelector(query)!! as ElementType

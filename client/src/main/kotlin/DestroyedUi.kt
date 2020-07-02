@@ -5,7 +5,7 @@ import kotlin.browser.document
 class DestroyedUi {
 
     private val root = document.getHtmlElementById("destroyed-ui")
-    private val toSelectionButton = root.querySelector(".toSelection")!! as HTMLButtonElement
+    private val toSelectionButton: HTMLButtonElement = root.byQuery(".toSelection")
 
     init {
         toSelectionButton.onclick = { toSelection() }

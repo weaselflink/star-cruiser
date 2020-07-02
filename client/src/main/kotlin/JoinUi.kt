@@ -15,18 +15,16 @@ import kotlin.math.min
 class JoinUi {
 
     private val root = document.getHtmlElementById("join-ui")
-    private val playerShipsList = root.querySelector(".playerShips")!! as HTMLElement
-    private val prevButton = root.querySelector(".playerShipsPrev")!! as HTMLButtonElement
-    private val nextButton = root.querySelector(".playerShipsNext")!! as HTMLButtonElement
+    private val playerShipsList: HTMLElement = root.byQuery(".playerShips")
+    private val prevButton: HTMLButtonElement = root.byQuery(".playerShipsPrev")
+    private val nextButton: HTMLButtonElement = root.byQuery(".playerShipsNext")
     private var playerShips = emptyList<PlayerShipMessage>()
     private val pageCount
         get() = playerShips.chunked(6).size
     private var page = 0
 
     init {
-        root.querySelector(".spawn")!!.let {
-            it as HTMLButtonElement
-        }.also {
+        root.byQuery<HTMLButtonElement>(".spawn").also {
             it.onclick = { clientSocket.send(Command.CommandSpawnShip) }
         }
         prevButton.onclick = { prev() }

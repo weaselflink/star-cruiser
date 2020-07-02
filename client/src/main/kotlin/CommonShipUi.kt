@@ -14,13 +14,13 @@ import kotlin.dom.removeClass
 class CommonShipUi {
 
     private val root = document.getHtmlElementById("common-ship-ui")
-    private val exitButton = root.querySelector(".exit")!! as HTMLButtonElement
-    private val fullScreenButton = root.querySelector(".fullscreen")!! as HTMLButtonElement
-    private val stationButtons = mapOf(
-        Helm to root.querySelector(".switchToHelm")!! as HTMLButtonElement,
-        Weapons to root.querySelector(".switchToWeapons")!! as HTMLButtonElement,
-        Navigation to root.querySelector(".switchToNavigation")!! as HTMLButtonElement,
-        MainScreen to root.querySelector(".switchToMainScreen")!! as HTMLButtonElement
+    private val exitButton: HTMLButtonElement = root.byQuery(".exit")
+    private val fullScreenButton: HTMLButtonElement = root.byQuery(".fullscreen")
+    private val stationButtons = mapOf<Station, HTMLButtonElement>(
+        Helm to root.byQuery(".switchToHelm"),
+        Weapons to root.byQuery(".switchToWeapons"),
+        Navigation to root.byQuery(".switchToNavigation"),
+        MainScreen to root.byQuery(".switchToMainScreen")
     )
     private val extraButtons = mutableListOf<ExtraButton>()
 
@@ -29,7 +29,7 @@ class CommonShipUi {
     init {
         exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
         fullScreenButton.onclick = {
-            val body = document.querySelector("body")!! as HTMLElement
+            val body: HTMLElement = document.byQuery("body")
             if (document.fullscreenElement == null) {
                 body.requestFullscreen()
                 fullScreenButton.innerText = "Windowed"
@@ -103,7 +103,7 @@ data class ExtraButton(
         callback: () -> Unit,
         vararg station: Station
     ) : this(
-        document.querySelector(selector)!! as HTMLButtonElement,
+        document.byQuery(selector),
         callback,
         station.toList()
     )

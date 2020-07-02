@@ -18,7 +18,7 @@ class WeaponsUi : StationUi {
     private val canvas = root.canvas
     private val ctx = canvas.context2D
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
-    private val toggleShieldsButton = document.querySelector(".toggleShields")!! as HTMLButtonElement
+    private val toggleShieldsButton: HTMLButtonElement = document.byQuery(".toggleShields")
     private val shortRangeScope = ShortRangeScope(canvas, true) { contactSelected(it) }
     private val lockTargetButton = CanvasButton(
         canvas = canvas,

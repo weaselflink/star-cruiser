@@ -1,6 +1,7 @@
 package components
 
 import Visibility
+import byQuery
 import de.bissell.starcruiser.pad
 import getHtmlElementById
 import org.w3c.dom.HTMLButtonElement
@@ -14,8 +15,8 @@ class SelectionDetails(
 ) {
 
     private val root = document.getHtmlElementById("selection-details")
-    private val scanButton = root.querySelector(".detailsScanButton")!! as HTMLButtonElement
-    private val deleteButton = root.querySelector(".detailsDeleteButton")!! as HTMLButtonElement
+    private val scanButton: HTMLButtonElement = root.byQuery(".detailsScanButton")
+    private val deleteButton: HTMLButtonElement = root.byQuery(".detailsDeleteButton")
 
     init {
         hide()

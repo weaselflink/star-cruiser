@@ -16,7 +16,7 @@ class MainScreenUi : StationUi {
 
     private val root = document.getHtmlElementById("main-screen-ui")
     private val canvas = root.canvas
-    private val topViewButton = document.querySelector(".topView")!! as HTMLButtonElement
+    private val topViewButton: HTMLButtonElement = document.byQuery(".topView")
     private val renderer = WebGLRenderer(
         WebGLRendererParams(
             canvas = canvas,
