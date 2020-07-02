@@ -53,21 +53,6 @@ fun init() {
                 Station.Weapons
             ),
             ExtraButton(
-                ".addWaypoint",
-                navigationUi::addWayPointClicked,
-                Station.Navigation
-            ),
-            ExtraButton(
-                ".deleteWaypoint",
-                navigationUi::deleteWayPointClicked,
-                Station.Navigation
-            ),
-            ExtraButton(
-                ".scanShip",
-                navigationUi::scanShipClicked,
-                Station.Navigation
-            ),
-            ExtraButton(
                 ".topView",
                 mainScreenUi::toggleTopView,
                 Station.MainScreen

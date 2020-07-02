@@ -1,3 +1,4 @@
+import components.CanvasButton
 import components.CanvasSlider
 import components.MapClick
 import components.NavigationMap
@@ -9,13 +10,9 @@ import de.bissell.starcruiser.ScanLevel
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import input.PointerEventDispatcher
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import kotlin.browser.document
-import kotlin.dom.addClass
-import kotlin.dom.removeClass
 
 class NavigationUi : StationUi {
 
@@ -26,12 +23,9 @@ class NavigationUi : StationUi {
     private val navigationMap = NavigationMap(canvas) { handleMapClick(it) }
     private val ctx = canvas.context2D
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
-    private val addWaypointButton = document.querySelector(".addWaypoint")!! as HTMLButtonElement
-    private val deleteWaypointButton = document.querySelector(".deleteWaypoint")!! as HTMLButtonElement
-    private val scanShipButton = document.querySelector(".scanShip")!! as HTMLButtonElement
     private val selectionDetails = SelectionDetails(
         onScan = { scanShipClicked() },
-        onDelete = { deleteWayPointClicked() }
+        onDelete = { deleteWaypointClicked() }
     )
     private val zoomSlider = CanvasSlider(
         canvas = canvas,
@@ -42,12 +36,23 @@ class NavigationUi : StationUi {
         onChange = { navigationMap.changeZoom(it) },
         leftText = "Zoom"
     )
+    private val addWaypointButton = CanvasButton(
+        canvas = canvas,
+        xExpr = { it.vmin * 55 },
+        yExpr = { it.height - it.vmin * 3 },
+        widthExpr = { it.vmin * 37 },
+        heightExpr = { it.vmin * 10 },
+        onClick = { toggleAddWaypoint() },
+        activated = { buttonState == ButtonState.AddWaypoint },
+        text = "Add waypoint"
+    )
 
     private var buttonState: ButtonState = ButtonState.Initial
 
     init {
         resize()
         pointerEventDispatcher.addHandler(zoomSlider)
+        pointerEventDispatcher.addHandler(addWaypointButton)
         pointerEventDispatcher.addHandler(navigationMap.MapPointerEventHandler())
     }
 
@@ -81,57 +86,28 @@ class NavigationUi : StationUi {
 
             navigationMap.draw(snapshot)
             drawZoom()
+            addWaypointButton.draw()
         }
     }
 
-    fun addWayPointClicked() {
+    private fun toggleAddWaypoint() {
         buttonState = if (buttonState != ButtonState.AddWaypoint) {
             ButtonState.AddWaypoint
         } else {
             ButtonState.Initial
         }
-        addWaypointButton.removeClass("current")
-        deleteWaypointButton.removeClass("current")
-        scanShipButton.removeClass("current")
-        if (buttonState == ButtonState.AddWaypoint) {
-            addWaypointButton.addClass("current")
+    }
+
+    private fun deleteWaypointClicked() {
+        navigationMap.selectedWaypoint?.also {
+            clientSocket.send(CommandDeleteWaypoint(it.index))
         }
     }
 
-    fun deleteWayPointClicked() {
-        val selectedWaypoint = navigationMap.selectedWaypoint
-        if (selectedWaypoint != null) {
-            clientSocket.send(CommandDeleteWaypoint(selectedWaypoint.index))
-        } else {
-            buttonState = if (buttonState != ButtonState.DeleteWaypoint) {
-                ButtonState.DeleteWaypoint
-            } else {
-                ButtonState.Initial
-            }
-            addWaypointButton.removeClass("current")
-            deleteWaypointButton.removeClass("current")
-            scanShipButton.removeClass("current")
-            if (buttonState == ButtonState.DeleteWaypoint) {
-                deleteWaypointButton.addClass("current")
-            }
-        }
-    }
-
-    fun scanShipClicked() {
-        val selectedContact = navigationMap.selectedContact
-        if (selectedContact != null && selectedContact.scanLevel != ScanLevel.highest) {
-            clientSocket.send(CommandScanShip(selectedContact.id))
-        } else {
-            buttonState = if (buttonState != ButtonState.ScanShip) {
-                ButtonState.ScanShip
-            } else {
-                ButtonState.Initial
-            }
-            addWaypointButton.removeClass("current")
-            deleteWaypointButton.removeClass("current")
-            scanShipButton.removeClass("current")
-            if (buttonState == ButtonState.ScanShip) {
-                scanShipButton.addClass("current")
+    private fun scanShipClicked() {
+        navigationMap.selectedContact?.also {
+            if (it.scanLevel != ScanLevel.highest) {
+                clientSocket.send(CommandScanShip(it.id))
             }
         }
     }
@@ -148,22 +124,7 @@ class NavigationUi : StationUi {
             } ?: clearMapSelections()
             ButtonState.AddWaypoint -> {
                 clientSocket.send(CommandAddWaypoint(mapClick.world))
-                addWaypointButton.removeClass("current")
                 buttonState = ButtonState.Initial
-            }
-            ButtonState.DeleteWaypoint -> {
-                mapClick.waypoints.firstOrNull()?.also {
-                    clientSocket.send(CommandDeleteWaypoint(it.index))
-                    deleteWaypointButton.removeClass("current")
-                    buttonState = ButtonState.Initial
-                }
-            }
-            ButtonState.ScanShip -> {
-                mapClick.contacts.firstOrNull()?.also {
-                    clientSocket.send(CommandScanShip(it.id))
-                    scanShipButton.removeClass("current")
-                    buttonState = ButtonState.Initial
-                }
             }
         }
     }
@@ -173,10 +134,8 @@ class NavigationUi : StationUi {
         navigationMap.selectedWaypoint = null
     }
 
-    enum class ButtonState {
+    private enum class ButtonState {
         Initial,
-        AddWaypoint,
-        DeleteWaypoint,
-        ScanShip
+        AddWaypoint
     }
 }
