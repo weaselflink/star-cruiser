@@ -4,6 +4,9 @@ import de.bissell.starcruiser.AsteroidMessage
 import de.bissell.starcruiser.ContactMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Vector2
+import kotlin.browser.window
+import kotlin.math.PI
+import kotlin.math.max
 import three.cameras.PerspectiveCamera
 import three.core.Object3D
 import three.debugPrint
@@ -16,9 +19,6 @@ import three.objects.Group
 import three.plusAssign
 import three.scenes.Scene
 import three.updateSize
-import kotlin.browser.window
-import kotlin.math.PI
-import kotlin.math.max
 
 class MainScene {
 

@@ -1,11 +1,11 @@
 package de.bissell.starcruiser
 
-import kotlinx.serialization.Serializable
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.random.Random
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class Vector2(

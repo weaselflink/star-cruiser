@@ -33,8 +33,8 @@ val HTMLElement.canvas: HTMLCanvasElement
 inline fun Document.getHtmlElementById(id: String): HTMLElement =
     getElementById(id)!! as HTMLElement
 
-inline fun <reified ElementType: Element> Document.byQuery(query: String): ElementType =
+inline fun <reified ElementType : Element> Document.byQuery(query: String): ElementType =
     querySelector(query)!! as ElementType
 
-inline fun <reified ElementType: Element> HTMLElement.byQuery(query: String): ElementType =
+inline fun <reified ElementType : Element> HTMLElement.byQuery(query: String): ElementType =
     querySelector(query)!! as ElementType

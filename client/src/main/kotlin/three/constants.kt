@@ -11,6 +11,6 @@ external object MultiplyBlending : Blending
 external object CustomBlending : Blending
 
 open external class Side
-external object FrontSide: Side
-external object BackSide: Side
-external object DoubleSide: Side
+external object FrontSide : Side
+external object BackSide : Side
+external object DoubleSide : Side

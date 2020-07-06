@@ -1,11 +1,11 @@
 package de.bissell.starcruiser
 
+import kotlin.math.PI
 import org.junit.jupiter.api.Test
 import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFailure
-import kotlin.math.PI
 
 class NumberExtensionsTest {
 

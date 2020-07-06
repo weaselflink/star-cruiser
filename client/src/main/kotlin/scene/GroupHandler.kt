@@ -36,7 +36,6 @@ class GroupHandler<G : ObjectGroup, M : Identifiable>(
                 this.update(message)
             }
         }
-
     }
 
     fun removeOld(

@@ -1,12 +1,12 @@
 package scene
 
+import kotlin.math.sqrt
+import kotlin.random.Random
 import three.core.Object3D
 import three.math.Euler
 import three.math.Quaternion
 import three.math.Vector3
 import three.plusAssign
-import kotlin.math.sqrt
-import kotlin.random.Random
 
 class AsteroidGroup(radius: Double) : ObjectGroup {
 

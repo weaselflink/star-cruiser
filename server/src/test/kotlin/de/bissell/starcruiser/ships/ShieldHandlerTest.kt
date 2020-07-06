@@ -2,12 +2,12 @@ package de.bissell.starcruiser.ships
 
 import de.bissell.starcruiser.GameTime
 import de.bissell.starcruiser.isNear
+import java.time.Instant
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
-import java.time.Instant
 
 class ShieldHandlerTest {
 

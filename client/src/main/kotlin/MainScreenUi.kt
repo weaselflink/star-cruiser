@@ -1,14 +1,14 @@
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
+import kotlin.browser.document
+import kotlin.browser.window
+import kotlin.dom.addClass
+import kotlin.dom.removeClass
 import org.w3c.dom.HTMLButtonElement
 import scene.MainScene
 import three.cameras.Camera
 import three.renderers.WebGLRenderer
 import three.renderers.WebGLRendererParams
-import kotlin.browser.document
-import kotlin.browser.window
-import kotlin.dom.addClass
-import kotlin.dom.removeClass
 
 class MainScreenUi : StationUi {
 

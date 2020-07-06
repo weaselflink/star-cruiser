@@ -13,7 +13,7 @@ sealed class Command {
     object CommandTogglePause : Command()
 
     @Serializable
-    object CommandSpawnShip: Command()
+    object CommandSpawnShip : Command()
 
     @Serializable
     data class CommandJoinShip(val objectId: ObjectId, val station: Station) : Command()

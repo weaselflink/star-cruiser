@@ -26,7 +26,7 @@ open external class Object3D {
 
     fun clone(recursive: Boolean? = definedExternally): Object3D
 
-    fun getWorldPosition(target: Vector3 ): Vector3
+    fun getWorldPosition(target: Vector3): Vector3
 
     fun lookAt(vector: Vector3)
     fun lookAt(x: Number, y: Number, z: Number)

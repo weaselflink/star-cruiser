@@ -16,9 +16,9 @@ fun PerspectiveCamera.updateSize(width: Number, height: Number) {
 fun Object3D.debugPrint(layer: Int = 0) {
     val prefix = (0 until layer).joinToString(separator = "") { "---- " }
     println("${prefix}name: $name")
-    println(with (position) { "${prefix}position: $x,$y,$z" })
-    println(with (rotation) { "${prefix}rotation: $x,$y,$z" })
-    println(with (scale) { "${prefix}scale: $x,$y,$z" })
+    println(with(position) { "${prefix}position: $x,$y,$z" })
+    println(with(rotation) { "${prefix}rotation: $x,$y,$z" })
+    println(with(scale) { "${prefix}scale: $x,$y,$z" })
     children.forEach {
         it.debugPrint(layer + 1)
     }

@@ -9,8 +9,10 @@ import io.ktor.http.content.static
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import io.ktor.routing.get
-import kotlinx.css.*
+import kotlinx.css.Align
 import kotlinx.css.BorderStyle.solid
+import kotlinx.css.CSSBuilder
+import kotlinx.css.Color
 import kotlinx.css.Color.Companion.black
 import kotlinx.css.Color.Companion.darkGrey
 import kotlinx.css.Color.Companion.dimGrey
@@ -20,7 +22,60 @@ import kotlinx.css.Cursor.pointer
 import kotlinx.css.Display.block
 import kotlinx.css.Display.grid
 import kotlinx.css.FontWeight.Companion.bold
+import kotlinx.css.Gap
+import kotlinx.css.GridColumn
+import kotlinx.css.GridRow
+import kotlinx.css.GridTemplateColumns
+import kotlinx.css.JustifyContent
+import kotlinx.css.Outline
 import kotlinx.css.Position.fixed
+import kotlinx.css.TextAlign
+import kotlinx.css.alignContent
+import kotlinx.css.alignSelf
+import kotlinx.css.backgroundColor
+import kotlinx.css.body
+import kotlinx.css.borderBottomLeftRadius
+import kotlinx.css.borderBottomRightRadius
+import kotlinx.css.borderColor
+import kotlinx.css.borderRadius
+import kotlinx.css.borderStyle
+import kotlinx.css.borderTopLeftRadius
+import kotlinx.css.borderTopRightRadius
+import kotlinx.css.borderWidth
+import kotlinx.css.bottom
+import kotlinx.css.canvas
+import kotlinx.css.color
+import kotlinx.css.cursor
+import kotlinx.css.display
+import kotlinx.css.fontFamily
+import kotlinx.css.fontSize
+import kotlinx.css.fontWeight
+import kotlinx.css.gap
+import kotlinx.css.gridColumn
+import kotlinx.css.gridRow
+import kotlinx.css.gridTemplateColumns
+import kotlinx.css.height
+import kotlinx.css.justifyContent
+import kotlinx.css.left
+import kotlinx.css.margin
+import kotlinx.css.marginBottom
+import kotlinx.css.marginTop
+import kotlinx.css.minHeight
+import kotlinx.css.outline
+import kotlinx.css.padding
+import kotlinx.css.paddingBottom
+import kotlinx.css.paddingLeft
+import kotlinx.css.paddingRight
+import kotlinx.css.paddingTop
+import kotlinx.css.pct
+import kotlinx.css.position
+import kotlinx.css.right
+import kotlinx.css.textAlign
+import kotlinx.css.top
+import kotlinx.css.vh
+import kotlinx.css.vmin
+import kotlinx.css.width
+import kotlinx.css.zIndex
 import kotlinx.html.BODY
 import kotlinx.html.ScriptType
 import kotlinx.html.body
@@ -255,9 +310,9 @@ private fun BODY.joinUi() {
             button(classes = "spawn leftEdge") {
                 +"+ Spawn ship"
             }
-            button(classes = "playerShipsPrev leftEdge") { +"Prev"}
+            button(classes = "playerShipsPrev leftEdge") { +"Prev" }
             div(classes = "playerShips") {}
-            button(classes = "playerShipsNext leftEdge") { +"Next"}
+            button(classes = "playerShipsNext leftEdge") { +"Next" }
         }
     }
 }

@@ -2,8 +2,8 @@ package components
 
 import CanvasDimensions
 import de.bissell.starcruiser.ShipMessage
-import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.roundToInt
+import org.w3c.dom.HTMLCanvasElement
 
 class HullDisplay(
     canvas: HTMLCanvasElement,

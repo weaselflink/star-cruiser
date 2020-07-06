@@ -19,8 +19,8 @@ data class ComponentDimensions(
     fun isInside(pointerEvent: PointerEvent): Boolean {
         val point = pointerEvent.point
 
-        return point.x > bottomX && point.x < bottomX + width
-                && point.y > bottomY - height && point.y < bottomY
+        return point.x > bottomX && point.x < bottomX + width &&
+                point.y > bottomY - height && point.y < bottomY
     }
 
     companion object {

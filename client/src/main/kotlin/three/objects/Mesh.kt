@@ -7,6 +7,6 @@ import three.core.Object3D
 import three.materials.Material
 
 external class Mesh(
-    geometry : Geometry,
-    material : Material
+    geometry: Geometry,
+    material: Material
 ) : Object3D

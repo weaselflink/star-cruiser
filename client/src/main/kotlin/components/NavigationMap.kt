@@ -24,6 +24,9 @@ import environmentContactStyle
 import friendlyContactStyle
 import input.PointerEvent
 import input.PointerEventHandler
+import kotlin.math.PI
+import kotlin.math.pow
+import kotlin.math.roundToInt
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import scanProgressStyle
@@ -34,9 +37,6 @@ import translate
 import translateToCenter
 import unknownContactStyle
 import wayPointStyle
-import kotlin.math.PI
-import kotlin.math.pow
-import kotlin.math.roundToInt
 
 class NavigationMap(
     private val canvas: HTMLCanvasElement,

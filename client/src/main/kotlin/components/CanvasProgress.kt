@@ -32,7 +32,7 @@ class CanvasProgress(
     fun draw() {
         val dim = currentDimensions(canvas)
 
-        with (ctx) {
+        with(ctx) {
             save()
 
             lineWidth = dim.lineWidth * 0.5

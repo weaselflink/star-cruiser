@@ -27,6 +27,7 @@ import de.bissell.starcruiser.client.ThrottleMessage.AcknowledgeInflightMessage
 import de.bissell.starcruiser.client.ThrottleMessage.AddInflightMessage
 import de.bissell.starcruiser.client.ThrottleMessage.GetInflightMessageCount
 import io.ktor.http.cio.websocket.Frame
+import java.util.UUID
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -36,7 +37,6 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 data class ClientId(private val id: String) {
 

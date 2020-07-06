@@ -13,6 +13,7 @@ import de.bissell.starcruiser.isNear
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Instant
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -24,7 +25,6 @@ import strikt.assertions.isFalse
 import strikt.assertions.isNotNull
 import strikt.assertions.isNull
 import strikt.assertions.isTrue
-import java.time.Instant
 
 class ShipTest {
 

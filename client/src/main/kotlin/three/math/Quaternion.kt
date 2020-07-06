@@ -16,4 +16,3 @@ external class Quaternion(
 
     fun copy(q: Quaternion): Quaternion
 }
-

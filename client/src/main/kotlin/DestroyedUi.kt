@@ -1,6 +1,6 @@
 import de.bissell.starcruiser.Command.CommandExitShip
-import org.w3c.dom.HTMLButtonElement
 import kotlin.browser.document
+import org.w3c.dom.HTMLButtonElement
 
 class DestroyedUi {
 

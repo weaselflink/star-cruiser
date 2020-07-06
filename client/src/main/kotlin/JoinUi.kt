@@ -3,14 +3,14 @@ import de.bissell.starcruiser.ObjectId
 import de.bissell.starcruiser.PlayerShipMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station.Helm
-import org.w3c.dom.HTMLButtonElement
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.asList
-import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.math.max
 import kotlin.math.min
+import org.w3c.dom.HTMLButtonElement
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.asList
+import org.w3c.dom.events.MouseEvent
 
 class JoinUi {
 

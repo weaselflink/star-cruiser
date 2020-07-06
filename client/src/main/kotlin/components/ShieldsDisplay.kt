@@ -2,8 +2,8 @@ package components
 
 import CanvasDimensions
 import de.bissell.starcruiser.ShieldMessage
-import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.roundToInt
+import org.w3c.dom.HTMLCanvasElement
 
 class ShieldsDisplay(
     canvas: HTMLCanvasElement,
@@ -24,7 +24,7 @@ class ShieldsDisplay(
     )
 
     fun draw(shieldMessage: ShieldMessage) {
-        with (shieldMessage) {
+        with(shieldMessage) {
             canvasProgress.leftText = if (up) {
                 "Shields up"
             } else {

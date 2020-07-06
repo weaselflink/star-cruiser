@@ -333,7 +333,6 @@ class Ship(
                 ?.let { beamWeapon.isInRange(it) }
                 ?: false
     }
-
 }
 
 data class ShipUpdateResult(

@@ -1,11 +1,11 @@
 package de.bissell.starcruiser
 
+import kotlin.math.PI
+import kotlin.math.sqrt
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
-import kotlin.math.PI
-import kotlin.math.sqrt
 
 class Vector2Test {
 
@@ -41,7 +41,7 @@ class Vector2Test {
 
     @Test
     fun `subtracts vectors`() {
-        expectThat(  Vector2(5.0, 1.1) - Vector2(-1.0, 0.9))
+        expectThat(Vector2(5.0, 1.1) - Vector2(-1.0, 0.9))
             .isNear(Vector2(6.0, 0.2))
     }
 
@@ -49,7 +49,7 @@ class Vector2Test {
     fun `scales vectors`() {
         expectThat(Vector2(5.0, 1.1) * 2.5)
             .isNear(Vector2(12.5, 2.75))
-        expectThat( 2.5 * Vector2(5.0, 1.1))
+        expectThat(2.5 * Vector2(5.0, 1.1))
             .isNear(Vector2(12.5, 2.75))
     }
 
@@ -59,7 +59,7 @@ class Vector2Test {
             .isNear(Vector2(-1.0, 1.0))
         expectThat(Vector2(1.0, 1.0).rotate(-PI / 2))
             .isNear(Vector2(1.0, -1.0))
-        expectThat( Vector2(1.0, 1.0).rotate(PI / 4))
+        expectThat(Vector2(1.0, 1.0).rotate(PI / 4))
             .isNear(Vector2(0.0, sqrt(2.0)))
     }
 }

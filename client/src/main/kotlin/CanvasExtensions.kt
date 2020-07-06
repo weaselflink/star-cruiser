@@ -1,4 +1,8 @@
 import de.bissell.starcruiser.Vector2
+import kotlin.browser.window
+import kotlin.math.PI
+import kotlin.math.max
+import kotlin.math.min
 import org.w3c.dom.CENTER
 import org.w3c.dom.CanvasLineJoin
 import org.w3c.dom.CanvasRenderingContext2D
@@ -7,10 +11,6 @@ import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.ROUND
 import org.w3c.dom.TOP
-import kotlin.browser.window
-import kotlin.math.PI
-import kotlin.math.max
-import kotlin.math.min
 
 val HTMLCanvasElement.context2D
     get() = getContext(contextId = "2d")!! as CanvasRenderingContext2D
@@ -93,7 +93,6 @@ fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, heigh
         arc(x + width - radius, y - radius, radius, -(PI / 2.0), PI / 2.0)
         lineTo(x + radius, y)
         arc(x + radius, y - radius, radius, PI / 2.0, -(PI / 2.0))
-
     } else {
         val radius = width / 2.0
         moveTo(x, y - radius)

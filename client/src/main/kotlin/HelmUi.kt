@@ -10,11 +10,11 @@ import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import input.PointerEventDispatcher
-import org.w3c.dom.CanvasRenderingContext2D
 import kotlin.browser.document
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+import org.w3c.dom.CanvasRenderingContext2D
 
 class HelmUi : StationUi {
 

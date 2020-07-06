@@ -1,6 +1,8 @@
 package scene
 
 import context2D
+import kotlin.browser.document
+import kotlin.math.PI
 import org.w3c.dom.HTMLCanvasElement
 import three.AdditiveBlending
 import three.DoubleSide
@@ -12,8 +14,6 @@ import three.materials.MaterialParameters
 import three.materials.MeshBasicMaterial
 import three.objects.Mesh
 import three.textures.Texture
-import kotlin.browser.document
-import kotlin.math.PI
 
 class LaserBeam(
     private val length: Number = 1.0,

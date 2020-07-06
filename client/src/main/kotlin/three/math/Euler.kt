@@ -12,5 +12,4 @@ external class Euler(
     var x: Double
     var y: Double
     var z: Double
-
 }

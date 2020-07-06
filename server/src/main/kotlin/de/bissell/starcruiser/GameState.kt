@@ -9,14 +9,14 @@ import de.bissell.starcruiser.Station.Navigation
 import de.bissell.starcruiser.Station.Weapons
 import de.bissell.starcruiser.client.ClientId
 import de.bissell.starcruiser.ships.Ship
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.actor
 import java.time.Instant
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit
 import kotlin.math.PI
 import kotlin.random.Random
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.actor
 
 sealed class GameStateChange
 
@@ -350,12 +350,12 @@ data class Client(
 
 sealed class ClientState {
 
-    object ShipSelection: ClientState()
+    object ShipSelection : ClientState()
 
-    object ShipDestroyed: ClientState()
+    object ShipDestroyed : ClientState()
 
     data class InShip(
         val ship: Ship,
         val station: Station
-    ): ClientState()
+    ) : ClientState()
 }

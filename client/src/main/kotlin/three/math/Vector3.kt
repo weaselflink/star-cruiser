@@ -18,7 +18,7 @@ external class Vector3(
 
     fun copy(v: Vector3): Vector3
 
-    fun length() : Double
+    fun length(): Double
 
     fun set(x: Number, y: Number, z: Number): Vector3
 

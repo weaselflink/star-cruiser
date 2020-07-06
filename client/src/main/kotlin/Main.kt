@@ -1,8 +1,12 @@
-import de.bissell.starcruiser.*
-import org.w3c.dom.WebSocket
-import org.w3c.dom.events.KeyboardEvent
+import de.bissell.starcruiser.Command
+import de.bissell.starcruiser.GameStateMessage
+import de.bissell.starcruiser.ShipMessage
+import de.bissell.starcruiser.SnapshotMessage
+import de.bissell.starcruiser.Station
 import kotlin.browser.document
 import kotlin.browser.window
+import org.w3c.dom.WebSocket
+import org.w3c.dom.events.KeyboardEvent
 
 lateinit var commonShipUi: CommonShipUi
 lateinit var joinUi: JoinUi
@@ -119,7 +123,7 @@ fun keyHandler(event: KeyboardEvent) {
     }
 }
 
-fun GameStateMessage?.currentShip() : ShipMessage? {
+fun GameStateMessage?.currentShip(): ShipMessage? {
     return this?.snapshot?.let {
         when (it) {
             is SnapshotMessage.ShipSnapshot -> it.ship

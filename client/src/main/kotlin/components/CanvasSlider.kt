@@ -8,6 +8,7 @@ import de.bissell.starcruiser.clamp
 import drawPill
 import input.PointerEvent
 import input.PointerEventHandler
+import kotlin.math.PI
 import org.w3c.dom.ALPHABETIC
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextAlign
@@ -15,7 +16,6 @@ import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.LEFT
 import px
-import kotlin.math.PI
 
 class CanvasSlider(
     private val canvas: HTMLCanvasElement,

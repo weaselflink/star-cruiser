@@ -17,6 +17,7 @@ plugins {
     kotlin("plugin.serialization") version "1.3.72" apply false
     id("com.github.johnrengelman.shadow") version "6.0.0" apply false
     id("com.github.ben-manes.versions") version "0.28.0" apply false
+    id("org.jlleitschuh.gradle.ktlint") version "9.2.1" apply false
 }
 
 allprojects {
@@ -24,6 +25,7 @@ allprojects {
     version = "0.11.0"
 
     apply(plugin = "com.github.ben-manes.versions")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     repositories {
         mavenCentral()

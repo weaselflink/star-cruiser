@@ -4,11 +4,11 @@ import Visibility
 import byQuery
 import de.bissell.starcruiser.pad
 import getHtmlElementById
+import kotlin.browser.document
+import kotlin.math.roundToInt
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
 import visibility
-import kotlin.browser.document
-import kotlin.math.roundToInt
 
 class SelectionDetails(
     private val onScan: () -> Unit,

@@ -226,7 +226,6 @@ sealed class LockStatus {
     data class Locked(
         override val targetId: ObjectId
     ) : LockStatus(), LockedTarget
-
 }
 
 @Serializable
@@ -289,7 +288,7 @@ sealed class JumpDriveMessage {
         override val ratio: Double,
         override val distance: Int,
         override val animation: Double?
-    ): JumpDriveMessage()
+    ) : JumpDriveMessage()
 
     @Serializable
     data class Jumping(
@@ -297,7 +296,7 @@ sealed class JumpDriveMessage {
         override val distance: Int,
         override val animation: Double?,
         val progress: Double
-    ): JumpDriveMessage()
+    ) : JumpDriveMessage()
 
     @Serializable
     data class Recharging(
@@ -305,5 +304,5 @@ sealed class JumpDriveMessage {
         override val distance: Int,
         override val animation: Double?,
         val progress: Double
-    ): JumpDriveMessage()
+    ) : JumpDriveMessage()
 }
