@@ -48,11 +48,6 @@ fun init() {
         hide()
         addExtraButtons(
             ExtraButton(
-                ".toggleShields",
-                weaponsUi::toggleShields,
-                Station.Weapons
-            ),
-            ExtraButton(
                 ".topView",
                 mainScreenUi::toggleTopView,
                 Station.MainScreen

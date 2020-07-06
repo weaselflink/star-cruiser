@@ -8,7 +8,6 @@ import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import input.PointerEventDispatcher
 import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.HTMLButtonElement
 import kotlin.browser.document
 
 class WeaponsUi : StationUi {
@@ -19,7 +18,6 @@ class WeaponsUi : StationUi {
     private val canvas = root.canvas
     private val ctx = canvas.context2D
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
-    private val toggleShieldsButton: HTMLButtonElement = document.byQuery(".toggleShields")
     private val shortRangeScope = ShortRangeScope(canvas, true) { contactSelected(it) }
     private val lockTargetButton = CanvasButton(
         canvas = canvas,
@@ -73,13 +71,6 @@ class WeaponsUi : StationUi {
     }
 
     fun draw(snapshot: SnapshotMessage.Weapons) {
-        shieldsUp = snapshot.ship.shield.up
-        if (shieldsUp) {
-            toggleShieldsButton.innerHTML = "Shields down"
-        } else {
-            toggleShieldsButton.innerHTML = "Shields up"
-        }
-
         ctx.draw(snapshot)
     }
 
