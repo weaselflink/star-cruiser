@@ -42,7 +42,7 @@ class NavigationUi : StationUi {
         heightExpr = { it.vmin * 10 },
         onClick = { toggleAddWaypoint() },
         activated = { buttonState == ButtonState.AddWaypoint },
-        text = "Add waypoint"
+        text = { "Add waypoint" }
     )
 
     private var buttonState: ButtonState = ButtonState.Initial

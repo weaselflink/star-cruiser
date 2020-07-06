@@ -75,7 +75,7 @@ class HelmUi : StationUi {
         widthExpr = { it.vmin * 20 },
         heightExpr = { it.vmin * 10 },
         onClick = { clientSocket.send(CommandStartJump) },
-        text = "Jump"
+        text = { "Jump" }
     )
 
     init {

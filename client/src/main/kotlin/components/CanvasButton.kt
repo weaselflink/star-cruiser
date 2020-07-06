@@ -21,7 +21,7 @@ class CanvasButton(
     private val heightExpr: (CanvasDimensions) -> Double,
     private val onClick: () -> Unit = {},
     private val activated: () -> Boolean = { false },
-    private val text: String? = null
+    private val text: () -> String? = { null }
 ) : PointerEventHandler {
 
     private val ctx: CanvasRenderingContext2D = canvas.context2D
@@ -75,7 +75,8 @@ class CanvasButton(
     }
 
     private fun CanvasRenderingContext2D.drawText(dim: ComponentDimensions) {
-        if (text != null) {
+        val currentText = text()
+        if (currentText != null) {
             save()
 
             fillStyle = if (activated()) {
@@ -89,7 +90,7 @@ class CanvasButton(
             val textSize = (dim.height * 0.5).toInt()
             font = "${textSize.px} sans-serif"
             translate(dim.width * 0.5, -dim.height * 0.35)
-            fillText(text, 0.0, 0.0)
+            fillText(currentText, 0.0, 0.0)
         }
     }
 

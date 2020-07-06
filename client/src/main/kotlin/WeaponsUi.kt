@@ -28,7 +28,16 @@ class WeaponsUi : StationUi {
         heightExpr = { it.vmin * 10 },
         onClick = { toggleLockTarget() },
         activated = { selectingTarget },
-        text = "Lock on"
+        text = { "Lock on" }
+    )
+    private val shieldsButton = CanvasButton(
+        canvas = canvas,
+        xExpr = { it.vmin * 3 },
+        yExpr = { it.height - it.vmin * 3 },
+        widthExpr = { it.vmin * 20 },
+        heightExpr = { it.vmin * 10 },
+        onClick = { toggleShields() },
+        text = { if (shieldsUp) "Down" else "Up" }
     )
 
     private var shieldsUp = false
@@ -38,6 +47,7 @@ class WeaponsUi : StationUi {
         resize()
         pointerEventDispatcher.addHandler(shortRangeScope.rotateButton)
         pointerEventDispatcher.addHandler(lockTargetButton)
+        pointerEventDispatcher.addHandler(shieldsButton)
     }
 
     fun resize() {
@@ -73,6 +83,7 @@ class WeaponsUi : StationUi {
 
         shortRangeScope.draw(snapshot)
         lockTargetButton.draw()
+        shieldsButton.draw()
     }
 
     private fun contactSelected(targetId: ObjectId) {

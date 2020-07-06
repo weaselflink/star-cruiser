@@ -51,7 +51,7 @@ class ShortRangeScope(
         heightExpr = { it.vmin * 10 },
         onClick = { ClientState.toggleRotateScope() },
         activated = { ClientState.rotateScope },
-        text = "Rotate"
+        text = { "Rotate" }
     )
 
     init {
