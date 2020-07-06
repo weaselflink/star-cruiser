@@ -8,12 +8,6 @@ plugins {
     kotlin("plugin.serialization")
 }
 
-repositories {
-    mavenLocal()
-    jcenter()
-    maven { url = uri("https://kotlin.bintray.com/ktor") }
-}
-
 kotlin {
     sourceSets {
         val commonMain by getting {

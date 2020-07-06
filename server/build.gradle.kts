@@ -13,12 +13,6 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-repositories {
-    mavenCentral()
-    jcenter()
-    maven { url = uri("https://kotlin.bintray.com/ktor") }
-}
-
 application {
     mainClassName = "io.ktor.server.netty.EngineMain"
 }
@@ -28,8 +22,8 @@ dependencies {
     implementation(project(":shared"))
 
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains:kotlin-css:1.0.0-pre.107-kotlin-1.3.72")
-    implementation("org.jetbrains:kotlin-css-jvm:1.0.0-pre.107-kotlin-1.3.72")
+    implementation("org.jetbrains:kotlin-css:1.0.0-pre.109-kotlin-1.3.72")
+    implementation("org.jetbrains:kotlin-css-jvm:1.0.0-pre.109-kotlin-1.3.72")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-core:$ktor_version")

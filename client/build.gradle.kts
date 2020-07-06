@@ -7,11 +7,6 @@ plugins {
     kotlin("plugin.serialization")
 }
 
-repositories {
-    mavenCentral()
-    maven(url = "https://jitpack.io")
-}
-
 dependencies {
 
     implementation(project(":shared"))
