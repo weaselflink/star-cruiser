@@ -1,4 +1,5 @@
 import components.CanvasButton
+import components.HullDisplay
 import components.ShieldsDisplay
 import components.ShortRangeScope
 import de.bissell.starcruiser.Command
@@ -28,6 +29,11 @@ class WeaponsUi : StationUi {
         onClick = { toggleLockTarget() },
         activated = { selectingTarget },
         text = { "Lock on" }
+    )
+    private val hullDisplay = HullDisplay(
+        canvas = canvas,
+        xExpr = { it.vmin * 3 },
+        yExpr = { it.height - it.vmin * 23 }
     )
     private val shieldsDisplay = ShieldsDisplay(
         canvas = canvas,
@@ -66,11 +72,9 @@ class WeaponsUi : StationUi {
         root.visibility = Visibility.hidden
     }
 
-    fun toggleShields() {
-        clientSocket.send(Command.CommandSetShieldsUp(!shieldsUp))
-    }
-
     fun draw(snapshot: SnapshotMessage.Weapons) {
+        shieldsUp = snapshot.ship.shield.up
+
         ctx.draw(snapshot)
     }
 
@@ -80,6 +84,7 @@ class WeaponsUi : StationUi {
 
         shortRangeScope.draw(snapshot)
         lockTargetButton.draw()
+        hullDisplay.draw(snapshot.ship)
         shieldsDisplay.draw(snapshot.ship.shield)
         shieldsButton.draw()
     }
@@ -89,6 +94,10 @@ class WeaponsUi : StationUi {
             toggleLockTarget()
             clientSocket.send(CommandLockTarget(targetId))
         }
+    }
+
+    private fun toggleShields() {
+        clientSocket.send(Command.CommandSetShieldsUp(!shieldsUp))
     }
 
     private fun toggleLockTarget() {

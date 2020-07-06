@@ -134,6 +134,7 @@ data class ShipMessage(
     val beams: List<BeamMessage>,
     val shield: ShieldMessage,
     val hull: Double,
+    val hullMax: Double,
     val jumpDrive: JumpDriveMessage
 )
 

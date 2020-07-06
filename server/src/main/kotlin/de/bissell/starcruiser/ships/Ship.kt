@@ -213,6 +213,7 @@ class Ship(
             beams = beamHandlers.map { it.toMessage() },
             shield = shieldHandler.toMessage(),
             hull = hull,
+            hullMax = template.hull,
             jumpDrive = jumpHandler.toMessage()
         )
 
