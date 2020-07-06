@@ -1,4 +1,5 @@
 import components.CanvasButton
+import components.ShieldsDisplay
 import components.ShortRangeScope
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.Command.CommandLockTarget
@@ -30,9 +31,14 @@ class WeaponsUi : StationUi {
         activated = { selectingTarget },
         text = { "Lock on" }
     )
-    private val shieldsButton = CanvasButton(
+    private val shieldsDisplay = ShieldsDisplay(
         canvas = canvas,
         xExpr = { it.vmin * 3 },
+        yExpr = { it.height - it.vmin * 15 }
+    )
+    private val shieldsButton = CanvasButton(
+        canvas = canvas,
+        xExpr = { it.vmin * 13 },
         yExpr = { it.height - it.vmin * 3 },
         widthExpr = { it.vmin * 20 },
         heightExpr = { it.vmin * 10 },
@@ -83,6 +89,7 @@ class WeaponsUi : StationUi {
 
         shortRangeScope.draw(snapshot)
         lockTargetButton.draw()
+        shieldsDisplay.draw(snapshot.ship.shield)
         shieldsButton.draw()
     }
 
