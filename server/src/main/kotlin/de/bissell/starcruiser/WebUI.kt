@@ -358,18 +358,11 @@ private val CSSBuilder.selectionDetailsCss: Unit
             right = 0.vmin
             bottom = 0.vmin
             zIndex = 10
-            display = grid
-            gridTemplateColumns = GridTemplateColumns("auto 10vmin")
-            gap = Gap("2vmin")
-            padding(3.vmin, 6.vmin)
-            color = lightGrey
-            backgroundColor = black
-            borderWidth = 0.5.vmin
-            borderStyle = solid
-            borderColor = darkGrey
-            borderTopLeftRadius = 4.vmin
             fontWeight = bold
             fontSize = 3.vmin
+            standardGrid
+            gridTemplateColumns = GridTemplateColumns("auto 10vmin")
+            borderTopLeftRadius = 4.vmin
         }
         "#selection-details button" {
             borderRadius = 4.vmin
@@ -400,24 +393,29 @@ private val CSSBuilder.popupCss: Unit
     get() {
         ".popup" {
             zIndex = 10
-            display = grid
-            gap = Gap("2vmin")
-            padding(3.vmin, 6.vmin)
-            color = lightGrey
-            backgroundColor = black
-            borderWidth = 0.5.vmin
-            borderStyle = solid
-            borderColor = darkGrey
-            borderRadius = 4.vmin
             fontWeight = bold
             fontSize = 4.vmin
+            standardGrid
             justifyContent = JustifyContent.center
+            borderRadius = 4.vmin
         }
         ".popup button" {
             borderRadius = 4.vmin
             paddingLeft = 4.vmin
             paddingRight = 4.vmin
         }
+    }
+
+private val CSSBuilder.standardGrid: Unit
+    get() {
+        display = grid
+        gap = Gap("2vmin")
+        padding(3.vmin, 6.vmin)
+        color = lightGrey
+        backgroundColor = black
+        borderWidth = 0.5.vmin
+        borderStyle = solid
+        borderColor = darkGrey
     }
 
 @Suppress("DEPRECATION")
