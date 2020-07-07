@@ -242,7 +242,7 @@ private val BODY.weaponsUI
     get() = canvasUi("weapons-ui")
 
 private val BODY.navigationUi
-    get() = canvasUi("weapons-ui") {
+    get() = canvasUi("navigation-ui") {
         div {
             id = "selection-details"
             div(classes = "designation") {}
