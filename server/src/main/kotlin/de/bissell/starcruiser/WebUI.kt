@@ -78,6 +78,7 @@ import kotlinx.css.vmin
 import kotlinx.css.width
 import kotlinx.css.zIndex
 import kotlinx.html.BODY
+import kotlinx.html.FlowOrMetaDataContent
 import kotlinx.html.ScriptType
 import kotlinx.html.body
 import kotlinx.html.button
@@ -89,6 +90,7 @@ import kotlinx.html.link
 import kotlinx.html.meta
 import kotlinx.html.p
 import kotlinx.html.script
+import kotlinx.html.style
 
 fun Routing.webUi() {
     static("/js") {
@@ -122,19 +124,10 @@ fun Routing.webUi() {
                 width = 100.pct
                 height = 100.pct
             }
-            ".spawn" {
-                marginBottom = 2.vmin
-            }
             ".playerShips" {
                 display = grid
                 gap = Gap(1.vmin.value)
                 alignSelf = Align.flexStart
-            }
-            "#destroyed-ui" {
-                display = grid
-                minHeight = 100.vh
-                alignContent = Align.center
-                justifyContent = JustifyContent.center
             }
             buttonCss
             selectionDetailsCss
@@ -184,6 +177,9 @@ private fun BODY.joinUi() {
         id = "join-ui"
         div(classes = "topLeftButtons") {
             button(classes = "spawn leftEdge") {
+                styleCss {
+                    marginBottom = 2.vmin
+                }
                 +"+ Spawn ship"
             }
             button(classes = "playerShipsPrev leftEdge") { +"Prev" }
@@ -196,6 +192,12 @@ private fun BODY.joinUi() {
 private fun BODY.destroyedUi() {
     div {
         id = "destroyed-ui"
+        styleCss {
+            display = grid
+            minHeight = 100.vh
+            alignContent = Align.center
+            justifyContent = JustifyContent.center
+        }
         div(classes = "popup") {
             p {
                 +"Your ship was destroyed"
@@ -417,6 +419,13 @@ private val CSSBuilder.popupCss: Unit
             paddingRight = 4.vmin
         }
     }
+
+@Suppress("DEPRECATION")
+private fun FlowOrMetaDataContent.styleCss(builder: CSSBuilder.() -> Unit) {
+    style(type = ContentType.Text.CSS.toString()) {
+        +CSSBuilder().apply(builder).toString()
+    }
+}
 
 private suspend inline fun ApplicationCall.respondCss(builder: CSSBuilder.() -> Unit) =
     respondText(CSSBuilder().apply(builder).toString(), ContentType.Text.CSS)
