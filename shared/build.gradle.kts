@@ -1,4 +1,6 @@
-@file:Suppress("PropertyName")
+@file:Suppress("PropertyName", "SuspiciousCollectionReassignment", "UNUSED_VARIABLE")
+
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val kotlin_version: String by project
 val ktor_version: String by project
@@ -59,29 +61,29 @@ kotlin {
 }
 
 tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    withType<KotlinCompile>().all {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs = freeCompilerArgs + listOf("-Xopt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
         }
     }
 
     withType<org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompile>().configureEach {
         kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs + listOf("-Xopt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
         }
     }
 
     withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile>().configureEach {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs = freeCompilerArgs + listOf("-Xopt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
         }
     }
 
     withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>().configureEach {
         kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs + listOf("-Xopt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
         }
     }
 

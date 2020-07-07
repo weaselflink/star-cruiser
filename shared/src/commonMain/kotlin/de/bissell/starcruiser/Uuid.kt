@@ -3,7 +3,6 @@ package de.bissell.starcruiser
 import kotlin.random.Random
 import kotlin.random.nextUBytes
 
-@OptIn(ExperimentalUnsignedTypes::class)
 class Uuid {
 
     private val bytes: UByteArray
