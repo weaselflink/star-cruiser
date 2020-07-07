@@ -8,8 +8,8 @@ import de.bissell.starcruiser.ObjectId
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import input.PointerEventDispatcher
-import kotlin.browser.document
 import org.w3c.dom.CanvasRenderingContext2D
+import kotlin.browser.document
 
 class WeaponsUi : StationUi {
 
@@ -55,9 +55,11 @@ class WeaponsUi : StationUi {
 
     init {
         resize()
-        pointerEventDispatcher.addHandler(shortRangeScope.rotateButton)
-        pointerEventDispatcher.addHandler(lockTargetButton)
-        pointerEventDispatcher.addHandler(shieldsButton)
+        pointerEventDispatcher.addHandlers(
+            shortRangeScope.rotateButton,
+            lockTargetButton,
+            shieldsButton
+        )
     }
 
     fun resize() {

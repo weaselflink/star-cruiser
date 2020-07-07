@@ -48,8 +48,8 @@ class PointerEventDispatcher(
         )
     }
 
-    fun addHandler(handler: PointerEventHandler) {
-        handlers += handler
+    fun addHandlers(vararg handlersToAdd: PointerEventHandler) {
+        handlersToAdd.forEach { handlers += it }
     }
 
     private fun handleMouseDown(mouseEvent: MouseEvent) {

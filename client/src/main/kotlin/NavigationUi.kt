@@ -1,11 +1,5 @@
-import components.CanvasButton
-import components.CanvasSlider
-import components.MapClick
-import components.NavigationMap
-import components.SelectionDetails
-import de.bissell.starcruiser.Command.CommandAddWaypoint
-import de.bissell.starcruiser.Command.CommandDeleteWaypoint
-import de.bissell.starcruiser.Command.CommandScanShip
+import components.*
+import de.bissell.starcruiser.Command.*
 import de.bissell.starcruiser.ScanLevel
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
@@ -49,9 +43,11 @@ class NavigationUi : StationUi {
 
     init {
         resize()
-        pointerEventDispatcher.addHandler(zoomSlider)
-        pointerEventDispatcher.addHandler(addWaypointButton)
-        pointerEventDispatcher.addHandler(navigationMap.MapPointerEventHandler())
+        pointerEventDispatcher.addHandlers(
+            zoomSlider,
+            addWaypointButton,
+            navigationMap.MapPointerEventHandler()
+        )
     }
 
     override fun show() {

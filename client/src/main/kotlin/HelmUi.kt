@@ -2,19 +2,16 @@ import components.CanvasButton
 import components.CanvasSlider
 import components.JumpDisplay
 import components.ShortRangeScope
-import de.bissell.starcruiser.Command.CommandChangeJumpDistance
-import de.bissell.starcruiser.Command.CommandChangeRudder
-import de.bissell.starcruiser.Command.CommandChangeThrottle
-import de.bissell.starcruiser.Command.CommandStartJump
+import de.bissell.starcruiser.Command.*
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import input.PointerEventDispatcher
+import org.w3c.dom.CanvasRenderingContext2D
 import kotlin.browser.document
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
-import org.w3c.dom.CanvasRenderingContext2D
 
 class HelmUi : StationUi {
 
@@ -80,11 +77,13 @@ class HelmUi : StationUi {
 
     init {
         resize()
-        pointerEventDispatcher.addHandler(throttleSlider)
-        pointerEventDispatcher.addHandler(jumpSlider)
-        pointerEventDispatcher.addHandler(rudderSlider)
-        pointerEventDispatcher.addHandler(jumpButton)
-        pointerEventDispatcher.addHandler(shortRangeScope.rotateButton)
+        pointerEventDispatcher.addHandlers(
+            throttleSlider,
+            jumpSlider,
+            rudderSlider,
+            jumpButton,
+            shortRangeScope.rotateButton
+        )
     }
 
     fun resize() {

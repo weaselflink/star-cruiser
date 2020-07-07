@@ -2,13 +2,13 @@ import components.CanvasButton
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import input.PointerEventDispatcher
-import kotlin.browser.document
-import kotlin.browser.window
 import org.w3c.dom.HTMLCanvasElement
 import scene.MainScene
 import three.cameras.Camera
 import three.renderers.WebGLRenderer
 import three.renderers.WebGLRendererParams
+import kotlin.browser.document
+import kotlin.browser.window
 
 class MainScreenUi : StationUi {
 
@@ -50,8 +50,10 @@ class MainScreenUi : StationUi {
 
     init {
         resize()
-        pointerEventDispatcher.addHandler(frontViewButton)
-        pointerEventDispatcher.addHandler(topViewButton)
+        pointerEventDispatcher.addHandlers(
+            frontViewButton,
+            topViewButton
+        )
     }
 
     fun resize() {
