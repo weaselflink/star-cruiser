@@ -417,4 +417,3 @@ private fun CSSBuilder.popupCss() {
 
 private suspend inline fun ApplicationCall.respondCss(builder: CSSBuilder.() -> Unit) =
     respondText(CSSBuilder().apply(builder).toString(), ContentType.Text.CSS)
-
