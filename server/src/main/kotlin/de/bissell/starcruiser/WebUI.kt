@@ -215,9 +215,6 @@ private val BODY.commonShipUi
             button(classes = "fullscreen leftEdge") {
                 +"Fullscreen"
             }
-            button(classes = "extraButton topView leftEdge") {
-                +"Top view"
-            }
         }
         div(classes = "topRightButtons") {
             button(classes = "current switchToHelm rightEdge") {
@@ -260,7 +257,15 @@ private val BODY.navigationUi
     }
 
 private val BODY.mainScreenUi
-    get() = canvasUi("main-screen-ui")
+    get() = div {
+        id = "main-screen-ui"
+        canvas(classes = "canvas3d") {}
+        canvas(classes = "canvas2d") {
+            styleCss {
+                zIndex = 5
+            }
+        }
+    }
 
 private fun BODY.htmlUi(divId: String, block: DIV.() -> Unit = {}) {
     div {

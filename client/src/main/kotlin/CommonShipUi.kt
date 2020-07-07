@@ -22,8 +22,6 @@ class CommonShipUi {
         Navigation to root.byQuery(".switchToNavigation"),
         MainScreen to root.byQuery(".switchToMainScreen")
     )
-    private val extraButtons = mutableListOf<ExtraButton>()
-
     private var currentStation: Station = Helm
 
     init {
@@ -65,48 +63,7 @@ class CommonShipUi {
         if (newStation != currentStation) {
             stationButtons[currentStation]?.removeClass("current")
             stationButtons[newStation]?.addClass("current")
-
-            extraButtons.forEach {
-                if (it.isVisibleAtStation(newStation)) {
-                    it.element.display = Display.block
-                } else {
-                    it.element.display = Display.none
-                }
-            }
-
             currentStation = newStation
         }
     }
-
-    fun addExtraButtons(vararg buttons: ExtraButton) {
-        buttons.forEach { extraButton ->
-            extraButtons += extraButton
-
-            extraButton.element.apply {
-                if (!extraButton.isVisibleAtStation(Helm)) {
-                    display = Display.none
-                }
-                onclick = { extraButton.callback() }
-            }
-        }
-    }
-}
-
-data class ExtraButton(
-    val element: HTMLButtonElement,
-    val callback: () -> Unit,
-    val stations: List<Station>
-) {
-
-    constructor(
-        selector: String,
-        callback: () -> Unit,
-        vararg station: Station
-    ) : this(
-        document.byQuery(selector),
-        callback,
-        station.toList()
-    )
-
-    fun isVisibleAtStation(station: Station) = stations.contains(station)
 }

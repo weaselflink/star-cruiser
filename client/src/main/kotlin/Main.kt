@@ -50,13 +50,6 @@ fun init() {
 
     commonShipUi = CommonShipUi().apply {
         hide()
-        addExtraButtons(
-            ExtraButton(
-                ".topView",
-                mainScreenUi::toggleTopView,
-                Station.MainScreen
-            )
-        )
     }
 
     window.requestAnimationFrame { step() }
