@@ -78,6 +78,7 @@ import kotlinx.css.vmin
 import kotlinx.css.width
 import kotlinx.css.zIndex
 import kotlinx.html.BODY
+import kotlinx.html.DIV
 import kotlinx.html.FlowOrMetaDataContent
 import kotlinx.html.ScriptType
 import kotlinx.html.body
@@ -160,21 +161,20 @@ fun Routing.webUi() {
                 }
             }
             body {
-                joinUi()
-                destroyedUi()
-                commonShipUi()
-                helmUi()
-                weaponsUI()
-                navigationUi()
-                mainScreenUi()
+                joinUi
+                destroyedUi
+                commonShipUi
+                helmUi
+                weaponsUI
+                navigationUi
+                mainScreenUi
             }
         }
     }
 }
 
-private fun BODY.joinUi() {
-    div {
-        id = "join-ui"
+private val BODY.joinUi
+    get() = htmlUi("join-ui") {
         div(classes = "topLeftButtons") {
             button(classes = "spawn leftEdge") {
                 styleCss {
@@ -187,11 +187,9 @@ private fun BODY.joinUi() {
             button(classes = "playerShipsNext leftEdge") { +"Next" }
         }
     }
-}
 
-private fun BODY.destroyedUi() {
-    div {
-        id = "destroyed-ui"
+private val BODY.destroyedUi
+    get() = htmlUi("destroyed-ui") {
         styleCss {
             display = grid
             minHeight = 100.vh
@@ -207,11 +205,9 @@ private fun BODY.destroyedUi() {
             }
         }
     }
-}
 
-private fun BODY.commonShipUi() {
-    div {
-        id = "common-ship-ui"
+private val BODY.commonShipUi
+    get() = htmlUi("common-ship-ui") {
         div(classes = "topLeftButtons") {
             button(classes = "exit leftEdge") {
                 +"Exit ship"
@@ -238,26 +234,15 @@ private fun BODY.commonShipUi() {
             }
         }
     }
-}
 
-private fun BODY.helmUi() {
-    div {
-        id = "helm-ui"
-        canvas {}
-    }
-}
+private val BODY.helmUi
+    get() = canvasUi("helm-ui")
 
-private fun BODY.weaponsUI() {
-    div {
-        id = "weapons-ui"
-        canvas {}
-    }
-}
+private val BODY.weaponsUI
+    get() = canvasUi("weapons-ui")
 
-private fun BODY.navigationUi() {
-    div {
-        id = "navigation-ui"
-        canvas {}
+private val BODY.navigationUi
+    get() = canvasUi("weapons-ui") {
         div {
             id = "selection-details"
             div(classes = "designation") {}
@@ -273,12 +258,22 @@ private fun BODY.navigationUi() {
             }
         }
     }
+
+private val BODY.mainScreenUi
+    get() = canvasUi("main-screen-ui")
+
+private fun BODY.htmlUi(divId: String, block: DIV.() -> Unit = {}) {
+    div {
+        id = divId
+        block()
+    }
 }
 
-private fun BODY.mainScreenUi() {
+private fun BODY.canvasUi(divId: String, block: DIV.() -> Unit = {}) {
     div {
-        id = "main-screen-ui"
+        id = divId
         canvas {}
+        block()
     }
 }
 
