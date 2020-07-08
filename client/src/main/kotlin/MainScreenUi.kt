@@ -70,8 +70,8 @@ class MainScreenUi : StationUi {
         mainScene.update(snapshot)
 
         when (viewType) {
-            ViewType.Front -> renderer.render(mainScene, mainScene.frontCamera)
-            else -> renderer.render(mainScene, mainScene.frontCamera)
+            ViewType.Front -> render(mainScene.frontCamera)
+            else -> render(mainScene.frontCamera)
         }
 
         with(ctx) {
@@ -101,9 +101,8 @@ class MainScreenUi : StationUi {
         text = { view.name }
     )
 
+    private fun render(camera: Camera) = renderer.render(mainScene.scene, camera)
 }
-
-private fun WebGLRenderer.render(mainScene: MainScene, camera: Camera) = render(mainScene.scene, camera)
 
 private enum class ViewType {
     Front,
