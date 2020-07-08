@@ -27,32 +27,25 @@ class MainScreenUi : StationUi {
     private val mainScene = MainScene()
     private val pointerEventDispatcher = PointerEventDispatcher(overlayCanvas)
     private var viewType = ViewType.Front
-    private val frontViewButton = CanvasButton(
-        canvas = overlayCanvas,
-        xExpr = { it.width * 0.5 - it.vmin * 39 },
-        yExpr = { it.height - it.vmin * 3 },
-        widthExpr = { it.vmin * 37 },
-        heightExpr = { it.vmin * 10 },
-        onClick = { viewType = ViewType.Front },
-        activated = { viewType == ViewType.Front },
-        text = { "Front" }
+    private val frontViewButton = createViewButton(
+        view = ViewType.Front,
+        xExpr = { it.width * 0.5 - it.vmin * 58 }
     )
-    private val topViewButton = CanvasButton(
-        canvas = overlayCanvas,
-        xExpr = { it.width * 0.5 + it.vmin * 2 },
-        yExpr = { it.height - it.vmin * 3 },
-        widthExpr = { it.vmin * 37 },
-        heightExpr = { it.vmin * 10 },
-        onClick = { viewType = ViewType.Top },
-        activated = { viewType == ViewType.Top },
-        text = { "Top" }
+    private val topViewButton = createViewButton(
+        view = ViewType.Top,
+        xExpr = { it.width * 0.5 - it.vmin * 18 }
+    )
+    private val scopeViewButton = createViewButton(
+        view = ViewType.Scope,
+        xExpr = { it.width * 0.5 + it.vmin * 22 }
     )
 
     init {
         resize()
         pointerEventDispatcher.addHandlers(
             frontViewButton,
-            topViewButton
+            topViewButton,
+            scopeViewButton
         )
     }
 
@@ -86,12 +79,28 @@ class MainScreenUi : StationUi {
 
             frontViewButton.draw()
             topViewButton.draw()
+            scopeViewButton.draw()
         }
     }
 
     fun cycleViewType() {
         viewType = viewType.next
     }
+
+    private fun createViewButton(
+        view: ViewType,
+        xExpr: (CanvasDimensions) -> Double
+    ) = CanvasButton(
+        canvas = overlayCanvas,
+        xExpr = xExpr,
+        yExpr = { it.height - it.vmin * 3 },
+        widthExpr = { it.vmin * 36 },
+        heightExpr = { it.vmin * 10 },
+        onClick = { viewType = view },
+        activated = { viewType == view },
+        text = { view.name }
+    )
+
 }
 
 private fun WebGLRenderer.render(mainScene: MainScene, camera: Camera) = render(mainScene.scene, camera)
