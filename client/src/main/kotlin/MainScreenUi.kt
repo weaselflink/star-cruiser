@@ -1,4 +1,5 @@
 import components.CanvasButton
+import components.ShortRangeScope
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import input.PointerEventDispatcher
@@ -26,6 +27,7 @@ class MainScreenUi : StationUi {
     )
     private val mainScene = MainScene()
     private val pointerEventDispatcher = PointerEventDispatcher(overlayCanvas)
+    private val shortRangeScope = ShortRangeScope(overlayCanvas)
     private var viewType = ViewType.Front
     private val frontViewButton = createViewButton(
         view = ViewType.Front,
@@ -67,16 +69,31 @@ class MainScreenUi : StationUi {
     }
 
     fun draw(snapshot: SnapshotMessage.MainScreen) {
-        mainScene.update(snapshot)
-
         when (viewType) {
-            ViewType.Front -> render(mainScene.frontCamera)
-            else -> render(mainScene.frontCamera)
+            ViewType.Front -> draw3d(snapshot, mainScene.frontCamera)
+            ViewType.Top -> draw3d(snapshot, mainScene.topCamera)
+            ViewType.Scope -> drawScope(snapshot)
         }
+    }
 
+    private fun draw3d(snapshot: SnapshotMessage.MainScreen, camera: Camera) {
         with(ctx) {
-            clear("#0000")
+            clear()
 
+            mainScene.update(snapshot)
+            render(camera)
+
+            frontViewButton.draw()
+            topViewButton.draw()
+            scopeViewButton.draw()
+        }
+    }
+
+    private fun drawScope(snapshot: SnapshotMessage.MainScreen) {
+        with(ctx) {
+            clear("#222")
+
+            shortRangeScope.draw(snapshot)
             frontViewButton.draw()
             topViewButton.draw()
             scopeViewButton.draw()

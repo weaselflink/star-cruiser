@@ -15,6 +15,10 @@ import org.w3c.dom.TOP
 val HTMLCanvasElement.context2D
     get() = getContext(contextId = "2d")!! as CanvasRenderingContext2D
 
+fun CanvasRenderingContext2D.clear() {
+    clearRect(0.0, 0.0, canvas.width.toDouble(), canvas.height.toDouble())
+}
+
 fun CanvasRenderingContext2D.clear(color: String) {
     fillStyle = color
     fillRect(0.0, 0.0, canvas.width.toDouble(), canvas.height.toDouble())
