@@ -26,15 +26,15 @@ class MainScreenUi : StationUi {
     )
     private val mainScene = MainScene()
     private val pointerEventDispatcher = PointerEventDispatcher(overlayCanvas)
-    private var topView = false
+    private var viewType = ViewType.Front
     private val frontViewButton = CanvasButton(
         canvas = overlayCanvas,
         xExpr = { it.width * 0.5 - it.vmin * 39 },
         yExpr = { it.height - it.vmin * 3 },
         widthExpr = { it.vmin * 37 },
         heightExpr = { it.vmin * 10 },
-        onClick = { toggleTopView() },
-        activated = { topView.not() },
+        onClick = { viewType = ViewType.Front },
+        activated = { viewType == ViewType.Front },
         text = { "Front" }
     )
     private val topViewButton = CanvasButton(
@@ -43,8 +43,8 @@ class MainScreenUi : StationUi {
         yExpr = { it.height - it.vmin * 3 },
         widthExpr = { it.vmin * 37 },
         heightExpr = { it.vmin * 10 },
-        onClick = { toggleTopView() },
-        activated = { topView },
+        onClick = { viewType = ViewType.Top },
+        activated = { viewType == ViewType.Top },
         text = { "Top" }
     )
 
@@ -76,10 +76,9 @@ class MainScreenUi : StationUi {
     fun draw(snapshot: SnapshotMessage.MainScreen) {
         mainScene.update(snapshot)
 
-        if (topView) {
-            renderer.render(mainScene, mainScene.topCamera)
-        } else {
-            renderer.render(mainScene, mainScene.frontCamera)
+        when (viewType) {
+            ViewType.Front -> renderer.render(mainScene, mainScene.frontCamera)
+            else -> renderer.render(mainScene, mainScene.frontCamera)
         }
 
         with(ctx) {
@@ -90,9 +89,22 @@ class MainScreenUi : StationUi {
         }
     }
 
-    fun toggleTopView() {
-        topView = !topView
+    fun cycleViewType() {
+        viewType = viewType.next
     }
 }
 
 private fun WebGLRenderer.render(mainScene: MainScene, camera: Camera) = render(mainScene.scene, camera)
+
+private enum class ViewType {
+    Front,
+    Top,
+    Scope;
+
+    val next: ViewType
+        get() = when (this) {
+            Front -> Top
+            Top -> Scope
+            Scope -> Front
+        }
+}

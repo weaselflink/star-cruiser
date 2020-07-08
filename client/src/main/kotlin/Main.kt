@@ -109,7 +109,7 @@ fun keyHandler(event: KeyboardEvent) {
             "KeyR" -> {
                 ClientState.toggleRotateScope()
             }
-            "KeyC" -> mainScreenUi.toggleTopView()
+            "KeyC" -> mainScreenUi.cycleViewType()
             "KeyJ" -> send(Command.CommandStartJump)
             else -> println("not bound: ${event.code}")
         }
