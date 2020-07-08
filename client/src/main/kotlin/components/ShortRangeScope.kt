@@ -4,11 +4,11 @@ import ClientState
 import beamStyle
 import circle
 import context2D
+import de.bissell.starcruiser.AsteroidMessage
 import de.bissell.starcruiser.BeamStatus
 import de.bissell.starcruiser.ContactType
 import de.bissell.starcruiser.LockStatus
 import de.bissell.starcruiser.ObjectId
-import de.bissell.starcruiser.ScopeAsteroidMessage
 import de.bissell.starcruiser.ScopeContactMessage
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage.ShortRangeScopeStation
@@ -26,10 +26,6 @@ import environmentContactStyle
 import friendlyContactStyle
 import historyStyle
 import input.toVector2
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.roundToInt
 import lockMarkerStyle
 import org.w3c.dom.CENTER
 import org.w3c.dom.CanvasLineCap
@@ -46,6 +42,10 @@ import translate
 import translateToCenter
 import unknownContactStyle
 import wayPointStyle
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.atan2
+import kotlin.math.roundToInt
 
 class ShortRangeScope(
     private val canvas: HTMLCanvasElement,
@@ -59,7 +59,7 @@ class ShortRangeScope(
     private var scopeRadius = dim.vmin * 47
     private var ship: ShipMessage? = null
     private var contacts: List<ScopeContactMessage> = emptyList()
-    private var asteroids: List<ScopeAsteroidMessage> = emptyList()
+    private var asteroids: List<AsteroidMessage> = emptyList()
 
     val rotateButton = CanvasButton(
         canvas = canvas,
@@ -244,7 +244,7 @@ class ShortRangeScope(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawAsteroid(asteroid: ScopeAsteroidMessage) {
+    private fun CanvasRenderingContext2D.drawAsteroid(asteroid: AsteroidMessage) {
         val posOnScope = asteroid.relativePosition.adjustForScope()
         save()
         translate(posOnScope)

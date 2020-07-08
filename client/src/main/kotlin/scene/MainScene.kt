@@ -79,7 +79,7 @@ class MainScene {
             ownShip.scale.set(it, it, it)
         }
 
-        val contacts = snapshot.contacts
+        val contacts = snapshot.longRangeContacts
         val asteroids = snapshot.asteroids
         val oldContactIds = contactHandler.nodes.keys.filter { true }
         val oldAsteroidIds = asteroidHandler.nodes.keys.filter { true }
@@ -103,7 +103,7 @@ class MainScene {
         ownShip.updateBeams(snapshot, snapshot.ship.beams)
 
         contactHandler.nodes.forEach { node ->
-            snapshot.contacts.firstOrNull { it.id == node.key }?.let { contact ->
+            snapshot.longRangeContacts.firstOrNull { it.id == node.key }?.let { contact ->
                 node.value.updateBeams(snapshot, contact.beams)
             }
         }
@@ -118,7 +118,7 @@ class MainScene {
             ownShip.hideShield()
         }
         contactHandler.nodes.forEach { node ->
-            snapshot.contacts.firstOrNull { it.id == node.key }?.let { contact ->
+            snapshot.longRangeContacts.firstOrNull { it.id == node.key }?.let { contact ->
                 if (contact.shield.activated) {
                     node.value.showShield(contact.shield.radius)
                 } else {
