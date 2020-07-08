@@ -7,18 +7,10 @@ import de.bissell.starcruiser.Command.CommandLockTarget
 import de.bissell.starcruiser.ObjectId
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
-import input.PointerEventDispatcher
 import org.w3c.dom.CanvasRenderingContext2D
-import kotlin.browser.document
 
-class WeaponsUi : StationUi {
+class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
 
-    override val station = Station.Weapons
-
-    private val root = document.getHtmlElementById("weapons-ui")
-    private val canvas = root.canvas
-    private val ctx = canvas.context2D
-    private val pointerEventDispatcher = PointerEventDispatcher(canvas)
     private val shortRangeScope = ShortRangeScope(canvas, true) { contactSelected(it) }
     private val lockTargetButton = CanvasButton(
         canvas = canvas,
@@ -54,24 +46,11 @@ class WeaponsUi : StationUi {
     private var selectingTarget = false
 
     init {
-        resize()
         pointerEventDispatcher.addHandlers(
             shortRangeScope.rotateButton,
             lockTargetButton,
             shieldsButton
         )
-    }
-
-    fun resize() {
-        canvas.updateSize()
-    }
-
-    override fun show() {
-        root.visibility = Visibility.visible
-    }
-
-    override fun hide() {
-        root.visibility = Visibility.hidden
     }
 
     fun draw(snapshot: SnapshotMessage.Weapons) {

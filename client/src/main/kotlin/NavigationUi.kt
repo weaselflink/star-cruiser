@@ -1,20 +1,18 @@
-import components.*
-import de.bissell.starcruiser.Command.*
+import components.CanvasButton
+import components.CanvasSlider
+import components.MapClick
+import components.NavigationMap
+import components.SelectionDetails
+import de.bissell.starcruiser.Command.CommandAddWaypoint
+import de.bissell.starcruiser.Command.CommandDeleteWaypoint
+import de.bissell.starcruiser.Command.CommandScanShip
 import de.bissell.starcruiser.ScanLevel
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
-import input.PointerEventDispatcher
-import kotlin.browser.document
 
-class NavigationUi : StationUi {
+class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
 
-    override val station = Station.Navigation
-
-    private val root = document.getHtmlElementById("navigation-ui")
-    private val canvas = root.canvas
     private val navigationMap = NavigationMap(canvas) { handleMapClick(it) }
-    private val ctx = canvas.context2D
-    private val pointerEventDispatcher = PointerEventDispatcher(canvas)
     private val selectionDetails = SelectionDetails(
         onScan = { scanShipClicked() },
         onDelete = { deleteWaypointClicked() }
@@ -42,7 +40,6 @@ class NavigationUi : StationUi {
     private var buttonState: ButtonState = ButtonState.Initial
 
     init {
-        resize()
         pointerEventDispatcher.addHandlers(
             zoomSlider,
             addWaypointButton,
@@ -50,12 +47,8 @@ class NavigationUi : StationUi {
         )
     }
 
-    override fun show() {
-        root.visibility = Visibility.visible
-    }
-
     override fun hide() {
-        root.visibility = Visibility.hidden
+        super.hide()
         selectionDetails.hide()
     }
 
@@ -65,10 +58,6 @@ class NavigationUi : StationUi {
 
     fun zoomOut() {
         navigationMap.zoomOut()
-    }
-
-    fun resize() {
-        canvas.updateSize()
     }
 
     fun draw(snapshot: SnapshotMessage.Navigation) {

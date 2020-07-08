@@ -2,25 +2,20 @@ import components.CanvasButton
 import components.CanvasSlider
 import components.JumpDisplay
 import components.ShortRangeScope
-import de.bissell.starcruiser.Command.*
+import de.bissell.starcruiser.Command.CommandChangeJumpDistance
+import de.bissell.starcruiser.Command.CommandChangeRudder
+import de.bissell.starcruiser.Command.CommandChangeThrottle
+import de.bissell.starcruiser.Command.CommandStartJump
 import de.bissell.starcruiser.ShipMessage
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
-import input.PointerEventDispatcher
 import org.w3c.dom.CanvasRenderingContext2D
-import kotlin.browser.document
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class HelmUi : StationUi {
+class HelmUi : CanvasUi(Station.Helm, "helm-ui") {
 
-    override val station = Station.Helm
-
-    private val root = document.getHtmlElementById("helm-ui")
-    private val canvas = root.canvas
-    private val ctx = canvas.context2D
-    private val pointerEventDispatcher = PointerEventDispatcher(canvas)
     private val shortRangeScope = ShortRangeScope(canvas)
     private val throttleSlider = CanvasSlider(
         canvas = canvas,
@@ -76,7 +71,6 @@ class HelmUi : StationUi {
     )
 
     init {
-        resize()
         pointerEventDispatcher.addHandlers(
             throttleSlider,
             jumpSlider,
@@ -84,18 +78,6 @@ class HelmUi : StationUi {
             jumpButton,
             shortRangeScope.rotateButton
         )
-    }
-
-    fun resize() {
-        canvas.updateSize()
-    }
-
-    override fun show() {
-        root.visibility = Visibility.visible
-    }
-
-    override fun hide() {
-        root.visibility = Visibility.hidden
     }
 
     fun draw(snapshot: SnapshotMessage.Helm) {
