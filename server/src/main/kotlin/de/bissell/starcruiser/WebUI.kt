@@ -208,7 +208,10 @@ private val BODY.destroyedUi
 
 private val BODY.commonShipUi
     get() = htmlUi("common-ship-ui") {
-        div(classes = "topLeftButtons") {
+        div(classes = "topLeftCornerButtons") {
+            button(classes = "settings topLeftCorner") {
+                +"\u2699"
+            }
             button(classes = "exit leftEdge") {
                 +"Exit ship"
             }
@@ -299,6 +302,14 @@ private val CSSBuilder.buttonCss: Unit
         ".topRightButtons" {
             right = 0.vmin
         }
+        ".topLeftCornerButtons" {
+            position = fixed
+            display = grid
+            gap = Gap(1.vmin.value)
+            top = 0.vmin
+            left = 0.vmin
+            zIndex = 10
+        }
         "button" {
             display = block
             color = lightGrey
@@ -331,6 +342,15 @@ private val CSSBuilder.buttonCss: Unit
             paddingLeft = 2.vmin
             borderTopLeftRadius = 0.vmin
             borderTopRightRadius = 4.vmin
+            borderBottomRightRadius = 4.vmin
+            borderBottomLeftRadius = 0.vmin
+        }
+        "button.topLeftCorner" {
+            declarations["justifySelf"] = "left"
+            fontSize = 8.vmin
+            padding(0.vmin, 3.vmin, 1.vmin, 3.vmin)
+            borderTopLeftRadius = 0.vmin
+            borderTopRightRadius = 0.vmin
             borderBottomRightRadius = 4.vmin
             borderBottomLeftRadius = 0.vmin
         }

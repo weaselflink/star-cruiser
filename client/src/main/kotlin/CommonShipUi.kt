@@ -14,6 +14,7 @@ import org.w3c.dom.HTMLElement
 class CommonShipUi {
 
     private val root = document.getHtmlElementById("common-ship-ui")
+    private val settingsButton: HTMLButtonElement = root.byQuery(".settings")
     private val exitButton: HTMLButtonElement = root.byQuery(".exit")
     private val fullScreenButton: HTMLButtonElement = root.byQuery(".fullscreen")
     private val stationButtons = mapOf<Station, HTMLButtonElement>(
@@ -22,9 +23,11 @@ class CommonShipUi {
         Navigation to root.byQuery(".switchToNavigation"),
         MainScreen to root.byQuery(".switchToMainScreen")
     )
+    private var showSettings = false
     private var currentStation: Station = Helm
 
     init {
+        settingsButton.onclick = { toggleShowSettings() }
         exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
         fullScreenButton.onclick = {
             val body: HTMLElement = document.byQuery("body")
@@ -50,6 +53,7 @@ class CommonShipUi {
 
     fun hide() {
         root.visibility = Visibility.hidden
+        toggleShowSettings(false)
     }
 
     fun draw(snapshot: SnapshotMessage.ShipSnapshot) {
@@ -64,6 +68,17 @@ class CommonShipUi {
             stationButtons[currentStation]?.removeClass("current")
             stationButtons[newStation]?.addClass("current")
             currentStation = newStation
+        }
+    }
+
+    private fun toggleShowSettings(value: Boolean = !showSettings) {
+        showSettings = value
+        if (showSettings) {
+            exitButton.display = Display.block
+            fullScreenButton.display = Display.block
+        } else {
+            exitButton.display = Display.none
+            fullScreenButton.display = Display.none
         }
     }
 }
