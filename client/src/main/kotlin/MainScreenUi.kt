@@ -27,7 +27,10 @@ class MainScreenUi : StationUi {
     )
     private val mainScene = MainScene()
     private val pointerEventDispatcher = PointerEventDispatcher(overlayCanvas)
-    private val shortRangeScope = ShortRangeScope(overlayCanvas)
+    private val shortRangeScope = ShortRangeScope(
+        canvas = overlayCanvas,
+        showRotateButton = false
+    )
     private var viewType = ViewType.Front
     private val frontViewButton = createViewButton(
         view = ViewType.Front,

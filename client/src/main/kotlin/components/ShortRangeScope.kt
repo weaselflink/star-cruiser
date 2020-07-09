@@ -50,6 +50,7 @@ import kotlin.math.roundToInt
 class ShortRangeScope(
     private val canvas: HTMLCanvasElement,
     private val showLocks: Boolean = false,
+    private val showRotateButton: Boolean = true,
     private val scopeClickListener: ((ObjectId) -> Unit)? = null
 ) {
 
@@ -67,7 +68,11 @@ class ShortRangeScope(
         yExpr = { it.height * 0.5 - it.vmin * 38 },
         widthExpr = { it.vmin * 22 },
         heightExpr = { it.vmin * 10 },
-        onClick = { ClientState.toggleRotateScope() },
+        onClick = {
+            if (showRotateButton) {
+                ClientState.toggleRotateScope()
+            }
+        },
         activated = { ClientState.rotateScope },
         text = { "Rotate" }
     )
@@ -132,7 +137,9 @@ class ShortRangeScope(
         restore()
 
         drawHeading(ship)
-        rotateButton.draw()
+        if (showRotateButton) {
+            rotateButton.draw()
+        }
     }
 
     private fun CanvasRenderingContext2D.drawCompass() {
