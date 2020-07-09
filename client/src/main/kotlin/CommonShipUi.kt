@@ -74,9 +74,11 @@ class CommonShipUi {
     private fun toggleShowSettings(value: Boolean = !showSettings) {
         showSettings = value
         if (showSettings) {
+            settingsButton.innerHTML = "\u00d7"
             exitButton.display = Display.block
             fullScreenButton.display = Display.block
         } else {
+            settingsButton.innerHTML = "\u2699"
             exitButton.display = Display.none
             fullScreenButton.display = Display.none
         }
