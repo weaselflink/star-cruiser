@@ -1,5 +1,6 @@
 import components.CanvasButton
 import components.ShortRangeScope
+import components.StationUi
 import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import input.PointerEventDispatcher

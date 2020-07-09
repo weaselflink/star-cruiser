@@ -1,3 +1,4 @@
+import components.StationUiSwitcher
 import de.bissell.starcruiser.Command
 import de.bissell.starcruiser.GameStateMessage
 import de.bissell.starcruiser.ShipMessage
@@ -185,29 +186,4 @@ fun drawShipUi(snapshot: SnapshotMessage.ShipSnapshot) {
 
 fun WebSocket?.send(command: Command) {
     this?.send(command.toJson())
-}
-
-interface StationUi {
-    val station: Station
-    fun show()
-    fun hide()
-}
-
-class StationUiSwitcher(
-    private val stations: List<StationUi>
-) {
-
-    init {
-        stations.forEach { it.hide() }
-    }
-
-    fun switchTo(station: Station?) {
-        stations.forEach {
-            if (it.station == station) {
-                it.show()
-            } else {
-                it.hide()
-            }
-        }
-    }
 }
