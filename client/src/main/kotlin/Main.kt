@@ -6,7 +6,6 @@ import de.bissell.starcruiser.SnapshotMessage
 import de.bissell.starcruiser.Station
 import kotlin.browser.document
 import kotlin.browser.window
-import org.w3c.dom.WebSocket
 import org.w3c.dom.events.KeyboardEvent
 
 lateinit var commonShipUi: CommonShipUi
@@ -16,8 +15,6 @@ lateinit var helmUi: HelmUi
 lateinit var weaponsUi: WeaponsUi
 lateinit var navigationUi: NavigationUi
 lateinit var mainScreenUi: MainScreenUi
-var clientSocket: WebSocket? = null
-var state: GameStateMessage? = null
 lateinit var stationUiSwitcher: StationUiSwitcher
 
 object ClientState {
@@ -64,34 +61,6 @@ fun init() {
     createSocket()
 
     document.onkeydown = { keyHandler(it) }
-}
-
-fun createSocket(): WebSocket? {
-    val protocol = if (window.location.protocol == "https:") {
-        "wss:"
-    } else {
-        "ws:"
-    }
-    val host = window.location.host
-    return WebSocket("$protocol//$host/ws/client").apply {
-        clientSocket = this
-
-        onopen = {
-            Unit
-        }
-        onclose = {
-            clientSocket = null
-            Unit
-        }
-        onmessage = { event ->
-            GameStateMessage.parse(event.data.toString()).apply {
-                state = this
-            }.also {
-                send(Command.UpdateAcknowledge(counter = it.counter))
-            }
-            Unit
-        }
-    }
 }
 
 fun keyHandler(event: KeyboardEvent) {
@@ -182,8 +151,4 @@ fun drawShipUi(snapshot: SnapshotMessage.ShipSnapshot) {
             mainScreenUi.draw(snapshot)
         }
     }
-}
-
-fun WebSocket?.send(command: Command) {
-    this?.send(command.toJson())
 }
