@@ -184,7 +184,6 @@ class MainScene {
     private fun loadShipModel() {
         loadModel("carrier.glb") { group ->
             model = group
-            group.debugPrint()
             assignModel(group, { model }, { model = it })
         }
     }
@@ -192,7 +191,6 @@ class MainScene {
     private fun loadShieldModel() {
         loadModel("shield-cube.glb") { group ->
             shieldModel = group
-            group.debugPrint()
             assignModel(group, { shieldModel }, { shieldModel = it })
         }
     }
@@ -215,7 +213,6 @@ class MainScene {
     private fun loadAsteroidModel() {
         loadModel("asteroid01.glb") { group ->
             asteroidModel = group
-            group.debugPrint()
             asteroidHandler.nodes.values.forEach {
                 if (it.model == null) {
                     it.model = group.clone(true)
