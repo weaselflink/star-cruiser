@@ -1,4 +1,4 @@
-package de.bissell.starcruiser
+package de.stefanbissell.starcruiser
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json

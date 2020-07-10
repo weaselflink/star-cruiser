@@ -1,4 +1,4 @@
-package de.bissell.starcruiser
+package de.stefanbissell.starcruiser
 
 import strikt.api.Assertion
 import strikt.assertions.isGreaterThan

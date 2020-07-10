@@ -1,8 +1,8 @@
-package de.bissell.starcruiser.client
+package de.stefanbissell.starcruiser.client
 
-import de.bissell.starcruiser.client.ThrottleMessage.AcknowledgeInflightMessage
-import de.bissell.starcruiser.client.ThrottleMessage.AddInflightMessage
-import de.bissell.starcruiser.client.ThrottleMessage.GetInflightMessageCount
+import de.stefanbissell.starcruiser.client.ThrottleMessage.AcknowledgeInflightMessage
+import de.stefanbissell.starcruiser.client.ThrottleMessage.AddInflightMessage
+import de.stefanbissell.starcruiser.client.ThrottleMessage.GetInflightMessageCount
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor

@@ -1,8 +1,8 @@
-package de.bissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships
 
-import de.bissell.starcruiser.Vector2
-import de.bissell.starcruiser.Vector3
-import de.bissell.starcruiser.toRadians
+import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.Vector3
+import de.stefanbissell.starcruiser.toRadians
 import kotlin.math.roundToInt
 
 data class ShipTemplate(

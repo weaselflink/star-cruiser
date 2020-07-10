@@ -1,5 +1,5 @@
-import de.bissell.starcruiser.Command
-import de.bissell.starcruiser.GameStateMessage
+import de.stefanbissell.starcruiser.Command
+import de.stefanbissell.starcruiser.GameStateMessage
 import org.w3c.dom.WebSocket
 import kotlin.browser.window
 

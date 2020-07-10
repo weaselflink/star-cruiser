@@ -1,6 +1,6 @@
-package de.bissell.starcruiser
+package de.stefanbissell.starcruiser
 
-import de.bissell.starcruiser.ships.Ship
+import de.stefanbissell.starcruiser.ships.Ship
 import org.jbox2d.collision.shapes.CircleShape
 import org.jbox2d.collision.shapes.PolygonShape
 import org.jbox2d.common.Mat22

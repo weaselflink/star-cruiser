@@ -1,8 +1,8 @@
-package de.bissell.starcruiser
+package de.stefanbissell.starcruiser
 
-import de.bissell.starcruiser.ApplicationConfig.gameStateUpdateIntervalMillis
-import de.bissell.starcruiser.GameState.Companion.gameStateActor
-import de.bissell.starcruiser.client.GameClient.Companion.startGameClient
+import de.stefanbissell.starcruiser.ApplicationConfig.gameStateUpdateIntervalMillis
+import de.stefanbissell.starcruiser.GameState.Companion.gameStateActor
+import de.stefanbissell.starcruiser.client.GameClient.Companion.startGameClient
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation

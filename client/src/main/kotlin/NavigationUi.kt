@@ -3,12 +3,12 @@ import components.CanvasSlider
 import components.MapClick
 import components.NavigationMap
 import components.SelectionDetails
-import de.bissell.starcruiser.Command.CommandAddWaypoint
-import de.bissell.starcruiser.Command.CommandDeleteWaypoint
-import de.bissell.starcruiser.Command.CommandScanShip
-import de.bissell.starcruiser.ScanLevel
-import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.Station
+import de.stefanbissell.starcruiser.Command.CommandAddWaypoint
+import de.stefanbissell.starcruiser.Command.CommandDeleteWaypoint
+import de.stefanbissell.starcruiser.Command.CommandScanShip
+import de.stefanbissell.starcruiser.ScanLevel
+import de.stefanbissell.starcruiser.SnapshotMessage
+import de.stefanbissell.starcruiser.Station
 
 class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
 

@@ -1,7 +1,7 @@
 package components
 
 import CanvasDimensions
-import de.bissell.starcruiser.ShipMessage
+import de.stefanbissell.starcruiser.ShipMessage
 import kotlin.math.roundToInt
 import org.w3c.dom.HTMLCanvasElement
 

@@ -1,9 +1,9 @@
 import components.StationUiSwitcher
-import de.bissell.starcruiser.Command
-import de.bissell.starcruiser.GameStateMessage
-import de.bissell.starcruiser.ShipMessage
-import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.Station
+import de.stefanbissell.starcruiser.Command
+import de.stefanbissell.starcruiser.GameStateMessage
+import de.stefanbissell.starcruiser.ShipMessage
+import de.stefanbissell.starcruiser.SnapshotMessage
+import de.stefanbissell.starcruiser.Station
 import kotlin.browser.document
 import kotlin.browser.window
 import org.w3c.dom.events.KeyboardEvent

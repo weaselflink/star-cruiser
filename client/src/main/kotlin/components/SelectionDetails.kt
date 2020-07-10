@@ -2,7 +2,7 @@ package components
 
 import Visibility
 import byQuery
-import de.bissell.starcruiser.pad
+import de.stefanbissell.starcruiser.pad
 import getHtmlElementById
 import kotlin.browser.document
 import kotlin.math.roundToInt

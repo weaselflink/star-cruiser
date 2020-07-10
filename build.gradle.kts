@@ -21,7 +21,7 @@ plugins {
 }
 
 allprojects {
-    group = "de.bissell.starcruiser"
+    group = "de.stefanbissell.starcruiser"
     version = "0.12.0"
 
     repositories {

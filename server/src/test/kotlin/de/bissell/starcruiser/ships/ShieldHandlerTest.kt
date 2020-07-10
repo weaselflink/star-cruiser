@@ -1,7 +1,7 @@
-package de.bissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships
 
-import de.bissell.starcruiser.GameTime
-import de.bissell.starcruiser.isNear
+import de.stefanbissell.starcruiser.GameTime
+import de.stefanbissell.starcruiser.isNear
 import java.time.Instant
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat

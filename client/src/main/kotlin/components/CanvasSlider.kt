@@ -3,8 +3,8 @@ package components
 import CanvasDimensions
 import circle
 import context2D
-import de.bissell.starcruiser.Vector2
-import de.bissell.starcruiser.clamp
+import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.clamp
 import drawPill
 import input.PointerEvent
 import input.PointerEventHandler

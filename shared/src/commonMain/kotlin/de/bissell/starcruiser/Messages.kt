@@ -1,4 +1,4 @@
-package de.bissell.starcruiser
+package de.stefanbissell.starcruiser
 
 import kotlinx.serialization.Decoder
 import kotlinx.serialization.Encoder

@@ -1,4 +1,4 @@
-import de.bissell.starcruiser.Command.CommandExitShip
+import de.stefanbissell.starcruiser.Command.CommandExitShip
 import kotlin.browser.document
 import org.w3c.dom.HTMLButtonElement
 

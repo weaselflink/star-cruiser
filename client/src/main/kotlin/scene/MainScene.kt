@@ -1,9 +1,9 @@
 package scene
 
-import de.bissell.starcruiser.AsteroidMessage
-import de.bissell.starcruiser.ContactMessage
-import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.AsteroidMessage
+import de.stefanbissell.starcruiser.ContactMessage
+import de.stefanbissell.starcruiser.SnapshotMessage
+import de.stefanbissell.starcruiser.Vector2
 import kotlin.browser.window
 import kotlin.math.PI
 import kotlin.math.max

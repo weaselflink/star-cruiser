@@ -1,8 +1,8 @@
-package de.bissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships
 
-import de.bissell.starcruiser.GameTime
-import de.bissell.starcruiser.JumpDriveMessage
-import de.bissell.starcruiser.clamp
+import de.stefanbissell.starcruiser.GameTime
+import de.stefanbissell.starcruiser.JumpDriveMessage
+import de.stefanbissell.starcruiser.clamp
 import kotlin.math.max
 import kotlin.math.min
 

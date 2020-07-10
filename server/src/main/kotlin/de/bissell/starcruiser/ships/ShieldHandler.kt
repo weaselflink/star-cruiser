@@ -1,7 +1,7 @@
-package de.bissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships
 
-import de.bissell.starcruiser.GameTime
-import de.bissell.starcruiser.ShieldMessage
+import de.stefanbissell.starcruiser.GameTime
+import de.stefanbissell.starcruiser.ShieldMessage
 import kotlin.math.max
 import kotlin.math.min
 

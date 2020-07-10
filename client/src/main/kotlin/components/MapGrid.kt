@@ -2,8 +2,8 @@ package components
 
 import CanvasDimensions
 import context2D
-import de.bissell.starcruiser.Vector2
-import de.bissell.starcruiser.pad
+import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.pad
 import dimensions
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextAlign

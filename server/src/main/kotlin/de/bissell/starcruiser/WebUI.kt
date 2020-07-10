@@ -1,4 +1,4 @@
-package de.bissell.starcruiser
+package de.stefanbissell.starcruiser
 
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call

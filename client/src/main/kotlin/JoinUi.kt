@@ -1,8 +1,8 @@
-import de.bissell.starcruiser.Command
-import de.bissell.starcruiser.ObjectId
-import de.bissell.starcruiser.PlayerShipMessage
-import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.Station.Helm
+import de.stefanbissell.starcruiser.Command
+import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.PlayerShipMessage
+import de.stefanbissell.starcruiser.SnapshotMessage
+import de.stefanbissell.starcruiser.Station.Helm
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.math.max

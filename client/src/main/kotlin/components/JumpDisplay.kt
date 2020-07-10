@@ -1,7 +1,7 @@
 package components
 
 import CanvasDimensions
-import de.bissell.starcruiser.JumpDriveMessage
+import de.stefanbissell.starcruiser.JumpDriveMessage
 import org.w3c.dom.HTMLCanvasElement
 
 class JumpDisplay(

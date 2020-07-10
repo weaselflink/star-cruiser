@@ -1,7 +1,7 @@
 package scene
 
-import de.bissell.starcruiser.Identifiable
-import de.bissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.Identifiable
+import de.stefanbissell.starcruiser.ObjectId
 import three.core.Object3D
 import three.plusAssign
 import three.scenes.Scene

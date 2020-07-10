@@ -1,6 +1,6 @@
-package de.bissell.starcruiser
+package de.stefanbissell.starcruiser
 
-import de.bissell.starcruiser.ships.Ship
+import de.stefanbissell.starcruiser.ships.Ship
 
 class Asteroid(
     val id: ObjectId = ObjectId.random(),

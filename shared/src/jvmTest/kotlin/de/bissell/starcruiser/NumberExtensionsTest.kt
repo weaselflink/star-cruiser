@@ -1,4 +1,4 @@
-package de.bissell.starcruiser
+package de.stefanbissell.starcruiser
 
 import kotlin.math.PI
 import org.junit.jupiter.api.Test

@@ -1,4 +1,4 @@
-import de.bissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.Vector2
 import kotlin.browser.window
 import kotlin.math.PI
 import kotlin.math.max

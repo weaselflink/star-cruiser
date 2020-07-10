@@ -1,15 +1,15 @@
-package de.bissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships
 
-import de.bissell.starcruiser.BeamStatus
-import de.bissell.starcruiser.BodyParameters
-import de.bissell.starcruiser.ContactType
-import de.bissell.starcruiser.GameTime
-import de.bissell.starcruiser.LockStatus
-import de.bissell.starcruiser.ObjectId
-import de.bissell.starcruiser.PhysicsEngine
-import de.bissell.starcruiser.Vector2
-import de.bissell.starcruiser.WaypointMessage
-import de.bissell.starcruiser.isNear
+import de.stefanbissell.starcruiser.BeamStatus
+import de.stefanbissell.starcruiser.BodyParameters
+import de.stefanbissell.starcruiser.ContactType
+import de.stefanbissell.starcruiser.GameTime
+import de.stefanbissell.starcruiser.LockStatus
+import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.PhysicsEngine
+import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.WaypointMessage
+import de.stefanbissell.starcruiser.isNear
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

@@ -1,8 +1,8 @@
 import components.CanvasButton
 import components.ShortRangeScope
 import components.StationUi
-import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.Station
+import de.stefanbissell.starcruiser.SnapshotMessage
+import de.stefanbissell.starcruiser.Station
 import input.PointerEventDispatcher
 import org.w3c.dom.HTMLCanvasElement
 import scene.MainScene

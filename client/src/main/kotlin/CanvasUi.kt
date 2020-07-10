@@ -1,5 +1,5 @@
 import components.StationUi
-import de.bissell.starcruiser.Station
+import de.stefanbissell.starcruiser.Station
 import input.PointerEventDispatcher
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document

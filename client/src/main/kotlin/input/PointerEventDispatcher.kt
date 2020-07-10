@@ -1,6 +1,6 @@
 package input
 
-import de.bissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.Vector2
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.Touch
 import org.w3c.dom.TouchEvent

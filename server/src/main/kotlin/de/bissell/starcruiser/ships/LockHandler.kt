@@ -1,8 +1,8 @@
-package de.bissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships
 
-import de.bissell.starcruiser.GameTime
-import de.bissell.starcruiser.LockStatus
-import de.bissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.GameTime
+import de.stefanbissell.starcruiser.LockStatus
+import de.stefanbissell.starcruiser.ObjectId
 
 class LockHandler(
     val targetId: ObjectId,

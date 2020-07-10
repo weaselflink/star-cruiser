@@ -1,6 +1,6 @@
 package components
 
-import de.bissell.starcruiser.Station
+import de.stefanbissell.starcruiser.Station
 
 class StationUiSwitcher(
     private val stations: List<StationUi>

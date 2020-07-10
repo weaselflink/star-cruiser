@@ -2,11 +2,11 @@ import components.CanvasButton
 import components.HullDisplay
 import components.ShieldsDisplay
 import components.ShortRangeScope
-import de.bissell.starcruiser.Command
-import de.bissell.starcruiser.Command.CommandLockTarget
-import de.bissell.starcruiser.ObjectId
-import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.Station
+import de.stefanbissell.starcruiser.Command
+import de.stefanbissell.starcruiser.Command.CommandLockTarget
+import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.SnapshotMessage
+import de.stefanbissell.starcruiser.Station
 import org.w3c.dom.CanvasRenderingContext2D
 
 class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {

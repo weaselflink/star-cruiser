@@ -1,10 +1,10 @@
-import de.bissell.starcruiser.Command
-import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.Station
-import de.bissell.starcruiser.Station.Helm
-import de.bissell.starcruiser.Station.MainScreen
-import de.bissell.starcruiser.Station.Navigation
-import de.bissell.starcruiser.Station.Weapons
+import de.stefanbissell.starcruiser.Command
+import de.stefanbissell.starcruiser.SnapshotMessage
+import de.stefanbissell.starcruiser.Station
+import de.stefanbissell.starcruiser.Station.Helm
+import de.stefanbissell.starcruiser.Station.MainScreen
+import de.stefanbissell.starcruiser.Station.Navigation
+import de.stefanbissell.starcruiser.Station.Weapons
 import kotlin.browser.document
 import kotlin.dom.addClass
 import kotlin.dom.removeClass

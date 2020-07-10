@@ -1,4 +1,4 @@
-package de.bissell.starcruiser.client
+package de.stefanbissell.starcruiser.client
 
 import kotlin.random.Random
 import kotlinx.coroutines.CompletableDeferred

@@ -24,4 +24,4 @@ fun Object3D.debugPrint(layer: Int = 0) {
     }
 }
 
-fun Vector3.set(v: de.bissell.starcruiser.Vector3) = set(v.x, v.y, v.z)
+fun Vector3.set(v: de.stefanbissell.starcruiser.Vector3) = set(v.x, v.y, v.z)

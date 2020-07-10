@@ -1,4 +1,4 @@
-package de.bissell.starcruiser
+package de.stefanbissell.starcruiser
 
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode

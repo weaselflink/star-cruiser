@@ -1,11 +1,11 @@
 package scene
 
-import de.bissell.starcruiser.BeamMessage
-import de.bissell.starcruiser.BeamStatus
-import de.bissell.starcruiser.ObjectId
-import de.bissell.starcruiser.ShieldMessage
-import de.bissell.starcruiser.SnapshotMessage
-import de.bissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.BeamMessage
+import de.stefanbissell.starcruiser.BeamStatus
+import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.ShieldMessage
+import de.stefanbissell.starcruiser.SnapshotMessage
+import de.stefanbissell.starcruiser.Vector2
 import three.core.Object3D
 import three.math.Euler
 import three.math.Vector3
