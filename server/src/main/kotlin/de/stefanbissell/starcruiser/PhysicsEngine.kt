@@ -53,69 +53,54 @@ class PhysicsEngine {
         }
 
     private fun Ship.toBody() =
-        world.createBody {
-            type = BodyType.DYNAMIC
-            position.set(this@toBody.position.toVec2())
-            angle = this@toBody.rotation.toFloat()
-            linearDamping = 0.4f
-            angularDamping = 0.95f
-        }.apply {
+        createDynamicBody(
+            position,
+            rotation
+        ).apply {
             createFixture(this@toBody)
         }
 
     private fun Body.createFixture(ship: Ship) {
         createFixture(
-            PolygonShape().apply {
-                val points = arrayOf(
-                    Vec2(-14.1f, 3.3f),
-                    Vec2(-13.24f, 4.7f),
-                    Vec2(-7f, 4.7f),
-                    Vec2(-7f, -4.7f),
-                    Vec2(-13.24f, -4.7f),
-                    Vec2(-14.1f, -3.3f)
-                )
-                set(points, points.size)
-            },
+            polygonShape(
+                Vec2(-14.1f, 3.3f),
+                Vec2(-13.24f, 4.7f),
+                Vec2(-7f, 4.7f),
+                Vec2(-7f, -4.7f),
+                Vec2(-13.24f, -4.7f),
+                Vec2(-14.1f, -3.3f)
+            ),
             ship.template.density.toFloat()
         )
         createFixture(
-            PolygonShape().apply {
-                val points = arrayOf(
-                    Vec2(-12.4f, 3.4f),
-                    Vec2(9.2f, 3.4f),
-                    Vec2(9.2f, -3.4f),
-                    Vec2(-12.4f, -3.4f)
-                )
-                set(points, points.size)
-            },
+            polygonShape(
+                Vec2(-12.4f, 3.4f),
+                Vec2(9.2f, 3.4f),
+                Vec2(9.2f, -3.4f),
+                Vec2(-12.4f, -3.4f)
+            ),
             ship.template.density.toFloat()
         )
         createFixture(
-            PolygonShape().apply {
-                val points = arrayOf(
-                    Vec2(9f, 3.7f),
-                    Vec2(11.9f, 3f),
-                    Vec2(12.5f, 2.4f),
-                    Vec2(13f, 1.1f),
-                    Vec2(13f, -1.1f),
-                    Vec2(12.5f, -2.4f),
-                    Vec2(11.9f, -3f),
-                    Vec2(9f, -3.7f)
-                )
-                set(points, points.size)
-            },
+            polygonShape(
+                Vec2(9f, 3.7f),
+                Vec2(11.9f, 3f),
+                Vec2(12.5f, 2.4f),
+                Vec2(13f, 1.1f),
+                Vec2(13f, -1.1f),
+                Vec2(12.5f, -2.4f),
+                Vec2(11.9f, -3f),
+                Vec2(9f, -3.7f)
+            ),
             ship.template.density.toFloat()
         )
     }
 
     private fun Asteroid.toBody() =
-        world.createBody {
-            type = BodyType.DYNAMIC
-            position.set(this@toBody.position.toVec2())
-            angle = this@toBody.rotation.toFloat()
-            linearDamping = 0.4f
-            angularDamping = 0.95f
-        }.apply {
+        createDynamicBody(
+            position,
+            rotation
+        ).apply {
             createFixture(this@toBody)
         }
 
@@ -126,6 +111,22 @@ class PhysicsEngine {
             },
             0.02f
         )
+    }
+
+    private fun polygonShape(vararg points: Vec2) =
+        PolygonShape().apply {
+            set(points, points.size)
+        }
+
+    private fun createDynamicBody(
+        position: Vector2,
+        rotation: Double
+    ) = world.createBody {
+        type = BodyType.DYNAMIC
+        this.position.set(position.toVec2())
+        angle = rotation.toFloat()
+        linearDamping = 0.4f
+        angularDamping = 0.95f
     }
 
     private fun Vec2.toVector2(): Vector2 = Vector2(x.toDouble(), y.toDouble())
