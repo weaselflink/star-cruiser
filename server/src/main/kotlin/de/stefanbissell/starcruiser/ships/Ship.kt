@@ -9,6 +9,7 @@ import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PhysicsEngine
 import de.stefanbissell.starcruiser.PlayerShipMessage
+import de.stefanbissell.starcruiser.PoweredSystem
 import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.ScopeContactMessage
 import de.stefanbissell.starcruiser.ShipMessage
@@ -41,6 +42,7 @@ class Ship(
     private var lockHandler: LockHandler? = null
     private var hull = template.hull
     private val jumpHandler = JumpHandler(template.jumpDrive)
+    private val powerHandler = PowerHandler()
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
         beamHandlers.forEach { it.update(time, shipProvider) }
@@ -181,6 +183,10 @@ class Ship(
         shieldHandler.setUp(value)
     }
 
+    fun setPower(poweredSystem: PoweredSystem, power: Int) {
+        powerHandler[poweredSystem] = power
+    }
+
     fun takeDamage(amount: Double) {
         hull -= shieldHandler.takeDamageAndReportHullDamage(amount)
     }
@@ -214,7 +220,8 @@ class Ship(
             shield = shieldHandler.toMessage(),
             hull = hull,
             hullMax = template.hull,
-            jumpDrive = jumpHandler.toMessage()
+            jumpDrive = jumpHandler.toMessage(),
+            powerMessage = powerHandler.toMessage()
         )
 
     fun toScopeContactMessage(relativeTo: Ship) =

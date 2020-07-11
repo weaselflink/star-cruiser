@@ -18,6 +18,7 @@ import de.stefanbissell.starcruiser.JoinShip
 import de.stefanbissell.starcruiser.LockTarget
 import de.stefanbissell.starcruiser.NewGameClient
 import de.stefanbissell.starcruiser.ScanShip
+import de.stefanbissell.starcruiser.SetPower
 import de.stefanbissell.starcruiser.SetShieldsUp
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.SpawnShip
@@ -27,7 +28,6 @@ import de.stefanbissell.starcruiser.client.ThrottleMessage.AcknowledgeInflightMe
 import de.stefanbissell.starcruiser.client.ThrottleMessage.AddInflightMessage
 import de.stefanbissell.starcruiser.client.ThrottleMessage.GetInflightMessageCount
 import io.ktor.http.cio.websocket.Frame
-import java.util.UUID
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -37,6 +37,7 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 data class ClientId(private val id: String) {
 
@@ -103,6 +104,9 @@ class GameClient(
                 )
                 is Command.CommandSetShieldsUp -> gameStateActor.send(
                     SetShieldsUp(id, command.value)
+                )
+                is Command.CommandSetPower -> gameStateActor.send(
+                    SetPower(id, command.system, command.power)
                 )
             }
         }

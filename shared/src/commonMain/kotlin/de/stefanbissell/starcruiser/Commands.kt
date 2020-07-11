@@ -51,6 +51,9 @@ sealed class Command {
     @Serializable
     data class CommandSetShieldsUp(val value: Boolean) : Command()
 
+    @Serializable
+    data class CommandSetPower(val system: PoweredSystem, val power: Int) : Command()
+
     fun toJson() = Json(jsonConfiguration).stringify(serializer(), this)
 
     companion object {

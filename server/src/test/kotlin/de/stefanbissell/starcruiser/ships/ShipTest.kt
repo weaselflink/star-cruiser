@@ -7,17 +7,18 @@ import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PhysicsEngine
+import de.stefanbissell.starcruiser.PoweredSystem
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
 import de.stefanbissell.starcruiser.isNear
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.Instant
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.containsExactly
+import strikt.assertions.hasEntry
 import strikt.assertions.isA
 import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
@@ -25,6 +26,7 @@ import strikt.assertions.isFalse
 import strikt.assertions.isNotNull
 import strikt.assertions.isNull
 import strikt.assertions.isTrue
+import java.time.Instant
 
 class ShipTest {
 
@@ -400,6 +402,14 @@ class ShipTest {
 
         expectThat(ship.toMessage().shield.up)
             .isTrue()
+    }
+
+    @Test
+    fun `can set power`() {
+        ship.setPower(PoweredSystem.Maneuver, 150)
+
+        expectThat(ship.toMessage().powerMessage.settings)
+            .hasEntry(PoweredSystem.Maneuver, 150)
     }
 
     private fun stepTimeTo(seconds: Number, shipProvider: (ObjectId) -> Ship? = { null }): ShipUpdateResult {

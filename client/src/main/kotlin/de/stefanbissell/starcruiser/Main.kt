@@ -41,6 +41,7 @@ fun init() {
             helmUi,
             weaponsUi,
             navigationUi,
+            engineeringUi,
             mainScreenUi
         )
     )

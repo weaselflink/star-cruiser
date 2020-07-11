@@ -61,6 +61,7 @@ class CommonShipUi {
         val newStation = when (snapshot) {
             is SnapshotMessage.Weapons -> Weapons
             is SnapshotMessage.Navigation -> Navigation
+            is SnapshotMessage.Engineering -> Engineering
             is SnapshotMessage.MainScreen -> MainScreen
             else -> Helm
         }

@@ -141,7 +141,8 @@ data class ShipMessage(
     val shield: ShieldMessage,
     val hull: Double,
     val hullMax: Double,
-    val jumpDrive: JumpDriveMessage
+    val jumpDrive: JumpDriveMessage,
+    val powerMessage: PowerMessage
 )
 
 @Serializable
@@ -314,3 +315,8 @@ enum class PoweredSystem {
     Shields,
     Weapon
 }
+
+@Serializable
+data class PowerMessage(
+    val settings: Map<PoweredSystem, Int>
+)
