@@ -304,3 +304,13 @@ sealed class JumpDriveMessage {
         val progress: Double
     ) : JumpDriveMessage()
 }
+
+@Serializable
+enum class PoweredSystem {
+    Sensors,
+    Maneuver,
+    Impulse,
+    Jump,
+    Shields,
+    Weapon
+}
