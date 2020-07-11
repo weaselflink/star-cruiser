@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser
 
+import de.stefanbissell.starcruiser.Station.Engineering
 import de.stefanbissell.starcruiser.Station.Helm
 import de.stefanbissell.starcruiser.Station.MainScreen
 import de.stefanbissell.starcruiser.Station.Navigation
@@ -20,6 +21,7 @@ class CommonShipUi {
         Helm to root.byQuery(".switchToHelm"),
         Weapons to root.byQuery(".switchToWeapons"),
         Navigation to root.byQuery(".switchToNavigation"),
+        Engineering to root.byQuery(".switchToEngineering"),
         MainScreen to root.byQuery(".switchToMainScreen")
     )
     private var showSettings = false

@@ -11,6 +11,7 @@ lateinit var destroyedUi: DestroyedUi
 lateinit var helmUi: HelmUi
 lateinit var weaponsUi: WeaponsUi
 lateinit var navigationUi: NavigationUi
+lateinit var engineeringUi: EngineeringUi
 lateinit var mainScreenUi: MainScreenUi
 lateinit var stationUiSwitcher: StationUiSwitcher
 
@@ -33,6 +34,7 @@ fun init() {
     helmUi = HelmUi()
     weaponsUi = WeaponsUi()
     navigationUi = NavigationUi()
+    engineeringUi = EngineeringUi()
     mainScreenUi = MainScreenUi()
     stationUiSwitcher = StationUiSwitcher(
         listOf(
@@ -142,6 +144,10 @@ fun drawShipUi(snapshot: SnapshotMessage.ShipSnapshot) {
         is SnapshotMessage.Navigation -> {
             stationUiSwitcher.switchTo(Station.Navigation)
             navigationUi.draw(snapshot)
+        }
+        is SnapshotMessage.Engineering -> {
+            stationUiSwitcher.switchTo(Station.Engineering)
+            engineeringUi.draw(snapshot)
         }
         is SnapshotMessage.MainScreen -> {
             stationUiSwitcher.switchTo(Station.MainScreen)

@@ -167,6 +167,7 @@ fun Routing.webUi() {
                 helmUi
                 weaponsUI
                 navigationUi
+                engineeringUI
                 mainScreenUi
             }
         }
@@ -229,6 +230,9 @@ private val BODY.commonShipUi
             button(classes = "switchToNavigation rightEdge") {
                 +"Navigation"
             }
+            button(classes = "switchToEngineering rightEdge") {
+                +"Engineering"
+            }
             button(classes = "switchToMainScreen rightEdge") {
                 +"Main screen"
             }
@@ -258,6 +262,9 @@ private val BODY.navigationUi
             }
         }
     }
+
+private val BODY.engineeringUI
+    get() = canvasUi("engineering-ui")
 
 private val BODY.mainScreenUi
     get() = div {

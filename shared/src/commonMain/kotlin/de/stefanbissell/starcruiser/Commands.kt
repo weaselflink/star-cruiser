@@ -63,5 +63,6 @@ enum class Station {
     Helm,
     Weapons,
     Navigation,
+    Engineering,
     MainScreen
 }

@@ -3,20 +3,21 @@ package de.stefanbissell.starcruiser
 import de.stefanbissell.starcruiser.ClientState.InShip
 import de.stefanbissell.starcruiser.ClientState.ShipDestroyed
 import de.stefanbissell.starcruiser.ClientState.ShipSelection
+import de.stefanbissell.starcruiser.Station.Engineering
 import de.stefanbissell.starcruiser.Station.Helm
 import de.stefanbissell.starcruiser.Station.MainScreen
 import de.stefanbissell.starcruiser.Station.Navigation
 import de.stefanbissell.starcruiser.Station.Weapons
 import de.stefanbissell.starcruiser.client.ClientId
 import de.stefanbissell.starcruiser.ships.Ship
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.actor
 import java.time.Instant
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit
 import kotlin.math.PI
 import kotlin.random.Random
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.actor
 
 sealed class GameStateChange
 
@@ -78,6 +79,9 @@ class GameState {
                         ship = ship.toMessage(),
                         contacts = getContacts(ship),
                         asteroids = getAsteroids(ship)
+                    )
+                    Engineering -> SnapshotMessage.Engineering(
+                        ship = ship.toMessage()
                     )
                     MainScreen -> SnapshotMessage.MainScreen(
                         ship = ship.toMessage(),

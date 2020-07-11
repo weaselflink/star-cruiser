@@ -99,6 +99,11 @@ sealed class SnapshotMessage {
     ) : SnapshotMessage(), ShipSnapshot
 
     @Serializable
+    data class Engineering(
+        override val ship: ShipMessage
+    ) : SnapshotMessage(), ShipSnapshot
+
+    @Serializable
     data class MainScreen(
         override val ship: ShipMessage,
         val longRangeContacts: List<ContactMessage>,
