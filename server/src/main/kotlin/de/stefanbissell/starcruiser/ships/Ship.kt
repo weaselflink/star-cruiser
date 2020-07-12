@@ -36,13 +36,13 @@ class Ship(
     private val waypoints: MutableList<Waypoint> = mutableListOf()
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val scans = mutableMapOf<ObjectId, ScanLevel>()
+    private val powerHandler = PowerHandler()
     private val beamHandlers = template.beams.map { BeamHandler(it) }
-    private val shieldHandler = ShieldHandler(template.shield)
+    private val shieldHandler = ShieldHandler(template.shield, powerHandler.boostLevel(PoweredSystem.Shields))
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
     private var hull = template.hull
     private val jumpHandler = JumpHandler(template.jumpDrive)
-    private val powerHandler = PowerHandler()
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
         beamHandlers.forEach { it.update(time, shipProvider) }

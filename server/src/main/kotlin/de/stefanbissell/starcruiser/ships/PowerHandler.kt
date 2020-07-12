@@ -10,13 +10,17 @@ class PowerHandler {
 
     private val powerSettings = PoweredSystem.values().associate { it to 100 }.toMutableMap()
 
-    operator fun get(poweredSystem: PoweredSystem) = powerSettings[poweredSystem]
-    operator fun set(poweredSystem: PoweredSystem, power: Int) {
-        powerSettings[poweredSystem] = max(0, min(200, (power / 10.0).roundToInt() * 10))
+    operator fun get(system: PoweredSystem): Int = powerSettings[system] ?: 100
+    operator fun set(system: PoweredSystem, power: Int) {
+        powerSettings[system] = max(0, min(200, (power / 10.0).roundToInt() * 10))
     }
+
+    fun boostLevel(system: PoweredSystem): BoostLevel = { this[system] / 100.0 }
 
     fun toMessage() =
         PowerMessage(
             settings = powerSettings
         )
 }
+
+typealias BoostLevel = () -> Double

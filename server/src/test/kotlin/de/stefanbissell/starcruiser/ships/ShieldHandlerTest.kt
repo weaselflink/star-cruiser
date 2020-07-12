@@ -2,12 +2,12 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.isNear
-import java.time.Instant
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
+import java.time.Instant
 
 class ShieldHandlerTest {
 
@@ -15,7 +15,8 @@ class ShieldHandlerTest {
         update(Instant.EPOCH)
     }
     private val shieldTemplate = ShieldTemplate()
-    private val shieldHandler = ShieldHandler(shieldTemplate)
+    private var power = 1.0
+    private val shieldHandler = ShieldHandler(shieldTemplate) { power }
 
     @Test
     fun `starts with full shields in up state`() {
@@ -60,6 +61,34 @@ class ShieldHandlerTest {
 
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0 + shieldTemplate.rechargeSpeed * 5.0)
+    }
+
+    @Test
+    fun `recharges shields adjusted for low boost level`() {
+        power = 0.5
+        shieldHandler.takeDamageAndReportHullDamage(3.0)
+
+        expectThat(shieldHandler.toMessage().strength)
+            .isNear(shieldTemplate.strength - 3.0)
+
+        stepTimeTo(5.0)
+
+        expectThat(shieldHandler.toMessage().strength)
+            .isNear(shieldTemplate.strength - 3.0 + shieldTemplate.rechargeSpeed * 5.0 * 0.5)
+    }
+
+    @Test
+    fun `recharges shields adjusted for high boost level`() {
+        power = 2.0
+        shieldHandler.takeDamageAndReportHullDamage(3.0)
+
+        expectThat(shieldHandler.toMessage().strength)
+            .isNear(shieldTemplate.strength - 3.0)
+
+        stepTimeTo(5.0)
+
+        expectThat(shieldHandler.toMessage().strength)
+            .isNear(shieldTemplate.strength - 3.0 + shieldTemplate.rechargeSpeed * 5.0 * 2.0)
     }
 
     @Test
