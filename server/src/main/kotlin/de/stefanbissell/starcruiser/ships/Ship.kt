@@ -62,7 +62,7 @@ class Ship(
         } else {
             thrust * template.aheadThrustFactor * powerHandler.boostLevel(PoweredSystem.Impulse)
         }
-        val effectiveRudder = rudder * template.rudderFactor
+        val effectiveRudder = rudder * template.rudderFactor * powerHandler.boostLevel(PoweredSystem.Maneuver)
         physicsEngine.updateShip(id, effectiveThrust, effectiveRudder)
 
         physicsEngine.getBodyParameters(id)?.let {
