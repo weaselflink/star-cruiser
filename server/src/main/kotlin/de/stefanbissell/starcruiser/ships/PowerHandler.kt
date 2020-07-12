@@ -15,7 +15,7 @@ class PowerHandler {
         powerSettings[system] = max(0, min(200, (power / 10.0).roundToInt() * 10))
     }
 
-    fun boostLevel(system: PoweredSystem): BoostLevel = { this[system] / 100.0 }
+    fun boostLevel(system: PoweredSystem) = this[system] / 100.0
 
     fun toMessage() =
         PowerMessage(

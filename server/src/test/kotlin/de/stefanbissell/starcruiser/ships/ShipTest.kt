@@ -249,6 +249,22 @@ class ShipTest {
     }
 
     @Test
+    fun `updates physics engine applying impulse power level`() {
+        ship.setPower(PoweredSystem.Impulse, 150)
+        ship.changeThrottle(50)
+        ship.changeRudder(50)
+        stepTimeTo(2)
+
+        verify(exactly = 1) {
+            physicsEngine.updateShip(
+                ship.id,
+                50 * ship.template.aheadThrustFactor * 1.5,
+                50 * ship.template.rudderFactor
+            )
+        }
+    }
+
+    @Test
     fun `takes values from physics engine`() {
         every {
             physicsEngine.getBodyParameters(ship.id)

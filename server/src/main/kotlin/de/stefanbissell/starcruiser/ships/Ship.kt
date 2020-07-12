@@ -40,14 +40,14 @@ class Ship(
     private val beamHandlers = template.beams.map { BeamHandler(it) }
     private val shieldHandler = ShieldHandler(
         shieldTemplate = template.shield,
-        boostLevel = powerHandler.boostLevel(PoweredSystem.Shields)
+        boostLevel = { powerHandler.boostLevel(PoweredSystem.Shields) }
     )
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
     private var hull = template.hull
     private val jumpHandler = JumpHandler(
         jumpDrive = template.jumpDrive,
-        boostLevel = powerHandler.boostLevel(PoweredSystem.Jump)
+        boostLevel = { powerHandler.boostLevel(PoweredSystem.Jump) }
     )
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
@@ -58,9 +58,9 @@ class Ship(
         updateLock(time)
         updateThrust(time)
         val effectiveThrust = if (thrust < 0) {
-            thrust * template.reverseThrustFactor
+            thrust * template.reverseThrustFactor * powerHandler.boostLevel(PoweredSystem.Impulse)
         } else {
-            thrust * template.aheadThrustFactor
+            thrust * template.aheadThrustFactor * powerHandler.boostLevel(PoweredSystem.Impulse)
         }
         val effectiveRudder = rudder * template.rudderFactor
         physicsEngine.updateShip(id, effectiveThrust, effectiveRudder)
