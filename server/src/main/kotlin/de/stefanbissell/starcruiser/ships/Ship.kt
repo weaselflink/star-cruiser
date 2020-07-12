@@ -177,7 +177,7 @@ class Ship(
 
     fun startScan(targetId: ObjectId) {
         if (scanHandler == null && canIncreaseScanLevel(targetId)) {
-            scanHandler = ScanHandler(targetId, template.scanSpeed)
+            scanHandler = ScanHandler(targetId, template.scanSpeed) { powerHandler.boostLevel(PoweredSystem.Sensors) }
         }
     }
 

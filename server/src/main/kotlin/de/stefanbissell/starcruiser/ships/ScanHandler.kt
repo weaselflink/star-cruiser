@@ -6,7 +6,8 @@ import de.stefanbissell.starcruiser.ScanProgress
 
 class ScanHandler(
     val targetId: ObjectId,
-    private val scanningSpeed: Double
+    private val scanningSpeed: Double,
+    private val boostLevel: BoostLevel
 ) {
 
     private var progress: Double = 0.0
@@ -15,7 +16,7 @@ class ScanHandler(
         get() = progress >= 1.0
 
     fun update(time: GameTime) {
-        progress += time.delta * scanningSpeed
+        progress += time.delta * scanningSpeed * boostLevel()
     }
 
     fun toMessage() =
