@@ -177,13 +177,21 @@ class Ship(
 
     fun startScan(targetId: ObjectId) {
         if (scanHandler == null && canIncreaseScanLevel(targetId)) {
-            scanHandler = ScanHandler(targetId, template.scanSpeed) { powerHandler.boostLevel(PoweredSystem.Sensors) }
+            scanHandler = ScanHandler(
+                targetId = targetId,
+                scanningSpeed = template.scanSpeed,
+                boostLevel = { powerHandler.boostLevel(PoweredSystem.Sensors) }
+            )
         }
     }
 
     fun lockTarget(targetId: ObjectId) {
         if (lockHandler?.targetId != targetId) {
-            lockHandler = LockHandler(targetId, template.lockingSpeed)
+            lockHandler = LockHandler(
+                targetId = targetId,
+                lockingSpeed = template.lockingSpeed,
+                boostLevel = { powerHandler.boostLevel(PoweredSystem.Sensors) }
+            )
         }
     }
 

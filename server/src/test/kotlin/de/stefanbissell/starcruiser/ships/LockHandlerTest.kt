@@ -4,13 +4,13 @@ import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.isNear
-import java.time.Instant
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
+import java.time.Instant
 
 class LockHandlerTest {
 
@@ -19,7 +19,8 @@ class LockHandlerTest {
     }
     private val targetId = ObjectId.random()
     private val lockingSpeed = 0.25
-    private val lockHandler = LockHandler(targetId, lockingSpeed)
+    private var power = 1.0
+    private val lockHandler = LockHandler(targetId, lockingSpeed) { power }
 
     @Test
     fun `starts with zero progress`() {
@@ -41,7 +42,19 @@ class LockHandlerTest {
             .isA<LockStatus.InProgress>()
             .and {
                 get { targetId }.isEqualTo(targetId)
-                get { progress }.isNear(0.75)
+                get { progress }.isNear(lockingSpeed * 3)
+            }
+    }
+
+    @Test
+    fun `applies power level to progress`() {
+        power = 1.5
+        stepTimeTo(2)
+
+        expectThat(lockHandler.toMessage())
+            .isA<LockStatus.InProgress>()
+            .and {
+                get { progress }.isNear(lockingSpeed * 2 * power)
             }
     }
 

@@ -6,7 +6,8 @@ import de.stefanbissell.starcruiser.ObjectId
 
 class LockHandler(
     val targetId: ObjectId,
-    private val lockingSpeed: Double
+    private val lockingSpeed: Double,
+    private val boostLevel: BoostLevel
 ) {
 
     private var progress: Double = 0.0
@@ -15,7 +16,7 @@ class LockHandler(
         get() = progress >= 1.0
 
     fun update(time: GameTime) {
-        progress += time.delta * lockingSpeed
+        progress += time.delta * lockingSpeed * boostLevel()
     }
 
     fun toMessage(): LockStatus =
