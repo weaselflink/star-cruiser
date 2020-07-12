@@ -37,7 +37,9 @@ class Ship(
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val scans = mutableMapOf<ObjectId, ScanLevel>()
     private val powerHandler = PowerHandler()
-    private val beamHandlers = template.beams.map { BeamHandler(it) }
+    private val beamHandlers = template.beams.map {
+        BeamHandler(it) { powerHandler.boostLevel(PoweredSystem.Weapons) }
+    }
     private val shieldHandler = ShieldHandler(
         shieldTemplate = template.shield,
         boostLevel = { powerHandler.boostLevel(PoweredSystem.Shields) }
@@ -289,7 +291,8 @@ class Ship(
     }
 
     private inner class BeamHandler(
-        val beamWeapon: BeamWeapon
+        val beamWeapon: BeamWeapon,
+        val boostLevel: BoostLevel
     ) {
 
         private var status: BeamStatus = BeamStatus.Idle
@@ -300,7 +303,8 @@ class Ship(
                     status = BeamStatus.Firing()
                 }
                 is BeamStatus.Recharging -> {
-                    status = current.update(time.delta * beamWeapon.rechargeSpeed).let {
+                    val currentProgress = time.delta * beamWeapon.rechargeSpeed * boostLevel()
+                    status = current.update(currentProgress).let {
                         if (it.progress >= 1.0) {
                             if (isLockedTargetInRange(shipProvider)) {
                                 BeamStatus.Firing()

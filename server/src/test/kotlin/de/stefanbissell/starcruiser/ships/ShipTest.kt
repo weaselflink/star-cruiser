@@ -334,6 +334,32 @@ class ShipTest {
 
         stepTimeTo(12) { target }
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Recharging>()
+
+        stepTimeTo(14)
+        expectThat(ship.toMessage().beams.first().status)
+            .isA<BeamStatus.Recharging>()
+            .get { progress }.isNear(ship.template.beams.first().rechargeSpeed * 2.0)
+    }
+
+    @Test
+    fun `updates beams applying power level`() {
+        ship.setPower(PoweredSystem.Weapons, 200)
+        val target = Ship(
+            position = Vector2(100, 0)
+        )
+
+        ship.lockTarget(target.id)
+        stepTimeTo(10)
+        stepTimeTo(10.5) { target }
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Firing>()
+        stepTimeTo(12) { target }
+        expectThat(ship.toMessage().beams.first().status)
+            .isA<BeamStatus.Recharging>()
+            .get { progress }.isNear(0.0)
+        stepTimeTo(14)
+        expectThat(ship.toMessage().beams.first().status)
+            .isA<BeamStatus.Recharging>()
+            .get { progress }.isNear(ship.template.beams.first().rechargeSpeed * 4.0)
     }
 
     @Test

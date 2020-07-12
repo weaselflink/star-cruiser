@@ -313,7 +313,7 @@ enum class PoweredSystem {
     Impulse,
     Jump,
     Shields,
-    Weapon
+    Weapons
 }
 
 @Serializable
