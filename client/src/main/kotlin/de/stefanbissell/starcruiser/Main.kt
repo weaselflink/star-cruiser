@@ -120,13 +120,13 @@ fun drawUi(stateCopy: GameStateMessage) {
             stationUiSwitcher.switchTo(null)
             destroyedUi.show()
         }
-        is SnapshotMessage.ShipSnapshot -> {
+        is SnapshotMessage.CrewSnapshot -> {
             drawShipUi(snapshot)
         }
     }
 }
 
-fun drawShipUi(snapshot: SnapshotMessage.ShipSnapshot) {
+fun drawShipUi(snapshot: SnapshotMessage.CrewSnapshot) {
     joinUi.hide()
     destroyedUi.hide()
     commonShipUi.apply {

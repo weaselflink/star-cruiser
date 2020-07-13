@@ -5,6 +5,7 @@ import de.stefanbissell.starcruiser.PoweredSystem.Shields
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isNotEqualTo
 
 class PowerHandlerTest {
 
@@ -41,5 +42,15 @@ class PowerHandlerTest {
         expectThat(powerHandler[Shields]).isEqualTo(50)
         powerHandler[Shields] = 58
         expectThat(powerHandler[Shields]).isEqualTo(60)
+    }
+
+    @Test
+    fun `compares messages correctly`() {
+        val initialMessage = powerHandler.toMessage()
+
+        powerHandler[Shields] = 52
+
+        expectThat(powerHandler.toMessage())
+            .isNotEqualTo(initialMessage)
     }
 }

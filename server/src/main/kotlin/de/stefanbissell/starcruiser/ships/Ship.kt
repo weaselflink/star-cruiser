@@ -267,6 +267,8 @@ class Ship(
             jumpAnimation = jumpHandler.toMessage().animation
         )
 
+    fun toPowerMessage() = powerHandler.toMessage()
+
     private fun canIncreaseScanLevel(targetId: ObjectId) = getScanLevel(targetId).let { it != it.next() }
 
     private fun getScanLevel(targetId: ObjectId) = scans[targetId] ?: ScanLevel.None

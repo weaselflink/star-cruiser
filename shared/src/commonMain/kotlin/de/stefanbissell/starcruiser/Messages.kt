@@ -59,7 +59,9 @@ data class GameStateMessage(
 @Serializable
 sealed class SnapshotMessage {
 
-    interface ShipSnapshot {
+    interface CrewSnapshot
+
+    interface ShipSnapshot : CrewSnapshot {
         val ship: ShipMessage
     }
 
@@ -100,8 +102,8 @@ sealed class SnapshotMessage {
 
     @Serializable
     data class Engineering(
-        override val ship: ShipMessage
-    ) : SnapshotMessage(), ShipSnapshot
+        val powerSettings: PowerMessage
+    ) : SnapshotMessage(), CrewSnapshot
 
     @Serializable
     data class MainScreen(

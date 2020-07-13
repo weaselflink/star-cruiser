@@ -82,7 +82,7 @@ class GameState {
                         asteroids = getAsteroids(ship)
                     )
                     Engineering -> SnapshotMessage.Engineering(
-                        ship = ship.toMessage()
+                        powerSettings = ship.toPowerMessage()
                     )
                     MainScreen -> SnapshotMessage.MainScreen(
                         ship = ship.toMessage(),

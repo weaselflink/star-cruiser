@@ -57,7 +57,7 @@ class CommonShipUi {
         toggleShowSettings(false)
     }
 
-    fun draw(snapshot: SnapshotMessage.ShipSnapshot) {
+    fun draw(snapshot: SnapshotMessage.CrewSnapshot) {
         val newStation = when (snapshot) {
             is SnapshotMessage.Weapons -> Weapons
             is SnapshotMessage.Navigation -> Navigation

@@ -19,7 +19,7 @@ class PowerHandler {
 
     fun toMessage() =
         PowerMessage(
-            settings = powerSettings
+            settings = powerSettings.toMap()
         )
 }
 

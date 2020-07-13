@@ -27,16 +27,14 @@ class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
     }
 
     fun draw(snapshot: SnapshotMessage.Engineering) {
-        val ship = snapshot.ship
-
-        ctx.draw(ship)
+        ctx.draw(snapshot.powerSettings)
     }
 
-    private fun CanvasRenderingContext2D.draw(ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.draw(powerSettings: PowerMessage) {
         transformReset()
         clear("#222")
 
-        ship.powerMessage.settings.forEach {
+        powerSettings.settings.forEach {
             val position = it.value.toDouble() / 200
             sliders[it.key]?.draw(position)
         }

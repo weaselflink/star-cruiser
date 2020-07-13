@@ -27,10 +27,14 @@ class PhysicsEngine {
 
     fun updateShip(objectId: ObjectId, thrust: Double, rudder: Double) {
         bodies[objectId.toBodyId()]?.apply {
-            applyForceToCenter(
-                Mat22.createRotationalTransform(angle).mul(Vec2(thrust.toFloat(), 0f))
-            )
-            applyTorque(rudder.toFloat())
+            if (thrust != 0.0) {
+                applyForceToCenter(
+                    Mat22.createRotationalTransform(angle).mul(Vec2(thrust.toFloat(), 0f))
+                )
+            }
+            if (rudder != 0.0) {
+                applyTorque(rudder.toFloat())
+            }
         }
     }
 
