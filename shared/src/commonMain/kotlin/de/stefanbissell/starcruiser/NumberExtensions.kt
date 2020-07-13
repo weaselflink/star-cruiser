@@ -34,13 +34,22 @@ fun Double.round(digits: Int) =
 
 fun Double.format(digits: Int) =
     this.round(digits).toString().let {
-        if (it.contains(".")) it else "$it.${(1..digits).joinToString(separator = "") { "0" }}"
+        val parts = it.split(".", limit = 2)
+        val digitsFound = if (parts.size == 1) 0 else parts[1].length
+        if (digitsFound == digits) {
+            it
+        } else {
+            val decimals = if (parts.size == 1) "" else parts[1]
+            "${parts[0]}.$decimals${(1..digits - digitsFound).joinToString(separator = "") { "0" }}"
+        }
     }
 
 fun Int.pad(width: Int) = toString().padStart(width, '0')
 
+fun Double.oneDigit() = (this * 10).roundToLong() / 10.0
+
 fun Double.twoDigits() = (this * 100).roundToLong() / 100.0
 
-fun Double.fiveDigits() = (this * 10_000).roundToLong() / 10_000.0
+fun Double.fiveDigits() = (this * 100_000).roundToLong() / 100_000.0
 
 fun Vector2.twoDigits() = Vector2(x.twoDigits(), y.twoDigits())

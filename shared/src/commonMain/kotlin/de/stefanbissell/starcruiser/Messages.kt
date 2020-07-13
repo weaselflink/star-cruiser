@@ -315,10 +315,12 @@ enum class PoweredSystem {
     Impulse,
     Jump,
     Shields,
-    Weapons
+    Weapons,
+    Reactor
 }
 
 @Serializable
 data class PowerMessage(
+    val capacitors: Double,
     val settings: Map<PoweredSystem, Int>
 )

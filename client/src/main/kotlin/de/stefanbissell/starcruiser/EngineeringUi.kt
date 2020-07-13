@@ -1,11 +1,17 @@
 package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.components.CanvasSlider
+import de.stefanbissell.starcruiser.components.CapacitorsDisplay
 import org.w3c.dom.CanvasRenderingContext2D
 import kotlin.math.roundToInt
 
 class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
 
+    private val capacitorsDisplay = CapacitorsDisplay(
+        canvas = canvas,
+        xExpr = { it.width * 0.5 - it.vmin * 20 },
+        yExpr = { it.vmin * 12 }
+    )
     private val sliders = PoweredSystem.values().mapIndexed { index, system ->
         system to CanvasSlider(
             canvas = canvas,
@@ -34,6 +40,7 @@ class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
         transformReset()
         clear("#222")
 
+        capacitorsDisplay.draw(powerSettings)
         powerSettings.settings.forEach {
             val position = it.value.toDouble() / 200
             sliders[it.key]?.draw(position)

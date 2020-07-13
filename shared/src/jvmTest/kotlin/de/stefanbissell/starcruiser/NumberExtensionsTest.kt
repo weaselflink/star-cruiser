@@ -1,11 +1,11 @@
 package de.stefanbissell.starcruiser
 
-import kotlin.math.PI
 import org.junit.jupiter.api.Test
 import strikt.api.expectCatching
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFailure
+import kotlin.math.PI
 
 class NumberExtensionsTest {
 
@@ -51,6 +51,16 @@ class NumberExtensionsTest {
         expectThat((-PI).round(4)).isNear(-3.1416)
         expectThat(0.0.round(0)).isNear(0.0)
         expectThat(0.0.round(4)).isNear(0.0)
+    }
+
+    @Test
+    fun `formats to given digits`() {
+        expectThat(23.0.format(2)).isEqualTo("23.00")
+        expectThat((-23.0).format(2)).isEqualTo("-23.00")
+        expectThat(23.1.format(2)).isEqualTo("23.10")
+        expectThat(23.12.format(2)).isEqualTo("23.12")
+        expectThat(23.125.format(2)).isEqualTo("23.13")
+        expectThat(23.12576.format(2)).isEqualTo("23.13")
     }
 
     @Test

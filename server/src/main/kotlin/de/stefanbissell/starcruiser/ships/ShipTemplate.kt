@@ -35,7 +35,9 @@ data class ShipTemplate(
     ),
     val shield: ShieldTemplate = ShieldTemplate(),
     val hull: Double = 10.0,
-    val jumpDrive: JumpDrive = JumpDrive()
+    val jumpDrive: JumpDrive = JumpDrive(),
+    val maxCapacitors: Double = 1000.0,
+    val reactorOutput: Double = 300.0
 )
 
 data class JumpDrive(
