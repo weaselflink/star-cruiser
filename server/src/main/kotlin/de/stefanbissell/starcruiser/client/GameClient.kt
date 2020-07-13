@@ -49,6 +49,7 @@ data class ClientId(private val id: String) {
 class GameClient(
     private val id: ClientId = ClientId.random(),
     private val gameStateActor: SendChannel<GameStateChange>,
+    private val statisticsActor: SendChannel<StatisticsMessage>,
     private val outgoing: SendChannel<Frame>,
     private val incoming: ReceiveChannel<Frame>
 ) {
@@ -57,9 +58,10 @@ class GameClient(
         val throttleActor = coroutineScope.createThrottleActor()
         gameStateActor.send(NewGameClient(id))
 
-        val updateJob = coroutineScope.launchUpdateJob(throttleActor)
+        val updateJob = coroutineScope.launchUpdateJob(throttleActor, statisticsActor)
 
         for (frame in incoming) {
+            statisticsActor.send(StatisticsMessage.MessageReceived(frame.data.size))
             val input = String(frame.data)
             when (val command = Command.parse(input)) {
                 is Command.UpdateAcknowledge -> throttleActor.send(AcknowledgeInflightMessage(command.counter))
@@ -115,7 +117,10 @@ class GameClient(
         gameStateActor.send(GameClientDisconnected(id))
     }
 
-    private fun CoroutineScope.launchUpdateJob(throttleActor: SendChannel<ThrottleMessage>): Job {
+    private fun CoroutineScope.launchUpdateJob(
+        throttleActor: SendChannel<ThrottleMessage>,
+        statisticsActor: SendChannel<StatisticsMessage>
+    ): Job {
         return launch {
             var lastSnapshot: SnapshotMessage? = null
 
@@ -125,12 +130,12 @@ class GameClient(
                     if (lastSnapshot != snapshot) {
                         val counterResponse = throttleActor.addInflightMessage()
                         lastSnapshot = snapshot
-                        outgoing.send(
-                            GameStateMessage(
-                                counterResponse,
-                                snapshot
-                            )
+                        val message = GameStateMessage(
+                            counterResponse,
+                            snapshot
                         )
+                        outgoing.send(message)
+                        statisticsActor.send(StatisticsMessage.MessageSent(Frame.Text(message.toJson()).data.size))
                     }
                 }
                 delay(gameClientUpdateIntervalMillis)
@@ -161,11 +166,13 @@ class GameClient(
     companion object {
         suspend fun CoroutineScope.startGameClient(
             gameStateActor: SendChannel<GameStateChange>,
+            statisticsActor: SendChannel<StatisticsMessage>,
             outgoing: SendChannel<Frame>,
             incoming: ReceiveChannel<Frame>
         ) =
             GameClient(
                 gameStateActor = gameStateActor,
+                statisticsActor = statisticsActor,
                 outgoing = outgoing,
                 incoming = incoming
             ).start(this)

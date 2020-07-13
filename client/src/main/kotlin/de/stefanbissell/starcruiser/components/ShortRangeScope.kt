@@ -197,7 +197,7 @@ class ShortRangeScope(
         historyStyle(dim)
 
         for (point in ship.history) {
-            val rel = (point.second - ship.position)
+            val rel = (point - ship.position)
             val posOnScope = rel.adjustForScope()
             save()
             translate(posOnScope)

@@ -16,9 +16,11 @@ import de.stefanbissell.starcruiser.ShipMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
 import de.stefanbissell.starcruiser.clamp
+import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.randomShipName
 import de.stefanbissell.starcruiser.toHeading
 import de.stefanbissell.starcruiser.toRadians
+import de.stefanbissell.starcruiser.twoDigits
 import kotlin.math.abs
 
 class Ship(
@@ -219,22 +221,22 @@ class Ship(
             id = id,
             designation = designation,
             shipClass = template.className,
-            speed = speed,
-            position = position,
-            rotation = rotation,
-            heading = rotation.toHeading(),
-            velocity = speed.length(),
+            speed = speed.twoDigits(),
+            position = position.twoDigits(),
+            rotation = rotation.fiveDigits(),
+            heading = rotation.toHeading().twoDigits(),
+            velocity = speed.length().twoDigits(),
             throttle = throttle,
-            thrust = thrust,
+            thrust = thrust.twoDigits(),
             rudder = rudder,
-            history = history.map { it.first to it.second },
+            history = history.map { it.second.twoDigits() },
             shortRangeScopeRange = template.shortRangeScopeRange,
             waypoints = waypoints.map { it.toWaypointMessage(this) },
             scanProgress = scanHandler?.toMessage(),
             lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
             beams = beamHandlers.map { it.toMessage() },
             shield = shieldHandler.toMessage(),
-            hull = hull,
+            hull = hull.twoDigits(),
             hullMax = template.hull,
             jumpDrive = jumpHandler.toMessage(),
             powerMessage = powerHandler.toMessage()

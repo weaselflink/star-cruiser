@@ -5,6 +5,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 const val degreesToRadians = 0.017453292519943295
 const val radiansToDegrees = 57.29577951308232
@@ -37,3 +38,9 @@ fun Double.format(digits: Int) =
     }
 
 fun Int.pad(width: Int) = toString().padStart(width, '0')
+
+fun Double.twoDigits() = (this * 100).roundToLong() / 100.0
+
+fun Double.fiveDigits() = (this * 10_000).roundToLong() / 10_000.0
+
+fun Vector2.twoDigits() = Vector2(x.twoDigits(), y.twoDigits())

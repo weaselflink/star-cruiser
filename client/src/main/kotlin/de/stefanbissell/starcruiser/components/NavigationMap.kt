@@ -199,7 +199,7 @@ class NavigationMap(
 
         for (point in ship.history) {
             save()
-            translate(point.second.adjustForMap())
+            translate(point.adjustForMap())
             beginPath()
             circle(0.0, 0.0, 2.0)
             fill()

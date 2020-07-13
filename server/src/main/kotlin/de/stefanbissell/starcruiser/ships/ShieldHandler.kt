@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ShieldMessage
+import de.stefanbissell.starcruiser.twoDigits
 import kotlin.math.max
 import kotlin.math.min
 
@@ -56,7 +57,7 @@ class ShieldHandler(
             radius = shieldTemplate.radius,
             up = up,
             activated = activated,
-            strength = currentStrength,
+            strength = currentStrength.twoDigits(),
             max = shieldTemplate.strength
         )
 

@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.ships
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.JumpDriveMessage
 import de.stefanbissell.starcruiser.clamp
+import de.stefanbissell.starcruiser.fiveDigits
 import kotlin.math.max
 import kotlin.math.min
 
@@ -51,21 +52,21 @@ class JumpHandler(
     fun toMessage() =
         when {
             jumping -> JumpDriveMessage.Jumping(
-                ratio = jumpDrive.distanceToRatio(jumpDistance),
+                ratio = jumpDrive.distanceToRatio(jumpDistance).fiveDigits(),
                 distance = jumpDistance,
-                animation = animation,
-                progress = jumpProgress
+                animation = animation?.fiveDigits(),
+                progress = jumpProgress.fiveDigits()
             )
             rechargeProgress < 1.0 -> JumpDriveMessage.Recharging(
-                ratio = jumpDrive.distanceToRatio(jumpDistance),
+                ratio = jumpDrive.distanceToRatio(jumpDistance).fiveDigits(),
                 distance = jumpDistance,
-                animation = animation,
-                progress = rechargeProgress
+                animation = animation?.fiveDigits(),
+                progress = rechargeProgress.fiveDigits()
             )
             else -> JumpDriveMessage.Ready(
-                ratio = jumpDrive.distanceToRatio(jumpDistance),
+                ratio = jumpDrive.distanceToRatio(jumpDistance).fiveDigits(),
                 distance = jumpDistance,
-                animation = animation
+                animation = animation?.fiveDigits()
             )
         }
 

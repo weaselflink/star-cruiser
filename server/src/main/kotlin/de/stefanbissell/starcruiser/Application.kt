@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser
 import de.stefanbissell.starcruiser.ApplicationConfig.gameStateUpdateIntervalMillis
 import de.stefanbissell.starcruiser.GameState.Companion.gameStateActor
 import de.stefanbissell.starcruiser.client.GameClient.Companion.startGameClient
+import de.stefanbissell.starcruiser.client.createStatisticsActor
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
@@ -13,10 +14,10 @@ import io.ktor.serialization.json
 import io.ktor.server.netty.EngineMain
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
-import java.time.Duration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.time.Duration
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
@@ -31,6 +32,7 @@ object ApplicationConfig {
 fun Application.module() {
 
     val gameStateActor = gameStateActor()
+    val statisticsActor = createStatisticsActor()
 
     launch {
         while (isActive) {
@@ -56,6 +58,7 @@ fun Application.module() {
         webSocket("/ws/client") {
             startGameClient(
                 gameStateActor = gameStateActor,
+                statisticsActor = statisticsActor,
                 outgoing = outgoing,
                 incoming = incoming
             )
