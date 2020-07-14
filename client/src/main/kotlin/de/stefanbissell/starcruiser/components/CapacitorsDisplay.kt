@@ -9,7 +9,7 @@ class CapacitorsDisplay(
     canvas: HTMLCanvasElement,
     xExpr: (CanvasDimensions) -> Double,
     yExpr: (CanvasDimensions) -> Double,
-    widthExpr: (CanvasDimensions) -> Double = { it.vmin * 40 },
+    widthExpr: (CanvasDimensions) -> Double = { it.vmin * 60 },
     heightExpr: (CanvasDimensions) -> Double = { it.vmin * 6 }
 ) {
 
@@ -30,6 +30,7 @@ class CapacitorsDisplay(
     fun draw(powerSettings: PowerMessage) {
         with(powerSettings) {
             canvasProgress.rightText = capacitors.format(1)
+            canvasProgress.progress = capacitors / maxCapacitors
         }
 
         canvasProgress.draw()

@@ -322,5 +322,6 @@ enum class PoweredSystem {
 @Serializable
 data class PowerMessage(
     val capacitors: Double,
+    val maxCapacitors: Double,
     val settings: Map<PoweredSystem, Int>
 )

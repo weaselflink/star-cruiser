@@ -38,6 +38,7 @@ class PowerHandler(
     fun toMessage() =
         PowerMessage(
             capacitors = capacitors.oneDigit(),
+            maxCapacitors = shipTemplate.maxCapacitors,
             settings = powerSettings.toMap()
         )
 }
