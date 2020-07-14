@@ -1,9 +1,8 @@
 package de.stefanbissell.starcruiser
 
-import de.stefanbissell.starcruiser.components.CanvasSlider
 import de.stefanbissell.starcruiser.components.CapacitorsDisplay
+import de.stefanbissell.starcruiser.components.PowerDisplay
 import org.w3c.dom.CanvasRenderingContext2D
-import kotlin.math.roundToInt
 
 class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
 
@@ -12,38 +11,29 @@ class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
         xExpr = { it.width * 0.5 - it.vmin * 30 },
         yExpr = { it.vmin * 12 }
     )
-    private val sliders = PoweredSystem.values().mapIndexed { index, system ->
-        system to CanvasSlider(
+    private val powerDisplays = PoweredSystem.values().mapIndexed { index, system ->
+        system to PowerDisplay(
+            system = system,
             canvas = canvas,
-            xExpr = { it.vmin * 3 },
-            yExpr = { it.height - it.vmin * 3 - it.vmin * index * 12 },
-            widthExpr = { it.vmin * 60 },
-            heightExpr = { it.vmin * 10 },
-            onChange = {
-                val power = (it * 200).roundToInt()
-                clientSocket.send(Command.CommandSetPower(system, power))
-            },
-            lines = listOf(0.5),
-            leftText = system.name
+            yExpr = { it.height - it.vmin * 3 - it.vmin * index * 12 }
         )
     }.associate { it.first to it.second }
 
     init {
-        sliders.forEach { pointerEventDispatcher.addHandlers(it.value) }
+        powerDisplays.forEach { pointerEventDispatcher.addHandlers(it.value) }
     }
 
     fun draw(snapshot: SnapshotMessage.Engineering) {
         ctx.draw(snapshot.powerSettings)
     }
 
-    private fun CanvasRenderingContext2D.draw(powerSettings: PowerMessage) {
+    private fun CanvasRenderingContext2D.draw(powerMessage: PowerMessage) {
         transformReset()
         clear("#222")
 
-        capacitorsDisplay.draw(powerSettings)
-        powerSettings.settings.forEach {
-            val position = it.value.toDouble() / 200
-            sliders[it.key]?.draw(position)
+        capacitorsDisplay.draw(powerMessage)
+        powerMessage.settings.forEach {
+            powerDisplays[it.key]?.draw(powerMessage)
         }
     }
 }
