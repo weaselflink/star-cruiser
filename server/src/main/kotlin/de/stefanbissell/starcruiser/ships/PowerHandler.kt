@@ -17,8 +17,7 @@ class PowerHandler(
 ) {
 
     private var capacitors = shipTemplate.maxCapacitors
-    private val allTypes = PoweredSystemType.values()
-    private val poweredSystems = allTypes
+    private val poweredSystems = PoweredSystemType.values()
         .associate { it to PoweredSystem() }
         .toMutableMap()
 
@@ -36,22 +35,16 @@ class PowerHandler(
     fun setCoolant(type: PoweredSystemType, value: Double) {
         getPoweredSystem(type).coolant = value
 
-        val totalCoolant = allTypes
-            .map {
-                getPoweredSystem(it)
-            }
+        val totalCoolant = poweredSystems.values
             .map { it.coolant }
             .sum()
 
         if (totalCoolant > shipTemplate.maxCoolant) {
             val ratio = shipTemplate.maxCoolant / totalCoolant
-            allTypes
-                .filter { it != type }
-                .map {
-                    getPoweredSystem(it)
-                }
+            poweredSystems
+                .filter { it.key != type }
                 .forEach {
-                    it.coolant *= ratio
+                    it.value.coolant *= ratio
                 }
         }
     }
@@ -68,12 +61,9 @@ class PowerHandler(
 
     private fun updateCapacitors(time: GameTime) {
         val capacitorPlus = shipTemplate.reactorOutput * getPoweredSystem(PoweredSystemType.Reactor).boostLevel
-        val capacitorMinus = allTypes
-            .filter { it != PoweredSystemType.Reactor }
-            .map {
-                getPoweredSystem(it)
-            }
-            .map { it.level }
+        val capacitorMinus = poweredSystems
+            .filter { it.key != PoweredSystemType.Reactor }
+            .map { it.value.level }
             .sum()
             .toDouble()
 
@@ -82,11 +72,9 @@ class PowerHandler(
     }
 
     private fun updateHeatLevels(time: GameTime) {
-        allTypes
-            .map {
-                getPoweredSystem(it)
-            }.forEach {
-                it.updateHeat(time)
+        poweredSystems
+            .forEach {
+                it.value.updateHeat(time)
             }
     }
 }
