@@ -60,10 +60,7 @@ class PowerHandler(
         PowerMessage(
             capacitors = capacitors.oneDigit(),
             maxCapacitors = shipTemplate.maxCapacitors,
-            settings = allTypes
-                .associate {
-                    it to getPoweredSystem(it).toMessage()
-                }
+            settings = poweredSystems.mapValues { it.value.toMessage() }
         )
 
     private fun getPoweredSystem(type: PoweredSystemType) =
@@ -102,7 +99,7 @@ class PoweredSystem {
         set(value) {
             field = ((value / 10.0).roundToInt() * 10).clamp(0, 200)
         }
-    var heat: Double = 0.0
+    private var heat: Double = 0.0
         set(value) {
             field = value.clamp(0.0, 1.0)
         }

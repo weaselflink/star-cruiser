@@ -2,7 +2,12 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.PoweredSystemType
+import de.stefanbissell.starcruiser.PoweredSystemType.Impulse
+import de.stefanbissell.starcruiser.PoweredSystemType.Jump
+import de.stefanbissell.starcruiser.PoweredSystemType.Maneuver
+import de.stefanbissell.starcruiser.PoweredSystemType.Reactor
 import de.stefanbissell.starcruiser.PoweredSystemType.Shields
+import de.stefanbissell.starcruiser.PoweredSystemType.Weapons
 import de.stefanbissell.starcruiser.isNear
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -27,35 +32,35 @@ class PowerHandlerTest {
 
     @Test
     fun `can set system power`() {
-        powerHandler.setLevel(Shields, 50)
-        expectThat(getLevel(Shields)).isEqualTo(50)
+        setLevel(Maneuver, 50)
+        expectThat(getLevel(Maneuver)).isEqualTo(50)
     }
 
     @Test
     fun `caps power above 0`() {
-        powerHandler.setLevel(Shields, -10)
-        expectThat(getLevel(Shields)).isEqualTo(0)
+        setLevel(Weapons, -10)
+        expectThat(getLevel(Weapons)).isEqualTo(0)
     }
 
     @Test
     fun `caps power below 200`() {
-        powerHandler.setLevel(Shields, 210)
+        setLevel(Shields, 210)
         expectThat(getLevel(Shields)).isEqualTo(200)
     }
 
     @Test
     fun `rounds power to nearest multiple of 5`() {
-        powerHandler.setLevel(Shields, 52)
-        expectThat(getLevel(Shields)).isEqualTo(50)
-        powerHandler.setLevel(Shields, 58)
-        expectThat(getLevel(Shields)).isEqualTo(60)
+        setLevel(Jump, 52)
+        expectThat(getLevel(Jump)).isEqualTo(50)
+        setLevel(Impulse, 58)
+        expectThat(getLevel(Impulse)).isEqualTo(60)
     }
 
     @Test
     fun `compares messages correctly`() {
         val initialMessage = powerHandler.toMessage()
 
-        powerHandler.setLevel(Shields, 52)
+        setLevel(Reactor, 52)
 
         expectThat(powerHandler.toMessage())
             .isNotEqualTo(initialMessage)
@@ -76,6 +81,9 @@ class PowerHandlerTest {
         time.update(Instant.EPOCH.plusMillis((60.toDouble() * 1000).toLong()))
         powerHandler.update(time)
     }
+
+    private fun setLevel(systemType: PoweredSystemType, value: Int) =
+        powerHandler.setLevel(systemType, value)
 
     private fun getLevel(systemType: PoweredSystemType) =
         powerHandler.toMessage().settings[systemType]?.level
