@@ -3,6 +3,8 @@ package de.stefanbissell.starcruiser.ships
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.PowerMessage
 import de.stefanbissell.starcruiser.PoweredSystem
+import de.stefanbissell.starcruiser.PoweredSystemMessage
+import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.oneDigit
 import kotlin.math.max
 import kotlin.math.min
@@ -39,7 +41,12 @@ class PowerHandler(
         PowerMessage(
             capacitors = capacitors.oneDigit(),
             maxCapacitors = shipTemplate.maxCapacitors,
-            settings = powerSettings.toMap()
+            settings = powerSettings.mapValues {
+                PoweredSystemMessage(
+                    level = it.value,
+                    heat = 0.0.fiveDigits()
+                )
+            }
         )
 }
 

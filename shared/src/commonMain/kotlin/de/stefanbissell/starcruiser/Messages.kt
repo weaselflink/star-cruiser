@@ -323,5 +323,11 @@ enum class PoweredSystem {
 data class PowerMessage(
     val capacitors: Double,
     val maxCapacitors: Double,
-    val settings: Map<PoweredSystem, Int>
+    val settings: Map<PoweredSystem, PoweredSystemMessage>
+)
+
+@Serializable
+data class PoweredSystemMessage(
+    val level: Int,
+    val heat: Double
 )

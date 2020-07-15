@@ -4,6 +4,7 @@ import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.PowerMessage
 import de.stefanbissell.starcruiser.PoweredSystem
+import de.stefanbissell.starcruiser.PoweredSystemMessage
 import de.stefanbissell.starcruiser.clientSocket
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandler
@@ -57,10 +58,16 @@ class PowerDisplay(
     }
 
     fun draw(powerMessage: PowerMessage) {
-        val setting = powerMessage.settings[system] ?: 100
-        val position = setting.toDouble() / 200.0
+        val systemMessage = powerMessage.settings[system]
+            ?: PoweredSystemMessage(
+                level = 100,
+                heat = 0.0
+            )
+        val position = systemMessage.level.toDouble() / 200.0
 
         slider.draw(position)
+
+        heat.progress = systemMessage.heat
         heat.draw()
     }
 }

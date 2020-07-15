@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PhysicsEngine
 import de.stefanbissell.starcruiser.PoweredSystem
+import de.stefanbissell.starcruiser.PoweredSystemMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
 import de.stefanbissell.starcruiser.isNear
@@ -467,7 +468,12 @@ class ShipTest {
         ship.setPower(PoweredSystem.Maneuver, 150)
 
         expectThat(ship.toMessage().powerMessage.settings)
-            .hasEntry(PoweredSystem.Maneuver, 150)
+            .hasEntry(
+                PoweredSystem.Maneuver, PoweredSystemMessage(
+                    level = 150,
+                    heat = 0.0
+                )
+            )
     }
 
     private fun stepTimeTo(seconds: Number, shipProvider: (ObjectId) -> Ship? = { null }): ShipUpdateResult {
