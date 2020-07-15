@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.oneDigit
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 class PowerHandler(
@@ -17,8 +18,14 @@ class PowerHandler(
     private var capacitors = shipTemplate.maxCapacitors
     private val powerSettings = PoweredSystemType.values().associate { it to 100 }.toMutableMap()
     private val coolantSettings = PoweredSystemType.values().associate { it to 0.0 }.toMutableMap()
+    private val heatLevels = PoweredSystemType.values().associate { it to 0.0 }.toMutableMap()
 
     fun update(time: GameTime) {
+        updateCapacitors(time)
+        updateHeatLevels(time)
+    }
+
+    private fun updateCapacitors(time: GameTime) {
         val capacitorPlus = shipTemplate.reactorOutput * boostLevel(PoweredSystemType.Reactor)
         val capacitorMinus = PoweredSystemType.values()
             .filter { it != PoweredSystemType.Reactor }
@@ -28,6 +35,13 @@ class PowerHandler(
 
         capacitors += time.delta * (capacitorPlus - capacitorMinus) / 60
         capacitors = max(0.0, min(shipTemplate.maxCapacitors, capacitors))
+    }
+
+    private fun updateHeatLevels(time: GameTime) {
+        PoweredSystemType.values().forEach { system ->
+            val heatChangePerSecond = 1.7.pow(boostLevel(system) - 1.0) - (1.01 + getCoolantLevel(system))
+            setHeatLevel(system, getHeatLevel(system) + heatChangePerSecond * time.delta)
+        }
     }
 
     fun getPowerLevel(systemType: PoweredSystemType): Int = powerSettings[systemType] ?: 100
@@ -42,6 +56,12 @@ class PowerHandler(
         coolantSettings[systemType] = max(0.0, min(1.0, coolant))
     }
 
+    private fun getHeatLevel(systemType: PoweredSystemType): Double = heatLevels[systemType] ?: 0.0
+
+    private fun setHeatLevel(systemType: PoweredSystemType, heat: Double) {
+        heatLevels[systemType] = max(0.0, min(1.0, heat))
+    }
+
     fun boostLevel(systemType: PoweredSystemType) = getPowerLevel(systemType) / 100.0
 
     fun toMessage() =
@@ -51,7 +71,7 @@ class PowerHandler(
             settings = PoweredSystemType.values().associate {
                 it to PoweredSystemMessage(
                     level = getPowerLevel(it),
-                    heat = 0.0.fiveDigits(),
+                    heat = getHeatLevel(it).fiveDigits(),
                     coolant = getCoolantLevel(it).fiveDigits()
                 )
             }
