@@ -52,6 +52,10 @@ class PointerEventDispatcher(
         handlersToAdd.forEach { handlers += it }
     }
 
+    fun addHandlers(handlersToAdd: List<PointerEventHandler>) {
+        handlersToAdd.forEach { handlers += it }
+    }
+
     private fun handleMouseDown(mouseEvent: MouseEvent) {
         val event = mouseEvent.toPointerEvent()
         handlers

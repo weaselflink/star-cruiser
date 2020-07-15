@@ -206,6 +206,10 @@ class Ship(
         powerHandler.setPowerLevel(poweredSystem, power)
     }
 
+    fun setCoolant(poweredSystem: PoweredSystem, coolant: Double) {
+        powerHandler.setCoolantLevel(poweredSystem, coolant)
+    }
+
     fun takeDamage(amount: Double) {
         hull -= shieldHandler.takeDamageAndReportHullDamage(amount)
     }

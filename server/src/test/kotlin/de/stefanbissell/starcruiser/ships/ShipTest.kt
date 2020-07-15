@@ -471,7 +471,22 @@ class ShipTest {
             .hasEntry(
                 PoweredSystem.Maneuver, PoweredSystemMessage(
                     level = 150,
-                    heat = 0.0
+                    heat = 0.0,
+                    coolant = 0.0
+                )
+            )
+    }
+
+    @Test
+    fun `can set coolant`() {
+        ship.setCoolant(PoweredSystem.Maneuver, 0.6)
+
+        expectThat(ship.toMessage().powerMessage.settings)
+            .hasEntry(
+                PoweredSystem.Maneuver, PoweredSystemMessage(
+                    level = 100,
+                    heat = 0.0,
+                    coolant = 0.6
                 )
             )
     }

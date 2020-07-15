@@ -16,6 +16,7 @@ class PowerHandler(
 
     private var capacitors = shipTemplate.maxCapacitors
     private val powerSettings = PoweredSystem.values().associate { it to 100 }.toMutableMap()
+    private val coolantSettings = PoweredSystem.values().associate { it to 0.0 }.toMutableMap()
 
     fun update(time: GameTime) {
         val capacitorPlus = shipTemplate.reactorOutput * boostLevel(PoweredSystem.Reactor)
@@ -35,16 +36,23 @@ class PowerHandler(
         powerSettings[system] = max(0, min(200, (power / 10.0).roundToInt() * 10))
     }
 
+    private fun getCoolantLevel(system: PoweredSystem): Double = coolantSettings[system] ?: 0.0
+
+    fun setCoolantLevel(system: PoweredSystem, coolant: Double) {
+        coolantSettings[system] = max(0.0, min(1.0, coolant))
+    }
+
     fun boostLevel(system: PoweredSystem) = getPowerLevel(system) / 100.0
 
     fun toMessage() =
         PowerMessage(
             capacitors = capacitors.oneDigit(),
             maxCapacitors = shipTemplate.maxCapacitors,
-            settings = powerSettings.mapValues {
-                PoweredSystemMessage(
-                    level = it.value,
-                    heat = 0.0.fiveDigits()
+            settings = PoweredSystem.values().associate {
+                it to PoweredSystemMessage(
+                    level = getPowerLevel(it),
+                    heat = 0.0.fiveDigits(),
+                    coolant = getCoolantLevel(it).fiveDigits()
                 )
             }
         )

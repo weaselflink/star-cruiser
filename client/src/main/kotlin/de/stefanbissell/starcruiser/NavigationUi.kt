@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.components.CanvasSlider
 import de.stefanbissell.starcruiser.components.MapClick
 import de.stefanbissell.starcruiser.components.NavigationMap
 import de.stefanbissell.starcruiser.components.SelectionDetails
+import org.w3c.dom.CanvasRenderingContext2D
 
 class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
 
@@ -62,14 +63,16 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
     fun draw(snapshot: SnapshotMessage.Navigation) {
         selectionDetails.draw(navigationMap.selection)
 
-        with(ctx) {
-            transformReset()
-            clear("#000")
+        ctx.draw(snapshot)
+    }
 
-            navigationMap.draw(snapshot)
-            drawZoom()
-            addWaypointButton.draw()
-        }
+    private fun CanvasRenderingContext2D.draw(snapshot: SnapshotMessage.Navigation) {
+        transformReset()
+        clear("#000")
+
+        navigationMap.draw(snapshot)
+        drawZoom()
+        addWaypointButton.draw()
     }
 
     private fun toggleAddWaypoint() {

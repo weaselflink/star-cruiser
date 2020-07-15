@@ -18,6 +18,7 @@ import de.stefanbissell.starcruiser.JoinShip
 import de.stefanbissell.starcruiser.LockTarget
 import de.stefanbissell.starcruiser.NewGameClient
 import de.stefanbissell.starcruiser.ScanShip
+import de.stefanbissell.starcruiser.SetCoolant
 import de.stefanbissell.starcruiser.SetPower
 import de.stefanbissell.starcruiser.SetShieldsUp
 import de.stefanbissell.starcruiser.SnapshotMessage
@@ -110,6 +111,11 @@ class GameClient(
                 is Command.CommandSetPower -> gameStateActor.send(
                     SetPower(id, command.system, command.power)
                 )
+                is Command.CommandSetCoolant -> {
+                    gameStateActor.send(
+                        SetCoolant(id, command.system, command.coolant)
+                    )
+                }
             }
         }
 

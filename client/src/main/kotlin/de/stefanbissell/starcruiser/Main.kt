@@ -55,6 +55,7 @@ fun init() {
         helmUi.resize()
         weaponsUi.resize()
         navigationUi.resize()
+        engineeringUi.resize()
         mainScreenUi.resize()
     }
 

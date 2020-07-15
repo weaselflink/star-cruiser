@@ -15,12 +15,14 @@ class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
         system to PowerDisplay(
             system = system,
             canvas = canvas,
-            yExpr = { it.height - it.vmin * 3 - it.vmin * index * 12 }
+            yExpr = { it.height - it.vmin * 3 - it.vmin * index * 10 }
         )
     }.associate { it.first to it.second }
 
     init {
-        powerDisplays.forEach { pointerEventDispatcher.addHandlers(it.value) }
+        powerDisplays.forEach {
+            pointerEventDispatcher.addHandlers(it.value.handlers)
+        }
     }
 
     fun draw(snapshot: SnapshotMessage.Engineering) {

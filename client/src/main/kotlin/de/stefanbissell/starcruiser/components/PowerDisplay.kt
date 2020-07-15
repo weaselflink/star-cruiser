@@ -6,7 +6,6 @@ import de.stefanbissell.starcruiser.PowerMessage
 import de.stefanbissell.starcruiser.PoweredSystem
 import de.stefanbissell.starcruiser.PoweredSystemMessage
 import de.stefanbissell.starcruiser.clientSocket
-import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandler
 import de.stefanbissell.starcruiser.send
 import org.w3c.dom.HTMLCanvasElement
@@ -16,14 +15,14 @@ class PowerDisplay(
     private val system: PoweredSystem,
     canvas: HTMLCanvasElement,
     yExpr: (CanvasDimensions) -> Double
-) : PointerEventHandler {
+) {
 
-    private val slider = CanvasSlider(
+    private val levelSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { it.vmin * 3 },
+        xExpr = { it.xOffset() + it.vmin * 3 },
         yExpr = yExpr,
-        widthExpr = { it.vmin * 60 },
-        heightExpr = { it.vmin * 10 },
+        widthExpr = { it.vmin * 44 },
+        heightExpr = { it.vmin * 8 },
         onChange = {
             val power = (it * 200).roundToInt()
             clientSocket.send(Command.CommandSetPower(system, power))
@@ -33,41 +32,43 @@ class PowerDisplay(
     )
     private val heat = CanvasProgress(
         canvas = canvas,
-        xExpr = { it.vmin * 66 },
+        xExpr = { it.xOffset() + it.vmin * 50 },
         yExpr = yExpr,
-        widthExpr = { it.vmin * 40 },
-        heightExpr = { it.vmin * 10 },
+        widthExpr = { it.vmin * 17 },
+        heightExpr = { it.vmin * 8 },
         backgroundColor = "#111",
         foregroundColor = "#888"
     )
+    private val coolantSlider = CanvasSlider(
+        canvas = canvas,
+        xExpr = { it.xOffset() + it.vmin * 70 },
+        yExpr = yExpr,
+        widthExpr = { it.vmin * 27 },
+        heightExpr = { it.vmin * 8 },
+        onChange = {
+            clientSocket.send(Command.CommandSetCoolant(system, it))
+        }
+    )
 
-    override fun isInterestedIn(pointerEvent: PointerEvent): Boolean {
-        return slider.isInterestedIn(pointerEvent)
-    }
-
-    override fun handlePointerDown(pointerEvent: PointerEvent) {
-        slider.handlePointerDown(pointerEvent)
-    }
-
-    override fun handlePointerMove(pointerEvent: PointerEvent) {
-        slider.handlePointerMove(pointerEvent)
-    }
-
-    override fun handlePointerUp(pointerEvent: PointerEvent) {
-        slider.handlePointerUp(pointerEvent)
-    }
+    val handlers: List<PointerEventHandler>
+        get() = listOf(levelSlider, coolantSlider)
 
     fun draw(powerMessage: PowerMessage) {
         val systemMessage = powerMessage.settings[system]
             ?: PoweredSystemMessage(
                 level = 100,
-                heat = 0.0
+                heat = 0.0,
+                coolant = 0.0
             )
         val position = systemMessage.level.toDouble() / 200.0
 
-        slider.draw(position)
+        levelSlider.draw(position)
 
         heat.progress = systemMessage.heat
         heat.draw()
+
+        coolantSlider.draw(systemMessage.coolant)
     }
+
+    private fun CanvasDimensions.xOffset() = (width - min) * 0.5
 }
