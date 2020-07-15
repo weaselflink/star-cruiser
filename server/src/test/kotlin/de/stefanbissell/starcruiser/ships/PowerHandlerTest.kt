@@ -21,41 +21,41 @@ class PowerHandlerTest {
     @Test
     fun `holds initial value for each system`() {
         PoweredSystemType.values().forEach {
-            expectThat(powerHandler.getPoweredSystem(it).level).isEqualTo(100)
+            expectThat(getLevel(it)).isEqualTo(100)
         }
     }
 
     @Test
     fun `can set system power`() {
-        powerHandler.getPoweredSystem(Shields).level = 50
-        expectThat(powerHandler.getPoweredSystem(Shields).level).isEqualTo(50)
+        powerHandler.setLevel(Shields, 50)
+        expectThat(getLevel(Shields)).isEqualTo(50)
     }
 
     @Test
     fun `caps power above 0`() {
-        powerHandler.getPoweredSystem(Shields).level = -10
-        expectThat(powerHandler.getPoweredSystem(Shields).level).isEqualTo(0)
+        powerHandler.setLevel(Shields, -10)
+        expectThat(getLevel(Shields)).isEqualTo(0)
     }
 
     @Test
     fun `caps power below 200`() {
-        powerHandler.getPoweredSystem(Shields).level = 210
-        expectThat(powerHandler.getPoweredSystem(Shields).level).isEqualTo(200)
+        powerHandler.setLevel(Shields, 210)
+        expectThat(getLevel(Shields)).isEqualTo(200)
     }
 
     @Test
     fun `rounds power to nearest multiple of 5`() {
-        powerHandler.getPoweredSystem(Shields).level = 52
-        expectThat(powerHandler.getPoweredSystem(Shields).level).isEqualTo(50)
-        powerHandler.getPoweredSystem(Shields).level = 58
-        expectThat(powerHandler.getPoweredSystem(Shields).level).isEqualTo(60)
+        powerHandler.setLevel(Shields, 52)
+        expectThat(getLevel(Shields)).isEqualTo(50)
+        powerHandler.setLevel(Shields, 58)
+        expectThat(getLevel(Shields)).isEqualTo(60)
     }
 
     @Test
     fun `compares messages correctly`() {
         val initialMessage = powerHandler.toMessage()
 
-        powerHandler.getPoweredSystem(Shields).level = 52
+        powerHandler.setLevel(Shields, 52)
 
         expectThat(powerHandler.toMessage())
             .isNotEqualTo(initialMessage)
@@ -76,4 +76,7 @@ class PowerHandlerTest {
         time.update(Instant.EPOCH.plusMillis((60.toDouble() * 1000).toLong()))
         powerHandler.update(time)
     }
+
+    private fun getLevel(systemType: PoweredSystemType) =
+        powerHandler.toMessage().settings[systemType]?.level
 }

@@ -17,7 +17,8 @@ class PowerHandler(
 ) {
 
     private var capacitors = shipTemplate.maxCapacitors
-    private val poweredSystems = PoweredSystemType.values()
+    private val allTypes = PoweredSystemType.values()
+    private val poweredSystems = allTypes
         .associate { it to PoweredSystem() }
         .toMutableMap()
 
@@ -26,12 +27,51 @@ class PowerHandler(
         updateHeatLevels(time)
     }
 
-    fun getPoweredSystem(type: PoweredSystemType) =
+    fun getBoostLevel(type: PoweredSystemType) = getPoweredSystem(type).boostLevel
+
+    fun setLevel(type: PoweredSystemType, value: Int) {
+        getPoweredSystem(type).level = value
+    }
+
+    fun setCoolant(type: PoweredSystemType, value: Double) {
+        getPoweredSystem(type).coolant = value
+
+        val totalCoolant = allTypes
+            .map {
+                getPoweredSystem(it)
+            }
+            .map { it.coolant }
+            .sum()
+
+        if (totalCoolant > shipTemplate.maxCoolant) {
+            val ratio = shipTemplate.maxCoolant / totalCoolant
+            allTypes
+                .filter { it != type }
+                .map {
+                    getPoweredSystem(it)
+                }
+                .forEach {
+                    it.coolant *= ratio
+                }
+        }
+    }
+
+    fun toMessage() =
+        PowerMessage(
+            capacitors = capacitors.oneDigit(),
+            maxCapacitors = shipTemplate.maxCapacitors,
+            settings = allTypes
+                .associate {
+                    it to getPoweredSystem(it).toMessage()
+                }
+        )
+
+    private fun getPoweredSystem(type: PoweredSystemType) =
         poweredSystems[type] ?: PoweredSystem()
 
     private fun updateCapacitors(time: GameTime) {
         val capacitorPlus = shipTemplate.reactorOutput * getPoweredSystem(PoweredSystemType.Reactor).boostLevel
-        val capacitorMinus = PoweredSystemType.values()
+        val capacitorMinus = allTypes
             .filter { it != PoweredSystemType.Reactor }
             .map {
                 getPoweredSystem(it)
@@ -45,26 +85,13 @@ class PowerHandler(
     }
 
     private fun updateHeatLevels(time: GameTime) {
-        PoweredSystemType.values().map {
-            getPoweredSystem(it)
-        }.forEach {
-            it.updateHeat(time)
-        }
-    }
-
-    fun toMessage() =
-        PowerMessage(
-            capacitors = capacitors.oneDigit(),
-            maxCapacitors = shipTemplate.maxCapacitors,
-            settings = PoweredSystemType.values().associate {
-                val poweredSystem = getPoweredSystem(it)
-                it to PoweredSystemMessage(
-                    level = poweredSystem.level,
-                    heat = poweredSystem.heat.fiveDigits(),
-                    coolant = poweredSystem.coolant.fiveDigits()
-                )
+        allTypes
+            .map {
+                getPoweredSystem(it)
+            }.forEach {
+                it.updateHeat(time)
             }
-        )
+    }
 }
 
 typealias BoostLevel = () -> Double
@@ -91,4 +118,11 @@ class PoweredSystem {
         val heatChangePerSecond = 1.7.pow(boostLevel - 1.0) - (1.01 + coolant)
         heat += heatChangePerSecond * time.delta
     }
+
+    fun toMessage() =
+        PoweredSystemMessage(
+            level = level,
+            heat = heat.fiveDigits(),
+            coolant = coolant.fiveDigits()
+        )
 }

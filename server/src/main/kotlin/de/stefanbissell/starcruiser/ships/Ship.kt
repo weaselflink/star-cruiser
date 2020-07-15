@@ -40,18 +40,18 @@ class Ship(
     private val scans = mutableMapOf<ObjectId, ScanLevel>()
     private val powerHandler = PowerHandler(template)
     private val beamHandlers = template.beams.map {
-        BeamHandler(it) { powerHandler.getPoweredSystem(PoweredSystemType.Weapons).boostLevel }
+        BeamHandler(it) { powerHandler.getBoostLevel(PoweredSystemType.Weapons) }
     }
     private val shieldHandler = ShieldHandler(
         shieldTemplate = template.shield,
-        boostLevel = { powerHandler.getPoweredSystem(PoweredSystemType.Shields).boostLevel }
+        boostLevel = { powerHandler.getBoostLevel(PoweredSystemType.Shields) }
     )
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
     private var hull = template.hull
     private val jumpHandler = JumpHandler(
         jumpDrive = template.jumpDrive,
-        boostLevel = { powerHandler.getPoweredSystem(PoweredSystemType.Jump).boostLevel }
+        boostLevel = { powerHandler.getBoostLevel(PoweredSystemType.Jump) }
     )
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
@@ -63,11 +63,11 @@ class Ship(
         updateLock(time)
         updateThrust(time)
         val effectiveThrust = if (thrust < 0) {
-            thrust * template.reverseThrustFactor * powerHandler.getPoweredSystem(PoweredSystemType.Impulse).boostLevel
+            thrust * template.reverseThrustFactor * powerHandler.getBoostLevel(PoweredSystemType.Impulse)
         } else {
-            thrust * template.aheadThrustFactor * powerHandler.getPoweredSystem(PoweredSystemType.Impulse).boostLevel
+            thrust * template.aheadThrustFactor * powerHandler.getBoostLevel(PoweredSystemType.Impulse)
         }
-        val effectiveRudder = rudder * template.rudderFactor * powerHandler.getPoweredSystem(PoweredSystemType.Maneuver).boostLevel
+        val effectiveRudder = rudder * template.rudderFactor * powerHandler.getBoostLevel(PoweredSystemType.Maneuver)
         physicsEngine.updateShip(id, effectiveThrust, effectiveRudder)
 
         physicsEngine.getBodyParameters(id)?.let {
@@ -183,7 +183,7 @@ class Ship(
             scanHandler = ScanHandler(
                 targetId = targetId,
                 scanningSpeed = template.scanSpeed,
-                boostLevel = { powerHandler.getPoweredSystem(PoweredSystemType.Sensors).boostLevel }
+                boostLevel = { powerHandler.getBoostLevel(PoweredSystemType.Sensors) }
             )
         }
     }
@@ -193,7 +193,7 @@ class Ship(
             lockHandler = LockHandler(
                 targetId = targetId,
                 lockingSpeed = template.lockingSpeed,
-                boostLevel = { powerHandler.getPoweredSystem(PoweredSystemType.Sensors).boostLevel }
+                boostLevel = { powerHandler.getBoostLevel(PoweredSystemType.Sensors) }
             )
         }
     }
@@ -203,11 +203,11 @@ class Ship(
     }
 
     fun setPower(systemType: PoweredSystemType, level: Int) {
-        powerHandler.getPoweredSystem(systemType).level = level
+        powerHandler.setLevel(systemType, level)
     }
 
     fun setCoolant(systemType: PoweredSystemType, coolant: Double) {
-        powerHandler.getPoweredSystem(systemType).coolant = coolant
+        powerHandler.setCoolant(systemType, coolant)
     }
 
     fun takeDamage(amount: Double) {

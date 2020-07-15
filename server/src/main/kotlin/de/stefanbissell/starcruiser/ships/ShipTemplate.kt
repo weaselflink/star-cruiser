@@ -37,7 +37,8 @@ data class ShipTemplate(
     val hull: Double = 10.0,
     val jumpDrive: JumpDrive = JumpDrive(),
     val maxCapacitors: Double = 1000.0,
-    val reactorOutput: Double = 300.0
+    val reactorOutput: Double = 300.0,
+    val maxCoolant: Double = 2.0
 )
 
 data class JumpDrive(
