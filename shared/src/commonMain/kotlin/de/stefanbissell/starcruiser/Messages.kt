@@ -309,7 +309,7 @@ sealed class JumpDriveMessage {
 }
 
 @Serializable
-enum class PoweredSystem {
+enum class PoweredSystemType {
     Sensors,
     Maneuver,
     Impulse,
@@ -323,7 +323,7 @@ enum class PoweredSystem {
 data class PowerMessage(
     val capacitors: Double,
     val maxCapacitors: Double,
-    val settings: Map<PoweredSystem, PoweredSystemMessage>
+    val settings: Map<PoweredSystemType, PoweredSystemMessage>
 )
 
 @Serializable

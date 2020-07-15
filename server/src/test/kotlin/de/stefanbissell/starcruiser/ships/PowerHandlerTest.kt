@@ -1,8 +1,8 @@
 package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
-import de.stefanbissell.starcruiser.PoweredSystem
-import de.stefanbissell.starcruiser.PoweredSystem.Shields
+import de.stefanbissell.starcruiser.PoweredSystemType
+import de.stefanbissell.starcruiser.PoweredSystemType.Shields
 import de.stefanbissell.starcruiser.isNear
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -20,7 +20,7 @@ class PowerHandlerTest {
 
     @Test
     fun `holds initial value for each system`() {
-        PoweredSystem.values().forEach {
+        PoweredSystemType.values().forEach {
             expectThat(powerHandler.getPowerLevel(it)).isEqualTo(100)
         }
     }

@@ -7,8 +7,8 @@ import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PhysicsEngine
-import de.stefanbissell.starcruiser.PoweredSystem
 import de.stefanbissell.starcruiser.PoweredSystemMessage
+import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
 import de.stefanbissell.starcruiser.isNear
@@ -251,7 +251,7 @@ class ShipTest {
 
     @Test
     fun `updates physics engine applying impulse power level`() {
-        ship.setPower(PoweredSystem.Impulse, 150)
+        ship.setPower(PoweredSystemType.Impulse, 150)
         ship.changeThrottle(50)
         ship.changeRudder(50)
         stepTimeTo(2)
@@ -267,7 +267,7 @@ class ShipTest {
 
     @Test
     fun `updates physics engine applying maneuver power level`() {
-        ship.setPower(PoweredSystem.Maneuver, 80)
+        ship.setPower(PoweredSystemType.Maneuver, 80)
         ship.changeThrottle(50)
         ship.changeRudder(50)
         stepTimeTo(2)
@@ -344,7 +344,7 @@ class ShipTest {
 
     @Test
     fun `updates beams applying power level`() {
-        ship.setPower(PoweredSystem.Weapons, 200)
+        ship.setPower(PoweredSystemType.Weapons, 200)
         val target = Ship(
             position = Vector2(100, 0)
         )
@@ -465,11 +465,11 @@ class ShipTest {
 
     @Test
     fun `can set power`() {
-        ship.setPower(PoweredSystem.Maneuver, 150)
+        ship.setPower(PoweredSystemType.Maneuver, 150)
 
         expectThat(ship.toMessage().powerMessage.settings)
             .hasEntry(
-                PoweredSystem.Maneuver, PoweredSystemMessage(
+                PoweredSystemType.Maneuver, PoweredSystemMessage(
                     level = 150,
                     heat = 0.0,
                     coolant = 0.0
@@ -479,11 +479,11 @@ class ShipTest {
 
     @Test
     fun `can set coolant`() {
-        ship.setCoolant(PoweredSystem.Maneuver, 0.6)
+        ship.setCoolant(PoweredSystemType.Maneuver, 0.6)
 
         expectThat(ship.toMessage().powerMessage.settings)
             .hasEntry(
-                PoweredSystem.Maneuver, PoweredSystemMessage(
+                PoweredSystemType.Maneuver, PoweredSystemMessage(
                     level = 100,
                     heat = 0.0,
                     coolant = 0.6

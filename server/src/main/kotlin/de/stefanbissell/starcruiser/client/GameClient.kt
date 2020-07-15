@@ -109,11 +109,11 @@ class GameClient(
                     SetShieldsUp(id, command.value)
                 )
                 is Command.CommandSetPower -> gameStateActor.send(
-                    SetPower(id, command.system, command.power)
+                    SetPower(id, command.systemType, command.power)
                 )
                 is Command.CommandSetCoolant -> {
                     gameStateActor.send(
-                        SetCoolant(id, command.system, command.coolant)
+                        SetCoolant(id, command.systemType, command.coolant)
                     )
                 }
             }

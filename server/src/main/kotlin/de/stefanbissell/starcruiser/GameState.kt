@@ -39,8 +39,8 @@ class DeleteWaypoint(val clientId: ClientId, val index: Int) : GameStateChange()
 class ScanShip(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
 class LockTarget(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
 class SetShieldsUp(val clientId: ClientId, val activated: Boolean) : GameStateChange()
-class SetPower(val clientId: ClientId, val system: PoweredSystem, val power: Int) : GameStateChange()
-class SetCoolant(val clientId: ClientId, val system: PoweredSystem, val coolant: Double) : GameStateChange()
+class SetPower(val clientId: ClientId, val systemType: PoweredSystemType, val power: Int) : GameStateChange()
+class SetCoolant(val clientId: ClientId, val systemType: PoweredSystemType, val coolant: Double) : GameStateChange()
 
 class GameState {
 
@@ -216,12 +216,12 @@ class GameState {
         getClientShip(clientId)?.setShieldsUp(value)
     }
 
-    fun setPower(clientId: ClientId, system: PoweredSystem, power: Int) {
-        getClientShip(clientId)?.setPower(system, power)
+    fun setPower(clientId: ClientId, systemType: PoweredSystemType, power: Int) {
+        getClientShip(clientId)?.setPower(systemType, power)
     }
 
-    fun setCoolant(clientId: ClientId, system: PoweredSystem, coolant: Double) {
-        getClientShip(clientId)?.setCoolant(system, coolant)
+    fun setCoolant(clientId: ClientId, systemType: PoweredSystemType, coolant: Double) {
+        getClientShip(clientId)?.setCoolant(systemType, coolant)
     }
 
     private fun getClient(clientId: ClientId) =
@@ -289,8 +289,8 @@ class GameState {
                     is ScanShip -> gameState.scanShip(change.clientId, change.targetId)
                     is LockTarget -> gameState.lockTarget(change.clientId, change.targetId)
                     is SetShieldsUp -> gameState.setShieldsUp(change.clientId, change.activated)
-                    is SetPower -> gameState.setPower(change.clientId, change.system, change.power)
-                    is SetCoolant -> gameState.setCoolant(change.clientId, change.system, change.coolant)
+                    is SetPower -> gameState.setPower(change.clientId, change.systemType, change.power)
+                    is SetCoolant -> gameState.setCoolant(change.clientId, change.systemType, change.coolant)
                 }
             }
         }

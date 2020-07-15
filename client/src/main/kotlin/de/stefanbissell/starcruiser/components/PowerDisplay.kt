@@ -3,8 +3,8 @@ package de.stefanbissell.starcruiser.components
 import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.PowerMessage
-import de.stefanbissell.starcruiser.PoweredSystem
 import de.stefanbissell.starcruiser.PoweredSystemMessage
+import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.clientSocket
 import de.stefanbissell.starcruiser.input.PointerEventHandler
 import de.stefanbissell.starcruiser.send
@@ -12,7 +12,7 @@ import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.roundToInt
 
 class PowerDisplay(
-    private val system: PoweredSystem,
+    private val systemType: PoweredSystemType,
     canvas: HTMLCanvasElement,
     yExpr: (CanvasDimensions) -> Double
 ) {
@@ -25,10 +25,10 @@ class PowerDisplay(
         heightExpr = { it.vmin * 8 },
         onChange = {
             val power = (it * 200).roundToInt()
-            clientSocket.send(Command.CommandSetPower(system, power))
+            clientSocket.send(Command.CommandSetPower(systemType, power))
         },
         lines = listOf(0.5),
-        leftText = system.name
+        leftText = systemType.name
     )
     private val heat = CanvasProgress(
         canvas = canvas,
@@ -46,7 +46,7 @@ class PowerDisplay(
         widthExpr = { it.vmin * 27 },
         heightExpr = { it.vmin * 8 },
         onChange = {
-            clientSocket.send(Command.CommandSetCoolant(system, it))
+            clientSocket.send(Command.CommandSetCoolant(systemType, it))
         }
     )
 
@@ -54,7 +54,7 @@ class PowerDisplay(
         get() = listOf(levelSlider, coolantSlider)
 
     fun draw(powerMessage: PowerMessage) {
-        val systemMessage = powerMessage.settings[system]
+        val systemMessage = powerMessage.settings[systemType]
             ?: PoweredSystemMessage(
                 level = 100,
                 heat = 0.0,

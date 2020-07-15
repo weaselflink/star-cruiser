@@ -11,9 +11,9 @@ class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
         xExpr = { it.width * 0.5 - it.vmin * 30 },
         yExpr = { it.vmin * 12 }
     )
-    private val powerDisplays = PoweredSystem.values().mapIndexed { index, system ->
-        system to PowerDisplay(
-            system = system,
+    private val powerDisplays = PoweredSystemType.values().mapIndexed { index, systemType ->
+        systemType to PowerDisplay(
+            systemType = systemType,
             canvas = canvas,
             yExpr = { it.height - it.vmin * 3 - it.vmin * index * 10 }
         )

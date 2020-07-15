@@ -2,8 +2,8 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.PowerMessage
-import de.stefanbissell.starcruiser.PoweredSystem
 import de.stefanbissell.starcruiser.PoweredSystemMessage
+import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.oneDigit
 import kotlin.math.max
@@ -15,13 +15,13 @@ class PowerHandler(
 ) {
 
     private var capacitors = shipTemplate.maxCapacitors
-    private val powerSettings = PoweredSystem.values().associate { it to 100 }.toMutableMap()
-    private val coolantSettings = PoweredSystem.values().associate { it to 0.0 }.toMutableMap()
+    private val powerSettings = PoweredSystemType.values().associate { it to 100 }.toMutableMap()
+    private val coolantSettings = PoweredSystemType.values().associate { it to 0.0 }.toMutableMap()
 
     fun update(time: GameTime) {
-        val capacitorPlus = shipTemplate.reactorOutput * boostLevel(PoweredSystem.Reactor)
-        val capacitorMinus = PoweredSystem.values()
-            .filter { it != PoweredSystem.Reactor }
+        val capacitorPlus = shipTemplate.reactorOutput * boostLevel(PoweredSystemType.Reactor)
+        val capacitorMinus = PoweredSystemType.values()
+            .filter { it != PoweredSystemType.Reactor }
             .map { getPowerLevel(it) }
             .sum()
             .toDouble()
@@ -30,25 +30,25 @@ class PowerHandler(
         capacitors = max(0.0, min(shipTemplate.maxCapacitors, capacitors))
     }
 
-    fun getPowerLevel(system: PoweredSystem): Int = powerSettings[system] ?: 100
+    fun getPowerLevel(systemType: PoweredSystemType): Int = powerSettings[systemType] ?: 100
 
-    fun setPowerLevel(system: PoweredSystem, power: Int) {
-        powerSettings[system] = max(0, min(200, (power / 10.0).roundToInt() * 10))
+    fun setPowerLevel(systemType: PoweredSystemType, power: Int) {
+        powerSettings[systemType] = max(0, min(200, (power / 10.0).roundToInt() * 10))
     }
 
-    private fun getCoolantLevel(system: PoweredSystem): Double = coolantSettings[system] ?: 0.0
+    private fun getCoolantLevel(systemType: PoweredSystemType): Double = coolantSettings[systemType] ?: 0.0
 
-    fun setCoolantLevel(system: PoweredSystem, coolant: Double) {
-        coolantSettings[system] = max(0.0, min(1.0, coolant))
+    fun setCoolantLevel(systemType: PoweredSystemType, coolant: Double) {
+        coolantSettings[systemType] = max(0.0, min(1.0, coolant))
     }
 
-    fun boostLevel(system: PoweredSystem) = getPowerLevel(system) / 100.0
+    fun boostLevel(systemType: PoweredSystemType) = getPowerLevel(systemType) / 100.0
 
     fun toMessage() =
         PowerMessage(
             capacitors = capacitors.oneDigit(),
             maxCapacitors = shipTemplate.maxCapacitors,
-            settings = PoweredSystem.values().associate {
+            settings = PoweredSystemType.values().associate {
                 it to PoweredSystemMessage(
                     level = getPowerLevel(it),
                     heat = 0.0.fiveDigits(),
