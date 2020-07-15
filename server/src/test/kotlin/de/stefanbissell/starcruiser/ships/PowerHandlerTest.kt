@@ -21,41 +21,41 @@ class PowerHandlerTest {
     @Test
     fun `holds initial value for each system`() {
         PoweredSystemType.values().forEach {
-            expectThat(powerHandler.getPowerLevel(it)).isEqualTo(100)
+            expectThat(powerHandler.getPoweredSystem(it).level).isEqualTo(100)
         }
     }
 
     @Test
     fun `can set system power`() {
-        powerHandler.setPowerLevel(Shields, 50)
-        expectThat(powerHandler.getPowerLevel(Shields)).isEqualTo(50)
+        powerHandler.getPoweredSystem(Shields).level = 50
+        expectThat(powerHandler.getPoweredSystem(Shields).level).isEqualTo(50)
     }
 
     @Test
     fun `caps power above 0`() {
-        powerHandler.setPowerLevel(Shields, -10)
-        expectThat(powerHandler.getPowerLevel(Shields)).isEqualTo(0)
+        powerHandler.getPoweredSystem(Shields).level = -10
+        expectThat(powerHandler.getPoweredSystem(Shields).level).isEqualTo(0)
     }
 
     @Test
     fun `caps power below 200`() {
-        powerHandler.setPowerLevel(Shields, 210)
-        expectThat(powerHandler.getPowerLevel(Shields)).isEqualTo(200)
+        powerHandler.getPoweredSystem(Shields).level = 210
+        expectThat(powerHandler.getPoweredSystem(Shields).level).isEqualTo(200)
     }
 
     @Test
     fun `rounds power to nearest multiple of 5`() {
-        powerHandler.setPowerLevel(Shields, 52)
-        expectThat(powerHandler.getPowerLevel(Shields)).isEqualTo(50)
-        powerHandler.setPowerLevel(Shields, 58)
-        expectThat(powerHandler.getPowerLevel(Shields)).isEqualTo(60)
+        powerHandler.getPoweredSystem(Shields).level = 52
+        expectThat(powerHandler.getPoweredSystem(Shields).level).isEqualTo(50)
+        powerHandler.getPoweredSystem(Shields).level = 58
+        expectThat(powerHandler.getPoweredSystem(Shields).level).isEqualTo(60)
     }
 
     @Test
     fun `compares messages correctly`() {
         val initialMessage = powerHandler.toMessage()
 
-        powerHandler.setPowerLevel(Shields, 52)
+        powerHandler.getPoweredSystem(Shields).level = 52
 
         expectThat(powerHandler.toMessage())
             .isNotEqualTo(initialMessage)
