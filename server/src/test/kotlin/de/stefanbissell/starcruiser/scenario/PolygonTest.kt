@@ -3,12 +3,13 @@ package de.stefanbissell.starcruiser.scenario
 import de.stefanbissell.starcruiser.p
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
 
-class AreaTest {
+class PolygonTest {
 
-    private val triangle = Area(
+    private val triangle = Polygon(
         listOf(
             p(6, 0),
             p(0, 0),
@@ -16,7 +17,7 @@ class AreaTest {
         )
     )
 
-    private val horseshoe = Area(
+    private val horseshoe = Polygon(
         listOf(
             p(1, 1),
             p(1, 5),
@@ -28,6 +29,18 @@ class AreaTest {
             p(7, 1)
         )
     )
+
+    @Test
+    fun `gives triangle bounding box`() {
+        expectThat(triangle.boundingBox)
+            .isEqualTo(Box(p(0, 0), p(6, 3)))
+    }
+
+    @Test
+    fun `gives horseshoe bounding box`() {
+        expectThat(horseshoe.boundingBox)
+            .isEqualTo(Box(p(1, 1), p(7, 5)))
+    }
 
     @Test
     fun `recognizes points inside triangle`() {
