@@ -1,11 +1,11 @@
 package de.stefanbissell.starcruiser
 
+import kotlinx.serialization.Serializable
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.random.Random
-import kotlinx.serialization.Serializable
 
 @Serializable
 data class Vector2(
@@ -66,5 +66,7 @@ data class Vector2(
             }
     }
 }
+
+fun p(x: Number, y: Number) = Vector2(x, y)
 
 operator fun Double.times(other: Vector2) = other * this

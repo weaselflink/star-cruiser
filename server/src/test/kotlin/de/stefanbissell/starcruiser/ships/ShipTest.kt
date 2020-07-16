@@ -12,6 +12,7 @@ import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
 import de.stefanbissell.starcruiser.isNear
+import de.stefanbissell.starcruiser.p
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -32,7 +33,7 @@ import java.time.Instant
 class ShipTest {
 
     private val ship = Ship(
-        position = Vector2(3, -4),
+        position = p(3, -4),
         template = ShipTemplate().let {
             it.copy(beams = it.beams.subList(0, 1))
         }
@@ -155,16 +156,16 @@ class ShipTest {
 
     @Test
     fun `can add waypoint`() {
-        ship.addWaypoint(Vector2(5, -4))
+        ship.addWaypoint(p(5, -4))
 
         expectThat(ship.toMessage().waypoints).containsExactly(
-            WaypointMessage(1, "WP1", Vector2(5, -4), Vector2(2, 0), 90.0)
+            WaypointMessage(1, "WP1", p(5, -4), p(2, 0), 90.0)
         )
     }
 
     @Test
     fun `can delete waypoint`() {
-        ship.addWaypoint(Vector2(5, -4))
+        ship.addWaypoint(p(5, -4))
         ship.deleteWaypoint(1)
 
         expectThat(ship.toMessage().waypoints).isEmpty()
@@ -172,25 +173,25 @@ class ShipTest {
 
     @Test
     fun `keeps index after deletion`() {
-        ship.addWaypoint(Vector2(5, -4))
-        ship.addWaypoint(Vector2(10, -4))
+        ship.addWaypoint(p(5, -4))
+        ship.addWaypoint(p(10, -4))
         ship.deleteWaypoint(1)
 
         expectThat(ship.toMessage().waypoints).containsExactly(
-            WaypointMessage(2, "WP2", Vector2(10, -4), Vector2(7, 0), 90.0)
+            WaypointMessage(2, "WP2", p(10, -4), p(7, 0), 90.0)
         )
     }
 
     @Test
     fun `fills waypoint slot`() {
-        ship.addWaypoint(Vector2(5, -4))
-        ship.addWaypoint(Vector2(10, -4))
+        ship.addWaypoint(p(5, -4))
+        ship.addWaypoint(p(10, -4))
         ship.deleteWaypoint(1)
-        ship.addWaypoint(Vector2(15, -4))
+        ship.addWaypoint(p(15, -4))
 
         expectThat(ship.toMessage().waypoints).containsExactly(
-            WaypointMessage(1, "WP1", Vector2(15, -4), Vector2(12, 0), 90.0),
-            WaypointMessage(2, "WP2", Vector2(10, -4), Vector2(7, 0), 90.0)
+            WaypointMessage(1, "WP1", p(15, -4), p(12, 0), 90.0),
+            WaypointMessage(2, "WP2", p(10, -4), p(7, 0), 90.0)
         )
     }
 
@@ -286,16 +287,16 @@ class ShipTest {
         every {
             physicsEngine.getBodyParameters(ship.id)
         } returns BodyParameters(
-            position = Vector2(1, 2),
-            speed = Vector2(3, 4),
+            position = p(1, 2),
+            speed = p(3, 4),
             rotation = 5.0
         )
 
         ship.update(time, physicsEngine) { null }
 
         ship.toMessage().also {
-            expectThat(it.position).isEqualTo(Vector2(1, 2))
-            expectThat(it.speed).isEqualTo(Vector2(3, 4))
+            expectThat(it.position).isEqualTo(p(1, 2))
+            expectThat(it.speed).isEqualTo(p(3, 4))
             expectThat(it.rotation).isEqualTo(5.0)
         }
     }
@@ -321,7 +322,7 @@ class ShipTest {
     @Test
     fun `updates beams`() {
         val target = Ship(
-            position = Vector2(100, 0)
+            position = p(100, 0)
         )
 
         ship.lockTarget(target.id)
@@ -347,7 +348,7 @@ class ShipTest {
         ship.setPower(PoweredSystemType.Weapons, 200)
         ship.setCoolant(PoweredSystemType.Weapons, 1.0)
         val target = Ship(
-            position = Vector2(100, 0)
+            position = p(100, 0)
         )
 
         ship.lockTarget(target.id)
@@ -367,7 +368,7 @@ class ShipTest {
     @Test
     fun `does not fire if target outside arc`() {
         val target = Ship(
-            position = Vector2(0, 100)
+            position = p(0, 100)
         )
 
         ship.lockTarget(target.id)
@@ -382,7 +383,7 @@ class ShipTest {
     @Test
     fun `does not fire if target outside range`() {
         val target = Ship(
-            position = Vector2(ship.template.beams.first().range.last + 100, 0)
+            position = p(ship.template.beams.first().range.last + 100, 0)
         )
 
         ship.lockTarget(target.id)
