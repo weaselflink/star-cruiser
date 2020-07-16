@@ -33,9 +33,18 @@ class PowerDisplay(
     private val heat = CanvasProgress(
         canvas = canvas,
         xExpr = { it.xOffset() + it.vmin * 50 },
+        yExpr = { yExpr(it) - it.vmin * 4.5 },
+        widthExpr = { it.vmin * 17 },
+        heightExpr = { it.vmin * 3.5 },
+        backgroundColor = "#111",
+        foregroundColor = "#888"
+    )
+    private val damage = CanvasProgress(
+        canvas = canvas,
+        xExpr = { it.xOffset() + it.vmin * 50 },
         yExpr = yExpr,
         widthExpr = { it.vmin * 17 },
-        heightExpr = { it.vmin * 8 },
+        heightExpr = { it.vmin * 3.5 },
         backgroundColor = "#111",
         foregroundColor = "#888"
     )
@@ -56,6 +65,7 @@ class PowerDisplay(
     fun draw(powerMessage: PowerMessage) {
         val systemMessage = powerMessage.settings[systemType]
             ?: PoweredSystemMessage(
+                damage = 0.0,
                 level = 100,
                 heat = 0.0,
                 coolant = 0.0
@@ -66,6 +76,9 @@ class PowerDisplay(
 
         heat.progress = systemMessage.heat
         heat.draw()
+        damage.progress = 1.0 - systemMessage.damage
+        damage.centerText = "${(damage.progress * 100).roundToInt()}%"
+        damage.draw()
 
         coolantSlider.draw(systemMessage.coolant)
     }

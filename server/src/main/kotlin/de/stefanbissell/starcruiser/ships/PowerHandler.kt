@@ -74,40 +74,53 @@ class PowerHandler(
     private fun updateHeatLevels(time: GameTime) {
         poweredSystems
             .forEach {
-                it.value.updateHeat(time)
+                it.value.update(time)
             }
+    }
+
+    inner class PoweredSystem {
+
+        private var damage: Double = 0.0
+            set(value) {
+                field = value.clamp(0.0, 1.0)
+            }
+        var level: Int = 100
+            set(value) {
+                field = ((value / 10.0).roundToInt() * 10).clamp(0, 200)
+            }
+        private val ratio
+            get() = level * 0.01
+        private var heat: Double = 0.0
+            set(value) {
+                field = value.clamp(0.0, 1.0)
+            }
+        var coolant: Double = 0.0
+            set(value) {
+                field = value.clamp(0.0, 1.0)
+            }
+
+        val boostLevel: Double
+            get() = ratio * (1.0 - damage)
+
+        fun update(time: GameTime) {
+            val heatChangePerSecond = 1.7.pow(ratio - 1.0) - (1.01 + coolant)
+            val resultantHeat = heat + heatChangePerSecond * time.delta
+            val overheat = resultantHeat - 1.0
+            heat = resultantHeat
+
+            if (overheat > 0.0) {
+                damage += overheat * shipTemplate.heatDamage * time.delta
+            }
+        }
+
+        fun toMessage() =
+            PoweredSystemMessage(
+                damage = damage.fiveDigits(),
+                level = level,
+                heat = heat.fiveDigits(),
+                coolant = coolant.fiveDigits()
+            )
     }
 }
 
 typealias BoostLevel = () -> Double
-
-class PoweredSystem {
-
-    var level: Int = 100
-        set(value) {
-            field = ((value / 10.0).roundToInt() * 10).clamp(0, 200)
-        }
-    private var heat: Double = 0.0
-        set(value) {
-            field = value.clamp(0.0, 1.0)
-        }
-    var coolant: Double = 0.0
-        set(value) {
-            field = value.clamp(0.0, 1.0)
-        }
-
-    val boostLevel: Double
-        get() = level / 100.0
-
-    fun updateHeat(time: GameTime) {
-        val heatChangePerSecond = 1.7.pow(boostLevel - 1.0) - (1.01 + coolant)
-        heat += heatChangePerSecond * time.delta
-    }
-
-    fun toMessage() =
-        PoweredSystemMessage(
-            level = level,
-            heat = heat.fiveDigits(),
-            coolant = coolant.fiveDigits()
-        )
-}

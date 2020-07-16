@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
+import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.px
 import org.w3c.dom.CENTER
@@ -27,7 +28,10 @@ class CanvasProgress(
     var leftText: String? = null
     var centerText: String? = null
     var rightText: String? = null
-    var progress: Double? = null
+    var progress: Double = 0.0
+        set(value) {
+            field = value.clamp(0.0, 1.0)
+        }
 
     fun draw() {
         val dim = currentDimensions(canvas)
@@ -46,9 +50,9 @@ class CanvasProgress(
             drawLeftText(dim)
             drawCenterText(dim)
             drawRightText(dim)
-            progress?.also {
-                drawBar(dim, it)
-                clipBar(dim, it)
+            if (progress > 0.0) {
+                drawBar(dim, progress)
+                clipBar(dim, progress)
                 fillStyle = backgroundColor
                 drawLeftText(dim)
                 drawCenterText(dim)

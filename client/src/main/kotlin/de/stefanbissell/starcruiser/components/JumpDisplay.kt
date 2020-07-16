@@ -26,7 +26,7 @@ class JumpDisplay(
         when (jumpDriveMessage) {
             is JumpDriveMessage.Ready -> {
                 canvasProgress.leftText = "Ready"
-                canvasProgress.progress = null
+                canvasProgress.progress = 0.0
             }
             is JumpDriveMessage.Jumping -> {
                 canvasProgress.leftText = "Jumping"

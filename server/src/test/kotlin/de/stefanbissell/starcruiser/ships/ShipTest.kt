@@ -345,6 +345,7 @@ class ShipTest {
     @Test
     fun `updates beams applying power level`() {
         ship.setPower(PoweredSystemType.Weapons, 200)
+        ship.setCoolant(PoweredSystemType.Weapons, 1.0)
         val target = Ship(
             position = Vector2(100, 0)
         )
@@ -470,6 +471,7 @@ class ShipTest {
         expectThat(ship.toMessage().powerMessage.settings)
             .hasEntry(
                 PoweredSystemType.Maneuver, PoweredSystemMessage(
+                    damage = 0.0,
                     level = 150,
                     heat = 0.0,
                     coolant = 0.0
@@ -484,6 +486,7 @@ class ShipTest {
         expectThat(ship.toMessage().powerMessage.settings)
             .hasEntry(
                 PoweredSystemType.Maneuver, PoweredSystemMessage(
+                    damage = 0.0,
                     level = 100,
                     heat = 0.0,
                     coolant = 0.6
