@@ -24,6 +24,7 @@ import de.stefanbissell.starcruiser.SetShieldsUp
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.SpawnShip
 import de.stefanbissell.starcruiser.StartJump
+import de.stefanbissell.starcruiser.StartRepair
 import de.stefanbissell.starcruiser.TogglePause
 import de.stefanbissell.starcruiser.client.ThrottleMessage.AcknowledgeInflightMessage
 import de.stefanbissell.starcruiser.client.ThrottleMessage.AddInflightMessage
@@ -107,6 +108,9 @@ class GameClient(
                 )
                 is Command.CommandSetShieldsUp -> gameStateActor.send(
                     SetShieldsUp(id, command.value)
+                )
+                is Command.CommandRepair -> gameStateActor.send(
+                    StartRepair(id, command.systemType)
                 )
                 is Command.CommandSetPower -> gameStateActor.send(
                     SetPower(id, command.systemType, command.power)

@@ -28,6 +28,8 @@ class PowerHandler(
 
     fun getBoostLevel(type: PoweredSystemType) = getPoweredSystem(type).boostLevel
 
+    fun startRepair(type: PoweredSystemType) {}
+
     fun setLevel(type: PoweredSystemType, value: Int) {
         getPoweredSystem(type).level = value
     }

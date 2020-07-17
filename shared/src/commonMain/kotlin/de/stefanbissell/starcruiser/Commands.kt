@@ -52,6 +52,9 @@ sealed class Command {
     data class CommandSetShieldsUp(val value: Boolean) : Command()
 
     @Serializable
+    data class CommandRepair(val systemType: PoweredSystemType) : Command()
+
+    @Serializable
     data class CommandSetPower(val systemType: PoweredSystemType, val power: Int) : Command()
 
     @Serializable

@@ -202,6 +202,10 @@ class Ship(
         shieldHandler.setUp(value)
     }
 
+    fun startRepair(systemType: PoweredSystemType) {
+        powerHandler.startRepair(systemType)
+    }
+
     fun setPower(systemType: PoweredSystemType, level: Int) {
         powerHandler.setLevel(systemType, level)
     }

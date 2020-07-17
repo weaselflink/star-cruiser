@@ -39,6 +39,7 @@ class DeleteWaypoint(val clientId: ClientId, val index: Int) : GameStateChange()
 class ScanShip(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
 class LockTarget(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
 class SetShieldsUp(val clientId: ClientId, val activated: Boolean) : GameStateChange()
+class StartRepair(val clientId: ClientId, val systemType: PoweredSystemType) : GameStateChange()
 class SetPower(val clientId: ClientId, val systemType: PoweredSystemType, val power: Int) : GameStateChange()
 class SetCoolant(val clientId: ClientId, val systemType: PoweredSystemType, val coolant: Double) : GameStateChange()
 
@@ -216,6 +217,10 @@ class GameState {
         getClientShip(clientId)?.setShieldsUp(value)
     }
 
+    fun startRepair(clientId: ClientId, systemType: PoweredSystemType) {
+        getClientShip(clientId)?.startRepair(systemType)
+    }
+
     fun setPower(clientId: ClientId, systemType: PoweredSystemType, power: Int) {
         getClientShip(clientId)?.setPower(systemType, power)
     }
@@ -289,6 +294,7 @@ class GameState {
                     is ScanShip -> gameState.scanShip(change.clientId, change.targetId)
                     is LockTarget -> gameState.lockTarget(change.clientId, change.targetId)
                     is SetShieldsUp -> gameState.setShieldsUp(change.clientId, change.activated)
+                    is StartRepair -> gameState.startRepair(change.clientId, change.systemType)
                     is SetPower -> gameState.setPower(change.clientId, change.systemType, change.power)
                     is SetCoolant -> gameState.setCoolant(change.clientId, change.systemType, change.coolant)
                 }
