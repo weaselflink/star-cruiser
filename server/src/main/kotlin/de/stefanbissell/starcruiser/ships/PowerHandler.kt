@@ -116,6 +116,11 @@ class PowerHandler(
             get() = ratio * (1.0 - damage)
 
         fun update(time: GameTime) {
+            updateHeat(time)
+            updateRepairProgress(time)
+        }
+
+        private fun updateHeat(time: GameTime) {
             val heatChangePerSecond = 1.7.pow(ratio - 1.0) - (1.01 + coolant)
             val resultantHeat = heat + heatChangePerSecond * time.delta
             val overheat = resultantHeat - 1.0
@@ -126,8 +131,23 @@ class PowerHandler(
             }
         }
 
+        private fun updateRepairProgress(time: GameTime) {
+            var currentRepairProgress = repairProgress
+            if (currentRepairProgress != null) {
+                currentRepairProgress += shipTemplate.repairSpeed * time.delta
+
+                if (currentRepairProgress > 1.0) {
+                    repairProgress = null
+
+                    damage -= shipTemplate.repairAmount
+                } else {
+                    repairProgress = currentRepairProgress
+                }
+            }
+        }
+
         fun startRepairing() {
-            if (repairProgress == null) {
+            if (repairProgress == null && damage > 0.0) {
                 repairProgress = 0.0
             }
         }
