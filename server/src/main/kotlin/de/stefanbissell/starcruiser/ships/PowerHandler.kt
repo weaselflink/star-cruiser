@@ -28,7 +28,17 @@ class PowerHandler(
 
     fun getBoostLevel(type: PoweredSystemType) = getPoweredSystem(type).boostLevel
 
-    fun startRepair(type: PoweredSystemType) {}
+    fun startRepair(type: PoweredSystemType) {
+        poweredSystems
+            .filter {
+                it.key != type
+            }
+            .forEach {
+                it.value.stopRepairing()
+            }
+
+        getPoweredSystem(type).startRepairing()
+    }
 
     fun setLevel(type: PoweredSystemType, value: Int) {
         getPoweredSystem(type).level = value
@@ -82,6 +92,7 @@ class PowerHandler(
 
     inner class PoweredSystem {
 
+        private var repairProgress: Double? = null
         private var damage: Double = 0.0
             set(value) {
                 field = value.clamp(0.0, 1.0)
@@ -115,8 +126,19 @@ class PowerHandler(
             }
         }
 
+        fun startRepairing() {
+            if (repairProgress == null) {
+                repairProgress = 0.0
+            }
+        }
+
+        fun stopRepairing() {
+            repairProgress = null
+        }
+
         fun toMessage() =
             PoweredSystemMessage(
+                repairProgress = repairProgress,
                 damage = damage.fiveDigits(),
                 level = level,
                 heat = heat.fiveDigits(),

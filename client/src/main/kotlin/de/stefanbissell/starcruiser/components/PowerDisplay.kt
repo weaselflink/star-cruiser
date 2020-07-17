@@ -24,6 +24,7 @@ class PowerDisplay(
         widthExpr = { it.vmin * 8 },
         heightExpr = { it.vmin * 8 },
         onClick = { clientSocket.send(Command.CommandRepair(systemType)) },
+        activated = { repairing },
         text = { "\ud83d\udee0" }
     )
     private val levelSlider = CanvasSlider(
@@ -69,16 +70,20 @@ class PowerDisplay(
     )
 
     val handlers: List<PointerEventHandler>
-        get() = listOf(levelSlider, coolantSlider)
+        get() = listOf(repairButton, levelSlider, coolantSlider)
+
+    private var repairing = false
 
     fun draw(powerMessage: PowerMessage) {
         val systemMessage = powerMessage.settings[systemType]
             ?: PoweredSystemMessage(
+                repairProgress = null,
                 damage = 0.0,
                 level = 100,
                 heat = 0.0,
                 coolant = 0.0
             )
+        repairing = systemMessage.repairProgress != null
         val position = systemMessage.level.toDouble() / 200.0
 
         repairButton.draw()
