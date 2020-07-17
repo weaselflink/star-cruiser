@@ -29,15 +29,12 @@ class PowerHandler(
     fun getBoostLevel(type: PoweredSystemType) = getPoweredSystem(type).boostLevel
 
     fun startRepair(type: PoweredSystemType) {
-        poweredSystems
-            .filter {
-                it.key != type
-            }
-            .forEach {
-                it.value.stopRepairing()
-            }
+        val system = getPoweredSystem(type)
+        if (system.canRepair()) {
+            system.startRepairing()
 
-        getPoweredSystem(type).startRepairing()
+            stopRepairingAllExcept(type)
+        }
     }
 
     fun setLevel(type: PoweredSystemType, value: Int) {
@@ -87,6 +84,16 @@ class PowerHandler(
         poweredSystems
             .forEach {
                 it.value.update(time)
+            }
+    }
+
+    private fun stopRepairingAllExcept(type: PoweredSystemType) {
+        poweredSystems
+            .filter {
+                it.key != type
+            }
+            .forEach {
+                it.value.stopRepairing()
             }
     }
 
@@ -146,8 +153,10 @@ class PowerHandler(
             }
         }
 
+        fun canRepair() = repairProgress == null && damage > 0.0
+
         fun startRepairing() {
-            if (repairProgress == null && damage > 0.0) {
+            if (canRepair()) {
                 repairProgress = 0.0
             }
         }
