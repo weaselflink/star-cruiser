@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.clientSocket
 import de.stefanbissell.starcruiser.input.PointerEventHandler
 import de.stefanbissell.starcruiser.send
+import de.stefanbissell.starcruiser.toPercent
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.roundToInt
 
@@ -93,7 +94,7 @@ class PowerDisplay(
         heat.progress = systemMessage.heat
         heat.draw()
         damage.progress = 1.0 - systemMessage.damage
-        damage.centerText = "${(damage.progress * 100).roundToInt()}%"
+        damage.centerText = "${damage.progress.toPercent()}%"
         damage.draw()
 
         coolantSlider.draw(systemMessage.coolant)

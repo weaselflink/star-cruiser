@@ -53,3 +53,5 @@ fun Double.twoDigits() = (this * 100).roundToLong() / 100.0
 fun Double.fiveDigits() = (this * 100_000).roundToLong() / 100_000.0
 
 fun Vector2.twoDigits() = Vector2(x.twoDigits(), y.twoDigits())
+
+fun Double.toPercent() = (this * 100).roundToInt()

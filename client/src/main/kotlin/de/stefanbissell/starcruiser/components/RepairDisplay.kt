@@ -1,15 +1,15 @@
 package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
-import de.stefanbissell.starcruiser.ShieldMessage
+import de.stefanbissell.starcruiser.PowerMessage
 import de.stefanbissell.starcruiser.toPercent
 import org.w3c.dom.HTMLCanvasElement
 
-class ShieldsDisplay(
+class RepairDisplay(
     canvas: HTMLCanvasElement,
     xExpr: (CanvasDimensions) -> Double,
     yExpr: (CanvasDimensions) -> Double,
-    widthExpr: (CanvasDimensions) -> Double = { it.vmin * 40 },
+    widthExpr: (CanvasDimensions) -> Double = { it.vmin * 60 },
     heightExpr: (CanvasDimensions) -> Double = { it.vmin * 6 }
 ) {
 
@@ -23,18 +23,20 @@ class ShieldsDisplay(
         foregroundColor = "#888"
     )
 
-    fun draw(shieldMessage: ShieldMessage) {
-        with(shieldMessage) {
-            canvasProgress.leftText = if (up) {
-                "Shields up"
-            } else {
-                "Shields down"
-            }
-            val progress = strength / max
-            canvasProgress.progress = progress
-            canvasProgress.rightText = "${progress.toPercent()}%"
-        }
+    init {
+        canvasProgress.leftText = "Repairing"
+    }
 
-        canvasProgress.draw()
+    fun draw(powerSettings: PowerMessage) {
+        val progress = powerSettings.settings.values
+            .mapNotNull { it.repairProgress }
+            .firstOrNull()
+
+        if (progress != null) {
+            canvasProgress.rightText = "${progress.toPercent()}%"
+            canvasProgress.progress = progress
+
+            canvasProgress.draw()
+        }
     }
 }

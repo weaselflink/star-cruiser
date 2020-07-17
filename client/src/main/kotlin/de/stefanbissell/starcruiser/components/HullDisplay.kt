@@ -2,8 +2,8 @@ package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.ShipMessage
+import de.stefanbissell.starcruiser.toPercent
 import org.w3c.dom.HTMLCanvasElement
-import kotlin.math.roundToInt
 
 class HullDisplay(
     canvas: HTMLCanvasElement,
@@ -30,7 +30,7 @@ class HullDisplay(
     fun draw(shipMessage: ShipMessage) {
         val progress = shipMessage.hull / shipMessage.hullMax
         canvasProgress.progress = progress
-        canvasProgress.rightText = "${(progress * 100).roundToInt()}%"
+        canvasProgress.rightText = "${progress.toPercent()}%"
 
         canvasProgress.draw()
     }
