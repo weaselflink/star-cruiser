@@ -214,8 +214,12 @@ class Ship(
         powerHandler.setCoolant(systemType, coolant)
     }
 
-    fun takeDamage(amount: Double) {
-        hull -= shieldHandler.takeDamageAndReportHullDamage(amount)
+    fun takeDamage(targetSystemType: PoweredSystemType, amount: Double) {
+        val hullDamage = shieldHandler.takeDamageAndReportHullDamage(amount)
+        if (hullDamage > 0.0) {
+            hull -= hullDamage
+            powerHandler.takeDamage(targetSystemType, amount)
+        }
     }
 
     fun toPlayerShipMessage() =
@@ -317,10 +321,12 @@ class Ship(
     ) {
 
         private var status: BeamStatus = BeamStatus.Idle
+        private var targetSystemType = PoweredSystemType.random()
 
         fun update(time: GameTime, shipProvider: (ObjectId) -> Ship?) {
             when (val current = status) {
                 is BeamStatus.Idle -> if (isLockedTargetInRange(shipProvider)) {
+                    targetSystemType = PoweredSystemType.random()
                     status = BeamStatus.Firing()
                 }
                 is BeamStatus.Recharging -> {
@@ -328,6 +334,7 @@ class Ship(
                     status = current.update(currentProgress).let {
                         if (it.progress >= 1.0) {
                             if (isLockedTargetInRange(shipProvider)) {
+                                targetSystemType = PoweredSystemType.random()
                                 BeamStatus.Firing()
                             } else {
                                 BeamStatus.Idle
@@ -342,7 +349,7 @@ class Ship(
                 }
             }
             if (status is BeamStatus.Firing) {
-                getLockedTarget(shipProvider)?.takeDamage(time.delta)
+                getLockedTarget(shipProvider)?.takeDamage(targetSystemType, time.delta)
             }
         }
 

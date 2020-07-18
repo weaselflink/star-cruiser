@@ -9,6 +9,7 @@ import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PhysicsEngine
 import de.stefanbissell.starcruiser.PoweredSystemMessage
 import de.stefanbissell.starcruiser.PoweredSystemType
+import de.stefanbissell.starcruiser.PoweredSystemType.Reactor
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
 import de.stefanbissell.starcruiser.isNear
@@ -398,7 +399,7 @@ class ShipTest {
     @Test
     fun `updates shields`() {
         val damage = 5.0
-        ship.takeDamage(damage)
+        ship.takeDamage(Reactor, damage)
         expectThat(ship.toMessage().shield.strength)
             .isNear(shieldTemplate.strength - damage)
 
@@ -410,7 +411,7 @@ class ShipTest {
     @Test
     fun `takes hull damage when shields depleted`() {
         val damage = shieldTemplate.strength + 5.0
-        ship.takeDamage(damage)
+        ship.takeDamage(Reactor, damage)
         expectThat(ship.toMessage().shield.strength)
             .isNear(0.0)
         expectThat(ship.toMessage().hull)
@@ -420,9 +421,20 @@ class ShipTest {
     }
 
     @Test
+    fun `takes powered system damage when shields depleted`() {
+        val damage = shieldTemplate.strength + 5.0
+        ship.takeDamage(Reactor, damage)
+        expectThat(ship.toMessage().shield.strength)
+            .isNear(0.0)
+        expectThat(ship.toMessage().powerMessage.settings[Reactor]?.damage)
+            .isNotNull()
+            .isNear(5.0 / ship.template.poweredSystemDamageCapacity)
+    }
+
+    @Test
     fun `ship can be destroyed`() {
         val damage = shieldTemplate.strength + ship.template.hull + 5.0
-        ship.takeDamage(damage)
+        ship.takeDamage(Reactor, damage)
         expectThat(ship.toMessage().shield.strength)
             .isNear(0.0)
         expectThat(ship.toMessage().hull)
@@ -434,7 +446,7 @@ class ShipTest {
     @Test
     fun `shield can be activated when above activation strength`() {
         val damage = shieldTemplate.strength - shieldTemplate.activationStrength * 2.0
-        ship.takeDamage(damage)
+        ship.takeDamage(Reactor, damage)
         ship.setShieldsUp(false)
 
         expectThat(ship.toMessage().shield.up)
@@ -448,7 +460,7 @@ class ShipTest {
     @Test
     fun `shield fails when below failure strength and cannot be activated again`() {
         val damage = shieldTemplate.strength - shieldTemplate.failureStrength * 0.5
-        ship.takeDamage(damage)
+        ship.takeDamage(Reactor, damage)
         stepTimeTo(0.1)
 
         expectThat(ship.toMessage().shield.up)

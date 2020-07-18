@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
+import kotlin.random.Random
 
 val jsonConfiguration = JsonConfiguration.Stable.copy(
     encodeDefaults = true,
@@ -316,7 +317,11 @@ enum class PoweredSystemType {
     Jump,
     Shields,
     Weapons,
-    Reactor
+    Reactor;
+
+    companion object {
+        fun random(): PoweredSystemType = values()[Random.nextInt(values().size)]
+    }
 }
 
 @Serializable

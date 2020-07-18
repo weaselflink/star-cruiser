@@ -26,6 +26,10 @@ class PowerHandler(
         updateHeatLevels(time)
     }
 
+    fun takeDamage(type: PoweredSystemType, amount: Double) {
+        getPoweredSystem(type).takeDamage(amount)
+    }
+
     fun getBoostLevel(type: PoweredSystemType) = getPoweredSystem(type).boostLevel
 
     fun startRepair(type: PoweredSystemType) {
@@ -125,6 +129,10 @@ class PowerHandler(
         fun update(time: GameTime) {
             updateHeat(time)
             updateRepairProgress(time)
+        }
+
+        fun takeDamage(amount: Double) {
+            damage += amount / shipTemplate.poweredSystemDamageCapacity
         }
 
         private fun updateHeat(time: GameTime) {
