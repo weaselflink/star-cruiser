@@ -31,8 +31,7 @@ class BeamHandler(
                 status = current.update(currentProgress).let {
                     if (it.progress >= 1.0) {
                         if (lockedTargetInRange) {
-                            targetSystemType =
-                                PoweredSystemType.random()
+                            targetSystemType = PoweredSystemType.random()
                             BeamStatus.Firing()
                         } else {
                             BeamStatus.Idle
@@ -41,8 +40,12 @@ class BeamHandler(
                 }
             }
             is BeamStatus.Firing -> {
-                status = current.update(time.delta * beamWeapon.firingSpeed).let {
-                    if (it.progress >= 1.0) BeamStatus.Recharging() else it
+                status = if (lockedTargetInRange) {
+                    current.update(time.delta * beamWeapon.firingSpeed).let {
+                        if (it.progress >= 1.0) BeamStatus.Recharging() else it
+                    }
+                } else {
+                    BeamStatus.Recharging()
                 }
             }
         }
