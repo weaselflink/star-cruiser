@@ -10,8 +10,7 @@ class BeamHandler(
     private val beamWeapon: BeamWeapon
 ) {
 
-    private var status: BeamStatus =
-        BeamStatus.Idle
+    private var status: BeamStatus = BeamStatus.Idle
     private var targetSystemType = PoweredSystemType.random()
 
     fun update(
