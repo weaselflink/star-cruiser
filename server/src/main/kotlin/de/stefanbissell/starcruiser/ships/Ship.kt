@@ -1,7 +1,5 @@
 package de.stefanbissell.starcruiser.ships
 
-import de.stefanbissell.starcruiser.BeamMessage
-import de.stefanbissell.starcruiser.BeamStatus
 import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
@@ -39,9 +37,7 @@ class Ship(
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val scans = mutableMapOf<ObjectId, ScanLevel>()
     private val powerHandler = PowerHandler(template)
-    private val beamHandlers = template.beams.map {
-        BeamHandler(it) { powerHandler.getBoostLevel(PoweredSystemType.Weapons) }
-    }
+    private val beamHandlers = template.beams.map { BeamHandler(it) }
     private val shieldHandler = ShieldHandler(template.shield)
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
@@ -52,7 +48,15 @@ class Ship(
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
         powerHandler.update(time)
-        beamHandlers.forEach { it.update(time, shipProvider) }
+        beamHandlers.forEach {
+            it.update(
+                time = time,
+                boostLevel = powerHandler.getBoostLevel(PoweredSystemType.Weapons),
+                shipProvider = shipProvider,
+                lockHandler = lockHandler,
+                ship = this
+            )
+        }
         shieldHandler.update(time, powerHandler.getBoostLevel(PoweredSystemType.Shields))
         jumpHandler.update(time, powerHandler.getBoostLevel(PoweredSystemType.Jump))
         updateScan(time)
@@ -243,7 +247,7 @@ class Ship(
             waypoints = waypoints.map { it.toWaypointMessage(this) },
             scanProgress = scanHandler?.toMessage(),
             lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
-            beams = beamHandlers.map { it.toMessage() },
+            beams = beamHandlers.map { it.toMessage(lockHandler) },
             shield = shieldHandler.toMessage(),
             hull = hull.twoDigits(),
             hullMax = template.hull,
@@ -271,7 +275,7 @@ class Ship(
             relativePosition = (position - relativeTo.position),
             rotation = rotation,
             bearing = (position - relativeTo.position).angle().toHeading(),
-            beams = beamHandlers.map { it.toMessage() },
+            beams = beamHandlers.map { it.toMessage(lockHandler) },
             shield = shieldHandler.toMessage(),
             jumpAnimation = jumpHandler.toMessage().animation
         )
@@ -309,70 +313,6 @@ class Ship(
                 relativePosition = (position - relativeTo.position),
                 bearing = (position - relativeTo.position).angle().toHeading()
             )
-    }
-
-    private inner class BeamHandler(
-        val beamWeapon: BeamWeapon,
-        val boostLevel: BoostLevel
-    ) {
-
-        private var status: BeamStatus = BeamStatus.Idle
-        private var targetSystemType = PoweredSystemType.random()
-
-        fun update(time: GameTime, shipProvider: (ObjectId) -> Ship?) {
-            when (val current = status) {
-                is BeamStatus.Idle -> if (isLockedTargetInRange(shipProvider)) {
-                    targetSystemType = PoweredSystemType.random()
-                    status = BeamStatus.Firing()
-                }
-                is BeamStatus.Recharging -> {
-                    val currentProgress = time.delta * beamWeapon.rechargeSpeed * boostLevel()
-                    status = current.update(currentProgress).let {
-                        if (it.progress >= 1.0) {
-                            if (isLockedTargetInRange(shipProvider)) {
-                                targetSystemType = PoweredSystemType.random()
-                                BeamStatus.Firing()
-                            } else {
-                                BeamStatus.Idle
-                            }
-                        } else it
-                    }
-                }
-                is BeamStatus.Firing -> {
-                    status = current.update(time.delta * beamWeapon.firingSpeed).let {
-                        if (it.progress >= 1.0) BeamStatus.Recharging() else it
-                    }
-                }
-            }
-            if (status is BeamStatus.Firing) {
-                getLockedTarget(shipProvider)?.takeDamage(targetSystemType, time.delta)
-            }
-        }
-
-        fun toMessage() =
-            BeamMessage(
-                position = beamWeapon.position,
-                minRange = beamWeapon.range.first.toDouble(),
-                maxRange = beamWeapon.range.last.toDouble(),
-                leftArc = beamWeapon.leftArc.toDouble(),
-                rightArc = beamWeapon.rightArc.toDouble(),
-                status = status,
-                targetId = getLockedTargetId()
-            )
-
-        private fun getLockedTargetId() =
-            if (lockHandler?.isComplete == true) lockHandler?.targetId else null
-
-        private fun getLockedTarget(shipProvider: (ObjectId) -> Ship?) =
-            getLockedTargetId()?.let { shipProvider(it) }
-
-        private fun isLockedTargetInRange(shipProvider: (ObjectId) -> Ship?) =
-            getLockedTarget(shipProvider)
-                ?.toScopeContactMessage(this@Ship)
-                ?.relativePosition
-                ?.rotate(-this@Ship.rotation)
-                ?.let { beamWeapon.isInRange(it) }
-                ?: false
     }
 }
 
