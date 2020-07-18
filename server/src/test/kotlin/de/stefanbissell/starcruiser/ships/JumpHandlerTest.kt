@@ -20,7 +20,7 @@ class JumpHandlerTest {
     }
     private val jumpDrive = JumpDrive()
     private var power = 1.0
-    private val jumpHandler = JumpHandler(jumpDrive) { power }
+    private val jumpHandler = JumpHandler(jumpDrive)
 
     @Test
     fun `ready initially`() {
@@ -177,6 +177,6 @@ class JumpHandlerTest {
 
     private fun stepTimeTo(seconds: Number) {
         time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
-        jumpHandler.update(time)
+        jumpHandler.update(time, power)
     }
 }

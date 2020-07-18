@@ -42,23 +42,19 @@ class Ship(
     private val beamHandlers = template.beams.map {
         BeamHandler(it) { powerHandler.getBoostLevel(PoweredSystemType.Weapons) }
     }
-    private val shieldHandler = ShieldHandler(
-        shieldTemplate = template.shield,
-        boostLevel = { powerHandler.getBoostLevel(PoweredSystemType.Shields) }
-    )
+    private val shieldHandler = ShieldHandler(template.shield)
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
     private var hull = template.hull
     private val jumpHandler = JumpHandler(
-        jumpDrive = template.jumpDrive,
-        boostLevel = { powerHandler.getBoostLevel(PoweredSystemType.Jump) }
+        jumpDrive = template.jumpDrive
     )
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
         powerHandler.update(time)
         beamHandlers.forEach { it.update(time, shipProvider) }
-        shieldHandler.update(time)
-        jumpHandler.update(time)
+        shieldHandler.update(time, powerHandler.getBoostLevel(PoweredSystemType.Shields))
+        jumpHandler.update(time, powerHandler.getBoostLevel(PoweredSystemType.Jump))
         updateScan(time)
         updateLock(time)
         updateThrust(time)

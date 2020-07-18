@@ -7,8 +7,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class ShieldHandler(
-    private val shieldTemplate: ShieldTemplate,
-    private val boostLevel: BoostLevel
+    private val shieldTemplate: ShieldTemplate
 ) {
 
     private var up: Boolean = true
@@ -17,10 +16,10 @@ class ShieldHandler(
 
     private var currentStrength: Double = shieldTemplate.strength
 
-    fun update(time: GameTime) {
+    fun update(time: GameTime, boostLevel: Double) {
         currentStrength = min(
             shieldTemplate.strength,
-            currentStrength + rechargeAmount(time)
+            currentStrength + rechargeAmount(time, boostLevel)
         )
     }
 
@@ -63,7 +62,8 @@ class ShieldHandler(
 
     private fun shieldFailing() = currentStrength <= shieldTemplate.failureStrength
 
-    private fun rechargeAmount(time: GameTime) = shieldTemplate.rechargeSpeed * time.delta * boostLevel()
+    private fun rechargeAmount(time: GameTime, boostLevel: Double) =
+        shieldTemplate.rechargeSpeed * time.delta * boostLevel
 
     private fun takeDamageToShieldAndThenHull(amount: Double): Double {
         val hullDamage = max(0.0, amount - currentStrength)

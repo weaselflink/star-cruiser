@@ -8,8 +8,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class JumpHandler(
-    private val jumpDrive: JumpDrive,
-    private val boostLevel: BoostLevel
+    private val jumpDrive: JumpDrive
 ) {
 
     var jumping: Boolean = false
@@ -25,11 +24,11 @@ class JumpHandler(
     val jumpComplete: Boolean
         get() = jumping && jumpProgress >= 1.0
 
-    fun update(time: GameTime) {
+    fun update(time: GameTime, boostLevel: Double) {
         if (jumping) {
             jumpProgress += time.delta * jumpDrive.jumpingSpeed
         } else {
-            rechargeProgress = min(1.0, rechargeProgress + time.delta * jumpDrive.rechargeSpeed * boostLevel())
+            rechargeProgress = min(1.0, rechargeProgress + time.delta * jumpDrive.rechargeSpeed * boostLevel)
         }
         updateAnimation(time)
     }

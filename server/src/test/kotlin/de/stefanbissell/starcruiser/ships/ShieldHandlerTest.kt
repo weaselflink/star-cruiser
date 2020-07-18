@@ -16,7 +16,7 @@ class ShieldHandlerTest {
     }
     private val shieldTemplate = ShieldTemplate()
     private var power = 1.0
-    private val shieldHandler = ShieldHandler(shieldTemplate) { power }
+    private val shieldHandler = ShieldHandler(shieldTemplate)
 
     @Test
     fun `starts with full shields in up state`() {
@@ -144,7 +144,7 @@ class ShieldHandlerTest {
 
     private fun stepTimeTo(seconds: Number) {
         time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
-        shieldHandler.update(time)
+        shieldHandler.update(time, power)
         shieldHandler.endUpdate()
     }
 }
