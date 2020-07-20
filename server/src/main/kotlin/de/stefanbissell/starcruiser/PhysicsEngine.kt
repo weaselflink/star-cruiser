@@ -64,6 +64,7 @@ class PhysicsEngine {
         return holder.obstructions
             .apply { removeAll(ignore) }
             .distinct()
+            .toList()
     }
 
     private fun Ship.toBody() =

@@ -54,7 +54,8 @@ class Ship(
                 boostLevel = powerHandler.getBoostLevel(PoweredSystemType.Weapons),
                 shipProvider = shipProvider,
                 lockHandler = lockHandler,
-                ship = this
+                ship = this,
+                physicsEngine = physicsEngine
             )
         }
         shieldHandler.update(time, powerHandler.getBoostLevel(PoweredSystemType.Shields))

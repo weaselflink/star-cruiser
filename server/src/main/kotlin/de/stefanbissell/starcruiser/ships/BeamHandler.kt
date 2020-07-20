@@ -4,7 +4,9 @@ import de.stefanbissell.starcruiser.BeamMessage
 import de.stefanbissell.starcruiser.BeamStatus
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.PhysicsEngine
 import de.stefanbissell.starcruiser.PoweredSystemType
+import de.stefanbissell.starcruiser.Vector2
 
 class BeamHandler(
     private val beamWeapon: BeamWeapon
@@ -12,15 +14,17 @@ class BeamHandler(
 
     private var status: BeamStatus = BeamStatus.Idle
     private var targetSystemType = PoweredSystemType.random()
+    private val position2d = beamWeapon.position.let { Vector2(it.x, it.y) }
 
     fun update(
         time: GameTime,
         boostLevel: Double,
         shipProvider: (ObjectId) -> Ship?,
         lockHandler: LockHandler?,
-        ship: Ship
+        ship: Ship,
+        physicsEngine: PhysicsEngine
     ) {
-        val lockedTargetInRange = isLockedTargetInRange(shipProvider, lockHandler, ship)
+        val lockedTargetInRange = isLockedTargetInRange(shipProvider, lockHandler, ship, physicsEngine)
         when (val current = status) {
             is BeamStatus.Idle -> if (lockedTargetInRange) {
                 targetSystemType = PoweredSystemType.random()
@@ -71,11 +75,25 @@ class BeamHandler(
     private fun getLockedTarget(shipProvider: (ObjectId) -> Ship?, lockHandler: LockHandler?) =
         getLockedTargetId(lockHandler)?.let { shipProvider(it) }
 
-    private fun isLockedTargetInRange(shipProvider: (ObjectId) -> Ship?, lockHandler: LockHandler?, ship: Ship) =
-        getLockedTarget(shipProvider, lockHandler)
-            ?.toScopeContactMessage(ship)
-            ?.relativePosition
-            ?.rotate(-ship.rotation)
-            ?.let { beamWeapon.isInRange(it) }
-            ?: false
+    private fun isLockedTargetInRange(
+        shipProvider: (ObjectId) -> Ship?,
+        lockHandler: LockHandler?,
+        ship: Ship,
+        physicsEngine: PhysicsEngine
+    ) = getLockedTarget(shipProvider, lockHandler)?.let {
+        inRange(it, ship) && unobstructed(it, ship, physicsEngine)
+    } ?: false
+
+    private fun inRange(target: Ship, ship: Ship) =
+        (target.position - ship.position)
+            .rotate(-ship.rotation)
+            .let { beamWeapon.isInRange(it) }
+
+    private fun unobstructed(target: Ship, ship: Ship, physicsEngine: PhysicsEngine): Boolean {
+        val ignore = listOf(ship.id, target.id)
+        val obstructions = physicsEngine.findObstructions(getBeamPosition(ship), target.position, ignore)
+        return obstructions.size == 0
+    }
+
+    private fun getBeamPosition(ship: Ship) = ship.position + (position2d.rotate(ship.rotation))
 }

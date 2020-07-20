@@ -3,8 +3,12 @@ package de.stefanbissell.starcruiser.ships
 import de.stefanbissell.starcruiser.BeamStatus
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.PhysicsEngine
 import de.stefanbissell.starcruiser.Vector3
 import de.stefanbissell.starcruiser.p
+import io.mockk.every
+import io.mockk.mockk
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -25,6 +29,14 @@ class BeamHandlerTest {
     }
     private var lockHandler: LockHandler? = null
     private val beamHandler = BeamHandler(beamWeapon)
+    private val physicsEngine = mockk<PhysicsEngine>()
+
+    @BeforeEach
+    internal fun setUp() {
+        every {
+            physicsEngine.findObstructions(any(), any(), any())
+        } returns emptyList()
+    }
 
     @Test
     fun `initially idle`() {
@@ -43,6 +55,18 @@ class BeamHandlerTest {
     @Test
     fun `stays idle with target locked but out of range`() {
         targetLockedAndOutOfRange()
+        stepTimeTo(1.0)
+
+        expectThat(beamHandler.toMessage(lockHandler).status)
+            .isEqualTo(BeamStatus.Idle)
+    }
+
+    @Test
+    fun `stays idle with target locked in range but obstructed`() {
+        targetLockedAndInRange()
+        every {
+            physicsEngine.findObstructions(any(), any(), any())
+        } returns listOf(ObjectId.random())
         stepTimeTo(1.0)
 
         expectThat(beamHandler.toMessage(lockHandler).status)
@@ -147,6 +171,6 @@ class BeamHandlerTest {
 
     private fun stepTimeTo(seconds: Number) {
         time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
-        beamHandler.update(time, power, shipProvider, lockHandler, ship)
+        beamHandler.update(time, power, shipProvider, lockHandler, ship, physicsEngine)
     }
 }
