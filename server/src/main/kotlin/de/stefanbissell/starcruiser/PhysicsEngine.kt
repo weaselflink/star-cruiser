@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.ships.Ship
+import org.jbox2d.callbacks.RayCastCallback
 import org.jbox2d.collision.shapes.CircleShape
 import org.jbox2d.collision.shapes.PolygonShape
 import org.jbox2d.common.Mat22
@@ -8,25 +9,26 @@ import org.jbox2d.common.Vec2
 import org.jbox2d.dynamics.Body
 import org.jbox2d.dynamics.BodyDef
 import org.jbox2d.dynamics.BodyType
+import org.jbox2d.dynamics.Fixture
 import org.jbox2d.dynamics.World
 
 class PhysicsEngine {
 
     private val world = World(Vec2())
-    private val bodies: MutableMap<BodyId, Body> = mutableMapOf()
+    private val bodies: MutableMap<ObjectId, Body> = mutableMapOf()
 
     fun step(time: GameTime) = world.step(time.delta.toFloat(), 6, 2)
 
     fun addShip(ship: Ship) {
-        bodies[ship.id.toBodyId()] = ship.toBody()
+        bodies[ship.id] = ship.toBody()
     }
 
     fun addAsteroid(asteroid: Asteroid) {
-        bodies[asteroid.id.toBodyId()] = asteroid.toBody()
+        bodies[asteroid.id] = asteroid.toBody()
     }
 
     fun updateShip(objectId: ObjectId, thrust: Double, rudder: Double) {
-        bodies[objectId.toBodyId()]?.apply {
+        bodies[objectId]?.apply {
             if (thrust != 0.0) {
                 applyForceToCenter(
                     Mat22.createRotationalTransform(angle).mul(Vec2(thrust.toFloat(), 0f))
@@ -39,7 +41,7 @@ class PhysicsEngine {
     }
 
     fun jumpShip(objectId: ObjectId, distance: Int) {
-        bodies[objectId.toBodyId()]?.apply {
+        bodies[objectId]?.apply {
             setTransform(
                 position.add(Mat22.createRotationalTransform(angle).mul(Vec2(distance.toFloat(), 0f))),
                 angle
@@ -48,7 +50,7 @@ class PhysicsEngine {
     }
 
     fun getBodyParameters(objectId: ObjectId) =
-        bodies[objectId.toBodyId()]?.let {
+        bodies[objectId]?.let {
             BodyParameters(
                 position = it.position.toVector2(),
                 speed = it.linearVelocity.toVector2(),
@@ -56,11 +58,20 @@ class PhysicsEngine {
             )
         }
 
+    fun findObstructions(start: Vector2, end: Vector2, ignore: List<ObjectId> = emptyList()): List<ObjectId> {
+        val holder = ObstructionHolder()
+        world.raycast(holder, start.toVec2(), end.toVec2())
+        return holder.obstructions
+            .apply { removeAll(ignore) }
+            .distinct()
+    }
+
     private fun Ship.toBody() =
         createDynamicBody(
             position,
             rotation
         ).apply {
+            m_userData = this@toBody.id
             createFixture(this@toBody)
         }
 
@@ -105,6 +116,7 @@ class PhysicsEngine {
             position,
             rotation
         ).apply {
+            m_userData = this@toBody.id
             createFixture(this@toBody)
         }
 
@@ -139,10 +151,21 @@ class PhysicsEngine {
 
     private fun World.createBody(block: BodyDef.() -> Unit): Body = createBody(BodyDef().apply(block))
 
-    private fun ObjectId.toBodyId() = BodyId(this.id)
-}
+    private inner class ObstructionHolder : RayCastCallback {
 
-data class BodyId(val id: String)
+        val obstructions = mutableListOf<ObjectId>()
+
+        override fun reportFixture(fixture: Fixture?, point: Vec2?, normal: Vec2?, fraction: Float): Float {
+            fixture?.body?.let {
+                val userData = it.m_userData
+                if (userData is ObjectId) {
+                    obstructions += userData
+                }
+            }
+            return 1f
+        }
+    }
+}
 
 data class BodyParameters(
     val position: Vector2,
