@@ -60,6 +60,9 @@ sealed class Command {
     @Serializable
     data class CommandSetCoolant(val systemType: PoweredSystemType, val coolant: Double) : Command()
 
+    @Serializable
+    data class CommandMainScreenView(val mainScreenView: MainScreenView) : Command()
+
     fun toJson() = Json(jsonConfiguration).stringify(serializer(), this)
 
     companion object {

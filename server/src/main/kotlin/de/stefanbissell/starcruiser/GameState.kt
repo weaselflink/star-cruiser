@@ -42,6 +42,7 @@ class SetShieldsUp(val clientId: ClientId, val activated: Boolean) : GameStateCh
 class StartRepair(val clientId: ClientId, val systemType: PoweredSystemType) : GameStateChange()
 class SetPower(val clientId: ClientId, val systemType: PoweredSystemType, val power: Int) : GameStateChange()
 class SetCoolant(val clientId: ClientId, val systemType: PoweredSystemType, val coolant: Double) : GameStateChange()
+class SetMainScreenView(val clientId: ClientId, val mainScreenView: MainScreenView) : GameStateChange()
 
 class GameState {
 
@@ -229,6 +230,10 @@ class GameState {
         getClientShip(clientId)?.setCoolant(systemType, coolant)
     }
 
+    fun setMainScreenView(clientId: ClientId, mainScreenView: MainScreenView) {
+        getClientShip(clientId)?.setMainScreenView(mainScreenView)
+    }
+
     private fun getClient(clientId: ClientId) =
         clients.computeIfAbsent(clientId) { Client(clientId) }
 
@@ -297,6 +302,7 @@ class GameState {
                     is StartRepair -> gameState.startRepair(change.clientId, change.systemType)
                     is SetPower -> gameState.setPower(change.clientId, change.systemType, change.power)
                     is SetCoolant -> gameState.setCoolant(change.clientId, change.systemType, change.coolant)
+                    is SetMainScreenView -> gameState.setMainScreenView(change.clientId, change.mainScreenView)
                 }
             }
         }

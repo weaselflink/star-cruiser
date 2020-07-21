@@ -145,7 +145,8 @@ data class ShipMessage(
     val hull: Double,
     val hullMax: Double,
     val jumpDrive: JumpDriveMessage,
-    val powerMessage: PowerMessage
+    val powerMessage: PowerMessage,
+    val mainScreenView: MainScreenView
 )
 
 @Serializable
@@ -181,6 +182,19 @@ data class ScopeContactMessage(
     val rotation: Double,
     val locked: Boolean
 )
+
+enum class MainScreenView {
+    Front,
+    Top,
+    Scope;
+
+    val next: MainScreenView
+        get() = when (this) {
+            Front -> Top
+            Top -> Scope
+            Scope -> Front
+        }
+}
 
 enum class ContactType {
     Unknown,

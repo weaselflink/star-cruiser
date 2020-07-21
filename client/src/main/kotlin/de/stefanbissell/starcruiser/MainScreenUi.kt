@@ -32,17 +32,17 @@ class MainScreenUi : StationUi {
         canvas = overlayCanvas,
         showRotateButton = false
     )
-    private var viewType = ViewType.Front
+    private var view = MainScreenView.Front
     private val frontViewButton = createViewButton(
-        view = ViewType.Front,
+        mainScreenView = MainScreenView.Front,
         xExpr = { it.width * 0.5 - it.vmin * 58 }
     )
     private val topViewButton = createViewButton(
-        view = ViewType.Top,
+        mainScreenView = MainScreenView.Top,
         xExpr = { it.width * 0.5 - it.vmin * 18 }
     )
     private val scopeViewButton = createViewButton(
-        view = ViewType.Scope,
+        mainScreenView = MainScreenView.Scope,
         xExpr = { it.width * 0.5 + it.vmin * 22 }
     )
 
@@ -73,10 +73,11 @@ class MainScreenUi : StationUi {
     }
 
     fun draw(snapshot: SnapshotMessage.MainScreen) {
-        when (viewType) {
-            ViewType.Front -> draw3d(snapshot, mainScene.frontCamera)
-            ViewType.Top -> draw3d(snapshot, mainScene.topCamera)
-            ViewType.Scope -> drawScope(snapshot)
+        view = snapshot.ship.mainScreenView
+        when (view) {
+            MainScreenView.Front -> draw3d(snapshot, mainScene.frontCamera)
+            MainScreenView.Top -> draw3d(snapshot, mainScene.topCamera)
+            MainScreenView.Scope -> drawScope(snapshot)
         }
     }
 
@@ -105,11 +106,11 @@ class MainScreenUi : StationUi {
     }
 
     fun cycleViewType() {
-        viewType = viewType.next
+        clientSocket.send(Command.CommandMainScreenView(view.next))
     }
 
     private fun createViewButton(
-        view: ViewType,
+        mainScreenView: MainScreenView,
         xExpr: (CanvasDimensions) -> Double
     ) = CanvasButton(
         canvas = overlayCanvas,
@@ -117,23 +118,10 @@ class MainScreenUi : StationUi {
         yExpr = { it.height - it.vmin * 3 },
         widthExpr = { it.vmin * 36 },
         heightExpr = { it.vmin * 10 },
-        onClick = { viewType = view },
-        activated = { viewType == view },
-        text = { view.name }
+        onClick = { clientSocket.send(Command.CommandMainScreenView(mainScreenView)) },
+        activated = { view == mainScreenView },
+        text = { mainScreenView.name }
     )
 
     private fun render(camera: Camera) = renderer.render(mainScene.scene, camera)
-}
-
-private enum class ViewType {
-    Front,
-    Top,
-    Scope;
-
-    val next: ViewType
-        get() = when (this) {
-            Front -> Top
-            Top -> Scope
-            Scope -> Front
-        }
 }

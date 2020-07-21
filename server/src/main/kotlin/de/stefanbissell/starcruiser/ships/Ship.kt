@@ -4,6 +4,7 @@ import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
+import de.stefanbissell.starcruiser.MainScreenView
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PhysicsEngine
 import de.stefanbissell.starcruiser.PlayerShipMessage
@@ -45,6 +46,7 @@ class Ship(
     private val jumpHandler = JumpHandler(
         jumpDrive = template.jumpDrive
     )
+    private var mainScreenView = MainScreenView.Front
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
         powerHandler.update(time)
@@ -215,6 +217,10 @@ class Ship(
         powerHandler.setCoolant(systemType, coolant)
     }
 
+    fun setMainScreenView(view: MainScreenView) {
+         mainScreenView = view
+    }
+
     fun takeDamage(targetSystemType: PoweredSystemType, amount: Double) {
         val hullDamage = shieldHandler.takeDamageAndReportHullDamage(amount)
         if (hullDamage > 0.0) {
@@ -253,7 +259,8 @@ class Ship(
             hull = hull.twoDigits(),
             hullMax = template.hull,
             jumpDrive = jumpHandler.toMessage(),
-            powerMessage = powerHandler.toMessage()
+            powerMessage = powerHandler.toMessage(),
+            mainScreenView = mainScreenView
         )
 
     fun toScopeContactMessage(relativeTo: Ship) =
