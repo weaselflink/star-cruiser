@@ -9,6 +9,12 @@ import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PhysicsEngine
 import de.stefanbissell.starcruiser.PlayerShipMessage
 import de.stefanbissell.starcruiser.PoweredSystemType
+import de.stefanbissell.starcruiser.PoweredSystemType.Impulse
+import de.stefanbissell.starcruiser.PoweredSystemType.Jump
+import de.stefanbissell.starcruiser.PoweredSystemType.Maneuver
+import de.stefanbissell.starcruiser.PoweredSystemType.Sensors
+import de.stefanbissell.starcruiser.PoweredSystemType.Shields
+import de.stefanbissell.starcruiser.PoweredSystemType.Weapons
 import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.ScopeContactMessage
 import de.stefanbissell.starcruiser.ShipMessage
@@ -50,26 +56,18 @@ class Ship(
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
         powerHandler.update(time)
-        beamHandlers.forEach {
-            it.update(
-                time = time,
-                boostLevel = powerHandler.getBoostLevel(PoweredSystemType.Weapons),
-                shipProvider = shipProvider,
-                lockHandler = lockHandler,
-                physicsEngine = physicsEngine
-            )
-        }
-        shieldHandler.update(time, powerHandler.getBoostLevel(PoweredSystemType.Shields))
-        jumpHandler.update(time, powerHandler.getBoostLevel(PoweredSystemType.Jump))
+        updateBeams(time, shipProvider, physicsEngine)
+        shieldHandler.update(time, Shields.boostLevel)
+        jumpHandler.update(time, Jump.boostLevel)
         updateScan(time)
         updateLock(time)
         updateThrust(time)
         val effectiveThrust = if (thrust < 0) {
-            thrust * template.reverseThrustFactor * powerHandler.getBoostLevel(PoweredSystemType.Impulse)
+            thrust * template.reverseThrustFactor * Impulse.boostLevel
         } else {
-            thrust * template.aheadThrustFactor * powerHandler.getBoostLevel(PoweredSystemType.Impulse)
+            thrust * template.aheadThrustFactor * Impulse.boostLevel
         }
-        val effectiveRudder = rudder * template.rudderFactor * powerHandler.getBoostLevel(PoweredSystemType.Maneuver)
+        val effectiveRudder = rudder * template.rudderFactor * Maneuver.boostLevel
         physicsEngine.updateShip(id, effectiveThrust, effectiveRudder)
 
         physicsEngine.getBodyParameters(id)?.let {
@@ -79,6 +77,22 @@ class Ship(
         }
 
         updateHistory(time)
+    }
+
+    private fun updateBeams(
+        time: GameTime,
+        shipProvider: (ObjectId) -> Ship?,
+        physicsEngine: PhysicsEngine
+    ) {
+        beamHandlers.forEach {
+            it.update(
+                time = time,
+                boostLevel = Weapons.boostLevel,
+                shipProvider = shipProvider,
+                lockHandler = lockHandler,
+                physicsEngine = physicsEngine
+            )
+        }
     }
 
     fun endUpdate(physicsEngine: PhysicsEngine): ShipUpdateResult {
@@ -185,7 +199,7 @@ class Ship(
             scanHandler = ScanHandler(
                 targetId = targetId,
                 scanningSpeed = template.scanSpeed,
-                boostLevel = { powerHandler.getBoostLevel(PoweredSystemType.Sensors) }
+                boostLevel = { Sensors.boostLevel }
             )
         }
     }
@@ -195,7 +209,7 @@ class Ship(
             lockHandler = LockHandler(
                 targetId = targetId,
                 lockingSpeed = template.lockingSpeed,
-                boostLevel = { powerHandler.getBoostLevel(PoweredSystemType.Sensors) }
+                boostLevel = { Sensors.boostLevel }
             )
         }
     }
@@ -306,6 +320,9 @@ class Ship(
         } else {
             false
         }
+
+    private val PoweredSystemType.boostLevel
+        get() = powerHandler.getBoostLevel(this)
 
     private inner class Waypoint(
         val index: Int,
