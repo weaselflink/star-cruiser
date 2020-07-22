@@ -38,7 +38,7 @@ class Ship(
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val scans = mutableMapOf<ObjectId, ScanLevel>()
     private val powerHandler = PowerHandler(template)
-    private val beamHandlers = template.beams.map { BeamHandler(it) }
+    private val beamHandlers = template.beams.map { BeamHandler(it, this) }
     private val shieldHandler = ShieldHandler(template.shield)
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
@@ -56,7 +56,6 @@ class Ship(
                 boostLevel = powerHandler.getBoostLevel(PoweredSystemType.Weapons),
                 shipProvider = shipProvider,
                 lockHandler = lockHandler,
-                ship = this,
                 physicsEngine = physicsEngine
             )
         }

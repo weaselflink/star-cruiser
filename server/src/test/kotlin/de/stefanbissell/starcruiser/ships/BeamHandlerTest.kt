@@ -28,7 +28,7 @@ class BeamHandlerTest {
         setShieldsUp(false)
     }
     private var lockHandler: LockHandler? = null
-    private val beamHandler = BeamHandler(beamWeapon)
+    private val beamHandler = BeamHandler(beamWeapon, ship)
     private val physicsEngine = mockk<PhysicsEngine>()
 
     @BeforeEach
@@ -171,6 +171,6 @@ class BeamHandlerTest {
 
     private fun stepTimeTo(seconds: Number) {
         time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
-        beamHandler.update(time, power, shipProvider, lockHandler, ship, physicsEngine)
+        beamHandler.update(time, power, shipProvider, lockHandler, physicsEngine)
     }
 }

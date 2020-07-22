@@ -9,7 +9,8 @@ import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.Vector2
 
 class BeamHandler(
-    private val beamWeapon: BeamWeapon
+    private val beamWeapon: BeamWeapon,
+    private val ship: Ship
 ) {
 
     private var status: BeamStatus = BeamStatus.Idle
@@ -21,7 +22,6 @@ class BeamHandler(
         boostLevel: Double,
         shipProvider: (ObjectId) -> Ship?,
         lockHandler: LockHandler?,
-        ship: Ship,
         physicsEngine: PhysicsEngine
     ) {
         val lockedTargetInRange = isLockedTargetInRange(shipProvider, lockHandler, ship, physicsEngine)
