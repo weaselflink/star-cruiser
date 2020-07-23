@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser.scene
 
 import de.stefanbissell.starcruiser.AsteroidMessage
+import de.stefanbissell.starcruiser.CameraMessage
 import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Vector2
@@ -13,6 +14,7 @@ import three.math.Vector3
 import three.objects.Group
 import three.plusAssign
 import three.scenes.Scene
+import three.set
 import three.updateSize
 import kotlin.browser.window
 import kotlin.math.PI
@@ -84,6 +86,7 @@ class MainScene {
             objectModels[ownShipModel]?.let {
                 ownShip.model = it
             }
+            updateFrontCamera(snapshot.ship.frontCamera)
         }
 
         val contacts = snapshot.longRangeContacts
@@ -146,6 +149,10 @@ class MainScene {
             position.z = -12.3
         }
     }
+    private fun updateFrontCamera(cameraMessage: CameraMessage) {
+        frontCamera.fov = cameraMessage.fov
+        frontCamera.position.set(cameraMessage.position)
+    }
 
     private fun createTopCamera(): PerspectiveCamera {
         return PerspectiveCamera(
@@ -189,7 +196,7 @@ class MainScene {
     }
 
     private fun loadObjectModels() {
-        listOf("carrier", "asteroid01").forEach(this::loadObjectModel)
+        listOf("carrier", "cruiser01", "asteroid01").forEach(this::loadObjectModel)
     }
 
     private fun loadObjectModel(name: String) {

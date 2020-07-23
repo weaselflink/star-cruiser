@@ -274,7 +274,8 @@ class Ship(
             hullMax = template.hull,
             jumpDrive = jumpHandler.toMessage(),
             powerMessage = powerHandler.toMessage(),
-            mainScreenView = mainScreenView
+            mainScreenView = mainScreenView,
+            frontCamera = template.frontCamera.toMessage()
         )
 
     fun toScopeContactMessage(relativeTo: Ship) =

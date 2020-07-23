@@ -151,7 +151,8 @@ data class ShipMessage(
     val hullMax: Double,
     val jumpDrive: JumpDriveMessage,
     val powerMessage: PowerMessage,
-    val mainScreenView: MainScreenView
+    val mainScreenView: MainScreenView,
+    val frontCamera: CameraMessage
 )
 
 @Serializable
@@ -188,6 +189,12 @@ data class ScopeContactMessage(
     val relativePosition: Vector2,
     val rotation: Double,
     val locked: Boolean
+)
+
+@Serializable
+data class CameraMessage(
+    val fov: Double,
+    val position: Vector3
 )
 
 enum class MainScreenView {

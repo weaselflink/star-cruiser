@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.ships
 
+import de.stefanbissell.starcruiser.CameraMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.Vector3
 import de.stefanbissell.starcruiser.p
@@ -45,6 +46,9 @@ data class ShipTemplate(
     val heatDamage: Double = 2.0,
     val repairSpeed: Double = 0.1,
     val repairAmount: Double = 0.25,
+    val frontCamera: CameraTemplate = CameraTemplate(
+        position = Vector3(0.0, 1.0, -12.3)
+    ),
     val physics: PhysicsTemplate = PhysicsTemplate()
 )
 
@@ -136,3 +140,15 @@ data class Geometry(
     val shape: Polygon,
     val density: Double
 )
+
+data class CameraTemplate(
+    val fov: Double = 75.0,
+    val position: Vector3
+) {
+
+    fun toMessage() =
+        CameraMessage(
+            fov = fov,
+            position = position
+        )
+}
