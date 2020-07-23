@@ -42,7 +42,7 @@ class AsteroidFieldDefinition {
         }
 
     fun area(vararg boundary: Vector2) {
-        area = Polygon(boundary.toList())
+        area = Polygon.of(*boundary)
     }
 
     fun createAsteroids(): List<Asteroid> =

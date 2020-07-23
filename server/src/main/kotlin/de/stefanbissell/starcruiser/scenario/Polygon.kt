@@ -3,7 +3,7 @@ package de.stefanbissell.starcruiser.scenario
 import de.stefanbissell.starcruiser.Vector2
 
 data class Polygon(
-    private val border: List<Vector2>
+    val border: List<Vector2>
 ): Area {
 
     private val edges: List<Pair<Vector2, Vector2>> =
@@ -39,5 +39,9 @@ data class Polygon(
                 / (edge.second.y - edge.first.y)
                 + edge.first.x)
             )
+    }
+
+    companion object {
+        fun of(vararg points: Vector2) = Polygon(points.toList())
     }
 }

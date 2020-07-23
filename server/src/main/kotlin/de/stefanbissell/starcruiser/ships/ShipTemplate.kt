@@ -2,6 +2,8 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.Vector3
+import de.stefanbissell.starcruiser.p
+import de.stefanbissell.starcruiser.scenario.Polygon
 import de.stefanbissell.starcruiser.toRadians
 import kotlin.math.roundToInt
 
@@ -11,7 +13,6 @@ data class ShipTemplate(
     val aheadThrustFactor: Double = 0.3,
     val reverseThrustFactor: Double = 0.1,
     val rudderFactor: Double = 0.4,
-    val density: Double = 0.02,
     val scanSpeed: Double = 0.2,
     val lockingSpeed: Double = 0.5,
     val shortRangeScopeRange: Double = 400.0,
@@ -42,7 +43,8 @@ data class ShipTemplate(
     val maxCoolant: Double = 2.0,
     val heatDamage: Double = 2.0,
     val repairSpeed: Double = 0.1,
-    val repairAmount: Double = 0.25
+    val repairAmount: Double = 0.25,
+    val physics: PhysicsTemplate = PhysicsTemplate()
 )
 
 data class JumpDrive(
@@ -89,4 +91,47 @@ data class ShieldTemplate(
     val rechargeSpeed: Double = 0.1,
     val failureStrength: Double = 0.5,
     val activationStrength: Double = 2.0
+)
+
+data class PhysicsTemplate(
+    val geometry: List<Geometry> = listOf(
+        Geometry(
+            Polygon.of(
+                p(-14.1, 3.3),
+                p(-13.24, 4.7),
+                p(-7, 4.7),
+                p(-7, -4.7),
+                p(-13.24, -4.7),
+                p(-14.1, -3.3)
+            ),
+            0.02
+        ),
+        Geometry(
+            Polygon.of(
+                p(-12.4, 3.4),
+                p(9.2, 3.4),
+                p(9.2, -3.4),
+                p(-12.4, -3.4)
+            ),
+            0.02
+        ),
+        Geometry(
+            Polygon.of(
+                p(9, 3.7),
+                p(11.9, 3),
+                p(12.5, 2.4),
+                p(13, 1.1),
+                p(13, -1.1),
+                p(12.5, -2.4),
+                p(11.9, -3),
+                p(9, -3.7)
+            ),
+            0.02
+        )
+    )
+)
+
+data class Geometry(
+    val shape: Polygon,
+    val density: Double
 )

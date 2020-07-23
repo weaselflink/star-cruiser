@@ -73,43 +73,21 @@ class PhysicsEngine {
             rotation
         ).apply {
             m_userData = this@toBody.id
-            createFixture(this@toBody)
+            createFixtures(this@toBody)
         }
 
-    private fun Body.createFixture(ship: Ship) {
-        createFixture(
-            polygonShape(
-                Vec2(-14.1f, 3.3f),
-                Vec2(-13.24f, 4.7f),
-                Vec2(-7f, 4.7f),
-                Vec2(-7f, -4.7f),
-                Vec2(-13.24f, -4.7f),
-                Vec2(-14.1f, -3.3f)
-            ),
-            ship.template.density.toFloat()
-        )
-        createFixture(
-            polygonShape(
-                Vec2(-12.4f, 3.4f),
-                Vec2(9.2f, 3.4f),
-                Vec2(9.2f, -3.4f),
-                Vec2(-12.4f, -3.4f)
-            ),
-            ship.template.density.toFloat()
-        )
-        createFixture(
-            polygonShape(
-                Vec2(9f, 3.7f),
-                Vec2(11.9f, 3f),
-                Vec2(12.5f, 2.4f),
-                Vec2(13f, 1.1f),
-                Vec2(13f, -1.1f),
-                Vec2(12.5f, -2.4f),
-                Vec2(11.9f, -3f),
-                Vec2(9f, -3.7f)
-            ),
-            ship.template.density.toFloat()
-        )
+    private fun Body.createFixtures(ship: Ship) {
+        ship.template.physics.geometry.forEach { geometry ->
+            val points = geometry.shape.border.map {
+                Vec2(it.x.toFloat(), it.y.toFloat())
+            }.toTypedArray()
+            createFixture(
+                PolygonShape().apply {
+                    set(points, points.size)
+                },
+                geometry.density.toFloat()
+            )
+        }
     }
 
     private fun Asteroid.toBody() =
@@ -129,11 +107,6 @@ class PhysicsEngine {
             0.02f
         )
     }
-
-    private fun polygonShape(vararg points: Vec2) =
-        PolygonShape().apply {
-            set(points, points.size)
-        }
 
     private fun createDynamicBody(
         position: Vector2,
