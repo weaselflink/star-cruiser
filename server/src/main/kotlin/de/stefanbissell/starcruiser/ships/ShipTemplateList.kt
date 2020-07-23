@@ -12,6 +12,16 @@ val cruiserTemplate = ShipTemplate().copy(
     aheadThrustFactor = 1.0,
     reverseThrustFactor = 0.3,
     rudderFactor = 2.0,
+    beams = listOf(
+        BeamWeapon(
+            position = Vector3(-5.26, 0.0, -15.33),
+            rightArc = -10
+        ),
+        BeamWeapon(
+            position = Vector3(5.26, 0.0, -15.33),
+            leftArc = 10
+        )
+    ),
     frontCamera = CameraTemplate(
         position = Vector3(0.0, 5.0, -4.7)
     ),
