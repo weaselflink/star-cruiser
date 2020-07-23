@@ -35,7 +35,7 @@ class ShipTest {
 
     private val ship = Ship(
         position = p(3, -4),
-        template = ShipTemplate().let {
+        template = carrierTemplate.let {
             it.copy(beams = it.beams.subList(0, 1))
         }
     )

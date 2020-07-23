@@ -30,7 +30,7 @@ import kotlin.math.abs
 
 class Ship(
     val id: ObjectId = ObjectId.random(),
-    val template: ShipTemplate = ShipTemplate(),
+    val template: ShipTemplate = carrierTemplate,
     private val designation: String = randomShipName(),
     var position: Vector2 = Vector2(),
     private var speed: Vector2 = Vector2(),

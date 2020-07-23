@@ -20,8 +20,7 @@ class PowerHandlerTest {
     private val time = GameTime().apply {
         update(Instant.EPOCH)
     }
-    private val shipTemplate = ShipTemplate()
-    private val powerHandler = PowerHandler(shipTemplate)
+    private val powerHandler = PowerHandler(carrierTemplate)
 
     @Test
     fun `holds initial value for each system`() {
@@ -69,12 +68,12 @@ class PowerHandlerTest {
     @Test
     fun `updates capacitors`() {
         expectThat(powerHandler.toMessage().capacitors)
-            .isEqualTo(shipTemplate.maxCapacitors)
+            .isEqualTo(carrierTemplate.maxCapacitors)
 
         stepTimeToOneMinute()
 
         expectThat(powerHandler.toMessage().capacitors)
-            .isNear(shipTemplate.maxCapacitors - 300.0)
+            .isNear(carrierTemplate.maxCapacitors - 300.0)
     }
 
     private fun stepTimeToOneMinute() {
