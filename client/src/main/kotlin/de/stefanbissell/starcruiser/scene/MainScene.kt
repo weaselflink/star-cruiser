@@ -25,7 +25,7 @@ class MainScene {
     val scene = Scene()
 
     private val ownShip = ShipGroup().also { scene.add(it) }
-    private var ownShipModel = "carrier"
+    private var ownShipModel: String? = null
     private val contactHandler = GroupHandler<ShipGroup, ContactMessage>(
         scene = scene,
         factory = { message ->
@@ -83,7 +83,7 @@ class MainScene {
         }
         if (ownShipModel != snapshot.ship.model) {
             ownShipModel = snapshot.ship.model
-            objectModels[ownShipModel]?.let {
+            objectModels[snapshot.ship.model]?.let {
                 ownShip.model = it
             }
             updateFrontCamera(snapshot.ship.frontCamera)
