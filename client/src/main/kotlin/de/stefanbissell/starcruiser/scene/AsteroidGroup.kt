@@ -18,7 +18,7 @@ class AsteroidGroup(radius: Double) : ObjectGroup {
         it.quaternion.copy(randomQuaternion())
     }
 
-    var model: Object3D? = null
+    override var model: Object3D? = null
         set(value) {
             field?.also { rootNode.remove(it) }
             field = value?.also {

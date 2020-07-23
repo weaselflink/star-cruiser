@@ -252,6 +252,7 @@ class Ship(
     fun toMessage() =
         ShipMessage(
             id = id,
+            model = template.model,
             designation = designation,
             shipClass = template.className,
             speed = speed.twoDigits(),
@@ -289,6 +290,7 @@ class Ship(
     fun toContactMessage(relativeTo: Ship) =
         ContactMessage(
             id = id,
+            model = template.model,
             type = getContactType(relativeTo),
             scanLevel = relativeTo.getScanLevel(id),
             designation = designation,

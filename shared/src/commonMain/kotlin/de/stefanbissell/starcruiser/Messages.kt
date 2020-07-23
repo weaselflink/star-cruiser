@@ -22,6 +22,10 @@ interface Identifiable {
     val id: ObjectId
 }
 
+interface IdentifiableWithModel : Identifiable {
+    val model: String
+}
+
 interface Positional {
     val position: Vector2
 }
@@ -125,6 +129,7 @@ data class PlayerShipMessage(
 @Serializable
 data class ShipMessage(
     val id: ObjectId,
+    val model: String,
     val designation: String,
     val shipClass: String?,
     val position: Vector2,
@@ -152,6 +157,7 @@ data class ShipMessage(
 @Serializable
 data class ContactMessage(
     override val id: ObjectId,
+    override val model: String,
     val type: ContactType,
     val scanLevel: ScanLevel,
     val designation: String,
@@ -162,16 +168,17 @@ data class ContactMessage(
     val beams: List<BeamMessage>,
     val shield: ShieldMessage,
     val jumpAnimation: Double?
-) : Identifiable, Positional
+) : IdentifiableWithModel, Positional
 
 @Serializable
 data class AsteroidMessage(
     override val id: ObjectId,
+    override val model: String,
     val radius: Double,
     override val position: Vector2,
     val relativePosition: Vector2,
     val rotation: Double
-) : Identifiable, Positional
+) : IdentifiableWithModel, Positional
 
 @Serializable
 data class ScopeContactMessage(

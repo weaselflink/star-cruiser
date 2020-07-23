@@ -17,7 +17,7 @@ class ShipGroup : ObjectGroup {
     override val rootNode = Object3D()
     private val beamNodes = mutableListOf<Object3D>()
 
-    var model: Object3D? = null
+    override var model: Object3D? = null
         set(value) {
             field?.also { rootNode.remove(it) }
             field = value?.also {

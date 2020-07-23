@@ -19,6 +19,7 @@ class Asteroid(
     fun toMessage(relativeTo: Ship) =
         AsteroidMessage(
             id = id,
+            model = "asteroid01",
             radius = radius,
             position = position,
             relativePosition = position - relativeTo.position,

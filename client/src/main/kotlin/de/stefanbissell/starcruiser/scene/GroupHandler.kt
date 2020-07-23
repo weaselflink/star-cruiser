@@ -1,30 +1,34 @@
 package de.stefanbissell.starcruiser.scene
 
-import de.stefanbissell.starcruiser.Identifiable
+import de.stefanbissell.starcruiser.IdentifiableWithModel
 import de.stefanbissell.starcruiser.ObjectId
 import three.core.Object3D
+import three.objects.Group
 import three.plusAssign
 import three.scenes.Scene
 
 interface ObjectGroup {
     val rootNode: Object3D
+    var model: Object3D?
 }
 
-class GroupHandler<G : ObjectGroup, M : Identifiable>(
+class GroupHandler<G : ObjectGroup, M : IdentifiableWithModel>(
     private val scene: Scene,
     private val factory: (M) -> G,
     private val update: G.(M) -> Unit
 ) {
 
     val nodes = mutableMapOf<ObjectId, G>()
+    private val messageCache = mutableMapOf<ObjectId, M>()
     private val holder = Object3D().also { scene += it }
 
     fun addNew(messages: List<M>) {
-        messages.filter {
-            !nodes.containsKey(it.id)
-        }.forEach {
-            factory(it).also { node ->
-                nodes[it.id] = node
+        messages.filter { message ->
+            !nodes.containsKey(message.id)
+        }.forEach { message ->
+            factory(message).also { node ->
+                nodes[message.id] = node
+                messageCache[message.id] = message
                 holder.add(node)
             }
         }
@@ -35,6 +39,7 @@ class GroupHandler<G : ObjectGroup, M : Identifiable>(
             nodes[message.id]?.apply {
                 this.update(message)
             }
+            messageCache[message.id] = message
         }
     }
 
@@ -48,6 +53,22 @@ class GroupHandler<G : ObjectGroup, M : Identifiable>(
         }.forEach { id ->
             nodes.remove(id)?.also {
                 holder.remove(it)
+            }
+            messageCache.remove(id)
+        }
+    }
+
+    fun assignModel(
+        name: String,
+        group: Group
+    ) {
+        messageCache.filter {
+            it.value.model == name
+        }.map {
+            it.key
+        }.forEach {
+            nodes[it]?.let { node ->
+                node.model = group.clone(true)
             }
         }
     }

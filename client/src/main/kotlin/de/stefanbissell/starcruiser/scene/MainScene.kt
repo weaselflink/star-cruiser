@@ -5,7 +5,6 @@ import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Vector2
 import three.cameras.PerspectiveCamera
-import three.core.Object3D
 import three.lights.AmbientLight
 import three.lights.DirectionalLight
 import three.loaders.CubeTextureLoader
@@ -24,11 +23,14 @@ class MainScene {
     val scene = Scene()
 
     private val ownShip = ShipGroup().also { scene.add(it) }
+    private var ownShipModel = "carrier"
     private val contactHandler = GroupHandler<ShipGroup, ContactMessage>(
         scene = scene,
-        factory = {
+        factory = { message ->
             ShipGroup().also { node ->
-                node.model = model?.clone(true)
+                objectModels[message.model]?.let { model ->
+                    node.model = model.clone(true)
+                }
                 node.shieldModel = shieldModel?.clone(true)
             }
         },
@@ -44,7 +46,9 @@ class MainScene {
         scene = scene,
         factory = { message ->
             AsteroidGroup(message.radius).also { node ->
-                node.model = asteroidModel?.clone(true)
+                objectModels[message.model]?.let { model ->
+                    node.model = model.clone(true)
+                }
             }
         },
         update = { asteroid ->
@@ -52,9 +56,8 @@ class MainScene {
             rotation.y = asteroid.rotation
         }
     )
-    private var model: Group? = null
+    private val objectModels = mutableMapOf<String, Group>()
     private var shieldModel: Group? = null
-    private var asteroidModel: Group? = null
 
     val frontCamera = createFrontCamera().also { ownShip += it }
     val topCamera = createTopCamera().also { ownShip += it }
@@ -62,9 +65,8 @@ class MainScene {
     init {
         createLights()
         loadBackground()
-        loadShipModel()
+        loadObjectModels()
         loadShieldModel()
-        loadAsteroidModel()
     }
 
     fun updateSize(windowWidth: Int, windowHeight: Int) {
@@ -76,6 +78,12 @@ class MainScene {
         ownShip.rotation.y = snapshot.ship.rotation
         jumpAnimationScale(snapshot.ship.jumpDrive.animation).also {
             ownShip.scale.set(it, it, it)
+        }
+        if (ownShipModel != snapshot.ship.model) {
+            ownShipModel = snapshot.ship.model
+            objectModels[ownShipModel]?.let {
+                ownShip.model = it
+            }
         }
 
         val contacts = snapshot.longRangeContacts
@@ -180,42 +188,26 @@ class MainScene {
             .toTypedArray()
     }
 
-    private fun loadShipModel() {
-        loadModel("carrier.glb") { group ->
-            model = group
-            assignModel(group, { model }, { model = it })
+    private fun loadObjectModels() {
+        listOf("carrier", "asteroid01").forEach(this::loadObjectModel)
+    }
+
+    private fun loadObjectModel(name: String) {
+        loadModel("${name}.glb") { group ->
+            objectModels[name] = group
+            if (ownShipModel == name && ownShip.model == null) {
+                ownShip.model = group.clone(true)
+            }
+            contactHandler.assignModel(name, group)
+            asteroidHandler.assignModel(name, group)
         }
     }
 
     private fun loadShieldModel() {
         loadModel("shield-cube.glb") { group ->
-            shieldModel = group
-            assignModel(group, { shieldModel }, { shieldModel = it })
-        }
-    }
-
-    private fun assignModel(
-        group: Group,
-        getter: ShipGroup.() -> Object3D?,
-        setter: ShipGroup.(Object3D) -> Unit
-    ) {
-        if (ownShip.getter() == null) {
-            ownShip.setter(group.clone(true))
-        }
-        contactHandler.nodes.values.forEach {
-            if (it.getter() == null) {
-                it.setter(group.clone(true))
-            }
-        }
-    }
-
-    private fun loadAsteroidModel() {
-        loadModel("asteroid01.glb") { group ->
-            asteroidModel = group
-            asteroidHandler.nodes.values.forEach {
-                if (it.model == null) {
-                    it.model = group.clone(true)
-                }
+            ownShip.shieldModel = group
+            contactHandler.nodes.values.forEach {
+                it.shieldModel = group
             }
         }
     }

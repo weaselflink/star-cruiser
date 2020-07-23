@@ -9,7 +9,7 @@ import kotlin.math.roundToInt
 
 data class ShipTemplate(
     val className: String = "Infector",
-    val model: String = "carrier.glb",
+    val model: String = "carrier",
     val throttleResponsiveness: Double = 25.0,
     val aheadThrustFactor: Double = 0.3,
     val reverseThrustFactor: Double = 0.1,
