@@ -212,6 +212,7 @@ class MainScene {
 
     private fun loadShieldModel() {
         loadModel("shield-cube.glb") { group ->
+            shieldModel = group
             ownShip.shieldModel = group.clone(true)
             contactHandler.nodes.values.forEach {
                 it.shieldModel = group.clone(true)
