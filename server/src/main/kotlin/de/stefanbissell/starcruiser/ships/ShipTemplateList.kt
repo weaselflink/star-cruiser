@@ -22,6 +22,9 @@ val cruiserTemplate = ShipTemplate().copy(
             leftArc = 10
         )
     ),
+    shield = ShieldTemplate().copy(
+        radius = 24.5
+    ),
     frontCamera = CameraTemplate(
         position = Vector3(0.0, 5.0, -4.7)
     ),
