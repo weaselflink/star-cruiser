@@ -351,9 +351,9 @@ class Ship(
             WaypointMessage(
                 index = index,
                 name = "WP$index",
-                position = position,
-                relativePosition = (position - relativeTo.position),
-                bearing = (position - relativeTo.position).angle().toHeading()
+                position = position.twoDigits(),
+                relativePosition = (position - relativeTo.position).twoDigits(),
+                bearing = (position - relativeTo.position).angle().toHeading().twoDigits()
             )
     }
 }
