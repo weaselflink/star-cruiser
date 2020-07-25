@@ -80,31 +80,29 @@ class HelmUi : CanvasUi(Station.Helm, "helm-ui") {
     }
 
     fun draw(snapshot: SnapshotMessage.Helm) {
-        val ship = snapshot.ship
-
-        ctx.draw(snapshot, ship)
+        ctx.draw(snapshot)
     }
 
-    private fun CanvasRenderingContext2D.draw(snapshot: SnapshotMessage.Helm, ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.draw(snapshot: SnapshotMessage.Helm) {
         transformReset()
         clearBackground()
 
         shortRangeScope.draw(snapshot)
 
-        drawThrottle(ship)
-        drawJump(ship)
-        drawRudder(ship)
+        drawThrottle(snapshot)
+        drawJump(snapshot)
+        drawRudder(snapshot)
     }
 
-    private fun drawThrottle(ship: ShipMessage) =
-        throttleSlider.draw((ship.throttle + 100) / 200.0)
+    private fun drawThrottle(snapshot: SnapshotMessage.Helm) =
+        throttleSlider.draw((snapshot.throttle + 100) / 200.0)
 
-    private fun drawJump(ship: ShipMessage) {
-        jumpSlider.draw(ship.jumpDrive.ratio)
-        jumpDisplay.draw(ship.jumpDrive)
+    private fun drawJump(snapshot: SnapshotMessage.Helm) {
+        jumpSlider.draw(snapshot.jumpDrive.ratio)
+        jumpDisplay.draw(snapshot.jumpDrive)
         jumpButton.draw()
     }
 
-    private fun drawRudder(ship: ShipMessage) =
-        rudderSlider.draw((ship.rudder + 100) / 200.0)
+    private fun drawRudder(snapshot: SnapshotMessage.Helm) =
+        rudderSlider.draw((snapshot.rudder + 100) / 200.0)
 }

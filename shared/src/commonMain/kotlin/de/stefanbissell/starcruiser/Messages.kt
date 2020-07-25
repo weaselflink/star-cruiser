@@ -102,7 +102,15 @@ sealed class SnapshotMessage {
         override val ship: ShipMessage,
         override val contacts: List<ScopeContactMessage>,
         override val asteroids: List<AsteroidMessage>
-    ) : SnapshotMessage(), ShipSnapshot, ShortRangeScopeStation
+    ) : SnapshotMessage(), ShipSnapshot, ShortRangeScopeStation {
+
+        val throttle
+            get() = ship.throttle
+        val rudder
+            get() = ship.rudder
+        val jumpDrive
+            get() = ship.jumpDrive
+    }
 
     @Serializable
     data class Weapons(
