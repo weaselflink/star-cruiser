@@ -5,7 +5,6 @@ import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.dimensions
 import de.stefanbissell.starcruiser.pad
-import de.stefanbissell.starcruiser.px
 import de.stefanbissell.starcruiser.translateToCenter
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextAlign
@@ -52,7 +51,7 @@ class MapGrid(
             strokeStyle = "#1d3549"
             fillStyle = "#664400"
             val textSize = 100.0.adjustForMap().toInt()
-            font = "bold ${textSize.px} sans-serif"
+            font = UiStyle.boldFont(textSize)
             textBaseline = CanvasTextBaseline.TOP
             textAlign = CanvasTextAlign.LEFT
         }

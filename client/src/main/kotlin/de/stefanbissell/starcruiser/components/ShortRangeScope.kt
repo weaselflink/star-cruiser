@@ -25,7 +25,6 @@ import de.stefanbissell.starcruiser.historyStyle
 import de.stefanbissell.starcruiser.input.toVector2
 import de.stefanbissell.starcruiser.lockMarkerStyle
 import de.stefanbissell.starcruiser.pad
-import de.stefanbissell.starcruiser.px
 import de.stefanbissell.starcruiser.shipStyle
 import de.stefanbissell.starcruiser.toHeading
 import de.stefanbissell.starcruiser.toRadians
@@ -144,7 +143,7 @@ class ShortRangeScope(
 
     private fun CanvasRenderingContext2D.drawCompass() {
         save()
-        fillStyle = "#000"
+        fillStyle = UiStyle.scopeBackgroundColor
         beginPath()
         circle(0.0, 0.0, scopeRadius)
         fill()
@@ -159,7 +158,7 @@ class ShortRangeScope(
         lineWidth = dim.vmin * 0.6
         lineCap = CanvasLineCap.ROUND
         textAlign = CanvasTextAlign.CENTER
-        font = "bold ${textSize.px} sans-serif"
+        font = UiStyle.boldFont(textSize)
         for (i in 0 until 36) {
             save()
             val angle = i * 10
@@ -410,7 +409,7 @@ class ShortRangeScope(
 
         save()
 
-        fillStyle = "#111"
+        fillStyle = UiStyle.buttonBackgroundColor
         beginPath()
         drawPill(
             centerX - width / 2.0, centerY - scopeRadius + height / 2.0,
@@ -428,7 +427,7 @@ class ShortRangeScope(
         stroke()
 
         fillStyle = "#aaa"
-        font = "bold ${textSize.px} sans-serif"
+        font = UiStyle.boldFont(textSize)
         textAlign = CanvasTextAlign.CENTER
         textBaseline = CanvasTextBaseline.MIDDLE
         fillText(headingText, centerX, centerY - scopeRadius + dim.vmin * 0.35)

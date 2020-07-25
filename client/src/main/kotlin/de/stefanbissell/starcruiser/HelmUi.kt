@@ -87,7 +87,7 @@ class HelmUi : CanvasUi(Station.Helm, "helm-ui") {
 
     private fun CanvasRenderingContext2D.draw(snapshot: SnapshotMessage.Helm, ship: ShipMessage) {
         transformReset()
-        clear("#222")
+        clearBackground()
 
         shortRangeScope.draw(snapshot)
 

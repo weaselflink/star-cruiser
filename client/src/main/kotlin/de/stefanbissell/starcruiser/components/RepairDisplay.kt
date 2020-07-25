@@ -18,9 +18,7 @@ class RepairDisplay(
         xExpr = xExpr,
         yExpr = yExpr,
         widthExpr = widthExpr,
-        heightExpr = heightExpr,
-        backgroundColor = "#111",
-        foregroundColor = "#888"
+        heightExpr = heightExpr
     )
 
     init {

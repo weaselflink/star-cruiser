@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.components.CanvasSlider
 import de.stefanbissell.starcruiser.components.MapClick
 import de.stefanbissell.starcruiser.components.NavigationMap
 import de.stefanbissell.starcruiser.components.SelectionDetails
+import de.stefanbissell.starcruiser.components.UiStyle
 import org.w3c.dom.CanvasRenderingContext2D
 
 class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
@@ -68,7 +69,7 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
 
     private fun CanvasRenderingContext2D.draw(snapshot: SnapshotMessage.Navigation) {
         transformReset()
-        clear("#000")
+        clear(UiStyle.mapBackgroundColor)
 
         navigationMap.draw(snapshot)
         drawZoom()

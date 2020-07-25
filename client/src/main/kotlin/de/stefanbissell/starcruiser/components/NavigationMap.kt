@@ -52,7 +52,6 @@ class NavigationMap(
         yExpr = { dim.vmin * 10 },
         widthExpr = { dim.vmin * 40 },
         heightExpr = { dim.vmin * 6 },
-        backgroundColor = "#111",
         foregroundColor = "#ff6347"
     )
     var center = Vector2()
@@ -115,7 +114,7 @@ class NavigationMap(
 
         with(ctx) {
             transformReset()
-            clear("#000")
+            clear(UiStyle.mapBackgroundColor)
 
             drawGrid()
             drawHistory(ship)

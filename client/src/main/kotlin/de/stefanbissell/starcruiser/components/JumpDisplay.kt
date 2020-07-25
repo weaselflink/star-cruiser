@@ -17,9 +17,7 @@ class JumpDisplay(
         xExpr = xExpr,
         yExpr = yExpr,
         widthExpr = widthExpr,
-        heightExpr = heightExpr,
-        backgroundColor = "#111",
-        foregroundColor = "#888"
+        heightExpr = heightExpr
     )
 
     fun draw(jumpDriveMessage: JumpDriveMessage) {

@@ -41,7 +41,7 @@ data class ComponentDimensions(
                     height = height,
                     radius = if (width > height) height * 0.5 else width * 0.5,
                     length = if (width > height) width else height,
-                    lineWidth = dim.vmin * 0.4
+                    lineWidth = dim.vmin * UiStyle.buttonLineWidth
                 )
             }
     }

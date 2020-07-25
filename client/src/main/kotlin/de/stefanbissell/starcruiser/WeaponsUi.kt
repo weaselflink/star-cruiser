@@ -59,7 +59,7 @@ class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
 
     private fun CanvasRenderingContext2D.draw(snapshot: SnapshotMessage.Weapons) {
         transformReset()
-        clear("#222")
+        clearBackground()
 
         shortRangeScope.draw(snapshot)
         lockTargetButton.draw()

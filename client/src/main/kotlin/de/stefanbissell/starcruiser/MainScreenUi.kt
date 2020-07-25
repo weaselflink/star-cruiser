@@ -96,7 +96,7 @@ class MainScreenUi : StationUi {
 
     private fun drawScope(snapshot: SnapshotMessage.MainScreen) {
         with(ctx) {
-            clear("#222")
+            clearBackground()
 
             shortRangeScope.draw(snapshot)
             frontViewButton.draw()

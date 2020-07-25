@@ -37,7 +37,7 @@ class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
 
     private fun CanvasRenderingContext2D.draw(powerMessage: PowerMessage) {
         transformReset()
-        clear("#222")
+        clearBackground()
 
         capacitorsDisplay.draw(powerMessage)
         repairDisplay.draw(powerMessage)

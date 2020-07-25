@@ -19,8 +19,8 @@ class CanvasProgress(
     private val yExpr: (CanvasDimensions) -> Double,
     private val widthExpr: (CanvasDimensions) -> Double = { it.vmin * 34 },
     private val heightExpr: (CanvasDimensions) -> Double = { it.vmin * 6 },
-    private val backgroundColor: String,
-    private val foregroundColor: String
+    private val backgroundColor: String = UiStyle.buttonBackgroundColor,
+    private val foregroundColor: String = UiStyle.buttonForegroundColor
 ) {
 
     private val ctx: CanvasRenderingContext2D = canvas.context2D
@@ -41,7 +41,7 @@ class CanvasProgress(
 
             lineWidth = dim.lineWidth * 0.5
             val textSize = (dim.height * 0.7).toInt()
-            font = "${textSize.px} sans-serif"
+            font = "${textSize.px} ${UiStyle.fontFamily}"
 
             drawBackground(dim)
             drawBorder(dim)

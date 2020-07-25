@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser
 
+import de.stefanbissell.starcruiser.components.UiStyle
 import org.w3c.dom.CENTER
 import org.w3c.dom.CanvasLineJoin
 import org.w3c.dom.CanvasRenderingContext2D
@@ -18,6 +19,10 @@ val HTMLCanvasElement.context2D
 
 fun CanvasRenderingContext2D.clear() {
     clearRect(0.0, 0.0, canvas.width.toDouble(), canvas.height.toDouble())
+}
+
+fun CanvasRenderingContext2D.clearBackground() {
+    clear(UiStyle.backgroundColor)
 }
 
 fun CanvasRenderingContext2D.clear(color: String) {
@@ -40,9 +45,6 @@ fun CanvasRenderingContext2D.circle(
     endAngle: Double = PI * 2,
     anticlockwise: Boolean = false
 ) = ellipse(x, y, radius, radius, 0.0, startAngle, endAngle, anticlockwise)
-
-val Int.px
-    get() = "${this}px"
 
 fun CanvasRenderingContext2D.drawShipSymbol(rot: Double, baseUnit: Double) {
     save()
@@ -147,7 +149,7 @@ private fun CanvasRenderingContext2D.contactStyle(dim: CanvasDimensions) {
     lineWidth = dim.vmin * 0.3
     lineJoin = CanvasLineJoin.ROUND
     val textSize = (dim.vmin * 2).toInt()
-    font = "bold ${textSize.px} sans-serif"
+    font = UiStyle.boldFont(textSize)
     textAlign = CanvasTextAlign.CENTER
 }
 
@@ -156,7 +158,7 @@ fun CanvasRenderingContext2D.wayPointStyle(dim: CanvasDimensions) {
     fillStyle = "#4682b4"
     lineWidth = dim.vmin * 0.4
     val textSize = (dim.vmin * 2).toInt()
-    font = "bold ${textSize.px} sans-serif"
+    font = UiStyle.boldFont(textSize)
     textAlign = CanvasTextAlign.CENTER
     lineJoin = CanvasLineJoin.ROUND
 }
@@ -166,7 +168,7 @@ fun CanvasRenderingContext2D.scanProgressStyle(dim: CanvasDimensions) {
     fillStyle = "#ff6347"
     lineWidth = dim.vmin * 0.5
     val textSize = (dim.vmin * 4).toInt()
-    font = "bold ${textSize.px} sans-serif"
+    font = UiStyle.boldFont(textSize)
     textAlign = CanvasTextAlign.CENTER
     textBaseline = CanvasTextBaseline.TOP
     lineJoin = CanvasLineJoin.ROUND
@@ -177,7 +179,7 @@ fun CanvasRenderingContext2D.lockMarkerStyle(dim: CanvasDimensions) {
     fillStyle = "#dc143c"
     lineWidth = dim.vmin * 0.3
     val textSize = (dim.vmin * 3).toInt()
-    font = "bold ${textSize.px} sans-serif"
+    font = UiStyle.boldFont(textSize)
     textAlign = CanvasTextAlign.CENTER
     lineJoin = CanvasLineJoin.ROUND
 }
@@ -187,7 +189,7 @@ fun CanvasRenderingContext2D.selectionMarkerStyle(dim: CanvasDimensions) {
     fillStyle = "#666"
     lineWidth = dim.vmin * 0.3
     val textSize = (dim.vmin * 3).toInt()
-    font = "bold ${textSize.px} sans-serif"
+    font = UiStyle.boldFont(textSize)
     textAlign = CanvasTextAlign.CENTER
     lineJoin = CanvasLineJoin.ROUND
 }

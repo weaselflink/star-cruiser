@@ -5,7 +5,6 @@ import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.drawPill
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandler
-import de.stefanbissell.starcruiser.px
 import org.w3c.dom.ALPHABETIC
 import org.w3c.dom.CENTER
 import org.w3c.dom.CanvasRenderingContext2D
@@ -56,19 +55,19 @@ class CanvasButton(
     private fun CanvasRenderingContext2D.drawPill(dim: ComponentDimensions) {
         lineWidth = dim.lineWidth
         fillStyle = if (pressed) {
-            "#333"
+            UiStyle.buttonPressedColor
         } else {
             if (activated()) {
-                "#888"
+                UiStyle.buttonForegroundColor
             } else {
-                "#111"
+                UiStyle.buttonBackgroundColor
             }
         }
         beginPath()
         drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
         fill()
 
-        strokeStyle = "#888"
+        strokeStyle = UiStyle.buttonForegroundColor
         beginPath()
         drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
         stroke()
@@ -80,15 +79,15 @@ class CanvasButton(
             save()
 
             fillStyle = if (activated()) {
-                "#111"
+                UiStyle.buttonBackgroundColor
             } else {
-                "#888"
+                UiStyle.buttonForegroundColor
             }
             textAlign = CanvasTextAlign.CENTER
             textBaseline = CanvasTextBaseline.ALPHABETIC
             translate(dim.bottomX, dim.bottomY)
             val textSize = (dim.height * 0.5).toInt()
-            font = "${textSize.px} sans-serif"
+            font = UiStyle.font(textSize)
             translate(dim.width * 0.5, -dim.height * 0.35)
             fillText(currentText, 0.0, 0.0)
         }

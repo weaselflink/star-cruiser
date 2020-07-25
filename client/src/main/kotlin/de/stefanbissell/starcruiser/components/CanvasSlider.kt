@@ -8,7 +8,6 @@ import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.drawPill
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandler
-import de.stefanbissell.starcruiser.px
 import org.w3c.dom.ALPHABETIC
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextAlign
@@ -77,12 +76,12 @@ class CanvasSlider(
 
     private fun CanvasRenderingContext2D.drawPill(dim: ComponentDimensions) {
         lineWidth = dim.lineWidth
-        fillStyle = "#111"
+        fillStyle = UiStyle.buttonBackgroundColor
         beginPath()
         drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
         fill()
 
-        strokeStyle = "#888"
+        strokeStyle = UiStyle.buttonForegroundColor
         beginPath()
         drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
         stroke()
@@ -98,12 +97,12 @@ class CanvasSlider(
             translate(dim.bottomX, dim.bottomY)
             if (dim.isHorizontal) {
                 val textSize = (dim.height * 0.5).toInt()
-                font = "${textSize.px} sans-serif"
+                font = UiStyle.font(textSize)
                 translate(dim.height * 0.4, -dim.height * 0.35)
                 fillText(leftText, 0.0, 0.0, dim.width - dim.height)
             } else {
                 val textSize = (dim.width * 0.5).toInt()
-                font = "${textSize.px} sans-serif"
+                font = UiStyle.font(textSize)
                 translate(dim.width * 0.65, -dim.width * 0.4)
                 rotate(-PI * 0.5)
                 fillText(leftText, 0.0, 0.0, dim.height - dim.width)
@@ -158,12 +157,12 @@ class CanvasSlider(
             translate(dim.bottomX, dim.bottomY)
             if (dim.isHorizontal) {
                 val textSize = (dim.height * 0.5).toInt()
-                font = "${textSize.px} sans-serif"
+                font = UiStyle.font(textSize)
                 translate(dim.height * 0.4, -dim.height * 0.35)
                 fillText(leftText, 0.0, 0.0, dim.width - dim.height)
             } else {
                 val textSize = (dim.width * 0.5).toInt()
-                font = "${textSize.px} sans-serif"
+                font = UiStyle.font(textSize)
                 translate(dim.width * 0.65, -dim.width * 0.4)
                 rotate(-PI * 0.5)
                 fillText(leftText, 0.0, 0.0, dim.height - dim.width)
