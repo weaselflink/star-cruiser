@@ -7,7 +7,6 @@ import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ScopeContactMessage
-import de.stefanbissell.starcruiser.ShipMessage
 import de.stefanbissell.starcruiser.SnapshotMessage.ShortRangeScopeStation
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
@@ -57,9 +56,7 @@ class ShortRangeScope(
     private var dim = canvas.dimensions()
 
     private var scopeRadius = dim.vmin * 47
-    private var ship: ShipMessage? = null
-    private var contacts: List<ScopeContactMessage> = emptyList()
-    private var asteroids: List<AsteroidMessage> = emptyList()
+    private var lastSnapshot: ShortRangeScopeStation? = null
 
     val rotateButton = CanvasButton(
         canvas = canvas,
@@ -83,11 +80,9 @@ class ShortRangeScope(
     fun draw(snapshot: ShortRangeScopeStation) {
         dim = canvas.dimensions()
         scopeRadius = dim.vmin * 47
-        ship = snapshot.ship
-        contacts = snapshot.contacts
-        asteroids = snapshot.asteroids
+        lastSnapshot = snapshot
 
-        ctx.draw(snapshot.ship)
+        ctx.draw(snapshot)
     }
 
     private fun scopeClicked(mouseEvent: MouseEvent) {
@@ -95,7 +90,7 @@ class ShortRangeScope(
 
         val mouseOnScope = mouseEvent.adjustForScope()
 
-        contacts.map {
+        lastSnapshot?.contacts.orEmpty().map {
             it to (it.relativePosition.adjustForScope() - mouseOnScope).length()
         }.filter {
             it.second <= 20.0
@@ -111,7 +106,7 @@ class ShortRangeScope(
         return (toVector2() - center).rotate(-scopeRotation)
     }
 
-    private fun CanvasRenderingContext2D.draw(ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.draw(snapshot: ShortRangeScopeStation) {
         save()
 
         translateToCenter()
@@ -123,19 +118,19 @@ class ShortRangeScope(
         circle(0.0, 0.0, scopeRadius)
         clip()
 
-        drawHistory(ship)
-        drawBeams(ship)
-        drawAsteroids()
-        drawWaypoints(ship)
-        drawContacts()
-        drawLockedContact(ship)
+        drawHistory(snapshot)
+        drawBeams(snapshot)
+        drawAsteroids(snapshot)
+        drawWaypoints(snapshot)
+        drawContacts(snapshot)
+        drawLockedContact(snapshot)
         restore()
         drawScopeEdge()
-        drawShip(ship)
+        drawShip(snapshot)
 
         restore()
 
-        drawHeading(ship)
+        drawHeading(snapshot)
         if (showRotateButton) {
             rotateButton.draw()
         }
@@ -191,13 +186,12 @@ class ShortRangeScope(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawHistory(ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.drawHistory(snapshot: ShortRangeScopeStation) {
         save()
         historyStyle(dim)
 
-        for (point in ship.history) {
-            val rel = (point - ship.position)
-            val posOnScope = rel.adjustForScope()
+        for (point in snapshot.history) {
+            val posOnScope = point.adjustForScope()
             save()
             translate(posOnScope)
             beginPath()
@@ -208,12 +202,12 @@ class ShortRangeScope(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawBeams(ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.drawBeams(snapshot: ShortRangeScopeStation) {
         save()
         beamStyle(dim)
-        rotate(-ship.rotation)
+        rotate(-snapshot.rotation)
 
-        for (beam in ship.beams) {
+        for (beam in snapshot.beams) {
             val x = -beam.position.z.adjustForScope()
             val y = beam.position.x.adjustForScope()
             val left = -beam.leftArc.toRadians()
@@ -239,11 +233,11 @@ class ShortRangeScope(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawAsteroids() {
+    private fun CanvasRenderingContext2D.drawAsteroids(snapshot: ShortRangeScopeStation) {
         save()
         environmentContactStyle(dim)
 
-        asteroids.forEach {
+        snapshot.asteroids.forEach {
             drawAsteroid(it)
         }
 
@@ -258,12 +252,12 @@ class ShortRangeScope(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawWaypoints(ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.drawWaypoints(snapshot: ShortRangeScopeStation) {
         save()
         wayPointStyle(dim)
 
         val waypointConflictHandler = WaypointConflictHandler()
-        for (waypoint in ship.waypoints) {
+        for (waypoint in snapshot.waypoints) {
             val distance = waypoint.relativePosition.length()
             if (distance < shortRangeScopeRange * 0.9) {
                 drawOnScopeWaypoint(waypoint)
@@ -315,8 +309,8 @@ class ShortRangeScope(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawContacts() {
-        contacts.forEach {
+    private fun CanvasRenderingContext2D.drawContacts(snapshot: ShortRangeScopeStation) {
+        snapshot.contacts.forEach {
             if (!showLocks || !it.locked) {
                 drawContact(it)
             }
@@ -335,20 +329,21 @@ class ShortRangeScope(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawLockedContact(ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.drawLockedContact(snapshot: ShortRangeScopeStation) {
         if (showLocks) {
-            when (val lock = ship.lockProgress) {
-                is LockStatus.InProgress -> drawLockProgress(lock.targetId, lock.progress)
-                is LockStatus.Locked -> drawLockProgress(lock.targetId, 1.0)
+            when (val lock = snapshot.lockProgress) {
+                is LockStatus.InProgress -> drawLockProgress(snapshot, lock.targetId, lock.progress)
+                is LockStatus.Locked -> drawLockProgress(snapshot, lock.targetId, 1.0)
             }
         }
     }
 
     private fun CanvasRenderingContext2D.drawLockProgress(
+        snapshot: ShortRangeScopeStation,
         targetId: ObjectId,
         progress: Double
     ) {
-        val contact = contacts.firstOrNull {
+        val contact = snapshot.contacts.firstOrNull {
             it.id == targetId
         } ?: return
         val posOnScope = contact.relativePosition.adjustForScope()
@@ -390,22 +385,20 @@ class ShortRangeScope(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
-        val rot = ship.rotation
-
+    private fun CanvasRenderingContext2D.drawShip(snapshot: ShortRangeScopeStation) {
         save()
         shipStyle(dim)
-        drawShipSymbol(rot, dim.vmin * 0.8)
+        drawShipSymbol(snapshot.rotation, dim.vmin * 0.8)
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawHeading(ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.drawHeading(snapshot: ShortRangeScopeStation) {
         val centerX = dim.width / 2.0
         val centerY = dim.height / 2.0
         val width = dim.vmin * 12
         val height = dim.vmin * 5
         val textSize = (dim.vmin * 4).toInt()
-        val headingText = ship.rotation.toHeading().roundToInt().pad(3)
+        val headingText = snapshot.rotation.toHeading().roundToInt().pad(3)
 
         save()
 
@@ -443,13 +436,13 @@ class ShortRangeScope(
 
     private val scopeRotation
         get() = if (ClientState.rotateScope) {
-            (ship?.rotation ?: 0.0) - PI / 2.0
+            (lastSnapshot?.rotation ?: 0.0) - PI / 2.0
         } else {
             0.0
         }
 
     private val shortRangeScopeRange
-        get() = ship?.shortRangeScopeRange ?: 100.0
+        get() = lastSnapshot?.shortRangeScopeRange ?: 100.0
 
     private inner class WaypointConflictHandler {
         private val added = mutableListOf<Pair<Double, Int>>()
