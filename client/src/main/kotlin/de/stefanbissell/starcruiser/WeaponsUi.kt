@@ -63,8 +63,8 @@ class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
 
         shortRangeScope.draw(snapshot)
         lockTargetButton.draw()
-        hullDisplay.draw(snapshot.ship)
-        shieldsDisplay.draw(snapshot.ship.shield)
+        hullDisplay.draw(snapshot)
+        shieldsDisplay.draw(snapshot.shield)
         shieldsButton.draw()
     }
 
