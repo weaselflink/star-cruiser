@@ -190,7 +190,7 @@ class ShortRangeScope(
         save()
         historyStyle(dim)
 
-        for (point in snapshot.history) {
+        for (point in snapshot.shortRangeScope.history) {
             val posOnScope = point.adjustForScope()
             save()
             translate(posOnScope)
@@ -205,9 +205,9 @@ class ShortRangeScope(
     private fun CanvasRenderingContext2D.drawBeams(snapshot: ShortRangeScopeStation) {
         save()
         beamStyle(dim)
-        rotate(-snapshot.rotation)
+        rotate(-snapshot.shortRangeScope.rotation)
 
-        for (beam in snapshot.beams) {
+        for (beam in snapshot.shortRangeScope.beams) {
             val x = -beam.position.z.adjustForScope()
             val y = beam.position.x.adjustForScope()
             val left = -beam.leftArc.toRadians()
@@ -257,7 +257,7 @@ class ShortRangeScope(
         wayPointStyle(dim)
 
         val waypointConflictHandler = WaypointConflictHandler()
-        for (waypoint in snapshot.waypoints) {
+        for (waypoint in snapshot.shortRangeScope.waypoints) {
             val distance = waypoint.relativePosition.length()
             if (distance < shortRangeScopeRange * 0.9) {
                 drawOnScopeWaypoint(waypoint)
@@ -331,7 +331,7 @@ class ShortRangeScope(
 
     private fun CanvasRenderingContext2D.drawLockedContact(snapshot: ShortRangeScopeStation) {
         if (showLocks) {
-            when (val lock = snapshot.lockProgress) {
+            when (val lock = snapshot.shortRangeScope.lockProgress) {
                 is LockStatus.InProgress -> drawLockProgress(snapshot, lock.targetId, lock.progress)
                 is LockStatus.Locked -> drawLockProgress(snapshot, lock.targetId, 1.0)
             }
@@ -388,7 +388,7 @@ class ShortRangeScope(
     private fun CanvasRenderingContext2D.drawShip(snapshot: ShortRangeScopeStation) {
         save()
         shipStyle(dim)
-        drawShipSymbol(snapshot.rotation, dim.vmin * 0.8)
+        drawShipSymbol(snapshot.shortRangeScope.rotation, dim.vmin * 0.8)
         restore()
     }
 
@@ -398,7 +398,7 @@ class ShortRangeScope(
         val width = dim.vmin * 12
         val height = dim.vmin * 5
         val textSize = (dim.vmin * 4).toInt()
-        val headingText = snapshot.rotation.toHeading().roundToInt().pad(3)
+        val headingText = snapshot.shortRangeScope.rotation.toHeading().roundToInt().pad(3)
 
         save()
 
@@ -436,13 +436,13 @@ class ShortRangeScope(
 
     private val scopeRotation
         get() = if (ClientState.rotateScope) {
-            (lastSnapshot?.rotation ?: 0.0) - PI / 2.0
+            (lastSnapshot?.shortRangeScope?.rotation ?: 0.0) - PI / 2.0
         } else {
             0.0
         }
 
     private val shortRangeScopeRange
-        get() = lastSnapshot?.shortRangeScopeRange ?: 100.0
+        get() = lastSnapshot?.shortRangeScope?.shortRangeScopeRange ?: 100.0
 
     private inner class WaypointConflictHandler {
         private val added = mutableListOf<Pair<Double, Int>>()

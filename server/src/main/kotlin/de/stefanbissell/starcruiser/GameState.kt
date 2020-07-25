@@ -70,14 +70,20 @@ class GameState {
                 val ship = state.ship
                 when (state.station) {
                     Helm -> SnapshotMessage.Helm(
-                        ship = ship.toMessage(),
+                        shortRangeScope = ship.toShortRangeScopeMessage(),
                         contacts = getScopeContacts(ship),
-                        asteroids = getAsteroids(ship)
+                        asteroids = getAsteroids(ship),
+                        throttle = ship.throttle,
+                        rudder = ship.rudder,
+                        jumpDrive = ship.toJumpDriveMessage()
                     )
                     Weapons -> SnapshotMessage.Weapons(
-                        ship = ship.toMessage(),
+                        shortRangeScope = ship.toShortRangeScopeMessage(),
                         contacts = getScopeContacts(ship),
-                        asteroids = getAsteroids(ship)
+                        asteroids = getAsteroids(ship),
+                        hull = ship.hull,
+                        hullMax = ship.template.hull,
+                        shield = ship.toShieldMessage()
                     )
                     Navigation -> SnapshotMessage.Navigation(
                         ship = ship.toMessage(),
@@ -89,6 +95,7 @@ class GameState {
                     )
                     MainScreen -> SnapshotMessage.MainScreen(
                         ship = ship.toMessage(),
+                        shortRangeScope = ship.toShortRangeScopeMessage(),
                         longRangeContacts = getContacts(ship),
                         contacts = getScopeContacts(ship),
                         asteroids = getAsteroids(ship)

@@ -52,7 +52,7 @@ class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
     }
 
     fun draw(snapshot: SnapshotMessage.Weapons) {
-        shieldsUp = snapshot.ship.shield.up
+        shieldsUp = snapshot.shield.up
 
         ctx.draw(snapshot)
     }

@@ -18,6 +18,7 @@ import de.stefanbissell.starcruiser.PoweredSystemType.Weapons
 import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.ScopeContactMessage
 import de.stefanbissell.starcruiser.ShipMessage
+import de.stefanbissell.starcruiser.ShortRangeScopeMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
 import de.stefanbissell.starcruiser.clamp
@@ -35,8 +36,8 @@ class Ship(
     var position: Vector2 = Vector2(),
     private var speed: Vector2 = Vector2(),
     var rotation: Double = 90.0.toRadians(),
-    private var throttle: Int = 0,
-    private var rudder: Int = 0
+    var throttle: Int = 0,
+    var rudder: Int = 0
 ) {
 
     private var thrust = 0.0
@@ -48,7 +49,7 @@ class Ship(
     private val shieldHandler = ShieldHandler(template.shield)
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
-    private var hull = template.hull
+    var hull = template.hull
     private val jumpHandler = JumpHandler(
         jumpDrive = template.jumpDrive
     )
@@ -278,6 +279,16 @@ class Ship(
             frontCamera = template.frontCamera.toMessage()
         )
 
+    fun toShortRangeScopeMessage() =
+        ShortRangeScopeMessage(
+            shortRangeScopeRange = template.shortRangeScopeRange,
+            rotation = rotation.fiveDigits(),
+            history = history.map { (it.second - position).twoDigits() },
+            waypoints = waypoints.map { it.toWaypointMessage(this) },
+            lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
+            beams = beamHandlers.map { it.toMessage(lockHandler) }
+        )
+
     fun toScopeContactMessage(relativeTo: Ship) =
         ScopeContactMessage(
             id = id,
@@ -305,6 +316,10 @@ class Ship(
         )
 
     fun toPowerMessage() = powerHandler.toMessage()
+
+    fun toJumpDriveMessage() = jumpHandler.toMessage()
+
+    fun toShieldMessage() = shieldHandler.toMessage()
 
     private fun canIncreaseScanLevel(targetId: ObjectId) = getScanLevel(targetId).let { it != it.next() }
 

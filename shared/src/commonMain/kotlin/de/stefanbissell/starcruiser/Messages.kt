@@ -66,27 +66,10 @@ sealed class SnapshotMessage {
 
     interface CrewSnapshot
 
-    interface ShipSnapshot : CrewSnapshot {
-        val ship: ShipMessage
-    }
-
     interface ShortRangeScopeStation {
-        val ship: ShipMessage
+        val shortRangeScope: ShortRangeScopeMessage
         val contacts: List<ScopeContactMessage>
         val asteroids: List<AsteroidMessage>
-
-        val shortRangeScopeRange: Double
-            get() = ship.shortRangeScopeRange
-        val rotation: Double
-            get() = ship.rotation
-        val history: List<Vector2>
-            get() = ship.history.map { it - ship.position }
-        val waypoints: List<WaypointMessage>
-            get() = ship.waypoints
-        val lockProgress: LockStatus
-            get() = ship.lockProgress
-        val beams: List<BeamMessage>
-            get() = ship.beams
     }
 
     @Serializable
@@ -99,40 +82,30 @@ sealed class SnapshotMessage {
 
     @Serializable
     data class Helm(
-        override val ship: ShipMessage,
+        override val shortRangeScope: ShortRangeScopeMessage,
         override val contacts: List<ScopeContactMessage>,
-        override val asteroids: List<AsteroidMessage>
-    ) : SnapshotMessage(), ShipSnapshot, ShortRangeScopeStation {
-
-        val throttle: Int
-            get() = ship.throttle
-        val rudder: Int
-            get() = ship.rudder
+        override val asteroids: List<AsteroidMessage>,
+        val throttle: Int,
+        val rudder: Int,
         val jumpDrive: JumpDriveMessage
-            get() = ship.jumpDrive
-    }
+    ) : SnapshotMessage(), ShortRangeScopeStation, CrewSnapshot
 
     @Serializable
     data class Weapons(
-        override val ship: ShipMessage,
+        override val shortRangeScope: ShortRangeScopeMessage,
         override val contacts: List<ScopeContactMessage>,
-        override val asteroids: List<AsteroidMessage>
-    ) : SnapshotMessage(), ShipSnapshot, ShortRangeScopeStation {
-
-        val hull: Double
-            get() = ship.hull
-        val hullMax: Double
-            get() = ship.hullMax
+        override val asteroids: List<AsteroidMessage>,
+        val hull: Double,
+        val hullMax: Double,
         val shield: ShieldMessage
-            get() = ship.shield
-    }
+    ) : SnapshotMessage(), ShortRangeScopeStation, CrewSnapshot
 
     @Serializable
     data class Navigation(
-        override val ship: ShipMessage,
+        val ship: ShipMessage,
         val contacts: List<ContactMessage>,
         val asteroids: List<AsteroidMessage>
-    ) : SnapshotMessage(), ShipSnapshot
+    ) : SnapshotMessage(), CrewSnapshot
 
     @Serializable
     data class Engineering(
@@ -141,11 +114,12 @@ sealed class SnapshotMessage {
 
     @Serializable
     data class MainScreen(
-        override val ship: ShipMessage,
+        val ship: ShipMessage,
+        override val shortRangeScope: ShortRangeScopeMessage,
         val longRangeContacts: List<ContactMessage>,
         override val contacts: List<ScopeContactMessage>,
         override val asteroids: List<AsteroidMessage>
-    ) : SnapshotMessage(), ShipSnapshot, ShortRangeScopeStation
+    ) : SnapshotMessage(), ShortRangeScopeStation, CrewSnapshot
 }
 
 @Serializable
@@ -182,6 +156,16 @@ data class ShipMessage(
     val powerMessage: PowerMessage,
     val mainScreenView: MainScreenView,
     val frontCamera: CameraMessage
+)
+
+@Serializable
+data class ShortRangeScopeMessage(
+    val shortRangeScopeRange: Double,
+    val rotation: Double,
+    val history: List<Vector2>,
+    val waypoints: List<WaypointMessage>,
+    val lockProgress: LockStatus,
+    val beams: List<BeamMessage>
 )
 
 @Serializable

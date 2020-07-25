@@ -65,16 +65,9 @@ fun init() {
 }
 
 fun keyHandler(event: KeyboardEvent) {
-    val throttle: Int = state.currentShip()?.throttle ?: 0
-    val rudder: Int = state.currentShip()?.rudder ?: 0
-
     clientSocket.apply {
         when (event.code) {
             "KeyP" -> send(Command.CommandTogglePause)
-            "KeyW", "ArrowUp" -> send(Command.CommandChangeThrottle(throttle + 10))
-            "KeyS", "ArrowDown" -> send(Command.CommandChangeThrottle(throttle - 10))
-            "KeyA", "ArrowLeft" -> send(Command.CommandChangeRudder(rudder + 10))
-            "KeyD", "ArrowRight" -> send(Command.CommandChangeRudder(rudder - 10))
             "KeyX" -> navigationUi.zoomIn()
             "KeyZ" -> navigationUi.zoomOut()
             "KeyR" -> {
@@ -83,15 +76,6 @@ fun keyHandler(event: KeyboardEvent) {
             "KeyC" -> mainScreenUi.cycleViewType()
             "KeyJ" -> send(Command.CommandStartJump)
             else -> println("not bound: ${event.code}")
-        }
-    }
-}
-
-fun GameStateMessage?.currentShip(): ShipMessage? {
-    return this?.snapshot?.let {
-        when (it) {
-            is SnapshotMessage.ShipSnapshot -> it.ship
-            else -> null
         }
     }
 }
