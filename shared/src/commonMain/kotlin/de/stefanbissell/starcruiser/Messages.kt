@@ -75,17 +75,17 @@ sealed class SnapshotMessage {
         val contacts: List<ScopeContactMessage>
         val asteroids: List<AsteroidMessage>
 
-        val shortRangeScopeRange
+        val shortRangeScopeRange: Double
             get() = ship.shortRangeScopeRange
-        val rotation
+        val rotation: Double
             get() = ship.rotation
-        val history
+        val history: List<Vector2>
             get() = ship.history.map { it - ship.position }
-        val waypoints
+        val waypoints: List<WaypointMessage>
             get() = ship.waypoints
-        val lockProgress
+        val lockProgress: LockStatus
             get() = ship.lockProgress
-        val beams
+        val beams: List<BeamMessage>
             get() = ship.beams
     }
 
