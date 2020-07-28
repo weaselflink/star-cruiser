@@ -22,7 +22,8 @@ class PowerHandler(
         .toMutableMap()
 
     fun update(time: GameTime) {
-        updateCapacitors(time)
+        generatePower(time)
+        drainPower(time)
         updateHeatLevels(time)
     }
 
@@ -72,15 +73,19 @@ class PowerHandler(
     private fun getPoweredSystem(type: PoweredSystemType) =
         poweredSystems[type] ?: PoweredSystem()
 
-    private fun updateCapacitors(time: GameTime) {
-        val capacitorPlus = shipTemplate.reactorOutput * getPoweredSystem(PoweredSystemType.Reactor).boostLevel
-        val capacitorMinus = poweredSystems
+    private fun generatePower(time: GameTime) {
+        val powerGenerated = shipTemplate.reactorOutput * getPoweredSystem(PoweredSystemType.Reactor).boostLevel
+        capacitors += time.delta * powerGenerated / 60
+    }
+
+    private fun drainPower(time: GameTime) {
+        val powerUsed = poweredSystems
             .filter { it.key != PoweredSystemType.Reactor }
             .map { it.value.level }
             .sum()
             .toDouble()
 
-        capacitors += time.delta * (capacitorPlus - capacitorMinus) / 60
+        capacitors -= time.delta * powerUsed / 60
         capacitors = max(0.0, min(shipTemplate.maxCapacitors, capacitors))
     }
 
