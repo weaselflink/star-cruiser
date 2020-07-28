@@ -7,8 +7,6 @@ import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.oneDigit
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -24,6 +22,7 @@ class PowerHandler(
     fun update(time: GameTime) {
         generatePower(time)
         drainPower(time)
+        finalizeCapacitorCharge()
         updateHeatLevels(time)
     }
 
@@ -86,7 +85,10 @@ class PowerHandler(
             .toDouble()
 
         capacitors -= time.delta * powerUsed / 60
-        capacitors = max(0.0, min(shipTemplate.maxCapacitors, capacitors))
+    }
+
+    private fun finalizeCapacitorCharge() {
+        capacitors = capacitors.clamp(0.0, shipTemplate.maxCapacitors)
     }
 
     private fun updateHeatLevels(time: GameTime) {
