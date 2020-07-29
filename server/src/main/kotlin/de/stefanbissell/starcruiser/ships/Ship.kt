@@ -138,9 +138,17 @@ class Ship(
     }
 
     private fun updateThrust(time: GameTime) {
-        val responsiveness = template.throttleResponsiveness
-        val diff = if (throttle > thrust) responsiveness else if (throttle < thrust) -responsiveness else 0.0
-        thrust = (thrust + diff * time.delta).clamp(-100.0, 100.0)
+        val responsiveness = template.throttleResponsiveness * time.delta
+        thrust = if (abs(thrust - throttle) <= responsiveness) {
+            throttle.toDouble()
+        } else {
+            val diff = when {
+                throttle > thrust -> responsiveness
+                throttle < thrust -> -responsiveness
+                else -> 0.0
+            }
+            (thrust + diff).clamp(-100.0, 100.0)
+        }
     }
 
     private fun updateHistory(time: GameTime) {
