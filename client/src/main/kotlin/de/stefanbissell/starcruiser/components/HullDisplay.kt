@@ -18,7 +18,14 @@ class HullDisplay(
         xExpr = xExpr,
         yExpr = yExpr,
         widthExpr = widthExpr,
-        heightExpr = heightExpr
+        heightExpr = heightExpr,
+        foregroundColorExpr = {
+            when {
+                it > 0.25 -> UiStyle.buttonForegroundColor
+                it > 0.1 -> UiStyle.warningYellow
+                else -> UiStyle.warningRed
+            }
+        }
     )
 
     init {
