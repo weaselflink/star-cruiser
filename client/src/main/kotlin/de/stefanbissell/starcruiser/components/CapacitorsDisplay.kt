@@ -18,7 +18,14 @@ class CapacitorsDisplay(
         xExpr = xExpr,
         yExpr = yExpr,
         widthExpr = widthExpr,
-        heightExpr = heightExpr
+        heightExpr = heightExpr,
+        foregroundColorExpr = {
+            when {
+                it > 0.25 -> UiStyle.buttonForegroundColor
+                it > 0.1 -> "#ffd700"
+                else -> "#ff4500"
+            }
+        }
     )
 
     init {
