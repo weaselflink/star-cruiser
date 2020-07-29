@@ -21,9 +21,17 @@ class ShieldsDisplay(
         heightExpr = heightExpr,
         foregroundColorExpr = {
             if (isUp) {
-                UiStyle.buttonForegroundColor
+                when {
+                    it > 0.2 -> UiStyle.buttonForegroundColor
+                    it > 0.1 -> UiStyle.warningYellow
+                    else -> UiStyle.warningRed
+                }
             } else {
-                UiStyle.buttonPressedColor
+                when {
+                    it > 0.2 -> UiStyle.buttonPressedColor
+                    it > 0.1 -> UiStyle.warningYellowDark
+                    else -> UiStyle.warningRedDark
+                }
             }
         }
     )

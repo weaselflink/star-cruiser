@@ -4,6 +4,9 @@ import de.stefanbissell.starcruiser.px
 
 object UiStyle {
 
+    private val yellow = HslColor(51)
+    private val red = HslColor(16)
+
     const val backgroundColor = "#222"
     const val mapBackgroundColor = "#000"
     const val scopeBackgroundColor = "#000"
@@ -13,11 +16,22 @@ object UiStyle {
     const val buttonPressedColor = "#333"
     const val buttonLineWidth = 0.4
 
-    const val warningYellow = "#ffd700"
-    const val warningRed = "#ff4500"
+    val warningYellow = yellow.toString()
+    val warningRed = red.toString()
+    val warningYellowDark = yellow.copy(lightness = 30).toString()
+    val warningRedDark = red.copy(lightness = 30).toString()
 
     const val fontFamily = "sans-serif"
 
     fun font(size: Number) = "${size.toInt().px} $fontFamily"
     fun boldFont(size: Number) = "bold ${size.toInt().px} $fontFamily"
+}
+
+private data class HslColor(
+    val hue: Int,
+    val saturation: Int = 100,
+    val lightness: Int = 50
+) {
+
+    override fun toString() = "hsl($hue, $saturation%, $lightness%)"
 }
