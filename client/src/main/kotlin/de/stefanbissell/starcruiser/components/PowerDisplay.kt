@@ -46,14 +46,28 @@ class PowerDisplay(
         xExpr = { it.xOffset() + it.vmin * 56 },
         yExpr = { yExpr(it) - it.vmin * 4.5 },
         widthExpr = { it.vmin * 14 },
-        heightExpr = { it.vmin * 3.5 }
+        heightExpr = { it.vmin * 3.5 },
+        foregroundColorExpr = {
+            when {
+                it < 0.5 -> UiStyle.buttonForegroundColor
+                it < 0.75 -> UiStyle.warningYellow
+                else -> UiStyle.warningRed
+            }
+        }
     )
     private val damage = CanvasProgress(
         canvas = canvas,
         xExpr = { it.xOffset() + it.vmin * 56 },
         yExpr = yExpr,
         widthExpr = { it.vmin * 14 },
-        heightExpr = { it.vmin * 3.5 }
+        heightExpr = { it.vmin * 3.5 },
+        foregroundColorExpr = {
+            when {
+                it > 0.9 -> UiStyle.buttonForegroundColor
+                it > 0.5 -> UiStyle.warningYellow
+                else -> UiStyle.warningRed
+            }
+        }
     )
     private val coolantSlider = CanvasSlider(
         canvas = canvas,
