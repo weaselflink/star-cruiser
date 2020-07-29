@@ -52,7 +52,7 @@ class NavigationMap(
         yExpr = { dim.vmin * 10 },
         widthExpr = { dim.vmin * 40 },
         heightExpr = { dim.vmin * 6 },
-        foregroundColor = "#ff6347"
+        foregroundColorExpr = { "#ff6347" }
     )
     var center = Vector2()
     var scaleSetting = 3

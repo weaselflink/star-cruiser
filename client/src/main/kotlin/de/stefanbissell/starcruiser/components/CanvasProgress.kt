@@ -19,11 +19,15 @@ class CanvasProgress(
     private val yExpr: (CanvasDimensions) -> Double,
     private val widthExpr: (CanvasDimensions) -> Double = { it.vmin * 34 },
     private val heightExpr: (CanvasDimensions) -> Double = { it.vmin * 6 },
-    private val backgroundColor: String = UiStyle.buttonBackgroundColor,
-    private val foregroundColor: String = UiStyle.buttonForegroundColor
+    private val backgroundColorExpr: (Double) -> String = { UiStyle.buttonBackgroundColor },
+    private val foregroundColorExpr: (Double) -> String = { UiStyle.buttonForegroundColor }
 ) {
 
     private val ctx: CanvasRenderingContext2D = canvas.context2D
+    private val backgroundColor
+        get() = backgroundColorExpr(progress)
+    private val foregroundColor
+        get() = foregroundColorExpr(progress)
 
     var leftText: String? = null
     var centerText: String? = null
@@ -32,6 +36,7 @@ class CanvasProgress(
         set(value) {
             field = value.clamp(0.0, 1.0)
         }
+
 
     fun draw() {
         val dim = currentDimensions(canvas)
