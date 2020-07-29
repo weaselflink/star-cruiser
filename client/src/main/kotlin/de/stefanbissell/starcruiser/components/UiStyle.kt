@@ -13,6 +13,9 @@ object UiStyle {
     const val buttonPressedColor = "#333"
     const val buttonLineWidth = 0.4
 
+    const val warningYellow = "#ffd700"
+    const val warningRed = "#ff4500"
+
     const val fontFamily = "sans-serif"
 
     fun font(size: Number) = "${size.toInt().px} $fontFamily"

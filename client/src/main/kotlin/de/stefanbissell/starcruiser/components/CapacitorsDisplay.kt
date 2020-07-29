@@ -22,8 +22,8 @@ class CapacitorsDisplay(
         foregroundColorExpr = {
             when {
                 it > 0.25 -> UiStyle.buttonForegroundColor
-                it > 0.1 -> "#ffd700"
-                else -> "#ff4500"
+                it > 0.1 -> UiStyle.warningYellow
+                else -> UiStyle.warningRed
             }
         }
     )
