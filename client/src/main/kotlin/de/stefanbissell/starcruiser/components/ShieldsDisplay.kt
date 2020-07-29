@@ -18,12 +18,21 @@ class ShieldsDisplay(
         xExpr = xExpr,
         yExpr = yExpr,
         widthExpr = widthExpr,
-        heightExpr = heightExpr
+        heightExpr = heightExpr,
+        foregroundColorExpr = {
+            if (isUp) {
+                UiStyle.buttonForegroundColor
+            } else {
+                UiStyle.buttonPressedColor
+            }
+        }
     )
+    private var isUp = true
 
     fun draw(shieldMessage: ShieldMessage) {
         with(shieldMessage) {
-            canvasProgress.leftText = if (up) {
+            isUp = up
+            canvasProgress.leftText = if (isUp) {
                 "Shields up"
             } else {
                 "Shields down"
