@@ -76,8 +76,34 @@ class PowerHandlerTest {
             .isNear(carrierTemplate.maxCapacitors - 300.0)
     }
 
+    @Test
+    fun `updates boost level modifier`() {
+        stepTimeTo(198)
+
+        expectThat(powerHandler.toMessage().capacitors)
+            .isNear(10.0)
+
+        stepTimeTo(208)
+
+        expectThat(powerHandler.getBoostLevel(Weapons))
+            .isEqualTo(0.6)
+        expectThat(powerHandler.toMessage().capacitors)
+            .isEqualTo(0.0)
+
+        stepTimeTo(218)
+
+        expectThat(powerHandler.getBoostLevel(Weapons))
+            .isEqualTo(0.5)
+        expectThat(powerHandler.toMessage().capacitors)
+            .isEqualTo(0.0)
+    }
+
     private fun stepTimeToOneMinute() {
-        time.update(Instant.EPOCH.plusMillis((60.toDouble() * 1000).toLong()))
+        stepTimeTo(60)
+    }
+
+    private fun stepTimeTo(seconds: Number) {
+        time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
         powerHandler.update(time)
     }
 

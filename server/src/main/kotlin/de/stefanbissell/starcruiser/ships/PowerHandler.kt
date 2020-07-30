@@ -14,6 +14,7 @@ class PowerHandler(
     private val shipTemplate: ShipTemplate
 ) {
 
+    private var boostLevelModifier = 1.0
     private var capacitors = shipTemplate.maxCapacitors
     private val poweredSystems = PoweredSystemType.values()
         .associate { it to PoweredSystem() }
@@ -30,7 +31,7 @@ class PowerHandler(
         getPoweredSystem(type).takeDamage(amount)
     }
 
-    fun getBoostLevel(type: PoweredSystemType) = getPoweredSystem(type).boostLevel
+    fun getBoostLevel(type: PoweredSystemType) = getPoweredSystem(type).boostLevel * boostLevelModifier
 
     fun startRepair(type: PoweredSystemType) {
         val system = getPoweredSystem(type)
@@ -78,13 +79,27 @@ class PowerHandler(
     }
 
     private fun drainPower(time: GameTime) {
-        val powerUsed = poweredSystems
+        val powerUsage = poweredSystems
             .filter { it.key != PoweredSystemType.Reactor }
             .map { it.value.level }
             .sum()
             .toDouble()
+        val powerUsed = time.delta * powerUsage / 60
+        updateBoostLevelModifier(powerUsed)
 
-        capacitors -= time.delta * powerUsed / 60
+        capacitors -= powerUsed
+    }
+
+    private fun updateBoostLevelModifier(powerUsed: Double) {
+        boostLevelModifier = if (capacitors > 0.0) {
+            if (powerUsed > capacitors) {
+                capacitors / powerUsed
+            } else {
+                1.0
+            }
+        } else {
+            0.0
+        }
     }
 
     private fun finalizeCapacitorCharge() {
