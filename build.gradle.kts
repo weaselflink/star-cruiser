@@ -16,8 +16,8 @@ plugins {
     kotlin("js") version "1.3.72" apply false
     kotlin("plugin.serialization") version "1.3.72" apply false
     id("com.github.johnrengelman.shadow") version "6.0.0" apply false
-    id("com.github.ben-manes.versions") version "0.28.0"
-    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
+    id("com.github.ben-manes.versions") version "0.29.0"
+    id("org.jlleitschuh.gradle.ktlint") version "9.3.0"
 }
 
 allprojects {
