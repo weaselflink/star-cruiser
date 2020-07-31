@@ -43,7 +43,7 @@ data class ShipTemplate(
     val maxCapacitors: Double = 1000.0,
     val reactorOutput: Double = 300.0,
     val maxCoolant: Double = 2.0,
-    val heatDamage: Double = 2.0,
+    val heatDamage: Double = 4.0,
     val repairSpeed: Double = 0.1,
     val repairAmount: Double = 0.25,
     val frontCamera: CameraTemplate = CameraTemplate(
