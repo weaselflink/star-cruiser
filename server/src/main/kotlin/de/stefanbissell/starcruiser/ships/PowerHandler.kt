@@ -14,9 +14,6 @@ class PowerHandler(
     private val shipTemplate: ShipTemplate
 ) {
 
-    private val heatBuildupBase = 1.7
-    private val heatBuildupModifier = 0.25
-
     private var boostLevelModifier = 1.0
     private var capacitors = shipTemplate.maxCapacitors
     private val poweredSystems = PoweredSystemType.values()
@@ -161,8 +158,8 @@ class PowerHandler(
         }
 
         private fun updateHeat(time: GameTime) {
-            val heatChangePerSecond = heatBuildupBase.pow(ratio - 1.0) - (1.01 + coolant)
-            val resultantHeat = heat + heatChangePerSecond * time.delta * heatBuildupModifier
+            val heatChangePerSecond = shipTemplate.heatBuildupBase.pow(ratio - 1.0) - (1.01 + coolant)
+            val resultantHeat = heat + heatChangePerSecond * time.delta * shipTemplate.heatBuildupModifier
             val overheat = resultantHeat - 1.0
             heat = resultantHeat
 

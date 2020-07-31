@@ -43,6 +43,8 @@ data class ShipTemplate(
     val maxCapacitors: Double = 1000.0,
     val reactorOutput: Double = 300.0,
     val maxCoolant: Double = 2.0,
+    val heatBuildupBase: Double = 1.7,
+    val heatBuildupModifier: Double = 0.25,
     val heatDamage: Double = 4.0,
     val repairSpeed: Double = 0.1,
     val repairAmount: Double = 0.25,
