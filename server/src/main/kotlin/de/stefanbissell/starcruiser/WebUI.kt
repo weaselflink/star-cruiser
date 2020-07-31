@@ -419,12 +419,14 @@ private val CSSBuilder.selectionDetailsCss: Unit
 private val CSSBuilder.popupCss: Unit
     get() {
         ".popup" {
-            zIndex = 10
             fontWeight = bold
             fontSize = 4.vmin
             standardGrid
             justifyContent = JustifyContent.center
             borderRadius = 4.vmin
+            margin = "30vmin auto"
+            width = 60.vmin
+            height = 25.vmin
         }
         ".popup button" {
             borderRadius = 4.vmin
