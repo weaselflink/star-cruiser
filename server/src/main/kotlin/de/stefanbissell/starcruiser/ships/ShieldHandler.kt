@@ -63,7 +63,11 @@ class ShieldHandler(
     private fun shieldFailing() = currentStrength <= shieldTemplate.failureStrength
 
     private fun rechargeAmount(time: GameTime, boostLevel: Double) =
-        shieldTemplate.rechargeSpeed * time.delta * boostLevel
+        if (boostLevel > 0.1) {
+            shieldTemplate.rechargeSpeed * time.delta * boostLevel
+        } else {
+            -shieldTemplate.decaySpeed * time.delta
+        }
 
     private fun takeDamageToShieldAndThenHull(amount: Double): Double {
         val hullDamage = max(0.0, amount - currentStrength)

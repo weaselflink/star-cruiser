@@ -142,6 +142,15 @@ class ShieldHandlerTest {
             .isTrue()
     }
 
+    @Test
+    fun `shield decays on low boost level`() {
+        power = 0.05
+        stepTimeTo(4.0 / shieldTemplate.decaySpeed)
+
+        expectThat(shieldHandler.toMessage().strength)
+            .isNear(shieldTemplate.strength - 4.0)
+    }
+
     private fun stepTimeTo(seconds: Number) {
         time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
         shieldHandler.update(time, power)

@@ -96,6 +96,7 @@ data class ShieldTemplate(
     val radius: Double = 17.0,
     val strength: Double = 10.0,
     val rechargeSpeed: Double = 0.1,
+    val decaySpeed: Double = 0.05,
     val failureStrength: Double = 0.5,
     val activationStrength: Double = 2.0
 )
