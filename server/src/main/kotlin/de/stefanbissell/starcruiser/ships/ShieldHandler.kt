@@ -2,9 +2,9 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ShieldMessage
+import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.twoDigits
 import kotlin.math.max
-import kotlin.math.min
 
 class ShieldHandler(
     private val shieldTemplate: ShieldTemplate
@@ -15,12 +15,12 @@ class ShieldHandler(
     private var activated: Boolean = false
 
     private var currentStrength: Double = shieldTemplate.strength
+        set(value) {
+            field = value.clamp(0.0, shieldTemplate.strength)
+        }
 
     fun update(time: GameTime, boostLevel: Double) {
-        currentStrength = min(
-            shieldTemplate.strength,
-            currentStrength + rechargeAmount(time, boostLevel)
-        )
+        currentStrength += rechargeAmount(time, boostLevel)
     }
 
     fun endUpdate() {
@@ -68,10 +68,7 @@ class ShieldHandler(
     private fun takeDamageToShieldAndThenHull(amount: Double): Double {
         val hullDamage = max(0.0, amount - currentStrength)
         damageSinceLastUpdate += amount
-        currentStrength = max(
-            0.0,
-            currentStrength - amount
-        )
+        currentStrength -= amount
         return hullDamage
     }
 }
