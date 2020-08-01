@@ -34,6 +34,15 @@ class CapacitorsDisplay(
 
     fun draw(powerSettings: PowerMessage) {
         with(powerSettings) {
+            val prediction = powerSettings.capacitorsPrediction
+            canvasProgress.leftText = when {
+                prediction == null -> "Capacitors"
+                prediction > 60 -> "Capacitors (full in >60s)"
+                prediction > 0 -> "Capacitors (full in ${prediction}s)"
+                prediction < -60 -> "Capacitors (empty in >60s)"
+                prediction < 0 -> "Capacitors (empty in ${-prediction}s)"
+                else -> "Capacitors"
+            }
             canvasProgress.rightText = capacitors.format(1)
             canvasProgress.progress = capacitors / maxCapacitors
         }

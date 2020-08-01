@@ -17,9 +17,14 @@ class PowerHandler(
 
     private var boostLevelModifier = 1.0
     private var capacitors = shipTemplate.maxCapacitors
+    private val maxCapacitors
+        get() = shipTemplate.maxCapacitors
     private val poweredSystems = PoweredSystemType.values()
         .associate { it to PoweredSystem() }
         .toMutableMap()
+
+    private var powerGenerated: Double = 0.0
+    private var powerUsed: Double = 0.0
 
     fun update(time: GameTime) {
         generatePower(time)
@@ -67,16 +72,31 @@ class PowerHandler(
     fun toMessage() =
         PowerMessage(
             capacitors = capacitors.oneDigit(),
-            maxCapacitors = shipTemplate.maxCapacitors,
+            maxCapacitors = maxCapacitors,
+            capacitorsPrediction = capacitorsPrediction(),
             settings = poweredSystems.mapValues { it.value.toMessage() }
         )
+
+    private fun capacitorsPrediction(): Int? =
+        when {
+            powerGenerated > powerUsed && capacitors < maxCapacitors -> {
+                (maxCapacitors - capacitors) / (powerGenerated - powerUsed)
+            }
+            powerGenerated < powerUsed && capacitors > 0.0 -> {
+                -capacitors / (powerUsed - powerGenerated)
+            }
+            else -> {
+                null
+            }
+        }?.roundToInt()
 
     private fun getPoweredSystem(type: PoweredSystemType) =
         poweredSystems[type] ?: PoweredSystem()
 
     private fun generatePower(time: GameTime) {
-        val powerGenerated = shipTemplate.reactorOutput * getPoweredSystem(PoweredSystemType.Reactor).boostLevel
-        capacitors += time.delta * powerGenerated / 60
+        val powerOutput = shipTemplate.reactorOutput * getPoweredSystem(PoweredSystemType.Reactor).boostLevel
+        powerGenerated = powerOutput / 60
+        capacitors += time.delta * powerGenerated
     }
 
     private fun drainPower(time: GameTime) {
@@ -85,10 +105,9 @@ class PowerHandler(
             .map { it.value.level }
             .sum()
             .toDouble()
-        val powerUsed = time.delta * powerUsage / 60
-        updateBoostLevelModifier(powerUsed)
-
-        capacitors -= powerUsed
+        powerUsed = powerUsage / 60
+        updateBoostLevelModifier(time.delta * powerUsed)
+        capacitors -= time.delta * powerUsed
     }
 
     private fun updateBoostLevelModifier(powerUsed: Double) {
@@ -104,7 +123,7 @@ class PowerHandler(
     }
 
     private fun finalizeCapacitorCharge() {
-        capacitors = capacitors.clamp(0.0, shipTemplate.maxCapacitors)
+        capacitors = capacitors.clamp(0.0, maxCapacitors)
     }
 
     private fun updateHeatLevels(time: GameTime) {
@@ -201,7 +220,7 @@ class PowerHandler(
                 repairProgress = repairProgress?.let {
                     RepairProgressMessage(
                         progress = it,
-                        remainingTime = ((1.0 - it) / shipTemplate.repairSpeed).roundToInt().toDouble()
+                        remainingTime = ((1.0 - it) / shipTemplate.repairSpeed).roundToInt()
                     )
                 },
                 damage = damage.fiveDigits(),

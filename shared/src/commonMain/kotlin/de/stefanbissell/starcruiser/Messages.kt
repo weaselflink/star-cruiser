@@ -369,6 +369,7 @@ enum class PoweredSystemType {
 data class PowerMessage(
     val capacitors: Double,
     val maxCapacitors: Double,
+    val capacitorsPrediction: Int?,
     val settings: Map<PoweredSystemType, PoweredSystemMessage>
 )
 
@@ -384,5 +385,5 @@ data class PoweredSystemMessage(
 @Serializable
 data class RepairProgressMessage(
     val progress: Double,
-    val remainingTime: Double
+    val remainingTime: Int
 )
