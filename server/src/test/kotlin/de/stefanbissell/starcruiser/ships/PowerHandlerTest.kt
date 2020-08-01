@@ -6,6 +6,7 @@ import de.stefanbissell.starcruiser.PoweredSystemType.Impulse
 import de.stefanbissell.starcruiser.PoweredSystemType.Jump
 import de.stefanbissell.starcruiser.PoweredSystemType.Maneuver
 import de.stefanbissell.starcruiser.PoweredSystemType.Reactor
+import de.stefanbissell.starcruiser.PoweredSystemType.Sensors
 import de.stefanbissell.starcruiser.PoweredSystemType.Shields
 import de.stefanbissell.starcruiser.PoweredSystemType.Weapons
 import de.stefanbissell.starcruiser.isNear
@@ -137,6 +138,46 @@ class PowerHandlerTest {
                 get { damage }.isNear(0.25)
                 get { repairProgress }.isNull()
             }
+    }
+
+    @Test
+    fun `predicts time to capacitors empty`() {
+        powerHandler.setLevel(Weapons, 0)
+        powerHandler.setLevel(Shields, 0)
+        powerHandler.setLevel(Jump, 0)
+
+        stepTimeTo(1)
+
+        expectThat(powerHandler.toMessage().capacitorsPrediction)
+            .isNull()
+    }
+
+    @Test
+    fun `show stable capacitors`() {
+        stepTimeTo(1)
+
+        expectThat(powerHandler.toMessage().capacitorsPrediction)
+            .isNotNull()
+            .isEqualTo(-199)
+    }
+
+    @Test
+    fun `predicts time to capacitors full`() {
+        stepTimeTo(60)
+
+        expectThat(powerHandler.toMessage().capacitors)
+            .isNear(700.0)
+
+        powerHandler.setLevel(Weapons, 0)
+        powerHandler.setLevel(Shields, 0)
+        powerHandler.setLevel(Jump, 0)
+        powerHandler.setLevel(Sensors, 0)
+
+        stepTimeTo(120)
+
+        expectThat(powerHandler.toMessage().capacitorsPrediction)
+            .isNotNull()
+            .isEqualTo(120)
     }
 
     private fun stepTimeToOneMinute() {
