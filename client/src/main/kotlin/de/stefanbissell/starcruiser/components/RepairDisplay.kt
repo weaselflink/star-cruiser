@@ -2,14 +2,13 @@ package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.PowerMessage
-import de.stefanbissell.starcruiser.toPercent
 import org.w3c.dom.HTMLCanvasElement
 
 class RepairDisplay(
     canvas: HTMLCanvasElement,
-    xExpr: (CanvasDimensions) -> Double,
-    yExpr: (CanvasDimensions) -> Double,
-    widthExpr: (CanvasDimensions) -> Double = { it.vmin * 60 },
+    xExpr: (CanvasDimensions) -> Double = { it.width * 0.5 - it.vmin * 35 },
+    yExpr: (CanvasDimensions) -> Double = { it.vmin * 20 },
+    widthExpr: (CanvasDimensions) -> Double = { it.vmin * 70 },
     heightExpr: (CanvasDimensions) -> Double = { it.vmin * 6 }
 ) {
 
@@ -26,13 +25,13 @@ class RepairDisplay(
     }
 
     fun draw(powerSettings: PowerMessage) {
-        val progress = powerSettings.settings.values
+        val repairProgress = powerSettings.settings.values
             .mapNotNull { it.repairProgress }
             .firstOrNull()
 
-        if (progress != null) {
-            canvasProgress.rightText = "${progress.toPercent()}%"
-            canvasProgress.progress = progress
+        if (repairProgress != null) {
+            canvasProgress.rightText = "${repairProgress.remainingTime}s"
+            canvasProgress.progress = repairProgress.progress
 
             canvasProgress.draw()
         }

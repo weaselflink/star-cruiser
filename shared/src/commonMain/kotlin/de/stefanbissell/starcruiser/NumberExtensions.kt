@@ -33,14 +33,18 @@ fun Double.round(digits: Int) =
     (this * 10.0.pow(digits.absoluteValue)).roundToInt() / 10.0.pow(digits.absoluteValue)
 
 fun Double.format(digits: Int) =
-    this.round(digits).toString().let {
-        val parts = it.split(".", limit = 2)
-        val digitsFound = if (parts.size == 1) 0 else parts[1].length
-        if (digitsFound == digits) {
-            it
-        } else {
-            val decimals = if (parts.size == 1) "" else parts[1]
-            "${parts[0]}.$decimals${(1..digits - digitsFound).joinToString(separator = "") { "0" }}"
+    if (digits < 1) {
+        this.toInt().toString()
+    } else {
+        this.round(digits).toString().let {
+            val parts = it.split(".", limit = 2)
+            val digitsFound = if (parts.size == 1) 0 else parts[1].length
+            if (digitsFound == digits) {
+                it
+            } else {
+                val decimals = if (parts.size == 1) "" else parts[1]
+                "${parts[0]}.$decimals${(1..digits - digitsFound).joinToString(separator = "") { "0" }}"
+            }
         }
     }
 

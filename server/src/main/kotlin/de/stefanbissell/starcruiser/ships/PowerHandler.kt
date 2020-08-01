@@ -4,6 +4,7 @@ import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.PowerMessage
 import de.stefanbissell.starcruiser.PoweredSystemMessage
 import de.stefanbissell.starcruiser.PoweredSystemType
+import de.stefanbissell.starcruiser.RepairProgressMessage
 import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.oneDigit
@@ -173,7 +174,7 @@ class PowerHandler(
             if (currentRepairProgress != null) {
                 currentRepairProgress += shipTemplate.repairSpeed * time.delta
 
-                if (currentRepairProgress > 1.0) {
+                if (currentRepairProgress >= 1.0) {
                     repairProgress = null
 
                     damage -= shipTemplate.repairAmount
@@ -197,7 +198,12 @@ class PowerHandler(
 
         fun toMessage() =
             PoweredSystemMessage(
-                repairProgress = repairProgress,
+                repairProgress = repairProgress?.let {
+                    RepairProgressMessage(
+                        progress = it,
+                        remainingTime = ((1.0 - it) / shipTemplate.repairSpeed).roundToInt().toDouble()
+                    )
+                },
                 damage = damage.fiveDigits(),
                 level = level,
                 heat = heat.fiveDigits(),

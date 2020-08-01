@@ -374,9 +374,15 @@ data class PowerMessage(
 
 @Serializable
 data class PoweredSystemMessage(
-    val repairProgress: Double?,
+    val repairProgress: RepairProgressMessage?,
     val damage: Double,
     val level: Int,
     val heat: Double,
     val coolant: Double
+)
+
+@Serializable
+data class RepairProgressMessage(
+    val progress: Double,
+    val remainingTime: Double
 )

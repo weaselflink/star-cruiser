@@ -7,16 +7,8 @@ import org.w3c.dom.CanvasRenderingContext2D
 
 class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
 
-    private val capacitorsDisplay = CapacitorsDisplay(
-        canvas = canvas,
-        xExpr = { it.width * 0.5 - it.vmin * 30 },
-        yExpr = { it.vmin * 12 }
-    )
-    private val repairDisplay = RepairDisplay(
-        canvas = canvas,
-        xExpr = { it.width * 0.5 - it.vmin * 30 },
-        yExpr = { it.vmin * 20 }
-    )
+    private val capacitorsDisplay = CapacitorsDisplay(canvas)
+    private val repairDisplay = RepairDisplay(canvas)
     private val powerDisplays = PoweredSystemType.values().mapIndexed { index, systemType ->
         systemType to PowerDisplay(
             systemType = systemType,

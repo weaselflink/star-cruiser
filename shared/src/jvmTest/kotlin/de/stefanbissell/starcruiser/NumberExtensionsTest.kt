@@ -61,6 +61,8 @@ class NumberExtensionsTest {
         expectThat(23.12.format(2)).isEqualTo("23.12")
         expectThat(23.125.format(2)).isEqualTo("23.13")
         expectThat(23.12576.format(2)).isEqualTo("23.13")
+        expectThat(23.12576.format(4)).isEqualTo("23.1258")
+        expectThat(23.12576.format(0)).isEqualTo("23")
     }
 
     @Test
