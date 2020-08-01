@@ -35,7 +35,7 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
         heightExpr = { it.vmin * 10 },
         onClick = { toggleAddWaypoint() },
         activated = { buttonState == ButtonState.AddWaypoint },
-        text = { "Add waypoint" }
+        initialText = "Add waypoint"
     )
 
     private var buttonState: ButtonState = ButtonState.Initial

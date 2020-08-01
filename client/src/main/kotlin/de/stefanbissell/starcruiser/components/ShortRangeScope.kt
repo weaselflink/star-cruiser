@@ -70,7 +70,7 @@ class ShortRangeScope(
             }
         },
         activated = { ClientState.rotateScope },
-        text = { "Rotate" }
+        initialText = "Rotate"
     )
 
     init {

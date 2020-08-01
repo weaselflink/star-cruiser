@@ -26,7 +26,7 @@ class PowerDisplay(
         heightExpr = { it.vmin * 8 },
         onClick = { clientSocket.send(Command.CommandRepair(systemType)) },
         activated = { repairing },
-        text = { "\ud83d\udee0" }
+        initialText = "\ud83d\udee0"
     )
     private val levelSlider = CanvasSlider(
         canvas = canvas,

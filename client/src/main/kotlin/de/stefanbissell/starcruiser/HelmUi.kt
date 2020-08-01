@@ -66,7 +66,7 @@ class HelmUi : CanvasUi(Station.Helm, "helm-ui") {
         widthExpr = { it.vmin * 20 },
         heightExpr = { it.vmin * 10 },
         onClick = { clientSocket.send(CommandStartJump) },
-        text = { "Jump" }
+        initialText = "Jump"
     )
 
     init {

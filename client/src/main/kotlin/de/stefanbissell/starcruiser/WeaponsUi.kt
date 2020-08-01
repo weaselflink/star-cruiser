@@ -18,7 +18,7 @@ class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
         heightExpr = { it.vmin * 10 },
         onClick = { toggleLockTarget() },
         activated = { selectingTarget },
-        text = { "Lock on" }
+        initialText = "Lock on"
     )
     private val hullDisplay = HullDisplay(
         canvas = canvas,
@@ -36,8 +36,7 @@ class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
         yExpr = { it.height - it.vmin * 3 },
         widthExpr = { it.vmin * 20 },
         heightExpr = { it.vmin * 10 },
-        onClick = { toggleShields() },
-        text = { if (shieldsUp) "Down" else "Up" }
+        onClick = { toggleShields() }
     )
 
     private var shieldsUp = false
@@ -62,6 +61,7 @@ class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
         clearBackground()
 
         shortRangeScope.draw(snapshot)
+        lockTargetButton.text = if (snapshot.shield.up) "Down" else "Up"
         lockTargetButton.draw()
         hullDisplay.draw(snapshot)
         shieldsDisplay.draw(snapshot.shield)

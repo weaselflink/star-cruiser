@@ -120,7 +120,7 @@ class MainScreenUi : StationUi {
         heightExpr = { it.vmin * 10 },
         onClick = { clientSocket.send(Command.CommandMainScreenView(mainScreenView)) },
         activated = { view == mainScreenView },
-        text = { mainScreenView.name }
+        initialText = mainScreenView.name
     )
 
     private fun render(camera: Camera) = renderer.render(mainScene.scene, camera)

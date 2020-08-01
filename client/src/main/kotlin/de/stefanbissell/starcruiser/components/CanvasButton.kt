@@ -20,12 +20,17 @@ class CanvasButton(
     private val heightExpr: (CanvasDimensions) -> Double,
     private val onClick: () -> Unit = {},
     private val activated: () -> Boolean = { false },
-    private val text: () -> String? = { null }
+    initialText: String? = null
 ) : PointerEventHandler {
 
     private val ctx: CanvasRenderingContext2D = canvas.context2D
 
     private var pressed = false
+    var text: String? = null
+
+    init {
+        text = initialText
+    }
 
     fun draw() {
         val dim = currentDimensions(canvas)
@@ -74,7 +79,7 @@ class CanvasButton(
     }
 
     private fun CanvasRenderingContext2D.drawText(dim: ComponentDimensions) {
-        val currentText = text()
+        val currentText = text
         if (currentText != null) {
             save()
 
