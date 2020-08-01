@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotEqualTo
+import strikt.assertions.isNotNull
+import strikt.assertions.isNull
 import java.time.Instant
 
 class PowerHandlerTest {
@@ -96,6 +98,45 @@ class PowerHandlerTest {
             .isEqualTo(0.5)
         expectThat(powerHandler.toMessage().capacitors)
             .isEqualTo(0.0)
+    }
+
+    @Test
+    fun `updates repair progress`() {
+        powerHandler.takeDamage(Jump, 2.5)
+        powerHandler.startRepair(Jump)
+
+        expectThat(powerHandler.toMessage().settings[Jump])
+            .isNotNull()
+            .and {
+                get { damage }.isNear(0.5)
+                get { repairProgress }.isNotNull()
+                    .and {
+                        get { progress }.isEqualTo(0.0)
+                        get { remainingTime }.isEqualTo(10)
+                    }
+            }
+
+        stepTimeTo(4)
+
+        expectThat(powerHandler.toMessage().settings[Jump])
+            .isNotNull()
+            .and {
+                get { damage }.isNear(0.5)
+                get { repairProgress }.isNotNull()
+                    .and {
+                        get { progress }.isEqualTo(0.4)
+                        get { remainingTime }.isEqualTo(6)
+                    }
+            }
+
+        stepTimeTo(10)
+
+        expectThat(powerHandler.toMessage().settings[Jump])
+            .isNotNull()
+            .and {
+                get { damage }.isNear(0.25)
+                get { repairProgress }.isNull()
+            }
     }
 
     private fun stepTimeToOneMinute() {
