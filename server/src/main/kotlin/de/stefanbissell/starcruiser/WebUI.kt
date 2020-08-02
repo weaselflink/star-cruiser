@@ -313,7 +313,7 @@ private val CSSBuilder.buttonCss: Unit
             position = fixed
             display = grid
             gap = Gap(1.vmin.value)
-            top = 0.vmin
+            top = 1.vmin
             left = 0.vmin
             zIndex = 10
         }
@@ -357,9 +357,10 @@ private val CSSBuilder.buttonCss: Unit
             fontSize = 8.vmin
             padding(0.vmin, 3.vmin, 1.vmin, 3.vmin)
             borderTopLeftRadius = 0.vmin
-            borderTopRightRadius = 0.vmin
+            borderTopRightRadius = 4.vmin
             borderBottomRightRadius = 4.vmin
             borderBottomLeftRadius = 0.vmin
+            height = 12.vmin
         }
         "button.rightEdge" {
             paddingTop = 1.vmin
