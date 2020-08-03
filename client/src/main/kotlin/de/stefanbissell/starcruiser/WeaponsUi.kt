@@ -39,7 +39,6 @@ class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
         onClick = { toggleShields() }
     )
 
-    private var shieldsUp = false
     private var selectingTarget = false
 
     init {
@@ -51,8 +50,6 @@ class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
     }
 
     fun draw(snapshot: SnapshotMessage.Weapons) {
-        shieldsUp = snapshot.shield.up
-
         ctx.draw(snapshot)
     }
 
@@ -76,7 +73,7 @@ class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
     }
 
     private fun toggleShields() {
-        clientSocket.send(Command.CommandSetShieldsUp(!shieldsUp))
+        clientSocket.send(Command.CommandToggleShieldsUp)
     }
 
     private fun toggleLockTarget() {

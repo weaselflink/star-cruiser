@@ -49,6 +49,10 @@ class ShieldHandler(
         }
     }
 
+    fun toggleUp() {
+        setUp(!up)
+    }
+
     private fun activationAllowed() = currentStrength >= shieldTemplate.activationStrength
 
     fun toMessage() =

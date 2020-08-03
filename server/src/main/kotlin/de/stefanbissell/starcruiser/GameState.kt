@@ -38,7 +38,7 @@ class AddWaypoint(val clientId: ClientId, val position: Vector2) : GameStateChan
 class DeleteWaypoint(val clientId: ClientId, val index: Int) : GameStateChange()
 class ScanShip(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
 class LockTarget(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
-class SetShieldsUp(val clientId: ClientId, val activated: Boolean) : GameStateChange()
+class ToggleShieldsUp(val clientId: ClientId) : GameStateChange()
 class StartRepair(val clientId: ClientId, val systemType: PoweredSystemType) : GameStateChange()
 class SetPower(val clientId: ClientId, val systemType: PoweredSystemType, val power: Int) : GameStateChange()
 class SetCoolant(val clientId: ClientId, val systemType: PoweredSystemType, val coolant: Double) : GameStateChange()
@@ -225,6 +225,10 @@ class GameState {
         getClientShip(clientId)?.setShieldsUp(value)
     }
 
+    fun toggleShieldsUp(clientId: ClientId) {
+        getClientShip(clientId)?.toggleShieldsUp()
+    }
+
     fun startRepair(clientId: ClientId, systemType: PoweredSystemType) {
         getClientShip(clientId)?.startRepair(systemType)
     }
@@ -305,7 +309,7 @@ class GameState {
                     is DeleteWaypoint -> gameState.deleteWaypoint(change.clientId, change.index)
                     is ScanShip -> gameState.scanShip(change.clientId, change.targetId)
                     is LockTarget -> gameState.lockTarget(change.clientId, change.targetId)
-                    is SetShieldsUp -> gameState.setShieldsUp(change.clientId, change.activated)
+                    is ToggleShieldsUp -> gameState.toggleShieldsUp(change.clientId)
                     is StartRepair -> gameState.startRepair(change.clientId, change.systemType)
                     is SetPower -> gameState.setPower(change.clientId, change.systemType, change.power)
                     is SetCoolant -> gameState.setCoolant(change.clientId, change.systemType, change.coolant)

@@ -21,12 +21,12 @@ import de.stefanbissell.starcruiser.ScanShip
 import de.stefanbissell.starcruiser.SetCoolant
 import de.stefanbissell.starcruiser.SetMainScreenView
 import de.stefanbissell.starcruiser.SetPower
-import de.stefanbissell.starcruiser.SetShieldsUp
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.SpawnShip
 import de.stefanbissell.starcruiser.StartJump
 import de.stefanbissell.starcruiser.StartRepair
 import de.stefanbissell.starcruiser.TogglePause
+import de.stefanbissell.starcruiser.ToggleShieldsUp
 import de.stefanbissell.starcruiser.client.ThrottleMessage.AcknowledgeInflightMessage
 import de.stefanbissell.starcruiser.client.ThrottleMessage.AddInflightMessage
 import de.stefanbissell.starcruiser.client.ThrottleMessage.GetInflightMessageCount
@@ -107,8 +107,8 @@ class GameClient(
                 is Command.CommandLockTarget -> gameStateActor.send(
                     LockTarget(id, command.targetId)
                 )
-                is Command.CommandSetShieldsUp -> gameStateActor.send(
-                    SetShieldsUp(id, command.value)
+                is Command.CommandToggleShieldsUp -> gameStateActor.send(
+                    ToggleShieldsUp(id)
                 )
                 is Command.CommandRepair -> gameStateActor.send(
                     StartRepair(id, command.systemType)

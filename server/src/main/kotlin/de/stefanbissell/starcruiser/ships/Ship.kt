@@ -227,6 +227,10 @@ class Ship(
         shieldHandler.setUp(value)
     }
 
+    fun toggleShieldsUp() {
+        shieldHandler.toggleUp()
+    }
+
     fun startRepair(systemType: PoweredSystemType) {
         powerHandler.startRepair(systemType)
     }

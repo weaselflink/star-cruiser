@@ -49,7 +49,7 @@ sealed class Command {
     data class CommandLockTarget(val targetId: ObjectId) : Command()
 
     @Serializable
-    data class CommandSetShieldsUp(val value: Boolean) : Command()
+    object CommandToggleShieldsUp : Command()
 
     @Serializable
     data class CommandRepair(val systemType: PoweredSystemType) : Command()
