@@ -24,9 +24,6 @@ import kotlinx.css.Display.block
 import kotlinx.css.Display.grid
 import kotlinx.css.FontWeight.Companion.bold
 import kotlinx.css.Gap
-import kotlinx.css.GridColumn
-import kotlinx.css.GridRow
-import kotlinx.css.GridTemplateColumns
 import kotlinx.css.JustifyContent
 import kotlinx.css.Outline
 import kotlinx.css.Position.fixed
@@ -43,7 +40,6 @@ import kotlinx.css.borderStyle
 import kotlinx.css.borderTopLeftRadius
 import kotlinx.css.borderTopRightRadius
 import kotlinx.css.borderWidth
-import kotlinx.css.bottom
 import kotlinx.css.canvas
 import kotlinx.css.color
 import kotlinx.css.cursor
@@ -52,9 +48,6 @@ import kotlinx.css.fontFamily
 import kotlinx.css.fontSize
 import kotlinx.css.fontWeight
 import kotlinx.css.gap
-import kotlinx.css.gridColumn
-import kotlinx.css.gridRow
-import kotlinx.css.gridTemplateColumns
 import kotlinx.css.height
 import kotlinx.css.justifyContent
 import kotlinx.css.left
@@ -131,7 +124,6 @@ fun Routing.webUi() {
                 alignSelf = Align.flexStart
             }
             buttonCss
-            selectionDetailsCss
             popupCss
         }
     }
@@ -246,22 +238,7 @@ private val BODY.weaponsUI
     get() = canvasUi("weapons-ui")
 
 private val BODY.navigationUi
-    get() = canvasUi("navigation-ui") {
-        div {
-            id = "selection-details"
-            div(classes = "designation") {}
-            div { +"Bearing" }
-            div(classes = "bearing") {}
-            div { +"Range" }
-            div(classes = "range") {}
-            button(classes = "detailsScanButton") {
-                +"Scan"
-            }
-            button(classes = "detailsDeleteButton") {
-                +"Delete"
-            }
-        }
-    }
+    get() = canvasUi("navigation-ui")
 
 private val BODY.engineeringUI
     get() = canvasUi("engineering-ui")
@@ -376,44 +353,6 @@ private val CSSBuilder.buttonCss: Unit
             color = black
             backgroundColor = dimGrey
             borderColor = dimGrey
-        }
-    }
-
-private val CSSBuilder.selectionDetailsCss: Unit
-    get() {
-        "#selection-details" {
-            position = fixed
-            right = 0.vmin
-            bottom = 0.vmin
-            zIndex = 10
-            fontWeight = bold
-            fontSize = 3.vmin
-            standardGrid
-            gridTemplateColumns = GridTemplateColumns("auto 10vmin")
-            borderTopLeftRadius = 4.vmin
-        }
-        "#selection-details button" {
-            borderRadius = 4.vmin
-            declarations["justifySelf"] = "center"
-            paddingLeft = 4.vmin
-            paddingRight = 4.vmin
-        }
-        "#selection-details .designation" {
-            gridColumn = GridColumn("span 2")
-        }
-        "#selection-details .bearing" {
-            textAlign = TextAlign.right
-        }
-        "#selection-details .range" {
-            textAlign = TextAlign.right
-        }
-        "#selection-details .detailsScanButton" {
-            gridRow = GridRow("4")
-            gridColumn = GridColumn("1 / span 2")
-        }
-        "#selection-details .detailsDeleteButton" {
-            gridRow = GridRow("4")
-            gridColumn = GridColumn("1 / span 2")
         }
     }
 
