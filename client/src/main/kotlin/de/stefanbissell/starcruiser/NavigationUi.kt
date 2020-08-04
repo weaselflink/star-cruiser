@@ -30,8 +30,8 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
     )
     private val addWaypointButton = CanvasButton(
         canvas = canvas,
-        xExpr = { it.vmin * 55 },
-        yExpr = { it.height - it.vmin * 3 },
+        xExpr = { if (it.width > it.vmin * 136) it.vmin * 55 else it.vmin * 3 },
+        yExpr = { if (it.width > it.vmin * 136) it.height - it.vmin * 3 else it.height - it.vmin * 15 },
         widthExpr = { it.vmin * 37 },
         heightExpr = { it.vmin * 10 },
         onClick = { toggleAddWaypoint() },

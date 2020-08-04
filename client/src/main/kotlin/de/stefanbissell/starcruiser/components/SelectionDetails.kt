@@ -12,9 +12,9 @@ import kotlin.math.roundToInt
 
 class SelectionDetails(
     private val canvas: HTMLCanvasElement,
-    private val xExpr: (CanvasDimensions) -> Double = { it.width - it.vmin * 40 },
+    private val xExpr: (CanvasDimensions) -> Double = { it.width - it.vmin * 42 },
     private val yExpr: (CanvasDimensions) -> Double = { it.height - it.vmin * 2 },
-    private val widthExpr: (CanvasDimensions) -> Double = { it.vmin * 38 },
+    private val widthExpr: (CanvasDimensions) -> Double = { it.vmin * 40 },
     private val heightExpr: (CanvasDimensions) -> Double = { it.vmin * 52 },
     private val onScan: () -> Unit,
     private val onDelete: () -> Unit
