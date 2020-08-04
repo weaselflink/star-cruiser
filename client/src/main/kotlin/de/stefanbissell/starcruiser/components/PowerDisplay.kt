@@ -6,7 +6,7 @@ import de.stefanbissell.starcruiser.PowerMessage
 import de.stefanbissell.starcruiser.PoweredSystemMessage
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.clientSocket
-import de.stefanbissell.starcruiser.input.PointerEventHandler
+import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.send
 import de.stefanbissell.starcruiser.toPercent
 import org.w3c.dom.HTMLCanvasElement
@@ -16,7 +16,7 @@ class PowerDisplay(
     private val systemType: PoweredSystemType,
     canvas: HTMLCanvasElement,
     yExpr: (CanvasDimensions) -> Double
-) {
+) : PointerEventHandlerParent() {
 
     private val repairButton = CanvasButton(
         canvas = canvas,
@@ -80,8 +80,9 @@ class PowerDisplay(
         }
     )
 
-    val handlers: List<PointerEventHandler>
-        get() = listOf(repairButton, levelSlider, coolantSlider)
+    init {
+        addChildren(repairButton, levelSlider, coolantSlider)
+    }
 
     private var repairing = false
 

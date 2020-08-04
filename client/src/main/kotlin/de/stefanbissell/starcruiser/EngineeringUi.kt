@@ -19,7 +19,7 @@ class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
 
     init {
         powerDisplays.forEach {
-            pointerEventDispatcher.addHandlers(it.value.handlers)
+            pointerEventDispatcher.addHandlers(it.value)
         }
     }
 
