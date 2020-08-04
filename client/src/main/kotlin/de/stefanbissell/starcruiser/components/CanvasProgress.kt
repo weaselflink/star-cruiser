@@ -120,7 +120,7 @@ class CanvasProgress(
     private fun marginExpr(dim: ComponentDimensions) = dim.height * 0.2
 
     private fun currentDimensions(canvas: HTMLCanvasElement) =
-        ComponentDimensions.calculate(
+        ComponentDimensions.calculatePill(
             canvas, xExpr, yExpr, widthExpr, heightExpr
         )
 }

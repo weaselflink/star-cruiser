@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.components.CanvasSlider
 import de.stefanbissell.starcruiser.components.MapClick
 import de.stefanbissell.starcruiser.components.NavigationMap
 import de.stefanbissell.starcruiser.components.SelectionDetails
+import de.stefanbissell.starcruiser.components.SelectionDetails2
 import de.stefanbissell.starcruiser.components.UiStyle
 import org.w3c.dom.CanvasRenderingContext2D
 
@@ -15,6 +16,11 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
 
     private val navigationMap = NavigationMap(canvas) { handleMapClick(it) }
     private val selectionDetails = SelectionDetails(
+        onScan = { scanShipClicked() },
+        onDelete = { deleteWaypointClicked() }
+    )
+    private val selectionDetails2 = SelectionDetails2(
+        canvas = canvas,
         onScan = { scanShipClicked() },
         onDelete = { deleteWaypointClicked() }
     )
@@ -44,6 +50,7 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
         pointerEventDispatcher.addHandlers(
             zoomSlider,
             addWaypointButton,
+            selectionDetails2,
             navigationMap.MapPointerEventHandler()
         )
     }
@@ -62,9 +69,9 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
     }
 
     fun draw(snapshot: SnapshotMessage.Navigation) {
-        selectionDetails.draw(navigationMap.selection)
-
         ctx.draw(snapshot)
+
+        selectionDetails2.draw(navigationMap.selection)
     }
 
     private fun CanvasRenderingContext2D.draw(snapshot: SnapshotMessage.Navigation) {

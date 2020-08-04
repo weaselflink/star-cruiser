@@ -99,7 +99,7 @@ class CanvasButton(
     }
 
     private fun currentDimensions(canvas: HTMLCanvasElement) =
-        ComponentDimensions.calculate(
+        ComponentDimensions.calculatePill(
             canvas, xExpr, yExpr, widthExpr, heightExpr
         )
 }

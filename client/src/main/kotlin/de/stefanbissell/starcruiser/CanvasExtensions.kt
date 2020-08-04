@@ -97,7 +97,12 @@ fun CanvasRenderingContext2D.drawPill(dim: ComponentDimensions) {
     drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
 }
 
-fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, height: Double) {
+fun CanvasRenderingContext2D.drawPill(
+    x: Double,
+    y: Double,
+    width: Double,
+    height: Double
+) {
     if (width > height) {
         val radius = height / 2.0
         moveTo(x + radius, y - radius * 2)
@@ -113,6 +118,29 @@ fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, heigh
         lineTo(x + radius * 2, y - radius)
         arc(x + radius, y - radius, radius, 0.0, PI)
     }
+    closePath()
+}
+
+fun CanvasRenderingContext2D.drawRect(dim: ComponentDimensions) {
+    drawRect(dim.bottomX, dim.bottomY, dim.width, dim.height, dim.radius)
+}
+
+fun CanvasRenderingContext2D.drawRect(
+    x: Double,
+    y: Double,
+    width: Double,
+    height: Double,
+    radius: Double
+) {
+
+    moveTo(x + width - radius, y - height)
+    arc(x + width - radius, y - height + radius, radius, -(PI / 2.0), 0.0)
+    lineTo(x + width, y - radius)
+    arc(x + width - radius, y - radius, radius, 0.0, PI / 2.0)
+    lineTo(x + radius, y)
+    arc(x + radius, y - radius, radius, PI / 2.0, PI)
+    lineTo(x, y - height + radius)
+    arc(x + radius, y - height + radius, radius, PI, -(PI / 2.0))
     closePath()
 }
 

@@ -6,6 +6,7 @@ import de.stefanbissell.starcruiser.input.PointerEvent
 import org.w3c.dom.HTMLCanvasElement
 
 data class ComponentDimensions(
+    val canvas: CanvasDimensions,
     val bottomX: Double,
     val bottomY: Double,
     val width: Double,
@@ -24,7 +25,7 @@ data class ComponentDimensions(
     }
 
     companion object {
-        fun calculate(
+        fun calculatePill(
             canvas: HTMLCanvasElement,
             xExpr: (CanvasDimensions) -> Double,
             yExpr: (CanvasDimensions) -> Double,
@@ -32,15 +33,37 @@ data class ComponentDimensions(
             heightExpr: (CanvasDimensions) -> Double
         ) =
             canvas.dimensions().let { dim ->
+                val bottomX = xExpr(dim)
                 val width = widthExpr(dim)
                 val height = heightExpr(dim)
                 ComponentDimensions(
-                    bottomX = xExpr(dim),
+                    canvas = dim,
+                    bottomX = bottomX,
                     bottomY = yExpr(dim),
                     width = width,
                     height = height,
                     radius = if (width > height) height * 0.5 else width * 0.5,
                     length = if (width > height) width else height,
+                    lineWidth = dim.vmin * UiStyle.buttonLineWidth
+                )
+            }
+
+        fun calculateRect(
+            canvas: HTMLCanvasElement,
+            xExpr: (CanvasDimensions) -> Double,
+            yExpr: (CanvasDimensions) -> Double,
+            widthExpr: (CanvasDimensions) -> Double,
+            heightExpr: (CanvasDimensions) -> Double
+        ) =
+            canvas.dimensions().let { dim ->
+                ComponentDimensions(
+                    canvas = dim,
+                    bottomX = xExpr(dim),
+                    bottomY = yExpr(dim),
+                    width = widthExpr(dim),
+                    height = heightExpr(dim),
+                    radius = dim.vmin * 5,
+                    length = widthExpr(dim),
                     lineWidth = dim.vmin * UiStyle.buttonLineWidth
                 )
             }
