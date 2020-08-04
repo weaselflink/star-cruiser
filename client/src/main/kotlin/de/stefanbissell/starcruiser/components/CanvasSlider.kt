@@ -36,8 +36,8 @@ class CanvasSlider(
         with(ctx) {
             save()
 
-            drawPill(dim)
-            drawText(dim)
+            drawBase(dim)
+            drawBackgroundText(dim)
             val effectiveValue = if (reverseValue) 1.0 - value else value
             drawKnob(dim, effectiveValue)
             drawKnobText(dim, effectiveValue)
@@ -74,39 +74,25 @@ class CanvasSlider(
         }
     }
 
-    private fun CanvasRenderingContext2D.drawPill(dim: ComponentDimensions) {
+    private fun CanvasRenderingContext2D.drawBase(dim: ComponentDimensions) {
         lineWidth = dim.lineWidth
         fillStyle = UiStyle.buttonBackgroundColor
         beginPath()
-        drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
+        drawPill(dim)
         fill()
 
         strokeStyle = UiStyle.buttonForegroundColor
         beginPath()
-        drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
+        drawPill(dim)
         stroke()
     }
 
-    private fun CanvasRenderingContext2D.drawText(dim: ComponentDimensions) {
+    private fun CanvasRenderingContext2D.drawBackgroundText(dim: ComponentDimensions) {
         if (leftText != null) {
             save()
 
             fillStyle = "#333"
-            textAlign = CanvasTextAlign.LEFT
-            textBaseline = CanvasTextBaseline.ALPHABETIC
-            translate(dim.bottomX, dim.bottomY)
-            if (dim.isHorizontal) {
-                val textSize = (dim.height * 0.5).toInt()
-                font = UiStyle.font(textSize)
-                translate(dim.height * 0.4, -dim.height * 0.35)
-                fillText(leftText, 0.0, 0.0, dim.width - dim.height)
-            } else {
-                val textSize = (dim.width * 0.5).toInt()
-                font = UiStyle.font(textSize)
-                translate(dim.width * 0.65, -dim.width * 0.4)
-                rotate(-PI * 0.5)
-                fillText(leftText, 0.0, 0.0, dim.height - dim.width)
-            }
+            drawText(dim, leftText)
 
             restore()
         }
@@ -114,6 +100,49 @@ class CanvasSlider(
 
     private fun CanvasRenderingContext2D.drawKnob(dim: ComponentDimensions, value: Double) {
         fillStyle = "#999"
+        drawKnobPath(dim, value)
+        fill()
+    }
+
+    private fun CanvasRenderingContext2D.drawKnobText(dim: ComponentDimensions, value: Double) {
+        if (leftText != null) {
+            save()
+
+            drawKnobPath(dim, value)
+            clip()
+
+            fillStyle = "#fff"
+            drawText(dim, leftText)
+
+            restore()
+        }
+    }
+
+    private fun CanvasRenderingContext2D.drawText(
+        dim: ComponentDimensions,
+        text: String
+    ) {
+        textAlign = CanvasTextAlign.LEFT
+        textBaseline = CanvasTextBaseline.ALPHABETIC
+        translate(dim.bottomX, dim.bottomY)
+        if (dim.isHorizontal) {
+            val textSize = dim.height * 0.5
+            font = UiStyle.font(textSize)
+            translate(dim.height * 0.4, -dim.height * 0.35)
+            fillText(text, 0.0, 0.0, dim.width - dim.height)
+        } else {
+            val textSize = dim.width * 0.5
+            font = UiStyle.font(textSize)
+            translate(dim.width * 0.65, -dim.width * 0.4)
+            rotate(-PI * 0.5)
+            fillText(text, 0.0, 0.0, dim.height - dim.width)
+        }
+    }
+
+    private fun CanvasRenderingContext2D.drawKnobPath(
+        dim: ComponentDimensions,
+        value: Double
+    ) {
         beginPath()
         if (dim.isHorizontal) {
             circle(
@@ -127,48 +156,6 @@ class CanvasSlider(
                 dim.bottomY - dim.radius - value.clamp(0.0, 1.0) * (dim.length - dim.radius * 2.0),
                 dim.radius * 0.8
             )
-        }
-        fill()
-    }
-
-    private fun CanvasRenderingContext2D.drawKnobText(dim: ComponentDimensions, value: Double) {
-        if (leftText != null) {
-            save()
-
-            beginPath()
-            if (dim.isHorizontal) {
-                circle(
-                    dim.bottomX + dim.radius + value.clamp(0.0, 1.0) * (dim.length - dim.radius * 2.0),
-                    dim.bottomY - dim.radius,
-                    dim.radius * 0.8
-                )
-            } else {
-                circle(
-                    dim.bottomX + dim.radius,
-                    dim.bottomY - dim.radius - value.clamp(0.0, 1.0) * (dim.length - dim.radius * 2.0),
-                    dim.radius * 0.8
-                )
-            }
-            clip()
-
-            fillStyle = "#fff"
-            textAlign = CanvasTextAlign.LEFT
-            textBaseline = CanvasTextBaseline.ALPHABETIC
-            translate(dim.bottomX, dim.bottomY)
-            if (dim.isHorizontal) {
-                val textSize = (dim.height * 0.5).toInt()
-                font = UiStyle.font(textSize)
-                translate(dim.height * 0.4, -dim.height * 0.35)
-                fillText(leftText, 0.0, 0.0, dim.width - dim.height)
-            } else {
-                val textSize = (dim.width * 0.5).toInt()
-                font = UiStyle.font(textSize)
-                translate(dim.width * 0.65, -dim.width * 0.4)
-                rotate(-PI * 0.5)
-                fillText(leftText, 0.0, 0.0, dim.height - dim.width)
-            }
-
-            restore()
         }
     }
 

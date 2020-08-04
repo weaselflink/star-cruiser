@@ -3,7 +3,6 @@ package de.stefanbissell.starcruiser.components
 import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.context2D
-import de.stefanbissell.starcruiser.px
 import org.w3c.dom.CENTER
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextAlign
@@ -45,8 +44,8 @@ class CanvasProgress(
             save()
 
             lineWidth = dim.lineWidth * 0.5
-            val textSize = (dim.height * 0.7).toInt()
-            font = "${textSize.px} ${UiStyle.fontFamily}"
+            val textSize = dim.height * 0.7
+            font = UiStyle.font(textSize)
 
             drawBackground(dim)
             drawBorder(dim)

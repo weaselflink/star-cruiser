@@ -38,7 +38,7 @@ class CanvasButton(
         with(ctx) {
             save()
 
-            drawPill(dim)
+            drawBase(dim)
             drawText(dim)
 
             restore()
@@ -57,7 +57,7 @@ class CanvasButton(
         pressed = false
     }
 
-    private fun CanvasRenderingContext2D.drawPill(dim: ComponentDimensions) {
+    private fun CanvasRenderingContext2D.drawBase(dim: ComponentDimensions) {
         lineWidth = dim.lineWidth
         fillStyle = if (pressed) {
             UiStyle.buttonPressedColor
@@ -69,12 +69,12 @@ class CanvasButton(
             }
         }
         beginPath()
-        drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
+        drawPill(dim)
         fill()
 
         strokeStyle = UiStyle.buttonForegroundColor
         beginPath()
-        drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
+        drawPill(dim)
         stroke()
     }
 
@@ -91,7 +91,7 @@ class CanvasButton(
             textAlign = CanvasTextAlign.CENTER
             textBaseline = CanvasTextBaseline.ALPHABETIC
             translate(dim.bottomX, dim.bottomY)
-            val textSize = (dim.height * 0.5).toInt()
+            val textSize = dim.height * 0.5
             font = UiStyle.font(textSize)
             translate(dim.width * 0.5, -dim.height * 0.35)
             fillText(currentText, 0.0, 0.0)

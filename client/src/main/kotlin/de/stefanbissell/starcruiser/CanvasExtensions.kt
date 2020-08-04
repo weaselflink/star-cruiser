@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser
 
+import de.stefanbissell.starcruiser.components.ComponentDimensions
 import de.stefanbissell.starcruiser.components.UiStyle
 import org.w3c.dom.CENTER
 import org.w3c.dom.CanvasLineJoin
@@ -90,6 +91,10 @@ fun CanvasRenderingContext2D.drawLockMarker(baseUnit: Double) {
     closePath()
     stroke()
     restore()
+}
+
+fun CanvasRenderingContext2D.drawPill(dim: ComponentDimensions) {
+    drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
 }
 
 fun CanvasRenderingContext2D.drawPill(x: Double, y: Double, width: Double, height: Double) {
