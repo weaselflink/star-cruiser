@@ -49,11 +49,11 @@ class PointerEventDispatcher(
     }
 
     fun addHandlers(vararg handlersToAdd: PointerEventHandler) {
-        handlersToAdd.forEach { handlers += it }
+        addHandlers(handlersToAdd.toList())
     }
 
-    fun addHandlers(handlersToAdd: List<PointerEventHandler>) {
-        handlersToAdd.forEach { handlers += it }
+    fun addHandlers(handlersToAdd: Iterable<PointerEventHandler>) {
+        handlers += handlersToAdd
     }
 
     private fun handleMouseDown(mouseEvent: MouseEvent) {

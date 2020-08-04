@@ -18,9 +18,7 @@ class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
     }.associate { it.first to it.second }
 
     init {
-        powerDisplays.forEach {
-            pointerEventDispatcher.addHandlers(it.value)
-        }
+        pointerEventDispatcher.addHandlers(powerDisplays.values)
     }
 
     fun draw(snapshot: SnapshotMessage.Engineering) {
