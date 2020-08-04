@@ -28,6 +28,13 @@ class SelectionDetails(
         widthExpr = { dim.width - it.vmin * 8 },
         heightExpr = { it.vmin * 4 }
     )
+    private val shieldsDisplay = ShieldsDisplay(
+        canvas = canvas,
+        xExpr = { innerX },
+        yExpr = { dim.bottomY - dim.height + it.vmin * 28 },
+        widthExpr = { dim.width - it.vmin * 8 },
+        heightExpr = { it.vmin * 4 }
+    )
     private val actionButton = CanvasButton(
         canvas = canvas,
         xExpr = { dim.bottomX + dim.width * 0.5 - it.vmin * 12 },
@@ -80,6 +87,9 @@ class SelectionDetails(
 
         selection.hullRatio?.also {
             hullDisplay.draw(it)
+        }
+        selection.shield?.also {
+            shieldsDisplay.draw(it)
         }
         when {
             selection.canScan -> {

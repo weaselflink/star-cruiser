@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.Positional
 import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.ScanProgress
+import de.stefanbissell.starcruiser.ShieldMessage
 import de.stefanbissell.starcruiser.ShipMessage
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Vector2
@@ -81,6 +82,7 @@ class NavigationMap(
                 bearing = it.bearing,
                 range = it.relativePosition.length(),
                 hullRatio = if (it.scanLevel == ScanLevel.Faction) it.hullRatio else null,
+                shield = if (it.scanLevel == ScanLevel.Faction) it.shield else null,
                 canScan = it.scanLevel != ScanLevel.highest
             )
         } ?: selectedWaypoint?.let {
@@ -345,6 +347,7 @@ data class Selection(
     val bearing: Double,
     val range: Double,
     val hullRatio: Double? = null,
+    val shield: ShieldMessage? = null,
     val canScan: Boolean = false,
     val canDelete: Boolean = false
 )
