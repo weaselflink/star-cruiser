@@ -323,6 +323,7 @@ class Ship(
             rotation = rotation,
             bearing = (position - relativeTo.position).angle().toHeading(),
             beams = beamHandlers.map { it.toMessage(lockHandler) },
+            hullRatio = (hull / template.hull).fiveDigits(),
             shield = shieldHandler.toMessage(),
             jumpAnimation = jumpHandler.toMessage().animation
         )

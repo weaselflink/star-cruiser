@@ -59,7 +59,7 @@ class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
 
         shortRangeScope.draw(snapshot)
         lockTargetButton.draw()
-        hullDisplay.draw(snapshot)
+        hullDisplay.draw(snapshot.hull / snapshot.hullMax)
         shieldsDisplay.draw(snapshot.shield)
         shieldsButton.text = if (snapshot.shield.up) "Down" else "Up"
         shieldsButton.draw()

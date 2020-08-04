@@ -1,7 +1,6 @@
 package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
-import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.toPercent
 import org.w3c.dom.HTMLCanvasElement
 
@@ -32,10 +31,9 @@ class HullDisplay(
         canvasProgress.leftText = "Hull"
     }
 
-    fun draw(snapshot: SnapshotMessage.Weapons) {
-        val progress = snapshot.hull / snapshot.hullMax
-        canvasProgress.progress = progress
-        canvasProgress.rightText = "${progress.toPercent()}%"
+    fun draw(ratio: Double) {
+        canvasProgress.progress = ratio
+        canvasProgress.rightText = "${ratio.toPercent()}%"
 
         canvasProgress.draw()
     }

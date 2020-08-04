@@ -21,10 +21,17 @@ class SelectionDetails(
 ) : PointerEventHandlerParent() {
 
     private val ctx: CanvasRenderingContext2D = canvas.context2D
+    private val hullDisplay = HullDisplay(
+        canvas = canvas,
+        xExpr = { innerX },
+        yExpr = { dim.bottomY - dim.height + it.vmin * 22 },
+        widthExpr = { dim.width - it.vmin * 8 },
+        heightExpr = { it.vmin * 4 }
+    )
     private val actionButton = CanvasButton(
         canvas = canvas,
-        xExpr = { xExpr(it) + widthExpr(it) * 0.5 - it.vmin * 12 },
-        yExpr = { yExpr(it) - it.vmin * 5 },
+        xExpr = { dim.bottomX + dim.width * 0.5 - it.vmin * 12 },
+        yExpr = { dim.bottomY - it.vmin * 5 },
         widthExpr = { it.vmin * 24 },
         heightExpr = { it.vmin * 10 },
         onClick = { actionButtonClicked() }
@@ -71,6 +78,9 @@ class SelectionDetails(
         drawBearing(selection.bearing)
         drawRange(selection.range)
 
+        selection.hullRatio?.also {
+            hullDisplay.draw(it)
+        }
         when {
             selection.canScan -> {
                 actionButton.text = "Scan"

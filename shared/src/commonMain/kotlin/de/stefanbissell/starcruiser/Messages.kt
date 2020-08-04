@@ -180,6 +180,7 @@ data class ContactMessage(
     val rotation: Double,
     val bearing: Double,
     val beams: List<BeamMessage>,
+    val hullRatio: Double,
     val shield: ShieldMessage,
     val jumpAnimation: Double?
 ) : IdentifiableWithModel, Positional

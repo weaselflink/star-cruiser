@@ -80,15 +80,14 @@ class NavigationMap(
                 label = it.designation,
                 bearing = it.bearing,
                 range = it.relativePosition.length(),
-                canScan = it.scanLevel != ScanLevel.highest,
-                canDelete = false
+                hullRatio = if (it.scanLevel == ScanLevel.Faction) it.hullRatio else null,
+                canScan = it.scanLevel != ScanLevel.highest
             )
         } ?: selectedWaypoint?.let {
             Selection(
                 label = it.name,
                 bearing = it.bearing,
                 range = it.relativePosition.length(),
-                canScan = false,
                 canDelete = true
             )
         }
@@ -345,6 +344,7 @@ data class Selection(
     val label: String,
     val bearing: Double,
     val range: Double,
-    val canScan: Boolean,
-    val canDelete: Boolean
+    val hullRatio: Double? = null,
+    val canScan: Boolean = false,
+    val canDelete: Boolean = false
 )
