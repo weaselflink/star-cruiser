@@ -60,5 +60,13 @@ fun Vector2.twoDigits() = Vector2(x.twoDigits(), y.twoDigits())
 
 fun Double.toPercent() = (this * 100).roundToInt()
 
+fun Int.formatThousands() =
+    this.toString()
+        .reversed()
+        .windowed(3, 3, true)
+        .map { it.reversed() }
+        .reversed()
+        .joinToString(separator = ",")
+
 val Int.px
     get() = "${this}px"

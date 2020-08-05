@@ -4,6 +4,7 @@ import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.MapSelectionMessage
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.drawRect
+import de.stefanbissell.starcruiser.formatThousands
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.pad
@@ -164,7 +165,7 @@ class SelectionDetails(
             dim.bottomY - dim.height + dim.canvas.vmin * 16
         )
         textAlign = CanvasTextAlign.RIGHT
-        val text = range.roundToInt().toString()
+        val text = range.roundToInt().formatThousands()
         fillText(
             text,
             dim.bottomX + dim.width - dim.canvas.vmin * 4,

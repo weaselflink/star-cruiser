@@ -85,4 +85,14 @@ class NumberExtensionsTest {
         expectThat(1.pad(5)).isEqualTo("00001")
         expectThat(0.pad(3)).isEqualTo("000")
     }
+
+    @Test
+    fun `add thousands separators`() {
+        expectThat(1.formatThousands()).isEqualTo("1")
+        expectThat(567.formatThousands()).isEqualTo("567")
+        expectThat(4567.formatThousands()).isEqualTo("4,567")
+        expectThat(34567.formatThousands()).isEqualTo("34,567")
+        expectThat(234567.formatThousands()).isEqualTo("234,567")
+        expectThat(1234567.formatThousands()).isEqualTo("1,234,567")
+    }
 }
