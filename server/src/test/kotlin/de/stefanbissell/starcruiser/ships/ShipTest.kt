@@ -167,7 +167,8 @@ class ShipTest {
     @Test
     fun `can delete waypoint`() {
         ship.addWaypoint(p(5, -4))
-        ship.deleteWaypoint(1)
+        ship.mapSelectWaypoint(1)
+        ship.deleteSelectedWaypoint()
 
         expectThat(ship.toMessage().waypoints).isEmpty()
     }
@@ -176,7 +177,8 @@ class ShipTest {
     fun `keeps index after deletion`() {
         ship.addWaypoint(p(5, -4))
         ship.addWaypoint(p(10, -4))
-        ship.deleteWaypoint(1)
+        ship.mapSelectWaypoint(1)
+        ship.deleteSelectedWaypoint()
 
         expectThat(ship.toMessage().waypoints).containsExactly(
             WaypointMessage(2, "WP2", p(10, -4), p(7, 0), 90.0)
@@ -187,7 +189,8 @@ class ShipTest {
     fun `fills waypoint slot`() {
         ship.addWaypoint(p(5, -4))
         ship.addWaypoint(p(10, -4))
-        ship.deleteWaypoint(1)
+        ship.mapSelectWaypoint(1)
+        ship.deleteSelectedWaypoint()
         ship.addWaypoint(p(15, -4))
 
         expectThat(ship.toMessage().waypoints).containsExactly(

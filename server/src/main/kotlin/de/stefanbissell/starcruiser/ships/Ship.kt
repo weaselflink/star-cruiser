@@ -216,10 +216,12 @@ class Ship(
         waypoints.sortBy { it.index }
     }
 
-    fun deleteWaypoint(index: Int) {
-        waypoints.removeIf { it.index == index }
-        if (mapSelection.isWaypointSelected(index)) {
-            mapSelection = MapSelection.None
+    fun deleteSelectedWaypoint() {
+        mapSelection.also { selection ->
+            if (selection is MapSelection.Waypoint) {
+                waypoints.removeIf { it.index == selection.index }
+                mapSelection = MapSelection.None
+            }
         }
     }
 

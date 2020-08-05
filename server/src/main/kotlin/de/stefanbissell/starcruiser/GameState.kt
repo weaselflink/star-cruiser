@@ -38,7 +38,7 @@ class MapClearSelection(val clientId: ClientId) : GameStateChange()
 class MapSelectWaypoint(val clientId: ClientId, val index: Int) : GameStateChange()
 class MapSelectShip(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
 class AddWaypoint(val clientId: ClientId, val position: Vector2) : GameStateChange()
-class DeleteWaypoint(val clientId: ClientId, val index: Int) : GameStateChange()
+class DeleteSelectedWaypoint(val clientId: ClientId) : GameStateChange()
 class ScanShip(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
 class LockTarget(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
 class ToggleShieldsUp(val clientId: ClientId) : GameStateChange()
@@ -221,8 +221,8 @@ class GameState {
         getClientShip(clientId)?.addWaypoint(position)
     }
 
-    fun deleteWaypoint(clientId: ClientId, index: Int) {
-        getClientShip(clientId)?.deleteWaypoint(index)
+    fun deleteSelectedWaypoint(clientId: ClientId) {
+        getClientShip(clientId)?.deleteSelectedWaypoint()
     }
 
     fun scanShip(clientId: ClientId, targetId: ObjectId) {
@@ -325,7 +325,7 @@ class GameState {
                     is MapSelectWaypoint -> gameState.mapSelectWaypoint(change.clientId, change.index)
                     is MapSelectShip -> gameState.mapSelectShip(change.clientId, change.targetId)
                     is AddWaypoint -> gameState.addWaypoint(change.clientId, change.position)
-                    is DeleteWaypoint -> gameState.deleteWaypoint(change.clientId, change.index)
+                    is DeleteSelectedWaypoint -> gameState.deleteSelectedWaypoint(change.clientId)
                     is ScanShip -> gameState.scanShip(change.clientId, change.targetId)
                     is LockTarget -> gameState.lockTarget(change.clientId, change.targetId)
                     is ToggleShieldsUp -> gameState.toggleShieldsUp(change.clientId)

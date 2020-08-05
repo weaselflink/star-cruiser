@@ -63,12 +63,7 @@ class NavigationMap(
     private var selectedObjectId: ObjectId? = null
     var selectedContact: ContactMessage?
         get() = contacts.firstOrNull { it.id == selectedObjectId }
-        set(value) { selectedObjectId = value?.id?.also { selectedWaypointIndex = null } }
-
-    private var selectedWaypointIndex: Int? = null
-    var selectedWaypoint: WaypointMessage?
-        get() = waypoints.firstOrNull { it.index == selectedWaypointIndex }
-        set(value) { selectedWaypointIndex = value?.index?.also { selectedObjectId = null } }
+        set(value) { selectedObjectId = value?.id }
 
     private var contacts: List<ContactMessage> = emptyList()
     private var asteroids: List<AsteroidMessage> = emptyList()

@@ -49,7 +49,7 @@ sealed class Command {
     data class CommandAddWaypoint(val position: Vector2) : Command()
 
     @Serializable
-    data class CommandDeleteWaypoint(val index: Int) : Command()
+    object CommandDeleteSelectedWaypoint : Command()
 
     @Serializable
     data class CommandScanShip(val targetId: ObjectId) : Command()

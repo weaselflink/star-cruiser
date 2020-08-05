@@ -1,7 +1,7 @@
 package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.Command.CommandAddWaypoint
-import de.stefanbissell.starcruiser.Command.CommandDeleteWaypoint
+import de.stefanbissell.starcruiser.Command.CommandDeleteSelectedWaypoint
 import de.stefanbissell.starcruiser.Command.CommandScanShip
 import de.stefanbissell.starcruiser.components.CanvasButton
 import de.stefanbissell.starcruiser.components.CanvasSlider
@@ -82,9 +82,7 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
     }
 
     private fun deleteWaypointClicked() {
-        navigationMap.selectedWaypoint?.also {
-            clientSocket.send(CommandDeleteWaypoint(it.index))
-        }
+        clientSocket.send(CommandDeleteSelectedWaypoint)
     }
 
     private fun scanShipClicked() {
@@ -104,7 +102,6 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
                 navigationMap.selectedContact = it
                 clientSocket.send(Command.CommandMapSelectShip(it.id))
             } ?: mapClick.waypoints.firstOrNull()?.also {
-                navigationMap.selectedWaypoint = it
                 clientSocket.send(Command.CommandMapSelectWaypoint(it.index))
             } ?: clearMapSelections()
             ButtonState.AddWaypoint -> {
@@ -116,7 +113,6 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
 
     private fun clearMapSelections() {
         navigationMap.selectedContact = null
-        navigationMap.selectedWaypoint = null
         clientSocket.send(Command.CommandMapClearSelection)
     }
 

@@ -8,7 +8,7 @@ import de.stefanbissell.starcruiser.ChangeRudder
 import de.stefanbissell.starcruiser.ChangeStation
 import de.stefanbissell.starcruiser.ChangeThrottle
 import de.stefanbissell.starcruiser.Command
-import de.stefanbissell.starcruiser.DeleteWaypoint
+import de.stefanbissell.starcruiser.DeleteSelectedWaypoint
 import de.stefanbissell.starcruiser.ExitShip
 import de.stefanbissell.starcruiser.GameClientDisconnected
 import de.stefanbissell.starcruiser.GameStateChange
@@ -110,8 +110,8 @@ class GameClient(
                 is Command.CommandAddWaypoint -> gameStateActor.send(
                     AddWaypoint(id, command.position)
                 )
-                is Command.CommandDeleteWaypoint -> gameStateActor.send(
-                    DeleteWaypoint(id, command.index)
+                is Command.CommandDeleteSelectedWaypoint -> gameStateActor.send(
+                    DeleteSelectedWaypoint(id)
                 )
                 is Command.CommandScanShip -> gameStateActor.send(
                     ScanShip(id, command.targetId)
