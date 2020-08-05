@@ -231,16 +231,20 @@ enum class ContactType {
 
 enum class ScanLevel {
     None,
-    Faction;
+    Basic;
 
-    fun next() =
-        when (this) {
-            None -> Faction
-            Faction -> Faction
-        }
+    val canBeIncreased
+        get() = this != highest
+
+    val next
+        get() =
+            when (this) {
+                None -> Basic
+                Basic -> Basic
+            }
 
     companion object {
-        val highest = Faction
+        private val highest = Basic
     }
 }
 

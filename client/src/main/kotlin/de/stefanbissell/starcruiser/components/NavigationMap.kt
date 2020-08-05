@@ -81,9 +81,9 @@ class NavigationMap(
                 label = it.designation,
                 bearing = it.bearing,
                 range = it.relativePosition.length(),
-                hullRatio = if (it.scanLevel == ScanLevel.Faction) it.hullRatio else null,
-                shield = if (it.scanLevel == ScanLevel.Faction) it.shield else null,
-                canScan = it.scanLevel != ScanLevel.highest
+                hullRatio = if (it.scanLevel == ScanLevel.Basic) it.hullRatio else null,
+                shield = if (it.scanLevel == ScanLevel.Basic) it.shield else null,
+                canScan = it.scanLevel.canBeIncreased
             )
         } ?: selectedWaypoint?.let {
             Selection(

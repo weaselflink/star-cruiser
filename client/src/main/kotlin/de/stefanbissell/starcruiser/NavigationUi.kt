@@ -89,7 +89,7 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
 
     private fun scanShipClicked() {
         navigationMap.selectedContact?.also {
-            if (it.scanLevel != ScanLevel.highest) {
+            if (it.scanLevel.canBeIncreased) {
                 clientSocket.send(CommandScanShip(it.id))
             }
         }

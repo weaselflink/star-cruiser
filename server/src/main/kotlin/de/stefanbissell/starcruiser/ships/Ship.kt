@@ -123,7 +123,7 @@ class Ship(
             it.update(time)
             if (it.isComplete) {
                 val scan = scans[it.targetId] ?: ScanLevel.None
-                scans[it.targetId] = scan.next()
+                scans[it.targetId] = scan.next
                 scanHandler = null
             }
         }
@@ -334,12 +334,12 @@ class Ship(
 
     fun toShieldMessage() = shieldHandler.toMessage()
 
-    private fun canIncreaseScanLevel(targetId: ObjectId) = getScanLevel(targetId).let { it != it.next() }
+    private fun canIncreaseScanLevel(targetId: ObjectId) = getScanLevel(targetId).canBeIncreased
 
     private fun getScanLevel(targetId: ObjectId) = scans[targetId] ?: ScanLevel.None
 
     private fun getContactType(relativeTo: Ship) =
-        if (relativeTo.getScanLevel(id) == ScanLevel.Faction) {
+        if (relativeTo.getScanLevel(id) == ScanLevel.Basic) {
             ContactType.Friendly
         } else {
             ContactType.Unknown
