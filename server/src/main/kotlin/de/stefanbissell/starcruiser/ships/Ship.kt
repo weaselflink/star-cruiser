@@ -5,6 +5,7 @@ import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.MainScreenView
+import de.stefanbissell.starcruiser.MapSelectionMessage
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PhysicsEngine
 import de.stefanbissell.starcruiser.PlayerShipMessage
@@ -298,7 +299,6 @@ class Ship(
             history = history.map { it.second.twoDigits() },
             shortRangeScopeRange = template.shortRangeScopeRange,
             waypoints = waypoints.map { it.toWaypointMessage(this) },
-            mapSelection = mapSelection.let { if (it is MapSelection.Ship) it.targetId else null },
             scanProgress = scanHandler?.toMessage(),
             lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
             beams = beamHandlers.map { it.toMessage(lockHandler) },
@@ -348,6 +348,38 @@ class Ship(
             jumpAnimation = jumpHandler.toMessage().animation
         )
 
+    fun toMapSelectionMessage(shipProvider: (ObjectId) -> Ship?) =
+        mapSelection.let { selection ->
+            when (selection) {
+                is MapSelection.Waypoint -> {
+                    waypoints.firstOrNull { it.index == selection.index }
+                        ?.let { waypoint ->
+                            MapSelectionMessage(
+                                position = waypoint.position,
+                                label = waypoint.label,
+                                bearing = bearingTo(waypoint.position),
+                                range = rangeTo(waypoint.position),
+                                canDelete = true
+                            )
+                        }
+                }
+                is MapSelection.Ship -> {
+                    shipProvider(selection.targetId)?.let { ship ->
+                        MapSelectionMessage(
+                            position = ship.position,
+                            label = ship.designation,
+                            bearing = bearingTo(ship.position),
+                            range = rangeTo(ship.position),
+                            hullRatio = (ship.hull / ship.template.hull).fiveDigits(),
+                            shield = ship.toShieldMessage(),
+                            canScan = true
+                        )
+                    }
+                }
+                else -> null
+            }
+        }
+
     fun toPowerMessage() = powerHandler.toMessage()
 
     fun toJumpDriveMessage() = jumpHandler.toMessage()
@@ -374,6 +406,12 @@ class Ship(
 
     private val PoweredSystemType.boostLevel
         get() = powerHandler.getBoostLevel(this)
+
+    private fun rangeTo(to: Vector2) =
+        (to - position).length().twoDigits()
+
+    private fun bearingTo(to: Vector2) =
+        (to - position).angle().toHeading().twoDigits()
 }
 
 private class Waypoint(
@@ -381,10 +419,13 @@ private class Waypoint(
     val position: Vector2
 ) {
 
+    val label
+        get() = "WP$index"
+
     fun toWaypointMessage(relativeTo: Ship) =
         WaypointMessage(
             index = index,
-            name = "WP$index",
+            name = label,
             position = position.twoDigits(),
             relativePosition = (position - relativeTo.position).twoDigits(),
             bearing = (position - relativeTo.position).angle().toHeading().twoDigits()

@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
+import de.stefanbissell.starcruiser.MapSelectionMessage
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.drawRect
 import de.stefanbissell.starcruiser.input.PointerEvent
@@ -45,9 +46,9 @@ class SelectionDetails(
     )
 
     private var dim = calculateComponentDimensions()
-    private var selection: Selection? = null
+    private var mapSelection: MapSelectionMessage? = null
     private val visible
-        get() = selection != null
+        get() = mapSelection != null
     private val innerX
         get() = dim.bottomX + dim.canvas.vmin * 4
 
@@ -62,14 +63,14 @@ class SelectionDetails(
         }
     }
 
-    fun draw(selection: Selection?) {
-        this.selection = selection?.also {
+    fun draw(mapSelection: MapSelectionMessage?) {
+        this.mapSelection = mapSelection?.also {
             ctx.draw(it)
         }
     }
 
     private fun actionButtonClicked() {
-        selection?.apply {
+        mapSelection?.apply {
             when {
                 canScan -> onScan()
                 canDelete -> onDelete()
@@ -77,26 +78,26 @@ class SelectionDetails(
         }
     }
 
-    private fun CanvasRenderingContext2D.draw(selection: Selection) {
+    private fun CanvasRenderingContext2D.draw(mapSelection: MapSelectionMessage) {
         dim = calculateComponentDimensions()
 
         drawBase()
-        drawDesignation(selection.label)
-        drawBearing(selection.bearing)
-        drawRange(selection.range)
+        drawDesignation(mapSelection.label)
+        drawBearing(mapSelection.bearing)
+        drawRange(mapSelection.range)
 
-        selection.hullRatio?.also {
+        mapSelection.hullRatio?.also {
             hullDisplay.draw(it)
         }
-        selection.shield?.also {
+        mapSelection.shield?.also {
             shieldsDisplay.draw(it)
         }
         when {
-            selection.canScan -> {
+            mapSelection.canScan -> {
                 actionButton.text = "Scan"
                 actionButton.draw()
             }
-            selection.canDelete -> {
+            mapSelection.canDelete -> {
                 actionButton.text = "Delete"
                 actionButton.draw()
             }

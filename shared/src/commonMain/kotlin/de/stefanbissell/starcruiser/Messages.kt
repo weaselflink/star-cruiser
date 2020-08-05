@@ -103,6 +103,7 @@ sealed class SnapshotMessage {
     @Serializable
     data class Navigation(
         val ship: ShipMessage,
+        val mapSelection: MapSelectionMessage?,
         val contacts: List<ContactMessage>,
         val asteroids: List<AsteroidMessage>
     ) : SnapshotMessage(), CrewSnapshot
@@ -146,7 +147,6 @@ data class ShipMessage(
     val history: List<Vector2>,
     val shortRangeScopeRange: Double,
     val waypoints: List<WaypointMessage>,
-    val mapSelection: ObjectId?,
     val scanProgress: ScanProgress?,
     val lockProgress: LockStatus,
     val beams: List<BeamMessage>,
@@ -285,6 +285,18 @@ data class WaypointMessage(
     val relativePosition: Vector2,
     val bearing: Double
 ) : Positional
+
+@Serializable
+data class MapSelectionMessage(
+    val position: Vector2,
+    val label: String,
+    val bearing: Double,
+    val range: Double,
+    val hullRatio: Double? = null,
+    val shield: ShieldMessage? = null,
+    val canScan: Boolean = false,
+    val canDelete: Boolean = false
+)
 
 @Serializable
 data class BeamMessage(

@@ -61,7 +61,7 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
     fun draw(snapshot: SnapshotMessage.Navigation) {
         ctx.draw(snapshot)
 
-        selectionDetails.draw(navigationMap.selection)
+        selectionDetails.draw(snapshot.mapSelection)
     }
 
     private fun CanvasRenderingContext2D.draw(snapshot: SnapshotMessage.Navigation) {

@@ -4,11 +4,10 @@ import de.stefanbissell.starcruiser.AsteroidMessage
 import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.ContactType
+import de.stefanbissell.starcruiser.MapSelectionMessage
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.Positional
-import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.ScanProgress
-import de.stefanbissell.starcruiser.ShieldMessage
 import de.stefanbissell.starcruiser.ShipMessage
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Vector2
@@ -75,25 +74,6 @@ class NavigationMap(
     private var asteroids: List<AsteroidMessage> = emptyList()
     private var waypoints: List<WaypointMessage> = emptyList()
 
-    val selection: Selection?
-        get() = selectedContact?.let {
-            Selection(
-                label = it.designation,
-                bearing = it.bearing,
-                range = it.relativePosition.length(),
-                hullRatio = if (it.scanLevel == ScanLevel.Basic) it.hullRatio else null,
-                shield = if (it.scanLevel == ScanLevel.Basic) it.shield else null,
-                canScan = it.scanLevel.canBeIncreased
-            )
-        } ?: selectedWaypoint?.let {
-            Selection(
-                label = it.name,
-                bearing = it.bearing,
-                range = it.relativePosition.length(),
-                canDelete = true
-            )
-        }
-
     fun zoomIn() {
         scaleSetting = (scaleSetting - 1).clamp(0, 6)
     }
@@ -122,7 +102,7 @@ class NavigationMap(
             drawAsteroids()
             drawWaypoints(ship)
             drawContacts()
-            drawSelectedMarker()
+            drawSelectedMarker(snapshot.mapSelection)
             drawShip(ship)
             drawScanProgress(ship)
         }
@@ -170,14 +150,12 @@ class NavigationMap(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawSelectedMarker() {
-        val pos = selectedContact?.position ?: selectedWaypoint?.position
-
-        pos?.also {
+    private fun CanvasRenderingContext2D.drawSelectedMarker(mapSelection: MapSelectionMessage?) {
+        mapSelection?.position?.also {
             save()
             selectionMarkerStyle(dim)
             translateToCenter()
-            translate(pos.adjustForMap())
+            translate(it.adjustForMap())
             drawLockMarker(dim.vmin * 3)
             restore()
         }
@@ -340,14 +318,4 @@ data class MapClick(
     val world: Vector2,
     val waypoints: List<WaypointMessage>,
     val contacts: List<ContactMessage>
-)
-
-data class Selection(
-    val label: String,
-    val bearing: Double,
-    val range: Double,
-    val hullRatio: Double? = null,
-    val shield: ShieldMessage? = null,
-    val canScan: Boolean = false,
-    val canDelete: Boolean = false
 )
