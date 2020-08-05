@@ -8,7 +8,9 @@ import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.pad
 import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.CanvasTextAlign
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.RIGHT
 import kotlin.math.roundToInt
 
 class SelectionDetails(
@@ -140,10 +142,11 @@ class SelectionDetails(
             innerX,
             dim.bottomY - dim.height + dim.canvas.vmin * 12
         )
+        textAlign = CanvasTextAlign.RIGHT
         val text = bearing.roundToInt().pad(3)
         fillText(
             text,
-            dim.bottomX + dim.width - dim.canvas.vmin * 10,
+            dim.bottomX + dim.width - dim.canvas.vmin * 4,
             dim.bottomY - dim.height + dim.canvas.vmin * 12
         )
 
@@ -160,10 +163,11 @@ class SelectionDetails(
             innerX,
             dim.bottomY - dim.height + dim.canvas.vmin * 16
         )
+        textAlign = CanvasTextAlign.RIGHT
         val text = range.roundToInt().toString()
         fillText(
             text,
-            dim.bottomX + dim.width - dim.canvas.vmin * 10,
+            dim.bottomX + dim.width - dim.canvas.vmin * 4,
             dim.bottomY - dim.height + dim.canvas.vmin * 16
         )
 
