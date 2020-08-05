@@ -34,6 +34,9 @@ class ChangeJumpDistance(val clientId: ClientId, val value: Double) : GameStateC
 class StartJump(val clientId: ClientId) : GameStateChange()
 class ChangeRudder(val clientId: ClientId, val value: Int) : GameStateChange()
 class GetGameStateSnapshot(val clientId: ClientId, val response: CompletableDeferred<SnapshotMessage>) : GameStateChange()
+class MapClearSelection(val clientId: ClientId) : GameStateChange()
+class MapSelectWaypoint(val clientId: ClientId, val index: Int) : GameStateChange()
+class MapSelectShip(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
 class AddWaypoint(val clientId: ClientId, val position: Vector2) : GameStateChange()
 class DeleteWaypoint(val clientId: ClientId, val index: Int) : GameStateChange()
 class ScanShip(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
@@ -201,6 +204,18 @@ class GameState {
         getClientShip(clientId)?.changeRudder(value)
     }
 
+    fun mapClearSelection(clientId: ClientId) {
+        getClientShip(clientId)?.mapClearSelection()
+    }
+
+    fun mapSelectWaypoint(clientId: ClientId, index: Int) {
+        getClientShip(clientId)?.mapSelectWaypoint(index)
+    }
+
+    fun mapSelectShip(clientId: ClientId, targetId: ObjectId) {
+        getClientShip(clientId)?.mapSelectShip(targetId)
+    }
+
     fun addWaypoint(clientId: ClientId, position: Vector2) {
         getClientShip(clientId)?.addWaypoint(position)
     }
@@ -305,6 +320,9 @@ class GameState {
                     is ChangeJumpDistance -> gameState.changeJumpDistance(change.clientId, change.value)
                     is StartJump -> gameState.startJump(change.clientId)
                     is ChangeRudder -> gameState.changeRudder(change.clientId, change.value)
+                    is MapClearSelection -> gameState.mapClearSelection(change.clientId)
+                    is MapSelectWaypoint -> gameState.mapSelectWaypoint(change.clientId, change.index)
+                    is MapSelectShip -> gameState.mapSelectShip(change.clientId, change.targetId)
                     is AddWaypoint -> gameState.addWaypoint(change.clientId, change.position)
                     is DeleteWaypoint -> gameState.deleteWaypoint(change.clientId, change.index)
                     is ScanShip -> gameState.scanShip(change.clientId, change.targetId)

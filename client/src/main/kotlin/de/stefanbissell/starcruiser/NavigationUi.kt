@@ -102,8 +102,10 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
         when (buttonState) {
             ButtonState.Initial -> mapClick.contacts.firstOrNull()?.also {
                 navigationMap.selectedContact = it
+                clientSocket.send(Command.CommandMapSelectShip(it.id))
             } ?: mapClick.waypoints.firstOrNull()?.also {
                 navigationMap.selectedWaypoint = it
+                clientSocket.send(Command.CommandMapSelectWaypoint(it.index))
             } ?: clearMapSelections()
             ButtonState.AddWaypoint -> {
                 clientSocket.send(CommandAddWaypoint(mapClick.world))
@@ -115,6 +117,7 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
     private fun clearMapSelections() {
         navigationMap.selectedContact = null
         navigationMap.selectedWaypoint = null
+        clientSocket.send(Command.CommandMapClearSelection)
     }
 
     private enum class ButtonState {

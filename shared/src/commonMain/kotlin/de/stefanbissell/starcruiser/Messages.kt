@@ -146,6 +146,7 @@ data class ShipMessage(
     val history: List<Vector2>,
     val shortRangeScopeRange: Double,
     val waypoints: List<WaypointMessage>,
+    val mapSelection: ObjectId?,
     val scanProgress: ScanProgress?,
     val lockProgress: LockStatus,
     val beams: List<BeamMessage>,

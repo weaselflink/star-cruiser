@@ -47,6 +47,7 @@ class Ship(
     private val powerHandler = PowerHandler(template)
     private val beamHandlers = template.beams.map { BeamHandler(it, this) }
     private val shieldHandler = ShieldHandler(template.shield)
+    private var mapSelection: MapSelection = MapSelection.None
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
     var hull = template.hull
@@ -110,6 +111,9 @@ class Ship(
     }
 
     fun targetDestroyed(shipId: ObjectId) {
+        if (mapSelection.isShipSelected(shipId)) {
+            mapSelection = MapSelection.None
+        }
         if (scanHandler?.targetId == shipId) {
             scanHandler = null
         }
@@ -190,6 +194,18 @@ class Ship(
         }
     }
 
+    fun mapClearSelection() {
+        mapSelection = MapSelection.None
+    }
+
+    fun mapSelectWaypoint(index: Int) {
+        mapSelection = MapSelection.Waypoint(index)
+    }
+
+    fun mapSelectShip(targetId: ObjectId) {
+        mapSelection = MapSelection.Ship(targetId)
+    }
+
     fun addWaypoint(position: Vector2) {
         (1..waypoints.size * 2 + 1).firstOrNull {
             waypoints.none { waypoint -> waypoint.index == it }
@@ -201,6 +217,9 @@ class Ship(
 
     fun deleteWaypoint(index: Int) {
         waypoints.removeIf { it.index == index }
+        if (mapSelection.isWaypointSelected(index)) {
+            mapSelection = MapSelection.None
+        }
     }
 
     fun startScan(targetId: ObjectId) {
@@ -244,7 +263,7 @@ class Ship(
     }
 
     fun setMainScreenView(view: MainScreenView) {
-         mainScreenView = view
+        mainScreenView = view
     }
 
     fun takeDamage(targetSystemType: PoweredSystemType, amount: Double) {
@@ -279,6 +298,7 @@ class Ship(
             history = history.map { it.second.twoDigits() },
             shortRangeScopeRange = template.shortRangeScopeRange,
             waypoints = waypoints.map { it.toWaypointMessage(this) },
+            mapSelection = mapSelection.let { if (it is MapSelection.Ship) it.targetId else null },
             scanProgress = scanHandler?.toMessage(),
             lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
             beams = beamHandlers.map { it.toMessage(lockHandler) },
@@ -354,21 +374,40 @@ class Ship(
 
     private val PoweredSystemType.boostLevel
         get() = powerHandler.getBoostLevel(this)
+}
 
-    private inner class Waypoint(
-        val index: Int,
-        val position: Vector2
-    ) {
+private class Waypoint(
+    val index: Int,
+    val position: Vector2
+) {
 
-        fun toWaypointMessage(relativeTo: Ship) =
-            WaypointMessage(
-                index = index,
-                name = "WP$index",
-                position = position.twoDigits(),
-                relativePosition = (position - relativeTo.position).twoDigits(),
-                bearing = (position - relativeTo.position).angle().toHeading().twoDigits()
-            )
-    }
+    fun toWaypointMessage(relativeTo: Ship) =
+        WaypointMessage(
+            index = index,
+            name = "WP$index",
+            position = position.twoDigits(),
+            relativePosition = (position - relativeTo.position).twoDigits(),
+            bearing = (position - relativeTo.position).angle().toHeading().twoDigits()
+        )
+}
+
+private sealed class MapSelection {
+
+    fun isWaypointSelected(indexToCheck: Int) =
+        this is Waypoint && index == indexToCheck
+
+    fun isShipSelected(shipId: ObjectId) =
+        this is Ship && targetId == shipId
+
+    object None : MapSelection()
+
+    data class Waypoint(
+        val index: Int
+    ) : MapSelection()
+
+    data class Ship(
+        val targetId: ObjectId
+    ) : MapSelection()
 }
 
 data class ShipUpdateResult(

@@ -16,6 +16,9 @@ import de.stefanbissell.starcruiser.GameStateMessage
 import de.stefanbissell.starcruiser.GetGameStateSnapshot
 import de.stefanbissell.starcruiser.JoinShip
 import de.stefanbissell.starcruiser.LockTarget
+import de.stefanbissell.starcruiser.MapClearSelection
+import de.stefanbissell.starcruiser.MapSelectShip
+import de.stefanbissell.starcruiser.MapSelectWaypoint
 import de.stefanbissell.starcruiser.NewGameClient
 import de.stefanbissell.starcruiser.ScanShip
 import de.stefanbissell.starcruiser.SetCoolant
@@ -94,6 +97,15 @@ class GameClient(
                 )
                 is Command.CommandChangeRudder -> gameStateActor.send(
                     ChangeRudder(id, command.value)
+                )
+                is Command.CommandMapSelectWaypoint -> gameStateActor.send(
+                    MapSelectWaypoint(id, command.index)
+                )
+                is Command.CommandMapClearSelection -> gameStateActor.send(
+                    MapClearSelection(id)
+                )
+                is Command.CommandMapSelectShip -> gameStateActor.send(
+                    MapSelectShip(id, command.targetId)
                 )
                 is Command.CommandAddWaypoint -> gameStateActor.send(
                     AddWaypoint(id, command.position)

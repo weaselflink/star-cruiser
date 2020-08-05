@@ -37,6 +37,15 @@ sealed class Command {
     data class CommandChangeRudder(val value: Int) : Command()
 
     @Serializable
+    object CommandMapClearSelection : Command()
+
+    @Serializable
+    data class CommandMapSelectWaypoint(val index: Int) : Command()
+
+    @Serializable
+    data class CommandMapSelectShip(val targetId: ObjectId) : Command()
+
+    @Serializable
     data class CommandAddWaypoint(val position: Vector2) : Command()
 
     @Serializable
