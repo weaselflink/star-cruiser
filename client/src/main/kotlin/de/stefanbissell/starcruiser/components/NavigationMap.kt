@@ -5,7 +5,6 @@ import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.MapSelectionMessage
-import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.Positional
 import de.stefanbissell.starcruiser.ScanProgress
 import de.stefanbissell.starcruiser.ShipMessage
@@ -59,11 +58,6 @@ class NavigationMap(
         private set
     private val scale: Double
         get() = 4.0 / 2.0.pow(scaleSetting.toDouble())
-
-    private var selectedObjectId: ObjectId? = null
-    var selectedContact: ContactMessage?
-        get() = contacts.firstOrNull { it.id == selectedObjectId }
-        set(value) { selectedObjectId = value?.id }
 
     private var contacts: List<ContactMessage> = emptyList()
     private var asteroids: List<AsteroidMessage> = emptyList()
