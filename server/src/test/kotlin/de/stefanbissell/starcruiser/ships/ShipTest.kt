@@ -204,8 +204,10 @@ class ShipTest {
         val target1 = Ship()
         val target2 = Ship()
 
-        ship.startScan(target1.id)
-        ship.startScan(target2.id)
+        ship.mapSelectShip(target1.id)
+        ship.startScan()
+        ship.mapSelectShip(target2.id)
+        ship.startScan()
 
         expectThat(ship.toMessage().scanProgress).isNotNull()
             .get { targetId }.isEqualTo(target1.id)
@@ -215,7 +217,8 @@ class ShipTest {
     fun `scans target`() {
         val target = Ship()
 
-        ship.startScan(target.id)
+        ship.mapSelectShip(target.id)
+        ship.startScan()
         stepTimeTo(4)
 
         expectThat(target.toContactMessage(ship).type).isEqualTo(ContactType.Unknown)
@@ -229,12 +232,14 @@ class ShipTest {
     fun `does not scan target with maximum scan level`() {
         val target = Ship()
 
-        ship.startScan(target.id)
+        ship.mapSelectShip(target.id)
+        ship.startScan()
         stepTimeTo(6)
 
         expectThat(target.toContactMessage(ship).type).isEqualTo(ContactType.Friendly)
 
-        ship.startScan(target.id)
+        ship.mapSelectShip(target.id)
+        ship.startScan()
 
         expectThat(ship.toMessage().scanProgress).isNull()
     }

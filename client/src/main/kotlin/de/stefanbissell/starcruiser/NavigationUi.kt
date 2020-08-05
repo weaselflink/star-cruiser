@@ -2,7 +2,7 @@ package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.Command.CommandAddWaypoint
 import de.stefanbissell.starcruiser.Command.CommandDeleteSelectedWaypoint
-import de.stefanbissell.starcruiser.Command.CommandScanShip
+import de.stefanbissell.starcruiser.Command.CommandScanSelectedShip
 import de.stefanbissell.starcruiser.components.CanvasButton
 import de.stefanbissell.starcruiser.components.CanvasSlider
 import de.stefanbissell.starcruiser.components.MapClick
@@ -86,11 +86,7 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
     }
 
     private fun scanShipClicked() {
-        navigationMap.selectedContact?.also {
-            if (it.scanLevel.canBeIncreased) {
-                clientSocket.send(CommandScanShip(it.id))
-            }
-        }
+        clientSocket.send(CommandScanSelectedShip)
     }
 
     private fun drawZoom() =

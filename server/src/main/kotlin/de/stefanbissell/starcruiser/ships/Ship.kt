@@ -225,13 +225,19 @@ class Ship(
         }
     }
 
-    fun startScan(targetId: ObjectId) {
-        if (scanHandler == null && canIncreaseScanLevel(targetId)) {
-            scanHandler = ScanHandler(
-                targetId = targetId,
-                scanningSpeed = template.scanSpeed,
-                boostLevel = { Sensors.boostLevel }
-            )
+    fun startScan() {
+        mapSelection.also { selection ->
+            if (
+                scanHandler == null &&
+                selection is MapSelection.Ship &&
+                canIncreaseScanLevel(selection.targetId)
+            ) {
+                scanHandler = ScanHandler(
+                    targetId = selection.targetId,
+                    scanningSpeed = template.scanSpeed,
+                    boostLevel = { Sensors.boostLevel }
+                )
+            }
         }
     }
 

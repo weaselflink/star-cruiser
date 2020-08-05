@@ -20,7 +20,7 @@ import de.stefanbissell.starcruiser.MapClearSelection
 import de.stefanbissell.starcruiser.MapSelectShip
 import de.stefanbissell.starcruiser.MapSelectWaypoint
 import de.stefanbissell.starcruiser.NewGameClient
-import de.stefanbissell.starcruiser.ScanShip
+import de.stefanbissell.starcruiser.ScanSelectedShip
 import de.stefanbissell.starcruiser.SetCoolant
 import de.stefanbissell.starcruiser.SetMainScreenView
 import de.stefanbissell.starcruiser.SetPower
@@ -113,8 +113,8 @@ class GameClient(
                 is Command.CommandDeleteSelectedWaypoint -> gameStateActor.send(
                     DeleteSelectedWaypoint(id)
                 )
-                is Command.CommandScanShip -> gameStateActor.send(
-                    ScanShip(id, command.targetId)
+                is Command.CommandScanSelectedShip -> gameStateActor.send(
+                    ScanSelectedShip(id)
                 )
                 is Command.CommandLockTarget -> gameStateActor.send(
                     LockTarget(id, command.targetId)

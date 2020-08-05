@@ -52,7 +52,7 @@ sealed class Command {
     object CommandDeleteSelectedWaypoint : Command()
 
     @Serializable
-    data class CommandScanShip(val targetId: ObjectId) : Command()
+    object CommandScanSelectedShip : Command()
 
     @Serializable
     data class CommandLockTarget(val targetId: ObjectId) : Command()
