@@ -64,9 +64,8 @@ fun Int.formatThousands() =
     this.toString()
         .reversed()
         .windowed(3, 3, true)
-        .map { it.reversed() }
-        .reversed()
         .joinToString(separator = ",")
+        .reversed()
 
 val Int.px
     get() = "${this}px"
