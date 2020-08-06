@@ -119,7 +119,6 @@ sealed class SnapshotMessage {
     data class MainScreen3d(
         val ship: ShipMessage,
         val longRangeContacts: List<ContactMessage>,
-        val contacts: List<ScopeContactMessage>,
         val asteroids: List<AsteroidMessage>
     ) : SnapshotMessage(), MainScreen
 

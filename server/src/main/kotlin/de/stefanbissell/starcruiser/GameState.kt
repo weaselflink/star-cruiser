@@ -120,7 +120,6 @@ class GameState {
         SnapshotMessage.MainScreen3d(
             ship = ship.toMessage(),
             longRangeContacts = getContacts(ship),
-            contacts = getScopeContacts(ship),
             asteroids = getAsteroids(ship)
         )
 
