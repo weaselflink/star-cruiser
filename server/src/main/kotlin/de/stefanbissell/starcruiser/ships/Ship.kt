@@ -6,6 +6,7 @@ import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.MainScreenView
 import de.stefanbissell.starcruiser.MapSelectionMessage
+import de.stefanbissell.starcruiser.NavigationShipMessage
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PhysicsEngine
 import de.stefanbissell.starcruiser.PlayerShipMessage
@@ -314,6 +315,16 @@ class Ship(
             powerMessage = powerHandler.toMessage(),
             mainScreenView = mainScreenView,
             frontCamera = template.frontCamera.toMessage()
+        )
+
+    fun toNavigationMessage() =
+        NavigationShipMessage(
+            id = id,
+            position = position.twoDigits(),
+            rotation = rotation.fiveDigits(),
+            history = history.map { it.second.twoDigits() },
+            waypoints = waypoints.map { it.toWaypointMessage(this) },
+            scanProgress = scanHandler?.toMessage()
         )
 
     fun toShortRangeScopeMessage() =

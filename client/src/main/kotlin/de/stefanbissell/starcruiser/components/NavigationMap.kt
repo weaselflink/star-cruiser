@@ -5,9 +5,9 @@ import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.MapSelectionMessage
+import de.stefanbissell.starcruiser.NavigationShipMessage
 import de.stefanbissell.starcruiser.Positional
 import de.stefanbissell.starcruiser.ScanProgress
-import de.stefanbissell.starcruiser.ShipMessage
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
@@ -150,7 +150,7 @@ class NavigationMap(
         }
     }
 
-    private fun CanvasRenderingContext2D.drawShip(ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.drawShip(ship: NavigationShipMessage) {
         save()
         translateToCenter()
         translate(ship.position.adjustForMap())
@@ -159,7 +159,7 @@ class NavigationMap(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawHistory(ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.drawHistory(ship: NavigationShipMessage) {
         save()
         translateToCenter()
         fillStyle = "#222"
@@ -175,7 +175,7 @@ class NavigationMap(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawWaypoints(ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.drawWaypoints(ship: NavigationShipMessage) {
         save()
         translateToCenter()
         wayPointStyle(dim)
@@ -196,7 +196,7 @@ class NavigationMap(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawScanProgress(ship: ShipMessage) {
+    private fun CanvasRenderingContext2D.drawScanProgress(ship: NavigationShipMessage) {
         val progress = ship.scanProgress ?: return
         val contact = contacts.firstOrNull { it.id == progress.targetId } ?: return
 
