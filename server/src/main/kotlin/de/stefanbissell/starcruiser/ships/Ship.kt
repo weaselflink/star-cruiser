@@ -304,7 +304,7 @@ class Ship(
             rudder = rudder,
             history = history.map { it.second.twoDigits() },
             shortRangeScopeRange = template.shortRangeScopeRange,
-            waypoints = waypoints.map { it.toWaypointMessage(this) },
+            waypoints = waypoints.map { it.toWaypointMessage() },
             scanProgress = scanHandler?.toMessage(),
             lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
             beams = beamHandlers.map { it.toMessage(lockHandler) },
@@ -323,7 +323,7 @@ class Ship(
             position = position.twoDigits(),
             rotation = rotation.fiveDigits(),
             history = history.map { it.second.twoDigits() },
-            waypoints = waypoints.map { it.toWaypointMessage(this) },
+            waypoints = waypoints.map { it.toWaypointMessage() },
             scanProgress = scanHandler?.toMessage()
         )
 
@@ -332,7 +332,7 @@ class Ship(
             shortRangeScopeRange = template.shortRangeScopeRange,
             rotation = rotation.fiveDigits(),
             history = history.map { (it.second - position).twoDigits() },
-            waypoints = waypoints.map { it.toWaypointMessage(this) },
+            waypoints = waypoints.map { it.toWaypointMessage() },
             lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
             beams = beamHandlers.map { it.toMessage(lockHandler) }
         )
@@ -443,24 +443,24 @@ class Ship(
 
     private fun bearingTo(to: Vector2) =
         (to - position).angle().toHeading().twoDigits()
-}
 
-private class Waypoint(
-    val index: Int,
-    val position: Vector2
-) {
+    private inner class Waypoint(
+        val index: Int,
+        val position: Vector2
+    ) {
 
-    val label
-        get() = "WP$index"
+        val label
+            get() = "WP$index"
 
-    fun toWaypointMessage(relativeTo: Ship) =
-        WaypointMessage(
-            index = index,
-            name = label,
-            position = position.twoDigits(),
-            relativePosition = (position - relativeTo.position).twoDigits(),
-            bearing = (position - relativeTo.position).angle().toHeading().twoDigits()
-        )
+        fun toWaypointMessage() =
+            WaypointMessage(
+                index = index,
+                name = label,
+                position = position.twoDigits(),
+                relativePosition = (position - this@Ship.position).twoDigits(),
+                bearing = (position - this@Ship.position).angle().toHeading().twoDigits()
+            )
+    }
 }
 
 private sealed class MapSelection {
