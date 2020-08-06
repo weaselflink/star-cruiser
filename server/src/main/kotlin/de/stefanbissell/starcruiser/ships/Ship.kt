@@ -367,33 +367,48 @@ class Ship(
     fun toMapSelectionMessage(shipProvider: (ObjectId) -> Ship?) =
         mapSelection.let { selection ->
             when (selection) {
-                is MapSelection.Waypoint -> {
-                    waypoints.firstOrNull { it.index == selection.index }
-                        ?.let { waypoint ->
-                            MapSelectionMessage(
-                                position = waypoint.position,
-                                label = waypoint.label,
-                                bearing = bearingTo(waypoint.position),
-                                range = rangeTo(waypoint.position),
-                                canDelete = true
-                            )
-                        }
-                }
+                is MapSelection.Waypoint -> toWaypointMapSelectionMessage(selection)
                 is MapSelection.Ship -> {
-                    shipProvider(selection.targetId)?.let { ship ->
-                        MapSelectionMessage(
-                            position = ship.position,
-                            label = ship.designation,
-                            bearing = bearingTo(ship.position),
-                            range = rangeTo(ship.position),
-                            hullRatio = (ship.hull / ship.template.hull).fiveDigits(),
-                            shield = ship.toShieldMessage(),
-                            canScan = true
-                        )
-                    }
+                    toShipMapSelectionMessage(shipProvider, selection)
                 }
                 else -> null
             }
+        }
+
+    private fun toWaypointMapSelectionMessage(selection: MapSelection.Waypoint) =
+        waypoints.firstOrNull { it.index == selection.index }
+            ?.let { waypoint ->
+                MapSelectionMessage(
+                    position = waypoint.position,
+                    label = waypoint.label,
+                    bearing = bearingTo(waypoint.position),
+                    range = rangeTo(waypoint.position),
+                    canDelete = true
+                )
+            }
+
+    private fun toShipMapSelectionMessage(
+        shipProvider: (ObjectId) -> Ship?,
+        selection: MapSelection.Ship
+    ) =
+        shipProvider(selection.targetId)?.let { ship ->
+            MapSelectionMessage(
+                position = ship.position,
+                label = ship.designation,
+                bearing = bearingTo(ship.position),
+                range = rangeTo(ship.position),
+                canScan = true
+            ).let { message ->
+                if (getScanLevel(selection.targetId) == ScanLevel.Basic) {
+                    message.copy(
+                        hullRatio = (ship.hull / ship.template.hull).fiveDigits(),
+                        shield = ship.toShieldMessage()
+                    )
+                } else {
+                    message
+                }
+            }
+
         }
 
     fun toPowerMessage() = powerHandler.toMessage()
