@@ -221,11 +221,11 @@ class ShipTest {
         ship.startScan()
         stepTimeTo(4)
 
-        expectThat(target.toContactMessage(ship).type).isEqualTo(ContactType.Unknown)
+        expectThat(target.toMapContactMessage(ship).type).isEqualTo(ContactType.Unknown)
 
         stepTimeTo(6)
 
-        expectThat(target.toContactMessage(ship).type).isEqualTo(ContactType.Friendly)
+        expectThat(target.toMapContactMessage(ship).type).isEqualTo(ContactType.Friendly)
     }
 
     @Test
@@ -236,7 +236,7 @@ class ShipTest {
         ship.startScan()
         stepTimeTo(6)
 
-        expectThat(target.toContactMessage(ship).type).isEqualTo(ContactType.Friendly)
+        expectThat(target.toMapContactMessage(ship).type).isEqualTo(ContactType.Friendly)
 
         ship.mapSelectShip(target.id)
         ship.startScan()

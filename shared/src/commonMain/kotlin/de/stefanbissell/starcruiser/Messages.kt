@@ -175,9 +175,6 @@ data class ShortRangeScopeMessage(
 data class ContactMessage(
     override val id: ObjectId,
     override val model: String,
-    val type: ContactType,
-    val scanLevel: ScanLevel,
-    val designation: String,
     override val position: Vector2,
     val relativePosition: Vector2,
     val rotation: Double,

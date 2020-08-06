@@ -326,9 +326,6 @@ class Ship(
         ContactMessage(
             id = id,
             model = template.model,
-            type = getContactType(relativeTo),
-            scanLevel = relativeTo.getScanLevel(id),
-            designation = designation,
             position = position,
             relativePosition = (position - relativeTo.position),
             rotation = rotation,
