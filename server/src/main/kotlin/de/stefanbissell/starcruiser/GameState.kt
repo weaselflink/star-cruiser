@@ -91,7 +91,7 @@ class GameState {
                     Navigation -> SnapshotMessage.Navigation(
                         ship = ship.toNavigationMessage(),
                         mapSelection = ship.toMapSelectionMessage { id -> ships[id] },
-                        contacts = getContacts(ship),
+                        contacts = getMapContacts(ship),
                         asteroids = getAsteroids(ship)
                     )
                     Engineering -> SnapshotMessage.Engineering(
@@ -119,7 +119,7 @@ class GameState {
     private fun toMainScreen3d(ship: Ship) =
         SnapshotMessage.MainScreen3d(
             ship = ship.toMessage(),
-            longRangeContacts = getContacts(ship),
+            contacts = getContacts(ship),
             asteroids = getAsteroids(ship)
         )
 
@@ -291,9 +291,11 @@ class GameState {
             .map { it.toContactMessage(clientShip) }
     }
 
-    private fun getAsteroids(clientShip: Ship): List<AsteroidMessage> {
-        return asteroids
-            .map { it.toMessage(clientShip) }
+    private fun getMapContacts(clientShip: Ship): List<MapContactMessage> {
+        return ships
+            .filter { it.key != clientShip.id }
+            .map { it.value }
+            .map { it.toMapContactMessage(clientShip) }
     }
 
     private fun getScopeContacts(clientShip: Ship): List<ScopeContactMessage> {
@@ -304,6 +306,11 @@ class GameState {
             .filter {
                 it.relativePosition.length() < clientShip.template.shortRangeScopeRange * 1.1
             }
+    }
+
+    private fun getAsteroids(clientShip: Ship): List<AsteroidMessage> {
+        return asteroids
+            .map { it.toMessage(clientShip) }
     }
 
     private fun destroyShip(shipId: ObjectId) {

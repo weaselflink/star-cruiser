@@ -104,7 +104,7 @@ sealed class SnapshotMessage {
     data class Navigation(
         val ship: NavigationShipMessage,
         val mapSelection: MapSelectionMessage?,
-        val contacts: List<ContactMessage>,
+        val contacts: List<MapContactMessage>,
         val asteroids: List<AsteroidMessage>
     ) : SnapshotMessage(), CrewSnapshot
 
@@ -118,7 +118,7 @@ sealed class SnapshotMessage {
     @Serializable
     data class MainScreen3d(
         val ship: ShipMessage,
-        val longRangeContacts: List<ContactMessage>,
+        val contacts: List<ContactMessage>,
         val asteroids: List<AsteroidMessage>
     ) : SnapshotMessage(), MainScreen
 
@@ -187,14 +187,13 @@ data class ContactMessage(
 ) : IdentifiableWithModel, Positional
 
 @Serializable
-data class AsteroidMessage(
-    override val id: ObjectId,
-    override val model: String,
-    val radius: Double,
+data class MapContactMessage(
+    val id: ObjectId,
+    val type: ContactType,
+    val designation: String,
     override val position: Vector2,
-    val relativePosition: Vector2,
     val rotation: Double
-) : IdentifiableWithModel, Positional
+) : Positional
 
 @Serializable
 data class ScopeContactMessage(
@@ -205,6 +204,16 @@ data class ScopeContactMessage(
     val rotation: Double,
     val locked: Boolean
 )
+
+@Serializable
+data class AsteroidMessage(
+    override val id: ObjectId,
+    override val model: String,
+    val radius: Double,
+    override val position: Vector2,
+    val relativePosition: Vector2,
+    val rotation: Double
+) : IdentifiableWithModel, Positional
 
 @Serializable
 data class CameraMessage(

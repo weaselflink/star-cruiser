@@ -96,12 +96,12 @@ class ShipGroup : ObjectGroup {
     }
 
     private fun SnapshotMessage.MainScreen3d.getTargetPosition(targetId: ObjectId?): Vector2? {
-        return longRangeContacts.firstOrNull { it.id == targetId }?.relativePosition
+        return contacts.firstOrNull { it.id == targetId }?.relativePosition
             ?: if (ship.id == targetId) Vector2() else null
     }
 
     private fun SnapshotMessage.MainScreen3d.getTargetShield(targetId: ObjectId?): ShieldMessage? {
-        return longRangeContacts.firstOrNull { it.id == targetId }?.shield
+        return contacts.firstOrNull { it.id == targetId }?.shield
             ?: if (ship.id == targetId) ship.shield else null
     }
 }

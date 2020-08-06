@@ -2,8 +2,8 @@ package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.AsteroidMessage
 import de.stefanbissell.starcruiser.CanvasDimensions
-import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.ContactType
+import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.MapSelectionMessage
 import de.stefanbissell.starcruiser.NavigationShipMessage
 import de.stefanbissell.starcruiser.Positional
@@ -59,7 +59,7 @@ class NavigationMap(
     private val scale: Double
         get() = 4.0 / 2.0.pow(scaleSetting.toDouble())
 
-    private var contacts: List<ContactMessage> = emptyList()
+    private var contacts: List<MapContactMessage> = emptyList()
     private var asteroids: List<AsteroidMessage> = emptyList()
     private var waypoints: List<WaypointMessage> = emptyList()
 
@@ -123,7 +123,7 @@ class NavigationMap(
         }
     }
 
-    private fun CanvasRenderingContext2D.drawContact(contact: ContactMessage) {
+    private fun CanvasRenderingContext2D.drawContact(contact: MapContactMessage) {
         save()
         translateToCenter()
         when (contact.type) {
@@ -211,7 +211,7 @@ class NavigationMap(
         scanProgressComponent.draw()
     }
 
-    private fun CanvasRenderingContext2D.drawScanProgressMarker(contact: ContactMessage, progress: ScanProgress) {
+    private fun CanvasRenderingContext2D.drawScanProgressMarker(contact: MapContactMessage, progress: ScanProgress) {
         save()
         scanProgressStyle(dim)
 
@@ -230,7 +230,7 @@ class NavigationMap(
 
     private fun getNearestWaypoints(vector: Vector2): List<WaypointMessage> = getNearest(waypoints, vector)
 
-    private fun getNearestContacts(vector: Vector2): List<ContactMessage> = getNearest(contacts, vector)
+    private fun getNearestContacts(vector: Vector2): List<MapContactMessage> = getNearest(contacts, vector)
 
     private fun <T : Positional> getNearest(elements: Iterable<T>, vector: Vector2): List<T> {
         val click = vector - canvasCenter()
@@ -306,5 +306,5 @@ data class MapClick(
     val screen: Vector2,
     val world: Vector2,
     val waypoints: List<WaypointMessage>,
-    val contacts: List<ContactMessage>
+    val contacts: List<MapContactMessage>
 )

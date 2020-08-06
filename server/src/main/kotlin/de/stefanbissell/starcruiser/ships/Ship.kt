@@ -5,6 +5,7 @@ import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.MainScreenView
+import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.MapSelectionMessage
 import de.stefanbissell.starcruiser.NavigationShipMessage
 import de.stefanbissell.starcruiser.ObjectId
@@ -321,16 +322,6 @@ class Ship(
             beams = beamHandlers.map { it.toMessage(lockHandler) }
         )
 
-    fun toScopeContactMessage(relativeTo: Ship) =
-        ScopeContactMessage(
-            id = id,
-            type = getContactType(relativeTo),
-            designation = designation,
-            relativePosition = (position - relativeTo.position),
-            rotation = rotation,
-            locked = relativeTo.isLocking(id)
-        )
-
     fun toContactMessage(relativeTo: Ship) =
         ContactMessage(
             id = id,
@@ -344,6 +335,25 @@ class Ship(
             beams = beamHandlers.map { it.toMessage(lockHandler) },
             shield = shieldHandler.toMessage(),
             jumpAnimation = jumpHandler.toMessage().animation
+        )
+
+    fun toMapContactMessage(relativeTo: Ship) =
+        MapContactMessage(
+            id = id,
+            type = getContactType(relativeTo),
+            designation = designation,
+            position = position,
+            rotation = rotation
+        )
+
+    fun toScopeContactMessage(relativeTo: Ship) =
+        ScopeContactMessage(
+            id = id,
+            type = getContactType(relativeTo),
+            designation = designation,
+            relativePosition = (position - relativeTo.position),
+            rotation = rotation,
+            locked = relativeTo.isLocking(id)
         )
 
     fun toMapSelectionMessage(shipProvider: (ObjectId) -> Ship?) =
