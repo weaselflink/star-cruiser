@@ -27,6 +27,12 @@ class PhysicsEngine {
         bodies[asteroid.id] = asteroid.toBody()
     }
 
+    fun removeObject(id: ObjectId) {
+        bodies.remove(id)?.also {
+            world.destroyBody(it)
+        }
+    }
+
     fun updateShip(objectId: ObjectId, thrust: Double, rudder: Double) {
         bodies[objectId]?.apply {
             if (thrust != 0.0) {

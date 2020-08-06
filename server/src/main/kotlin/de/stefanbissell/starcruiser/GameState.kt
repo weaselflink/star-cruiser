@@ -323,6 +323,7 @@ class GameState {
             it.targetDestroyed(shipId)
         }
         ships.remove(shipId)
+        physicsEngine.removeObject(shipId)
     }
 
     companion object {
