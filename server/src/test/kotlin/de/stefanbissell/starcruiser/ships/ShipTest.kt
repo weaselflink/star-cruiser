@@ -303,9 +303,9 @@ class ShipTest {
 
         ship.update(time, physicsEngine) { null }
 
+        expectThat(ship.speed).isEqualTo(p(3, 4))
         ship.toMessage().also {
             expectThat(it.position).isEqualTo(p(1, 2))
-            expectThat(it.speed).isEqualTo(p(3, 4))
             expectThat(it.rotation).isEqualTo(5.0)
         }
     }
