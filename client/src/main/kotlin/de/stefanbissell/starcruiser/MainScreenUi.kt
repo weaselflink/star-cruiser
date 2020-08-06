@@ -73,15 +73,19 @@ class MainScreenUi : StationUi {
     }
 
     fun draw(snapshot: SnapshotMessage.MainScreen) {
-        view = snapshot.ship.mainScreenView
-        when (view) {
-            MainScreenView.Front -> draw3d(snapshot, mainScene.frontCamera)
-            MainScreenView.Top -> draw3d(snapshot, mainScene.topCamera)
-            MainScreenView.Scope -> drawScope(snapshot)
+        when (snapshot) {
+            is SnapshotMessage.MainScreenShortRangeScope -> drawScope(snapshot)
+            is SnapshotMessage.MainScreen3d -> {
+                when (snapshot.ship.mainScreenView) {
+                    MainScreenView.Front -> draw3d(snapshot, mainScene.frontCamera)
+                    else -> draw3d(snapshot, mainScene.topCamera)
+                }
+            }
         }
     }
 
-    private fun draw3d(snapshot: SnapshotMessage.MainScreen, camera: Camera) {
+    private fun draw3d(snapshot: SnapshotMessage.MainScreen3d, camera: Camera) {
+        view = snapshot.ship.mainScreenView
         with(ctx) {
             clear()
 
@@ -94,7 +98,8 @@ class MainScreenUi : StationUi {
         }
     }
 
-    private fun drawScope(snapshot: SnapshotMessage.MainScreen) {
+    private fun drawScope(snapshot: SnapshotMessage.MainScreenShortRangeScope) {
+        view = MainScreenView.Scope
         with(ctx) {
             clearBackground()
 

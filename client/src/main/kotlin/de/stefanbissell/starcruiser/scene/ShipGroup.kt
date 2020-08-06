@@ -57,7 +57,7 @@ class ShipGroup : ObjectGroup {
     }
 
     fun updateBeams(
-        snapshot: SnapshotMessage.MainScreen,
+        snapshot: SnapshotMessage.MainScreen3d,
         beams: List<BeamMessage>
     ) {
         beamNodes.forEach {
@@ -72,7 +72,7 @@ class ShipGroup : ObjectGroup {
         }
     }
 
-    private fun updateBeam(snapshot: SnapshotMessage.MainScreen, beamMessage: BeamMessage) {
+    private fun updateBeam(snapshot: SnapshotMessage.MainScreen3d, beamMessage: BeamMessage) {
         val relativePosition = snapshot.getTargetPosition(beamMessage.targetId) ?: return
         val shieldRadius = snapshot.getTargetShield(beamMessage.targetId)?.let {
             if (it.up) it.radius else 0.0
@@ -95,12 +95,12 @@ class ShipGroup : ObjectGroup {
         }
     }
 
-    private fun SnapshotMessage.MainScreen.getTargetPosition(targetId: ObjectId?): Vector2? {
+    private fun SnapshotMessage.MainScreen3d.getTargetPosition(targetId: ObjectId?): Vector2? {
         return longRangeContacts.firstOrNull { it.id == targetId }?.relativePosition
             ?: if (ship.id == targetId) Vector2() else null
     }
 
-    private fun SnapshotMessage.MainScreen.getTargetShield(targetId: ObjectId?): ShieldMessage? {
+    private fun SnapshotMessage.MainScreen3d.getTargetShield(targetId: ObjectId?): ShieldMessage? {
         return longRangeContacts.firstOrNull { it.id == targetId }?.shield
             ?: if (ship.id == targetId) ship.shield else null
     }

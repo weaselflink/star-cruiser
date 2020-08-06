@@ -97,17 +97,33 @@ class GameState {
                     Engineering -> SnapshotMessage.Engineering(
                         powerSettings = ship.toPowerMessage()
                     )
-                    MainScreen -> SnapshotMessage.MainScreen(
-                        ship = ship.toMessage(),
-                        shortRangeScope = ship.toShortRangeScopeMessage(),
-                        longRangeContacts = getContacts(ship),
-                        contacts = getScopeContacts(ship),
-                        asteroids = getAsteroids(ship)
-                    )
+                    MainScreen -> toMainScreenMessage(ship)
                 }
             }
         }
     }
+
+    private fun toMainScreenMessage(ship: Ship): SnapshotMessage =
+        when (ship.mainScreenView) {
+            MainScreenView.Scope -> toMainScreenShortRangeScope(ship)
+            else -> toMainScreen3d(ship)
+        }
+
+    private fun toMainScreenShortRangeScope(ship: Ship) =
+        SnapshotMessage.MainScreenShortRangeScope(
+            shortRangeScope = ship.toShortRangeScopeMessage(),
+            contacts = getScopeContacts(ship),
+            asteroids = getAsteroids(ship)
+        )
+
+    private fun toMainScreen3d(ship: Ship) =
+        SnapshotMessage.MainScreen3d(
+            ship = ship.toMessage(),
+            longRangeContacts = getContacts(ship),
+            contacts = getScopeContacts(ship),
+            asteroids = getAsteroids(ship)
+        )
+
 
     fun clientConnected(clientId: ClientId) {
         getClient(clientId)
@@ -256,7 +272,9 @@ class GameState {
     }
 
     fun setMainScreenView(clientId: ClientId, mainScreenView: MainScreenView) {
-        getClientShip(clientId)?.setMainScreenView(mainScreenView)
+        getClientShip(clientId)?.also {
+            it.mainScreenView = mainScreenView
+        }
     }
 
     private fun getClient(clientId: ClientId) =

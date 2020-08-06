@@ -42,7 +42,7 @@ class Ship(
     var rudder: Int = 0
 ) {
 
-    private var thrust = 0.0
+    var thrust = 0.0
     private val waypoints: MutableList<Waypoint> = mutableListOf()
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val scans = mutableMapOf<ObjectId, ScanLevel>()
@@ -56,7 +56,7 @@ class Ship(
     private val jumpHandler = JumpHandler(
         jumpDrive = template.jumpDrive
     )
-    private var mainScreenView = MainScreenView.Front
+    var mainScreenView = MainScreenView.Front
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
         powerHandler.update(time)
@@ -272,10 +272,6 @@ class Ship(
         powerHandler.setCoolant(systemType, coolant)
     }
 
-    fun setMainScreenView(view: MainScreenView) {
-        mainScreenView = view
-    }
-
     fun takeDamage(targetSystemType: PoweredSystemType, amount: Double) {
         val hullDamage = shieldHandler.takeDamageAndReportHullDamage(amount)
         if (hullDamage > 0.0) {
@@ -298,21 +294,9 @@ class Ship(
             designation = designation,
             position = position.twoDigits(),
             rotation = rotation.fiveDigits(),
-            heading = rotation.toHeading().twoDigits(),
-            throttle = throttle,
-            thrust = thrust.twoDigits(),
-            rudder = rudder,
-            history = history.map { it.second.twoDigits() },
-            shortRangeScopeRange = template.shortRangeScopeRange,
-            waypoints = waypoints.map { it.toWaypointMessage() },
-            scanProgress = scanHandler?.toMessage(),
-            lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
             beams = beamHandlers.map { it.toMessage(lockHandler) },
             shield = shieldHandler.toMessage(),
-            hull = hull.twoDigits(),
-            hullMax = template.hull,
             jumpDrive = jumpHandler.toMessage(),
-            powerMessage = powerHandler.toMessage(),
             mainScreenView = mainScreenView,
             frontCamera = template.frontCamera.toMessage()
         )
@@ -367,7 +351,9 @@ class Ship(
     fun toMapSelectionMessage(shipProvider: (ObjectId) -> Ship?) =
         mapSelection.let { selection ->
             when (selection) {
-                is MapSelection.Waypoint -> toWaypointMapSelectionMessage(selection)
+                is MapSelection.Waypoint -> {
+                    toWaypointMapSelectionMessage(selection)
+                }
                 is MapSelection.Ship -> {
                     toShipMapSelectionMessage(shipProvider, selection)
                 }

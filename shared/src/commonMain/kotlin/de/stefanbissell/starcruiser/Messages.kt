@@ -113,14 +113,22 @@ sealed class SnapshotMessage {
         val powerSettings: PowerMessage
     ) : SnapshotMessage(), CrewSnapshot
 
+    interface MainScreen : CrewSnapshot
+
     @Serializable
-    data class MainScreen(
+    data class MainScreen3d(
         val ship: ShipMessage,
-        override val shortRangeScope: ShortRangeScopeMessage,
         val longRangeContacts: List<ContactMessage>,
+        val contacts: List<ScopeContactMessage>,
+        val asteroids: List<AsteroidMessage>
+    ) : SnapshotMessage(), MainScreen
+
+    @Serializable
+    data class MainScreenShortRangeScope(
+        override val shortRangeScope: ShortRangeScopeMessage,
         override val contacts: List<ScopeContactMessage>,
         override val asteroids: List<AsteroidMessage>
-    ) : SnapshotMessage(), ShortRangeScopeStation, CrewSnapshot
+    ) : SnapshotMessage(), ShortRangeScopeStation, MainScreen
 }
 
 @Serializable
@@ -137,21 +145,9 @@ data class ShipMessage(
     val designation: String,
     val position: Vector2,
     val rotation: Double,
-    val heading: Double,
-    val throttle: Int,
-    val thrust: Double,
-    val rudder: Int,
-    val history: List<Vector2>,
-    val shortRangeScopeRange: Double,
-    val waypoints: List<WaypointMessage>,
-    val scanProgress: ScanProgress?,
-    val lockProgress: LockStatus,
     val beams: List<BeamMessage>,
     val shield: ShieldMessage,
-    val hull: Double,
-    val hullMax: Double,
     val jumpDrive: JumpDriveMessage,
-    val powerMessage: PowerMessage,
     val mainScreenView: MainScreenView,
     val frontCamera: CameraMessage
 )

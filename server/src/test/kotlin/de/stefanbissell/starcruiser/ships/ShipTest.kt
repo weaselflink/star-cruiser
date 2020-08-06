@@ -60,7 +60,7 @@ class ShipTest {
         ship.changeThrottle(100)
         stepTimeTo(2)
 
-        expectThat(ship.toMessage().thrust).isNear(ship.template.throttleResponsiveness * 2)
+        expectThat(ship.thrust).isNear(ship.template.throttleResponsiveness * 2)
     }
 
     @Test
@@ -68,35 +68,35 @@ class ShipTest {
         ship.changeThrottle(-100)
         stepTimeTo(2)
 
-        expectThat(ship.toMessage().thrust).isNear(ship.template.throttleResponsiveness * -2)
+        expectThat(ship.thrust).isNear(ship.template.throttleResponsiveness * -2)
     }
 
     @Test
     fun `sets positive throttle`() {
         ship.changeThrottle(50)
 
-        expectThat(ship.toMessage().throttle).isEqualTo(50)
+        expectThat(ship.throttle).isEqualTo(50)
     }
 
     @Test
     fun `sets negative throttle`() {
         ship.changeThrottle(-50)
 
-        expectThat(ship.toMessage().throttle).isEqualTo(-50)
+        expectThat(ship.throttle).isEqualTo(-50)
     }
 
     @Test
     fun `clamps throttle to lower bound`() {
         ship.changeThrottle(-150)
 
-        expectThat(ship.toMessage().throttle).isEqualTo(-100)
+        expectThat(ship.throttle).isEqualTo(-100)
     }
 
     @Test
     fun `clamps throttle to upper bound`() {
         ship.changeThrottle(150)
 
-        expectThat(ship.toMessage().throttle).isEqualTo(100)
+        expectThat(ship.throttle).isEqualTo(100)
     }
 
     @Test
@@ -131,35 +131,35 @@ class ShipTest {
     fun `sets positive rudder`() {
         ship.changeRudder(50)
 
-        expectThat(ship.toMessage().rudder).isEqualTo(50)
+        expectThat(ship.rudder).isEqualTo(50)
     }
 
     @Test
     fun `sets negative rudder`() {
         ship.changeRudder(-50)
 
-        expectThat(ship.toMessage().rudder).isEqualTo(-50)
+        expectThat(ship.rudder).isEqualTo(-50)
     }
 
     @Test
     fun `clamps rudder to lower bound`() {
         ship.changeRudder(-150)
 
-        expectThat(ship.toMessage().rudder).isEqualTo(-100)
+        expectThat(ship.rudder).isEqualTo(-100)
     }
 
     @Test
     fun `clamps rudder to upper bound`() {
         ship.changeRudder(150)
 
-        expectThat(ship.toMessage().rudder).isEqualTo(100)
+        expectThat(ship.rudder).isEqualTo(100)
     }
 
     @Test
     fun `can add waypoint`() {
         ship.addWaypoint(p(5, -4))
 
-        expectThat(ship.toMessage().waypoints).containsExactly(
+        expectThat(ship.toShortRangeScopeMessage().waypoints).containsExactly(
             WaypointMessage(1, "WP1", p(5, -4), p(2, 0), 90.0)
         )
     }
@@ -170,7 +170,7 @@ class ShipTest {
         ship.mapSelectWaypoint(1)
         ship.deleteSelectedWaypoint()
 
-        expectThat(ship.toMessage().waypoints).isEmpty()
+        expectThat(ship.toShortRangeScopeMessage().waypoints).isEmpty()
     }
 
     @Test
@@ -180,7 +180,7 @@ class ShipTest {
         ship.mapSelectWaypoint(1)
         ship.deleteSelectedWaypoint()
 
-        expectThat(ship.toMessage().waypoints).containsExactly(
+        expectThat(ship.toShortRangeScopeMessage().waypoints).containsExactly(
             WaypointMessage(2, "WP2", p(10, -4), p(7, 0), 90.0)
         )
     }
@@ -193,7 +193,7 @@ class ShipTest {
         ship.deleteSelectedWaypoint()
         ship.addWaypoint(p(15, -4))
 
-        expectThat(ship.toMessage().waypoints).containsExactly(
+        expectThat(ship.toShortRangeScopeMessage().waypoints).containsExactly(
             WaypointMessage(1, "WP1", p(15, -4), p(12, 0), 90.0),
             WaypointMessage(2, "WP2", p(10, -4), p(7, 0), 90.0)
         )
@@ -209,7 +209,7 @@ class ShipTest {
         ship.mapSelectShip(target2.id)
         ship.startScan()
 
-        expectThat(ship.toMessage().scanProgress).isNotNull()
+        expectThat(ship.toNavigationMessage().scanProgress).isNotNull()
             .get { targetId }.isEqualTo(target1.id)
     }
 
@@ -241,7 +241,7 @@ class ShipTest {
         ship.mapSelectShip(target.id)
         ship.startScan()
 
-        expectThat(ship.toMessage().scanProgress).isNull()
+        expectThat(ship.toNavigationMessage().scanProgress).isNull()
     }
 
     @Test
@@ -316,16 +316,16 @@ class ShipTest {
 
         ship.update(time, physicsEngine) { target }
 
-        expectThat(ship.toMessage().lockProgress).isA<LockStatus.NoLock>()
+        expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.NoLock>()
 
         ship.lockTarget(target.id)
         stepTimeTo(1)
 
-        expectThat(ship.toMessage().lockProgress).isA<LockStatus.InProgress>()
+        expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.InProgress>()
 
         stepTimeTo(10)
 
-        expectThat(ship.toMessage().lockProgress).isA<LockStatus.Locked>()
+        expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
     }
 
     @Test
@@ -336,7 +336,7 @@ class ShipTest {
 
         ship.lockTarget(target.id)
         stepTimeTo(10)
-        expectThat(ship.toMessage().lockProgress).isA<LockStatus.Locked>()
+        expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
         stepTimeTo(10.5) { target }
@@ -382,7 +382,7 @@ class ShipTest {
 
         ship.lockTarget(target.id)
         stepTimeTo(10)
-        expectThat(ship.toMessage().lockProgress).isA<LockStatus.Locked>()
+        expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
         stepTimeTo(10.5) { target }
@@ -397,7 +397,7 @@ class ShipTest {
 
         ship.lockTarget(target.id)
         stepTimeTo(10)
-        expectThat(ship.toMessage().lockProgress).isA<LockStatus.Locked>()
+        expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
         stepTimeTo(10.5) { target }
@@ -422,7 +422,7 @@ class ShipTest {
         ship.takeDamage(Reactor, damage)
         expectThat(ship.toMessage().shield.strength)
             .isNear(0.0)
-        expectThat(ship.toMessage().hull)
+        expectThat(ship.hull)
             .isNear(ship.template.hull - 5.0)
         expectThat(stepTimeTo(0.1).destroyed)
             .isFalse()
@@ -434,7 +434,7 @@ class ShipTest {
         ship.takeDamage(Reactor, damage)
         expectThat(ship.toMessage().shield.strength)
             .isNear(0.0)
-        expectThat(ship.toMessage().powerMessage.settings[Reactor]?.damage)
+        expectThat(ship.toPowerMessage().settings[Reactor]?.damage)
             .isNotNull()
             .isNear(5.0 / ship.template.poweredSystemDamageCapacity)
     }
@@ -445,7 +445,7 @@ class ShipTest {
         ship.takeDamage(Reactor, damage)
         expectThat(ship.toMessage().shield.strength)
             .isNear(0.0)
-        expectThat(ship.toMessage().hull)
+        expectThat(ship.hull)
             .isNear(-5.0)
         expectThat(stepTimeTo(0.1).destroyed)
             .isTrue()
@@ -489,7 +489,7 @@ class ShipTest {
     fun `can set power`() {
         ship.setPower(PoweredSystemType.Maneuver, 150)
 
-        expectThat(ship.toMessage().powerMessage.settings)
+        expectThat(ship.toPowerMessage().settings)
             .hasEntry(
                 PoweredSystemType.Maneuver, PoweredSystemMessage(
                     repairProgress = null,
@@ -505,7 +505,7 @@ class ShipTest {
     fun `can set coolant`() {
         ship.setCoolant(PoweredSystemType.Maneuver, 0.6)
 
-        expectThat(ship.toMessage().powerMessage.settings)
+        expectThat(ship.toPowerMessage().settings)
             .hasEntry(
                 PoweredSystemType.Maneuver, PoweredSystemMessage(
                     repairProgress = null,

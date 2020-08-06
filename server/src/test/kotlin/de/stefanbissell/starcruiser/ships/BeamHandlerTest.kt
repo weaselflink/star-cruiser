@@ -131,7 +131,7 @@ class BeamHandlerTest {
         stepTimeTo(1.0)
         stepTimeTo(2.0)
 
-        expectThat(target.toMessage().hull)
+        expectThat(target.hull)
             .isEqualTo(target.template.hull - 1.0)
     }
 

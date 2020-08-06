@@ -76,14 +76,15 @@ class MainScene {
         topCamera.updateSize(windowWidth, windowHeight)
     }
 
-    fun update(snapshot: SnapshotMessage.MainScreen) {
+    fun update(snapshot: SnapshotMessage.MainScreen3d) {
         ownShip.rotation.y = snapshot.ship.rotation
         jumpAnimationScale(snapshot.ship.jumpDrive.animation).also {
             ownShip.scale.set(it, it, it)
         }
-        if (ownShipModel != snapshot.ship.model) {
-            ownShipModel = snapshot.ship.model
-            objectModels[snapshot.ship.model]?.let {
+        val model = snapshot.ship.model
+        if (ownShipModel != model) {
+            ownShipModel = model
+            objectModels[model]?.let {
                 ownShip.model = it
             }
             updateFrontCamera(snapshot.ship.frontCamera)
@@ -109,7 +110,7 @@ class MainScene {
         updateShields(snapshot)
     }
 
-    private fun updateBeams(snapshot: SnapshotMessage.MainScreen) {
+    private fun updateBeams(snapshot: SnapshotMessage.MainScreen3d) {
         ownShip.updateBeams(snapshot, snapshot.ship.beams)
 
         contactHandler.nodes.forEach { node ->
@@ -119,7 +120,7 @@ class MainScene {
         }
     }
 
-    private fun updateShields(snapshot: SnapshotMessage.MainScreen) {
+    private fun updateShields(snapshot: SnapshotMessage.MainScreen3d) {
         contactHandler.nodes.values.forEach { it.hideShield() }
 
         if (snapshot.ship.shield.activated) {
