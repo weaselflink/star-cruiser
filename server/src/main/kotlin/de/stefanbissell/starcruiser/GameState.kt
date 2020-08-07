@@ -9,6 +9,7 @@ import de.stefanbissell.starcruiser.Station.MainScreen
 import de.stefanbissell.starcruiser.Station.Navigation
 import de.stefanbissell.starcruiser.Station.Weapons
 import de.stefanbissell.starcruiser.client.ClientId
+import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.ships.Ship
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -17,6 +18,7 @@ import java.time.Instant
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit
 import kotlin.math.PI
+import kotlin.math.roundToLong
 import kotlin.random.Random
 
 sealed class GameStateChange
@@ -177,7 +179,7 @@ class GameState {
 
         time.update(now())
 
-        physicsEngine.step(time)
+        physicsEngine.step(time.delta)
         updateShips()
         updateAsteroids()
     }
@@ -361,9 +363,11 @@ class GameState {
     }
 }
 
-class GameTime {
+class GameTime(
+    initialTime: Instant? = null
+) {
 
-    private var lastUpdate: Instant? = null
+    private var lastUpdate: Instant? = initialTime
 
     var current: Double = 0.0
         private set
@@ -381,10 +385,16 @@ class GameTime {
 
     fun update(now: Instant) {
         delta = lastUpdate?.let {
-            (it.until(now, ChronoUnit.MILLIS)) / 1000.0
+            (it.until(now, ChronoUnit.MILLIS)) / 1_000.0
         } ?: 0.001
         current += delta
         lastUpdate = now
+    }
+
+    fun update(seconds: Double) {
+        delta = seconds
+        current += delta
+        lastUpdate = lastUpdate?.plusMillis((seconds * 1_000).roundToLong())
     }
 }
 

@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser
 
+import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.ships.Ship
 
 class Asteroid(

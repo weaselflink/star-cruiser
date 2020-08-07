@@ -1,5 +1,8 @@
-package de.stefanbissell.starcruiser
+package de.stefanbissell.starcruiser.physics
 
+import de.stefanbissell.starcruiser.Asteroid
+import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.ships.Ship
 import org.jbox2d.callbacks.RayCastCallback
 import org.jbox2d.collision.shapes.CircleShape
@@ -17,7 +20,7 @@ class PhysicsEngine {
     private val world = World(Vec2())
     private val bodies: MutableMap<ObjectId, Body> = mutableMapOf()
 
-    fun step(time: GameTime) = world.step(time.delta.toFloat(), 6, 2)
+    fun step(delta: Number) = world.step(delta.toFloat(), 6, 2)
 
     fun addShip(ship: Ship) {
         bodies[ship.id] = ship.toBody()
@@ -60,7 +63,8 @@ class PhysicsEngine {
             BodyParameters(
                 position = it.position.toVector2(),
                 speed = it.linearVelocity.toVector2(),
-                rotation = it.angle.toDouble()
+                rotation = it.angle.toDouble(),
+                rotationSpeed = it.angularVelocity.toDouble()
             )
         }
 
@@ -125,7 +129,8 @@ class PhysicsEngine {
         angularDamping = 0.95f
     }
 
-    private fun Vec2.toVector2(): Vector2 = Vector2(x.toDouble(), y.toDouble())
+    private fun Vec2.toVector2(): Vector2 =
+        Vector2(x.toDouble(), y.toDouble())
 
     private fun Vector2.toVec2(): Vec2 = Vec2(x.toFloat(), y.toFloat())
 
@@ -149,6 +154,7 @@ class PhysicsEngine {
 
 data class BodyParameters(
     val position: Vector2,
-    val speed: Vector2,
-    val rotation: Double
+    val speed: Vector2 = Vector2(),
+    val rotation: Double = 0.0,
+    val rotationSpeed: Double = 0.0
 )

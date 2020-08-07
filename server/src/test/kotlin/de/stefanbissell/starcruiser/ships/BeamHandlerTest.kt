@@ -3,9 +3,9 @@ package de.stefanbissell.starcruiser.ships
 import de.stefanbissell.starcruiser.BeamStatus
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
-import de.stefanbissell.starcruiser.PhysicsEngine
 import de.stefanbissell.starcruiser.Vector3
 import de.stefanbissell.starcruiser.p
+import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach

@@ -1,12 +1,10 @@
 package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.BeamStatus
-import de.stefanbissell.starcruiser.BodyParameters
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.ObjectId
-import de.stefanbissell.starcruiser.PhysicsEngine
 import de.stefanbissell.starcruiser.PoweredSystemMessage
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.PoweredSystemType.Reactor
@@ -14,6 +12,8 @@ import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
 import de.stefanbissell.starcruiser.isNear
 import de.stefanbissell.starcruiser.p
+import de.stefanbissell.starcruiser.physics.BodyParameters
+import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -49,9 +49,7 @@ class ShipTest {
         every {
             physicsEngine.getBodyParameters(ship.id)
         } returns BodyParameters(
-            position = Vector2(3, -4),
-            speed = Vector2(),
-            rotation = 0.0
+            position = Vector2(3, -4)
         )
     }
 

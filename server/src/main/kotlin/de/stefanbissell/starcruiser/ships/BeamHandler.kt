@@ -4,9 +4,9 @@ import de.stefanbissell.starcruiser.BeamMessage
 import de.stefanbissell.starcruiser.BeamStatus
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
-import de.stefanbissell.starcruiser.PhysicsEngine
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.physics.PhysicsEngine
 
 class BeamHandler(
     private val beamWeapon: BeamWeapon,

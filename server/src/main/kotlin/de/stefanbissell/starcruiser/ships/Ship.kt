@@ -9,7 +9,6 @@ import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.MapSelectionMessage
 import de.stefanbissell.starcruiser.NavigationShipMessage
 import de.stefanbissell.starcruiser.ObjectId
-import de.stefanbissell.starcruiser.PhysicsEngine
 import de.stefanbissell.starcruiser.PlayerShipMessage
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.PoweredSystemType.Impulse
@@ -26,6 +25,7 @@ import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
 import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.fiveDigits
+import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.randomShipName
 import de.stefanbissell.starcruiser.toHeading
 import de.stefanbissell.starcruiser.toRadians

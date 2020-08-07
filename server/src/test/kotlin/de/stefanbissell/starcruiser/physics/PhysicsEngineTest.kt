@@ -1,5 +1,7 @@
-package de.stefanbissell.starcruiser
+package de.stefanbissell.starcruiser.physics
 
+import de.stefanbissell.starcruiser.Asteroid
+import de.stefanbissell.starcruiser.p
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -14,7 +16,10 @@ class PhysicsEngineTest {
             physicsEngine.addAsteroid(it)
         }
 
-        expectThat(physicsEngine.findObstructions(p(-100, 0), p(100, 0)))
+        expectThat(physicsEngine.findObstructions(
+            p(-100, 0),
+            p(100, 0)
+        ))
             .isEqualTo(listOf(asteroid.id))
     }
 
@@ -28,7 +33,9 @@ class PhysicsEngineTest {
             physicsEngine.addAsteroid(it)
         }
 
-        expectThat(physicsEngine.findObstructions(p(-100, 0), p(100, 0), listOf(asteroid1.id)))
+        expectThat(physicsEngine.findObstructions(
+            p(-100, 0),
+            p(100, 0), listOf(asteroid1.id)))
             .isEqualTo(listOf(asteroid2.id))
     }
 }
