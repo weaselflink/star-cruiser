@@ -1,12 +1,12 @@
 package de.stefanbissell.starcruiser.client
 
-import kotlin.random.Random
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import kotlin.random.Random
 
 class ThrottleActorTest {
 

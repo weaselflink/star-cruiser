@@ -491,7 +491,8 @@ class ShipTest {
 
         expectThat(ship.toPowerMessage().settings)
             .hasEntry(
-                PoweredSystemType.Maneuver, PoweredSystemMessage(
+                PoweredSystemType.Maneuver,
+                PoweredSystemMessage(
                     repairProgress = null,
                     damage = 0.0,
                     level = 150,
@@ -507,7 +508,8 @@ class ShipTest {
 
         expectThat(ship.toPowerMessage().settings)
             .hasEntry(
-                PoweredSystemType.Maneuver, PoweredSystemMessage(
+                PoweredSystemType.Maneuver,
+                PoweredSystemMessage(
                     repairProgress = null,
                     damage = 0.0,
                     level = 100,

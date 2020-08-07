@@ -399,7 +399,6 @@ class Ship(
                     message
                 }
             }
-
         }
 
     fun toPowerMessage() = powerHandler.toMessage()

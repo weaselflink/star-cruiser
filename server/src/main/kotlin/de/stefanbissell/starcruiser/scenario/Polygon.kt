@@ -4,7 +4,7 @@ import de.stefanbissell.starcruiser.Vector2
 
 data class Polygon(
     val border: List<Vector2>
-): Area {
+) : Area {
 
     private val edges: List<Pair<Vector2, Vector2>> =
         border.mapIndexed { index, point ->
@@ -31,13 +31,20 @@ data class Polygon(
         } % 2 == 1
     }
 
-    private fun intersects(point: Vector2, edge: Pair<Vector2, Vector2>): Boolean {
-        return (edge.first.y > point.y) != (edge.second.y > point.y)
-            && (point.x < (
-            (edge.second.x - edge.first.x)
-                * (point.y - edge.first.y)
-                / (edge.second.y - edge.first.y)
-                + edge.first.x)
+    private fun intersects(point: Vector2, edge: Pair<Vector2, Vector2>) =
+        intersectsOnYAxis(edge, point) && intersectsLeftOfPoint(point, edge)
+
+    private fun intersectsOnYAxis(edge: Pair<Vector2, Vector2>, point: Vector2) =
+        (edge.first.y > point.y) != (edge.second.y > point.y)
+
+    private fun intersectsLeftOfPoint(point: Vector2, edge: Pair<Vector2, Vector2>): Boolean {
+        return (
+            point.x < (
+                (edge.second.x - edge.first.x) *
+                    (point.y - edge.first.y) /
+                    (edge.second.y - edge.first.y) +
+                    edge.first.x
+                )
             )
     }
 

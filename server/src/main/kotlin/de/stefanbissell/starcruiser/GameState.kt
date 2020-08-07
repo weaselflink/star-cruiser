@@ -123,7 +123,6 @@ class GameState {
             asteroids = getAsteroids(ship)
         )
 
-
     fun clientConnected(clientId: ClientId) {
         getClient(clientId)
     }

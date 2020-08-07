@@ -15,8 +15,8 @@ data class Box(
     override val boundingBox: Box = this
 
     override fun isInside(point: Vector2): Boolean =
-        point.x >= bottomLeft.x && point.y >= bottomLeft.y
-            && point.x <= topRight.x && point.y <= topRight.y
+        point.x >= bottomLeft.x && point.y >= bottomLeft.y &&
+            point.x <= topRight.x && point.y <= topRight.y
 
     fun randomPointInside() =
         bottomLeft + Vector2(Random.nextDouble(width), Random.nextDouble(height))
