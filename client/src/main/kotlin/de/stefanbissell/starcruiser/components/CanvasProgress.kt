@@ -36,7 +36,6 @@ class CanvasProgress(
             field = value.clamp(0.0, 1.0)
         }
 
-
     fun draw() {
         val dim = currentDimensions(canvas)
 

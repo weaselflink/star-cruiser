@@ -9,9 +9,7 @@ val kotlin_version: String by project
 plugins {
     application
     kotlin("jvm")
-    kotlin("plugin.serialization")
     id("com.github.johnrengelman.shadow")
-    id("org.jlleitschuh.gradle.ktlint")
 }
 
 application {

@@ -150,6 +150,7 @@ class MainScene {
             position.z = -12.3
         }
     }
+
     private fun updateFrontCamera(cameraMessage: CameraMessage) {
         frontCamera.fov = cameraMessage.fov
         frontCamera.position.set(cameraMessage.position)
@@ -176,12 +177,15 @@ class MainScene {
     }
 
     private fun jumpAnimationScale(animation: Double?) =
-        max(0.01, when {
-            animation == null -> 1.0
-            animation > -0.2 && animation <= 0.0 -> -animation / 0.2
-            animation > 0.0 && animation < 0.2 -> animation / 0.2
-            else -> 1.0
-        })
+        max(
+            0.01,
+            when {
+                animation == null -> 1.0
+                animation > -0.2 && animation <= 0.0 -> -animation / 0.2
+                animation > 0.0 && animation < 0.2 -> animation / 0.2
+                else -> 1.0
+            }
+        )
 
     private fun loadBackground() {
         CubeTextureLoader().load(
@@ -201,7 +205,7 @@ class MainScene {
     }
 
     private fun loadObjectModel(name: String) {
-        loadModel("${name}.glb") { group ->
+        loadModel("$name.glb") { group ->
             objectModels[name] = group
             if (ownShipModel == name && ownShip.model == null) {
                 ownShip.model = group.clone(true)

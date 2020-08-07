@@ -7,16 +7,20 @@ class Uuid {
 
     private val bytes: UByteArray
 
-    constructor() { bytes = version4RandomBytes() }
+    constructor() {
+        bytes = version4RandomBytes()
+    }
 
-    private constructor(customBytes: UByteArray) { bytes = customBytes }
+    private constructor(customBytes: UByteArray) {
+        bytes = customBytes
+    }
 
     override fun toString() =
         bytes.copyOfRange(0, 4).toHex() + "-" +
-        bytes.copyOfRange(4, 6).toHex() + "-" +
-        bytes.copyOfRange(6, 8).toHex() + "-" +
-        bytes.copyOfRange(8, 10).toHex() + "-" +
-        bytes.copyOfRange(10, 16).toHex()
+            bytes.copyOfRange(4, 6).toHex() + "-" +
+            bytes.copyOfRange(6, 8).toHex() + "-" +
+            bytes.copyOfRange(8, 10).toHex() + "-" +
+            bytes.copyOfRange(10, 16).toHex()
 
     companion object {
 

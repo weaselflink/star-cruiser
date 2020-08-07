@@ -1,7 +1,7 @@
 package de.stefanbissell.starcruiser
 
-import kotlin.math.sqrt
 import kotlinx.serialization.Serializable
+import kotlin.math.sqrt
 
 @Serializable
 data class Vector3(

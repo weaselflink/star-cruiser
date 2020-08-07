@@ -21,7 +21,7 @@ data class ComponentDimensions(
         val point = pointerEvent.point
 
         return point.x > bottomX && point.x < bottomX + width &&
-                point.y > bottomY - height && point.y < bottomY
+            point.y > bottomY - height && point.y < bottomY
     }
 
     companion object {

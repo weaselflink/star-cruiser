@@ -178,4 +178,3 @@ class SelectionDetails(
     private fun calculateComponentDimensions() =
         ComponentDimensions.calculateRect(canvas, xExpr, yExpr, widthExpr, heightExpr)
 }
-

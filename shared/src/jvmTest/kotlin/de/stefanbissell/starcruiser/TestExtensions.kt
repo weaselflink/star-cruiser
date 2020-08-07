@@ -1,7 +1,7 @@
 package de.stefanbissell.starcruiser
 
-import kotlin.math.abs
 import strikt.api.Assertion
+import kotlin.math.abs
 
 fun Assertion.Builder<Double>.isNear(expected: Double, tolerance: Double = 0.0000001) =
     assert("is nearly equal to %s", expected) {

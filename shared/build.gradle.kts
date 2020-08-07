@@ -7,7 +7,6 @@ val ktor_version: String by project
 
 plugins {
     kotlin("multiplatform")
-    kotlin("plugin.serialization")
 }
 
 kotlin {

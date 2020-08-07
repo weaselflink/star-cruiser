@@ -24,6 +24,9 @@ allprojects {
     group = "de.stefanbissell.starcruiser"
     version = "0.19.0"
 
+    apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
     repositories {
         mavenCentral()
         jcenter()
@@ -38,8 +41,8 @@ allprojects {
             }
         }
     }
-}
 
-ktlint {
-    version.set("0.37.2")
+    ktlint {
+        version.set("0.37.2")
+    }
 }

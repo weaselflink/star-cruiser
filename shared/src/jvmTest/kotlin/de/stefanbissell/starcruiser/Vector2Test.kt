@@ -1,11 +1,11 @@
 package de.stefanbissell.starcruiser
 
-import kotlin.math.PI
-import kotlin.math.sqrt
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
+import kotlin.math.PI
+import kotlin.math.sqrt
 
 class Vector2Test {
 

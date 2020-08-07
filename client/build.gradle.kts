@@ -4,7 +4,6 @@ val kotlin_version: String by project
 
 plugins {
     kotlin("js")
-    kotlin("plugin.serialization")
 }
 
 dependencies {
