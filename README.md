@@ -1,4 +1,6 @@
-![Build master](https://github.com/weaselflink/star-cruiser/workflows/Build%20master/badge.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/weaselflink/star-cruiser?style=flat-square)
+![Build master](https://github.com/weaselflink/star-cruiser/workflows/Build%20master/badge.svg) 
+![last commit](https://img.shields.io/github/last-commit/weaselflink/star-cruiser)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/weaselflink/star-cruiser?style=flat-square)
 
 ## Star Cruiser Crew Simulator
 
