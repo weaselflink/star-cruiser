@@ -16,11 +16,12 @@ class PhysicsEngineTest {
             physicsEngine.addAsteroid(it)
         }
 
-        expectThat(physicsEngine.findObstructions(
-            p(-100, 0),
-            p(100, 0)
-        ))
-            .isEqualTo(listOf(asteroid.id))
+        expectThat(
+            physicsEngine.findObstructions(
+                p(-100, 0),
+                p(100, 0)
+            )
+        ).isEqualTo(listOf(asteroid.id))
     }
 
     @Test
@@ -33,9 +34,11 @@ class PhysicsEngineTest {
             physicsEngine.addAsteroid(it)
         }
 
-        expectThat(physicsEngine.findObstructions(
-            p(-100, 0),
-            p(100, 0), listOf(asteroid1.id)))
-            .isEqualTo(listOf(asteroid2.id))
+        expectThat(
+            physicsEngine.findObstructions(
+                p(-100, 0),
+                p(100, 0), listOf(asteroid1.id)
+            )
+        ).isEqualTo(listOf(asteroid2.id))
     }
 }
