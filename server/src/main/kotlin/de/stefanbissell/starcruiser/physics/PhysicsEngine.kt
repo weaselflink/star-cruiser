@@ -49,6 +49,18 @@ class PhysicsEngine {
         }
     }
 
+    fun setShipSpeed(objectId: ObjectId, speed: Vector2) {
+        bodies[objectId]?.apply {
+            linearVelocity = speed.toVec2()
+        }
+    }
+
+    fun setShipRotationSpeed(objectId: ObjectId, rotationSpeed: Double) {
+        bodies[objectId]?.apply {
+            angularVelocity = rotationSpeed.toFloat()
+        }
+    }
+
     fun jumpShip(objectId: ObjectId, distance: Int) {
         bodies[objectId]?.apply {
             setTransform(
