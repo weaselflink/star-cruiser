@@ -93,6 +93,15 @@ class CircuitPathGameTest {
         expectThat(aGame("L1,I1,L2;L0,L2,L2X;XI1,L3,I0").isSolved).isFalse()
     }
 
+    @Test
+    fun `can create random solved`() {
+        repeat(10) {
+            expectThat(
+                CircuitPathGame.createSolved().isSolved
+            ).isTrue()
+        }
+    }
+
     private fun aGame(setup: String): CircuitPathGame {
         val rows = setup.split(";")
         val columnCount = rows.first().count { it == ',' } + 1

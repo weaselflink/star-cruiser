@@ -1,5 +1,7 @@
 package de.stefanbissell.starcruiser.minigames
 
+import kotlin.random.Random
+
 class CircuitPathGame(
     val start: Pair<Int, Int>,
     val end: Pair<Int, Int>
@@ -25,6 +27,70 @@ class CircuitPathGame(
             }
             return marked.contains(Tile(end.first, end.second, TileType.FULL))
         }
+
+    fun fillUpTiles() {
+        val width = tiles.maxBy { it.column }!!.column + 1
+        val height = tiles.maxBy { it.row }!!.row + 1
+        (0..width).forEach { column ->
+            (0..height).forEach { row ->
+                if (tiles.none { it.column == column && it.row == row }) {
+                    tiles += Tile.random(column, row)
+                }
+            }
+        }
+    }
+
+    fun randomizeTiles() {
+        tiles.forEach {
+            it.rotation = Random.nextInt(4)
+        }
+    }
+
+    companion object {
+        fun createSolved(): CircuitPathGame {
+            val path = createPath()
+            val game = CircuitPathGame(
+                start = path.first(),
+                end = path.last()
+            )
+            path.windowed(size = 3, step = 1).forEach { window ->
+                val pos = window[1]
+                val tile = when {
+                    window[0].second == window[2].second ->
+                        Tile(pos.first, pos.second, TileType.I, 1)
+                    window[0].second < window[2].second && window[0].second == window[1].second ->
+                        Tile(pos.first, pos.second, TileType.L, 2)
+                    window[0].second > window[2].second && window[0].second == window[1].second ->
+                        Tile(pos.first, pos.second, TileType.L, 3)
+                    window[0].second < window[2].second && window[0].second != window[1].second ->
+                        Tile(pos.first, pos.second, TileType.L, 0)
+                    else ->
+                        Tile(pos.first, pos.second, TileType.L, 1)
+                }
+                game.tiles += tile
+            }
+            game.fillUpTiles()
+            return game
+        }
+
+        private fun createPath(): MutableList<Pair<Int, Int>> {
+            var column = 0
+            var row = Random.nextInt(2)
+            val path = mutableListOf(column to row)
+            while (column < 7) {
+                if (path.count { it.first == column } > 1 || Random.nextBoolean()) {
+                    column++
+                    path += column to row
+                } else {
+                    row = (row + 1) % 2
+                    path += column to row
+                }
+            }
+            path.add(0, -1 to path.first().second)
+            path.add(8 to path.last().second)
+            return path
+        }
+    }
 
     data class Tile(
         val column: Int,
@@ -56,6 +122,17 @@ class CircuitPathGame(
                     else -> column - 1 to row
                 }
             }
+
+        companion object {
+            fun random(column: Int, row: Int): Tile {
+                val type = if (Random.nextBoolean()) {
+                    TileType.I
+                } else {
+                    TileType.L
+                }
+                return Tile(column, row, type, Random.nextInt(4))
+            }
+        }
     }
 
     enum class TileType(
