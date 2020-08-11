@@ -14,13 +14,15 @@ class CircuitPathGameTest {
 
     @Test
     fun `creates path`() {
-        val width = 4
-        val path = PathFinder(width = width).path
-        expectThat(path.first().column).isEqualTo(-1)
-        expectThat(path.last().column).isEqualTo(width)
-        expectThat(path.size).isGreaterThanOrEqualTo(width + 2)
-        path.windowed(size = 2).forEach { window ->
-            expectThat(window[0].isNextTo(window[1]))
+        val width = 10
+        repeat(10) {
+            val path = PathFinder(width, 4).path
+            expectThat(path.first().column).isEqualTo(-1)
+            expectThat(path.last().column).isEqualTo(width)
+            expectThat(path.size).isGreaterThanOrEqualTo(width + 2)
+            path.windowed(size = 2).forEach { window ->
+                expectThat(window[0].isNextTo(window[1]))
+            }
         }
     }
 
@@ -109,8 +111,9 @@ class CircuitPathGameTest {
     @Test
     fun `can create random solved`() {
         repeat(10) {
+            val game = CircuitPathGame.createSolved(10, 4)
             expectThat(
-                CircuitPathGame.createSolved().isSolved
+                game.isSolved
             ).isTrue()
         }
     }
@@ -119,6 +122,8 @@ class CircuitPathGameTest {
         val rows = setup.split(";")
         val columnCount = rows.first().count { it == ',' } + 1
         val game = CircuitPathGame(
+            width = columnCount,
+            height = rows.size,
             start = -1 to rows.indexOfFirst { it.startsWith("X") },
             end = columnCount to rows.indexOfFirst { it.endsWith("X") }
         )

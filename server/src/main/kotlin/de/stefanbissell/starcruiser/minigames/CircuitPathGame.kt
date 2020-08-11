@@ -4,6 +4,8 @@ import kotlin.math.abs
 import kotlin.random.Random
 
 class CircuitPathGame(
+    val width: Int,
+    val height: Int,
     val start: Pair<Int, Int>,
     val end: Pair<Int, Int>
 ) {
@@ -30,10 +32,8 @@ class CircuitPathGame(
         }
 
     fun fillUpTiles() {
-        val width = tiles.maxBy { it.column }!!.column + 1
-        val height = tiles.maxBy { it.row }!!.row + 1
-        (0..width).forEach { column ->
-            (0..height).forEach { row ->
+        (0 until width).forEach { column ->
+            (0 until height).forEach { row ->
                 if (tiles.none { it.column == column && it.row == row }) {
                     tiles += Tile.random(column, row)
                 }
@@ -48,25 +48,41 @@ class CircuitPathGame(
     }
 
     companion object {
-        fun createSolved(): CircuitPathGame {
-            val path = PathFinder(width = 8).path.map { it.column to it.row }
+        fun createSolved(width: Int, height: Int): CircuitPathGame {
+            val path = PathFinder(width, height).path.map { it.column to it.row }
             val game = CircuitPathGame(
+                width = width,
+                height = height,
                 start = path.first(),
                 end = path.last()
             )
             path.windowed(size = 3).forEach { window ->
                 val pos = window[1]
+                val columnChange = window[2].first - window[0].first
+                val rowChange = window[2].second - window[0].second
                 val tile = when {
                     window[0].second == window[2].second ->
                         Tile(pos.first, pos.second, TileType.I, 1)
-                    window[0].second < window[2].second && window[0].second == window[1].second ->
-                        Tile(pos.first, pos.second, TileType.L, 2)
-                    window[0].second > window[2].second && window[0].second == window[1].second ->
-                        Tile(pos.first, pos.second, TileType.L, 3)
-                    window[0].second < window[2].second && window[0].second != window[1].second ->
+                    window[0].first == window[2].first ->
+                        Tile(pos.first, pos.second, TileType.I, 0)
+
+                    columnChange < 0 && rowChange < 0 && window[0].second == window[1].second ->
                         Tile(pos.first, pos.second, TileType.L, 0)
-                    else ->
+                    columnChange > 0 && rowChange > 0 && window[0].second != window[1].second ->
+                        Tile(pos.first, pos.second, TileType.L, 0)
+
+                    columnChange > 0 && rowChange < 0 && window[0].second != window[1].second ->
                         Tile(pos.first, pos.second, TileType.L, 1)
+                    columnChange < 0 && rowChange > 0 && window[0].second == window[1].second ->
+                        Tile(pos.first, pos.second, TileType.L, 1)
+
+                    columnChange < 0 && rowChange < 0 && window[0].second != window[1].second ->
+                        Tile(pos.first, pos.second, TileType.L, 2)
+                    columnChange > 0 && rowChange > 0 && window[0].second == window[1].second ->
+                        Tile(pos.first, pos.second, TileType.L, 2)
+
+                    else ->
+                        Tile(pos.first, pos.second, TileType.L, 3)
                 }
                 game.tiles += tile
             }
@@ -130,15 +146,18 @@ class CircuitPathGame(
 }
 
 class PathFinder(
-    width: Int,
-    height: Int = 2,
-    random: Random = Random
+    private val width: Int,
+    private val height: Int = 2,
+    private val random: Random = Random
 ) {
 
     val path = mutableListOf<Step>()
+    private val permutations = (0 until (width * height)).map { permutation() }
+    private val decisions = (0 until (width * height)).map { 0 }.toMutableList()
+    private var pos = 0
 
     init {
-        var column = 0
+        /*var column = 0
         var row = random.nextInt(height)
         path += Step(column, row)
         while (column < width) {
@@ -149,9 +168,73 @@ class PathFinder(
                 row = (row + 1) % 2
                 path += Step(column, row)
             }
-        }
+        }*/
+        findValidPath(
+            start = Step(0, random.nextInt(height)),
+            end = Step(width - 1, random.nextInt(height))
+        )
         path.add(0, Step(-1, path.first().row))
         path.add(Step(width, path.last().row))
+    }
+
+    private fun findValidPath(start: Step, end: Step) {
+        traversePath(start, end)
+        while (!path.contains(end)) {
+            incrementDecision()
+            traversePath(start, end)
+        }
+    }
+
+    private fun incrementDecision() {
+        if (pos < 0) {
+            throw Exception()
+        }
+        decisions[pos] += 1
+        if (decisions[pos] >= validDecisions()) {
+            decisions[pos] = 0
+            path.removeAt(path.size - 1)
+            pos--
+            incrementDecision()
+        }
+    }
+
+    private fun validDecisions() = (0..3).count { isValid(path.last().next(it)) }
+
+    private fun traversePath(start: Step, end: Step) {
+        path.clear()
+        pos = 0
+        path += start
+        var next = continueOnPath()
+        while (isValid(next) && !path.contains(end)) {
+            path += next!!
+            pos++
+            next = continueOnPath()
+        }
+    }
+
+    private fun continueOnPath(): Step? {
+        val valid = permutations[pos].filter {
+            isValid(path.last().next(it))
+        }
+        if (decisions[pos] >= valid.size) {
+            return null
+        }
+        return path.last().next(valid[decisions[pos]])
+    }
+
+    private fun isValid(toCheck: Step?) =
+        toCheck != null && !path.contains(toCheck) &&
+            toCheck.column >= 0 && toCheck.column < width &&
+            toCheck.row >= 0 && toCheck.row < height
+
+    private fun permutation(): List<Int> {
+        val initial = (0..3).toMutableList()
+        val result = mutableListOf<Int>()
+        while (initial.isNotEmpty()) {
+            val num = initial.removeAt(random.nextInt(initial.size))
+            result += num
+        }
+        return result.toList()
     }
 
     data class Step(
@@ -163,6 +246,14 @@ class PathFinder(
             (column == other.column && abs(row - other.row) == 1) ||
                 (abs(column - other.column) == 1 && row == other.row)
         }
+
+        fun next(direction: Int) =
+            when (direction) {
+                0 -> Step(column, row - 1)
+                1 -> Step(column + 1, row)
+                2 -> Step(column, row + 1)
+                else -> Step(column - 1, row)
+            }
     }
 }
 
