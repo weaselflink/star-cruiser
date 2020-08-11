@@ -163,11 +163,11 @@ class CircuitPathGameTest {
     @Test
     fun `can solve game by rotating tiles`() {
         val game = aGame(
-        """
-             ┌─┐
-             └┐┐X
-            X│┘│
             """
+                 ┌─┐
+                 └┐┐X
+                X│┘│
+                """
         )
 
         game.rotateTile(0, 2)
