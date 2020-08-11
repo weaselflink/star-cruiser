@@ -157,18 +157,6 @@ class PathFinder(
     private var pos = 0
 
     init {
-        /*var column = 0
-        var row = random.nextInt(height)
-        path += Step(column, row)
-        while (column < width) {
-            if (path.count { it.column == column } > 1 || random.nextBoolean()) {
-                column++
-                path += Step(column, row)
-            } else {
-                row = (row + 1) % 2
-                path += Step(column, row)
-            }
-        }*/
         findValidPath(
             start = Step(0, random.nextInt(height)),
             end = Step(width - 1, random.nextInt(height))
