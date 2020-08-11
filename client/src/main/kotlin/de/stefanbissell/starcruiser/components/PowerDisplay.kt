@@ -24,7 +24,7 @@ class PowerDisplay(
         yExpr = yExpr,
         widthExpr = { it.vmin * 8 },
         heightExpr = { it.vmin * 8 },
-        onClick = { clientSocket.send(Command.CommandRepair(systemType)) },
+        onClick = { clientSocket.send(Command.CommandStartRepair(systemType)) },
         activated = { repairing },
         initialText = "\ud83d\udee0"
     )
@@ -89,13 +89,12 @@ class PowerDisplay(
     fun draw(powerMessage: PowerMessage) {
         val systemMessage = powerMessage.settings[systemType]
             ?: PoweredSystemMessage(
-                repairProgress = null,
                 damage = 0.0,
                 level = 100,
                 heat = 0.0,
                 coolant = 0.0
             )
-        repairing = systemMessage.repairProgress != null
+        repairing = powerMessage.repairProgress?.type == systemType
         val position = systemMessage.level.toDouble() / 200.0
 
         repairButton.draw()

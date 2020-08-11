@@ -491,7 +491,6 @@ class ShipTest {
             .hasEntry(
                 PoweredSystemType.Maneuver,
                 PoweredSystemMessage(
-                    repairProgress = null,
                     damage = 0.0,
                     level = 150,
                     heat = 0.0,
@@ -508,7 +507,6 @@ class ShipTest {
             .hasEntry(
                 PoweredSystemType.Maneuver,
                 PoweredSystemMessage(
-                    repairProgress = null,
                     damage = 0.0,
                     level = 100,
                     heat = 0.0,

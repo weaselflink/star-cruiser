@@ -102,42 +102,23 @@ class PowerHandlerTest {
     }
 
     @Test
-    fun `updates repair progress`() {
+    fun `starts repair progress`() {
         powerHandler.takeDamage(Jump, 2.5)
         powerHandler.startRepair(Jump)
 
-        expectThat(powerHandler.toMessage().settings[Jump])
-            .isNotNull()
-            .and {
-                get { damage }.isNear(0.5)
-                get { repairProgress }.isNotNull()
-                    .and {
-                        get { progress }.isEqualTo(0.0)
-                        get { remainingTime }.isEqualTo(10)
-                    }
-            }
+        expectThat(
+            powerHandler.toMessage().repairProgress
+        ).isNotNull()
+            .get { type }.isEqualTo(Jump)
+    }
 
-        stepTimeTo(4)
+    @Test
+    fun `does not start repair progress if not needed`() {
+        powerHandler.startRepair(Jump)
 
-        expectThat(powerHandler.toMessage().settings[Jump])
-            .isNotNull()
-            .and {
-                get { damage }.isNear(0.5)
-                get { repairProgress }.isNotNull()
-                    .and {
-                        get { progress }.isEqualTo(0.4)
-                        get { remainingTime }.isEqualTo(6)
-                    }
-            }
-
-        stepTimeTo(10)
-
-        expectThat(powerHandler.toMessage().settings[Jump])
-            .isNotNull()
-            .and {
-                get { damage }.isNear(0.25)
-                get { repairProgress }.isNull()
-            }
+        expectThat(
+            powerHandler.toMessage().repairProgress
+        ).isNull()
     }
 
     @Test

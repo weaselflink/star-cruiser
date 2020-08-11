@@ -18,6 +18,7 @@ class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
     }.associate { it.first to it.second }
 
     init {
+        pointerEventDispatcher.addHandlers(repairDisplay)
         pointerEventDispatcher.addHandlers(powerDisplays.values)
     }
 
@@ -30,9 +31,9 @@ class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
         clearBackground()
 
         capacitorsDisplay.draw(powerMessage)
-        repairDisplay.draw(powerMessage)
         powerMessage.settings.forEach {
             powerDisplays[it.key]?.draw(powerMessage)
         }
+        repairDisplay.draw(powerMessage)
     }
 }

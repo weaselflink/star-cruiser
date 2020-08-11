@@ -45,6 +45,8 @@ class ScanSelectedShip(val clientId: ClientId) : GameStateChange()
 class LockTarget(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
 class ToggleShieldsUp(val clientId: ClientId) : GameStateChange()
 class StartRepair(val clientId: ClientId, val systemType: PoweredSystemType) : GameStateChange()
+class AbortRepair(val clientId: ClientId) : GameStateChange()
+class SolveRepairGame(val clientId: ClientId, val column: Int, val row: Int) : GameStateChange()
 class SetPower(val clientId: ClientId, val systemType: PoweredSystemType, val power: Int) : GameStateChange()
 class SetCoolant(val clientId: ClientId, val systemType: PoweredSystemType, val coolant: Double) : GameStateChange()
 class SetMainScreenView(val clientId: ClientId, val mainScreenView: MainScreenView) : GameStateChange()
@@ -156,6 +158,9 @@ class GameState {
             it.addWaypoint(Vector2.random(1000, 500))
             ships[it.id] = it
             physicsEngine.addShip(it)
+            it.toggleShieldsUp()
+            it.takeDamage(PoweredSystemType.Jump, 2.5)
+            it.toggleShieldsUp()
         }
     }
 
@@ -263,6 +268,14 @@ class GameState {
         getClientShip(clientId)?.startRepair(systemType)
     }
 
+    fun abortRepair(clientId: ClientId) {
+        getClientShip(clientId)?.abortRepair()
+    }
+
+    fun solveRepairGame(clientId: ClientId, column: Int, row: Int) {
+        getClientShip(clientId)?.solveRepairGame(column, row)
+    }
+
     fun setPower(clientId: ClientId, systemType: PoweredSystemType, power: Int) {
         getClientShip(clientId)?.setPower(systemType, power)
     }
@@ -354,6 +367,8 @@ class GameState {
                     is LockTarget -> gameState.lockTarget(change.clientId, change.targetId)
                     is ToggleShieldsUp -> gameState.toggleShieldsUp(change.clientId)
                     is StartRepair -> gameState.startRepair(change.clientId, change.systemType)
+                    is AbortRepair -> gameState.abortRepair(change.clientId)
+                    is SolveRepairGame -> gameState.solveRepairGame(change.clientId, change.column, change.row)
                     is SetPower -> gameState.setPower(change.clientId, change.systemType, change.power)
                     is SetCoolant -> gameState.setCoolant(change.clientId, change.systemType, change.coolant)
                     is SetMainScreenView -> gameState.setMainScreenView(change.clientId, change.mainScreenView)

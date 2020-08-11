@@ -394,12 +394,12 @@ data class PowerMessage(
     val capacitors: Double,
     val maxCapacitors: Double,
     val capacitorsPrediction: Int?,
-    val settings: Map<PoweredSystemType, PoweredSystemMessage>
+    val settings: Map<PoweredSystemType, PoweredSystemMessage>,
+    val repairProgress: RepairProgressMessage?
 )
 
 @Serializable
 data class PoweredSystemMessage(
-    val repairProgress: RepairProgressMessage?,
     val damage: Double,
     val level: Int,
     val heat: Double,
@@ -408,6 +408,10 @@ data class PoweredSystemMessage(
 
 @Serializable
 data class RepairProgressMessage(
-    val progress: Double,
-    val remainingTime: Int
+    val type: PoweredSystemType,
+    val width: Int,
+    val height: Int,
+    val start: Int,
+    val end: Int,
+    val tiles: List<String>
 )

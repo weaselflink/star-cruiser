@@ -7,6 +7,7 @@ import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.RepairProgressMessage
 import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.fiveDigits
+import de.stefanbissell.starcruiser.minigames.CircuitPathGame
 import de.stefanbissell.starcruiser.oneDigit
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -25,12 +26,14 @@ class PowerHandler(
 
     private var powerGenerated: Double = 0.0
     private var powerUsed: Double = 0.0
+    private var repairHandler: RepairHandler? = null
 
     fun update(time: GameTime) {
         generatePower(time)
         drainPower(time)
         finalizeCapacitorCharge()
         updateHeatLevels(time)
+        updateRepairHandler(time)
     }
 
     fun takeDamage(type: PoweredSystemType, amount: Double) {
@@ -41,10 +44,19 @@ class PowerHandler(
 
     fun startRepair(type: PoweredSystemType) {
         val system = getPoweredSystem(type)
-        if (system.canRepair()) {
-            system.startRepairing()
+        if (system.canRepair() && repairHandler?.type != type) {
+            repairHandler = RepairHandler(type)
+        }
+    }
 
-            stopRepairingAllExcept(type)
+    fun abortRepair() {
+        repairHandler = null
+    }
+
+    fun solveRepairGame(column: Int, row: Int) {
+        println("$column, $row")
+        repairHandler?.apply {
+            game.rotateTile(column, row)
         }
     }
 
@@ -74,7 +86,8 @@ class PowerHandler(
             capacitors = capacitors.oneDigit(),
             maxCapacitors = maxCapacitors,
             capacitorsPrediction = capacitorsPrediction(),
-            settings = poweredSystems.mapValues { it.value.toMessage() }
+            settings = poweredSystems.mapValues { it.value.toMessage() },
+            repairProgress = repairHandler?.toMessage()
         )
 
     private fun capacitorsPrediction(): Int? =
@@ -133,20 +146,21 @@ class PowerHandler(
             }
     }
 
-    private fun stopRepairingAllExcept(type: PoweredSystemType) {
-        poweredSystems
-            .filter {
-                it.key != type
+    private fun updateRepairHandler(time: GameTime) {
+        repairHandler?.apply {
+            update(time)
+            if (solvedTimer > 1.0) {
+                getPoweredSystem(type).apply {
+                    damage -= shipTemplate.repairAmount
+                }
+                repairHandler = null
             }
-            .forEach {
-                it.value.stopRepairing()
-            }
+        }
     }
 
     inner class PoweredSystem {
 
-        private var repairProgress: Double? = null
-        private var damage: Double = 0.0
+        var damage: Double = 0.0
             set(value) {
                 field = value.clamp(0.0, 1.0)
             }
@@ -170,7 +184,6 @@ class PowerHandler(
 
         fun update(time: GameTime) {
             updateHeat(time)
-            updateRepairProgress(time)
         }
 
         fun takeDamage(amount: Double) {
@@ -188,46 +201,56 @@ class PowerHandler(
             }
         }
 
-        private fun updateRepairProgress(time: GameTime) {
-            var currentRepairProgress = repairProgress
-            if (currentRepairProgress != null) {
-                currentRepairProgress += shipTemplate.repairSpeed * time.delta
-
-                if (currentRepairProgress >= 1.0) {
-                    repairProgress = null
-
-                    damage -= shipTemplate.repairAmount
-                } else {
-                    repairProgress = currentRepairProgress
-                }
-            }
-        }
-
-        fun canRepair() = repairProgress == null && damage > 0.0
-
-        fun startRepairing() {
-            if (canRepair()) {
-                repairProgress = 0.0
-            }
-        }
-
-        fun stopRepairing() {
-            repairProgress = null
-        }
+        fun canRepair() = damage > 0.0
 
         fun toMessage() =
             PoweredSystemMessage(
-                repairProgress = repairProgress?.let {
-                    RepairProgressMessage(
-                        progress = it,
-                        remainingTime = ((1.0 - it) / shipTemplate.repairSpeed).roundToInt()
-                    )
-                },
                 damage = damage.fiveDigits(),
                 level = level,
                 heat = heat.fiveDigits(),
                 coolant = coolant.fiveDigits()
             )
+    }
+}
+
+private class RepairHandler(
+    val type: PoweredSystemType
+) {
+    var solvedTimer = 0.0
+    val game = CircuitPathGame.createUnsolved(8, 3)
+
+    fun update(time: GameTime) {
+        if (game.isSolved) {
+            solvedTimer += time.delta
+        } else {
+            solvedTimer = 0.0
+        }
+    }
+
+    fun toMessage() =
+        RepairProgressMessage(
+            type = type,
+            width = game.width,
+            height = game.height,
+            start = game.start.second,
+            end = game.end.second,
+            tiles = encodeTiles()
+        )
+
+    private fun encodeTiles(): List<String> {
+        return (0 until game.height)
+            .map { row ->
+                game.tiles.filter { it.row == row }
+            }
+            .map { rowTiles ->
+                rowTiles.sortedBy { it.column }
+            }
+            .map { rowTiles ->
+                rowTiles.map { it.connections.joinToString(separator = "") }
+            }
+            .map {
+                it.joinToString(separator = ",")
+            }
     }
 }
 

@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.client
 
+import de.stefanbissell.starcruiser.AbortRepair
 import de.stefanbissell.starcruiser.AddWaypoint
 import de.stefanbissell.starcruiser.ApplicationConfig.gameClientMaxInflightMessages
 import de.stefanbissell.starcruiser.ApplicationConfig.gameClientUpdateIntervalMillis
@@ -25,6 +26,7 @@ import de.stefanbissell.starcruiser.SetCoolant
 import de.stefanbissell.starcruiser.SetMainScreenView
 import de.stefanbissell.starcruiser.SetPower
 import de.stefanbissell.starcruiser.SnapshotMessage
+import de.stefanbissell.starcruiser.SolveRepairGame
 import de.stefanbissell.starcruiser.SpawnShip
 import de.stefanbissell.starcruiser.StartJump
 import de.stefanbissell.starcruiser.StartRepair
@@ -122,8 +124,14 @@ class GameClient(
                 is Command.CommandToggleShieldsUp -> gameStateActor.send(
                     ToggleShieldsUp(id)
                 )
-                is Command.CommandRepair -> gameStateActor.send(
+                is Command.CommandStartRepair -> gameStateActor.send(
                     StartRepair(id, command.systemType)
+                )
+                is Command.CommandAbortRepair -> gameStateActor.send(
+                    AbortRepair(id)
+                )
+                is Command.CommandSolveRepairGame -> gameStateActor.send(
+                    SolveRepairGame(id, command.column, command.row)
                 )
                 is Command.CommandSetPower -> gameStateActor.send(
                     SetPower(id, command.systemType, command.power)

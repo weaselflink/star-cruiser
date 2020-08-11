@@ -61,7 +61,13 @@ sealed class Command {
     object CommandToggleShieldsUp : Command()
 
     @Serializable
-    data class CommandRepair(val systemType: PoweredSystemType) : Command()
+    data class CommandStartRepair(val systemType: PoweredSystemType) : Command()
+
+    @Serializable
+    object CommandAbortRepair : Command()
+
+    @Serializable
+    data class CommandSolveRepairGame(val column: Int, val row: Int) : Command()
 
     @Serializable
     data class CommandSetPower(val systemType: PoweredSystemType, val power: Int) : Command()

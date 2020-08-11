@@ -21,7 +21,7 @@ object UiStyle {
     val warningYellowDark = yellow.copy(lightness = 30).toString()
     val warningRedDark = red.copy(lightness = 30).toString()
 
-    const val fontFamily = "sans-serif"
+    private const val fontFamily = "sans-serif"
 
     fun font(size: Number) = "${size.toInt().px} $fontFamily"
     fun boldFont(size: Number) = "bold ${size.toInt().px} $fontFamily"

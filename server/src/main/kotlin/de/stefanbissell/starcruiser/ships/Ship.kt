@@ -265,6 +265,14 @@ class Ship(
         powerHandler.startRepair(systemType)
     }
 
+    fun abortRepair() {
+        powerHandler.abortRepair()
+    }
+
+    fun solveRepairGame(column: Int, row: Int) {
+        powerHandler.solveRepairGame(column, row)
+    }
+
     fun setPower(systemType: PoweredSystemType, level: Int) {
         powerHandler.setLevel(systemType, level)
     }
