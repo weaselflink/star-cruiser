@@ -31,7 +31,7 @@ class CircuitPathGame(
             return marked.contains(Tile(end.first, end.second, TileType.FULL))
         }
 
-    fun fillUpTiles() {
+    private fun fillUpTiles() {
         (0 until width).forEach { column ->
             (0 until height).forEach { row ->
                 if (tiles.none { it.column == column && it.row == row }) {
@@ -41,7 +41,7 @@ class CircuitPathGame(
         }
     }
 
-    fun randomizeTiles() {
+    private fun randomizeTiles() {
         tiles.forEach {
             it.rotation = Random.nextInt(4)
         }
@@ -89,6 +89,13 @@ class CircuitPathGame(
             game.fillUpTiles()
             return game
         }
+
+        fun createUnsolved(width: Int, height: Int) =
+            createSolved(width, height).apply {
+                while (isSolved) {
+                    randomizeTiles()
+                }
+            }
     }
 
     data class Tile(

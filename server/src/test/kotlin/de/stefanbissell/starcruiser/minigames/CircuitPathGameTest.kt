@@ -15,7 +15,7 @@ class CircuitPathGameTest {
     @Test
     fun `creates path`() {
         val width = 10
-        repeat(10) {
+        repeat(5) {
             val path = PathFinder(width, 4).path
             expectThat(path.first().column).isEqualTo(-1)
             expectThat(path.last().column).isEqualTo(width)
@@ -162,11 +162,21 @@ class CircuitPathGameTest {
 
     @Test
     fun `can create random solved`() {
-        repeat(10) {
+        repeat(5) {
             val game = CircuitPathGame.createSolved(10, 4)
             expectThat(
                 game.isSolved
             ).isTrue()
+        }
+    }
+
+    @Test
+    fun `can create random unsolved`() {
+        repeat(5) {
+            val game = CircuitPathGame.createUnsolved(10, 4)
+            expectThat(
+                game.isSolved
+            ).isFalse()
         }
     }
 
