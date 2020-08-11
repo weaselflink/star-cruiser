@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.minigames
 
+import kotlin.math.abs
 import kotlin.random.Random
 
 class CircuitPathGame(
@@ -48,12 +49,12 @@ class CircuitPathGame(
 
     companion object {
         fun createSolved(): CircuitPathGame {
-            val path = createPath()
+            val path = PathFinder(width = 8).path.map { it.column to it.row }
             val game = CircuitPathGame(
                 start = path.first(),
                 end = path.last()
             )
-            path.windowed(size = 3, step = 1).forEach { window ->
+            path.windowed(size = 3).forEach { window ->
                 val pos = window[1]
                 val tile = when {
                     window[0].second == window[2].second ->
@@ -71,24 +72,6 @@ class CircuitPathGame(
             }
             game.fillUpTiles()
             return game
-        }
-
-        private fun createPath(): MutableList<Pair<Int, Int>> {
-            var column = 0
-            var row = Random.nextInt(2)
-            val path = mutableListOf(column to row)
-            while (column < 7) {
-                if (path.count { it.first == column } > 1 || Random.nextBoolean()) {
-                    column++
-                    path += column to row
-                } else {
-                    row = (row + 1) % 2
-                    path += column to row
-                }
-            }
-            path.add(0, -1 to path.first().second)
-            path.add(8 to path.last().second)
-            return path
         }
     }
 
@@ -143,6 +126,43 @@ class CircuitPathGame(
         FULL(0, 1, 2, 3);
 
         val connections = connectedSides.toList()
+    }
+}
+
+class PathFinder(
+    width: Int,
+    height: Int = 2,
+    random: Random = Random
+) {
+
+    val path = mutableListOf<Step>()
+
+    init {
+        var column = 0
+        var row = random.nextInt(height)
+        path += Step(column, row)
+        while (column < width) {
+            if (path.count { it.column == column } > 1 || random.nextBoolean()) {
+                column++
+                path += Step(column, row)
+            } else {
+                row = (row + 1) % 2
+                path += Step(column, row)
+            }
+        }
+        path.add(0, Step(-1, path.first().row))
+        path.add(Step(width, path.last().row))
+    }
+
+    data class Step(
+        val column: Int,
+        val row: Int
+    ) {
+
+        fun isNextTo(other: Step) {
+            (column == other.column && abs(row - other.row) == 1) ||
+                (abs(column - other.column) == 1 && row == other.row)
+        }
     }
 }
 

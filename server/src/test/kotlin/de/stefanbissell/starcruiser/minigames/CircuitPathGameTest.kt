@@ -7,9 +7,22 @@ import strikt.api.expectThat
 import strikt.assertions.containsExactly
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
+import strikt.assertions.isGreaterThanOrEqualTo
 import strikt.assertions.isTrue
 
 class CircuitPathGameTest {
+
+    @Test
+    fun `creates path`() {
+        val width = 4
+        val path = PathFinder(width = width).path
+        expectThat(path.first().column).isEqualTo(-1)
+        expectThat(path.last().column).isEqualTo(width)
+        expectThat(path.size).isGreaterThanOrEqualTo(width + 2)
+        path.windowed(size = 2).forEach { window ->
+            expectThat(window[0].isNextTo(window[1]))
+        }
+    }
 
     @Test
     fun `rotates tile`() {
