@@ -31,6 +31,11 @@ class CircuitPathGame(
             return marked.contains(Tile(end.first, end.second, TileType.FULL))
         }
 
+    fun rotateTile(column: Int, row: Int) {
+        tiles.firstOrNull { it.column == column && it.row == row }
+            ?.apply { rotate() }
+    }
+
     private fun fillUpTiles() {
         (0 until width).forEach { column ->
             (0 until height).forEach { row ->

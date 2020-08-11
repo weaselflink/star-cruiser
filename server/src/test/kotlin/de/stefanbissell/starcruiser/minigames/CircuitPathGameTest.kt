@@ -161,6 +161,30 @@ class CircuitPathGameTest {
     }
 
     @Test
+    fun `can solve game by rotating tiles`() {
+        val game = aGame(
+        """
+             ┌─┐
+             └┐┐X
+            X│┘│
+            """
+        )
+
+        game.rotateTile(0, 2)
+        game.rotateTile(2, 1)
+
+        expectThat(
+            game.isSolved
+        ).isFalse()
+
+        game.rotateTile(2, 1)
+
+        expectThat(
+            game.isSolved
+        ).isTrue()
+    }
+
+    @Test
     fun `can create random solved`() {
         repeat(5) {
             val game = CircuitPathGame.createSolved(10, 4)
