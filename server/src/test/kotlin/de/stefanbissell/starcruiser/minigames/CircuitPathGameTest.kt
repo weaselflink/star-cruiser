@@ -96,16 +96,68 @@ class CircuitPathGameTest {
 
     @Test
     fun `detects valid solution`() {
-        expectThat(aGame("XL0X").isSolved).isFalse()
-        expectThat(aGame("XI1X").isSolved).isTrue()
-        expectThat(aGame("XI1,I3X").isSolved).isTrue()
-        expectThat(aGame("XI1,I2X").isSolved).isFalse()
-        expectThat(aGame("XI1,L2,L0;I0,L0,I1X").isSolved).isTrue()
-        expectThat(aGame("XI1,L2,L0;I0,L1,I1X").isSolved).isFalse()
-        expectThat(aGame("XL2,L1X;L0,L3").isSolved).isTrue()
-        expectThat(aGame("XL2,L1X;L0,I3").isSolved).isFalse()
-        expectThat(aGame("L1,I1,L2;L0,L2,L0X;XI1,L3,I0").isSolved).isTrue()
-        expectThat(aGame("L1,I1,L2;L0,L2,L2X;XI1,L3,I0").isSolved).isFalse()
+        expectThat(aGame("X─X").isSolved).isTrue()
+        expectThat(aGame("X└X").isSolved).isFalse()
+        expectThat(aGame("X──X").isSolved).isTrue()
+        expectThat(aGame("X─│X").isSolved).isFalse()
+        expectThat(
+            aGame(
+                """
+                X─┐└
+                 │└─X
+                """
+            ).isSolved
+        ).isTrue()
+        expectThat(
+            aGame(
+                """
+                X─┐└
+                 │──X
+                """
+            ).isSolved
+        ).isFalse()
+        expectThat(
+            aGame(
+                """
+                X───
+                 │└─X
+                """
+            ).isSolved
+        ).isFalse()
+        expectThat(
+            aGame(
+                """
+                X┐┌X
+                 └┘
+                """
+            ).isSolved
+        ).isTrue()
+        expectThat(
+            aGame(
+                """
+                X┐┌X
+                 └│
+                """
+            ).isSolved
+        ).isFalse()
+        expectThat(
+            aGame(
+                """
+                 ┌─┐
+                 └┐└X
+                X─┘│
+                """
+            ).isSolved
+        ).isTrue()
+        expectThat(
+            aGame(
+                """
+                 ┌─┐
+                 └┐┐X
+                X─┘│
+                """
+            ).isSolved
+        ).isFalse()
     }
 
     @Test
@@ -119,8 +171,8 @@ class CircuitPathGameTest {
     }
 
     private fun aGame(setup: String): CircuitPathGame {
-        val rows = setup.split(";")
-        val columnCount = rows.first().count { it == ',' } + 1
+        val rows = setup.trim().trim('\n').split("\n").map { it.trim() }
+        val columnCount = rows.first().trim('X').length
         val game = CircuitPathGame(
             width = columnCount,
             height = rows.size,
@@ -128,19 +180,24 @@ class CircuitPathGameTest {
             end = columnCount to rows.indexOfFirst { it.endsWith("X") }
         )
         rows.map {
-            it.removePrefix("X").removeSuffix("X")
+            it.trim('X')
         }.forEachIndexed { rowIndex, row ->
-            row.split(",").forEachIndexed { columnIndex, column ->
-                game.tiles += Tile(
-                    column = columnIndex,
-                    row = rowIndex,
-                    type = if (column.startsWith("L")) TileType.L else TileType.I,
-                    rotation = column.substring(1).toInt()
-                )
+            row.forEachIndexed { columnIndex, column ->
+                game.tiles += column.parseTile(columnIndex, rowIndex)
             }
         }
         return game
     }
+
+    private fun Char.parseTile(column: Int, row: Int) =
+        when (this) {
+            '│' -> Tile(column, row, TileType.I, 0)
+            '─' -> Tile(column, row, TileType.I, 1)
+            '└' -> Tile(column, row, TileType.L, 0)
+            '┌' -> Tile(column, row, TileType.L, 1)
+            '┐' -> Tile(column, row, TileType.L, 2)
+            else -> Tile(column, row, TileType.L, 3)
+        }
 
     private fun anLTile(rotation: Int) = Tile(
         column = 0,
