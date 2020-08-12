@@ -159,7 +159,13 @@ class RepairDisplay(
         private fun CanvasRenderingContext2D.drawTileConnections() {
             save()
 
+            strokeStyle = if (connections.contains("+")) {
+                "#ccc"
+            } else {
+                UiStyle.buttonForegroundColor
+            }
             lineWidth = UiStyle.buttonLineWidth.vmin
+
             if (connections.contains("0")) {
                 beginPath()
                 moveTo(x + width * 0.5, y + height * 0.5)
