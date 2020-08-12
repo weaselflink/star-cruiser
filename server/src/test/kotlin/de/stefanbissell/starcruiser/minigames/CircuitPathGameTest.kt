@@ -158,6 +158,15 @@ class CircuitPathGameTest {
                 """
             ).isSolved
         ).isFalse()
+        expectThat(
+            aGame(
+                """
+                 ┌─┐
+                 └┐│X
+                X─┘│
+                """
+            ).isSolved
+        ).isFalse()
     }
 
     @Test
@@ -212,7 +221,7 @@ class CircuitPathGameTest {
     @Test
     fun `can create random unsolved`() {
         repeat(5) {
-            val game = CircuitPathGame.createUnsolved(10, 4)
+            val game = CircuitPathGame.createUnsolved(8, 4)
             expectThat(
                 game.isSolved
             ).isFalse()
