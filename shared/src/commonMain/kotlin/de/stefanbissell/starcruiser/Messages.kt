@@ -413,5 +413,5 @@ data class RepairProgressMessage(
     val height: Int,
     val start: Int,
     val end: Int,
-    val tiles: List<String>
+    val tiles: String
 )

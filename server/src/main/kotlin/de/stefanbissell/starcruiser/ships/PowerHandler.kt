@@ -54,7 +54,6 @@ class PowerHandler(
     }
 
     fun solveRepairGame(column: Int, row: Int) {
-        println("$column, $row")
         repairHandler?.apply {
             game.rotateTile(column, row)
         }
@@ -234,7 +233,7 @@ private class RepairHandler(
             height = game.height,
             start = game.start.second,
             end = game.end.second,
-            tiles = game.encodedTiles.split(";")
+            tiles = game.encodedTiles
         )
 }
 

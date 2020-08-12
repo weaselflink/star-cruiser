@@ -46,7 +46,7 @@ class RepairDisplay(
 
     private fun parseTiles(repairProgress: RepairProgressMessage) {
         tiles.clear()
-        repairProgress.tiles.forEachIndexed { rowIndex, row ->
+        repairProgress.tiles.split(";").forEachIndexed { rowIndex, row ->
             row.split(",").forEachIndexed { columnIndex, tile ->
                 tiles += Tile(columnIndex, rowIndex, tile)
             }
