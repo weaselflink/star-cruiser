@@ -233,7 +233,8 @@ private class RepairHandler(
             height = game.height,
             start = game.start.second,
             end = game.end.second,
-            tiles = game.encodedTiles
+            tiles = game.encodedTiles,
+            solved = game.isSolved
         )
 }
 

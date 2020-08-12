@@ -413,5 +413,6 @@ data class RepairProgressMessage(
     val height: Int,
     val start: Int,
     val end: Int,
-    val tiles: String
+    val tiles: String,
+    val solved: Boolean
 )

@@ -4,6 +4,7 @@ import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.PowerMessage
 import de.stefanbissell.starcruiser.RepairProgressMessage
+import de.stefanbissell.starcruiser.circle
 import de.stefanbissell.starcruiser.clientSocket
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.dimensions
@@ -75,13 +76,18 @@ class RepairDisplay(
 
         save()
 
-        strokeStyle = "#ccc"
+        strokeStyle = "#eee"
+        fillStyle = strokeStyle
         lineWidth = UiStyle.buttonLineWidth.vmin
 
         beginPath()
         moveTo(x, y)
         lineTo(x + 5.vmin, y)
         stroke()
+
+        beginPath()
+        circle(x, y, 2.vmin)
+        fill()
 
         restore()
     }
@@ -90,18 +96,27 @@ class RepairDisplay(
         dim: ComponentDimensions,
         repairProgress: RepairProgressMessage
     ) {
-        val x = dim.bottomX + dim.width - 10.vmin
+        val x = dim.bottomX + dim.width - 5.vmin
         val y = dim.bottomY - dim.height + 9.vmin + repairProgress.end * 8.vmin
 
         save()
 
-        strokeStyle = UiStyle.buttonForegroundColor
+        strokeStyle = if (repairProgress.solved) {
+            "#eee"
+        } else {
+            UiStyle.buttonForegroundColor
+        }
+        fillStyle = strokeStyle
         lineWidth = UiStyle.buttonLineWidth.vmin
 
         beginPath()
         moveTo(x, y)
-        lineTo(x + 5.vmin, y)
+        lineTo(x - 5.vmin, y)
         stroke()
+
+        beginPath()
+        circle(x, y, 2.vmin)
+        fill()
 
         restore()
     }
@@ -160,7 +175,7 @@ class RepairDisplay(
             save()
 
             strokeStyle = if (connections.contains("+")) {
-                "#ccc"
+                "#eee"
             } else {
                 UiStyle.buttonForegroundColor
             }
