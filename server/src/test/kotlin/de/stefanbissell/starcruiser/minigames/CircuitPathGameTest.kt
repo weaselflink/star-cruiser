@@ -39,15 +39,15 @@ class CircuitPathGameTest {
         expectThat(anLTile(0).connections).containsExactly(0, 1)
         expectThat(anLTile(1).connections).containsExactly(1, 2)
         expectThat(anLTile(2).connections).containsExactly(2, 3)
-        expectThat(anLTile(3).connections).containsExactly(3, 0)
+        expectThat(anLTile(3).connections).containsExactly(0, 3)
     }
 
     @Test
     fun `rotates I tile connections`() {
         expectThat(anITile(0).connections).containsExactly(0, 2)
         expectThat(anITile(1).connections).containsExactly(1, 3)
-        expectThat(anITile(2).connections).containsExactly(2, 0)
-        expectThat(anITile(3).connections).containsExactly(3, 1)
+        expectThat(anITile(2).connections).containsExactly(0, 2)
+        expectThat(anITile(3).connections).containsExactly(1, 3)
     }
 
     @Test
@@ -182,6 +182,21 @@ class CircuitPathGameTest {
         expectThat(
             game.isSolved
         ).isTrue()
+    }
+
+    @Test
+    fun `encodes tiles to string`() {
+        val game = aGame(
+            """
+                 ┌─┐
+                 └┐┐X
+                X│┘│
+                """
+        )
+
+        expectThat(
+            game.encodedTiles
+        ).isEqualTo("12,13,23;01,23,23;02,03,02")
     }
 
     @Test

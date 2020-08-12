@@ -234,24 +234,8 @@ private class RepairHandler(
             height = game.height,
             start = game.start.second,
             end = game.end.second,
-            tiles = encodeTiles()
+            tiles = game.encodedTiles.split(";")
         )
-
-    private fun encodeTiles(): List<String> {
-        return (0 until game.height)
-            .map { row ->
-                game.tiles.filter { it.row == row }
-            }
-            .map { rowTiles ->
-                rowTiles.sortedBy { it.column }
-            }
-            .map { rowTiles ->
-                rowTiles.map { it.connections.joinToString(separator = "") }
-            }
-            .map {
-                it.joinToString(separator = ",")
-            }
-    }
 }
 
 typealias BoostLevel = () -> Double

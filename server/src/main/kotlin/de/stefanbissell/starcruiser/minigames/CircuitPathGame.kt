@@ -30,6 +30,14 @@ class CircuitPathGame(
             }
             return marked.contains(Tile(end.first, end.second, TileType.FULL))
         }
+    val encodedTiles: String
+        get() =
+            (0 until height).joinToString(";") { row ->
+                tiles.filter { it.row == row }
+                    .sortedBy { it.column }
+                    .map { it.connections }
+                    .joinToString(",") { it.joinToString("") }
+            }
 
     fun rotateTile(column: Int, row: Int) {
         tiles.firstOrNull { it.column == column && it.row == row }
@@ -111,7 +119,7 @@ class CircuitPathGame(
     ) {
 
         val connections: List<Int>
-            get() = type.connections.map { it.rotate(rotation) }
+            get() = type.connections.map { it.rotate(rotation) }.sorted()
 
         fun rotate() {
             rotation = rotation.rotate(1)
