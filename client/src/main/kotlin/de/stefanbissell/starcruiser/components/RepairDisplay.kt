@@ -21,14 +21,24 @@ import org.w3c.dom.HTMLCanvasElement
 class RepairDisplay(
     val canvas: HTMLCanvasElement,
     val xExpr: (CanvasDimensions) -> Double = { it.width * 0.5 - it.vmin * 42 },
-    val yExpr: (CanvasDimensions) -> Double = { it.height * 0.5 + it.vmin * 25 },
+    val yExpr: (CanvasDimensions) -> Double = { it.height * 0.5 + it.vmin * 30 },
     val widthExpr: (CanvasDimensions) -> Double = { it.vmin * 84 },
-    val heightExpr: (CanvasDimensions) -> Double = { it.vmin * 50 }
+    val heightExpr: (CanvasDimensions) -> Double = { it.vmin * 60 }
 ) : PointerEventHandler {
 
     private val ctx = canvas.context2D
     private var visible = false
     private val tiles = mutableListOf<Tile>()
+
+    private val abortButton = CanvasButton(
+        canvas = canvas,
+        xExpr = { xExpr(it) + widthExpr(it) - it.vmin * 25 },
+        yExpr = { yExpr(it) - it.vmin * 5 },
+        widthExpr = { it.vmin * 20 },
+        heightExpr = { it.vmin * 10 },
+        onClick = { clientSocket.send(Command.CommandAbortRepair) },
+        initialText = "Abort"
+    )
 
     override fun isInterestedIn(pointerEvent: PointerEvent) = visible
 
@@ -36,6 +46,16 @@ class RepairDisplay(
         tiles.firstOrNull {
             it.isInterestedIn(pointerEvent)
         }?.click()
+
+        if (abortButton.isInterestedIn(pointerEvent)) {
+            abortButton.handlePointerDown(pointerEvent)
+        }
+    }
+
+    override fun handlePointerUp(pointerEvent: PointerEvent) {
+        if (abortButton.isInterestedIn(pointerEvent)) {
+            abortButton.handlePointerUp(pointerEvent)
+        }
     }
 
     fun draw(powerSettings: PowerMessage) {
@@ -70,6 +90,8 @@ class RepairDisplay(
         drawEnd(dim, repairProgress)
 
         restore()
+
+        abortButton.draw()
     }
 
     private fun CanvasRenderingContext2D.drawHeader(
