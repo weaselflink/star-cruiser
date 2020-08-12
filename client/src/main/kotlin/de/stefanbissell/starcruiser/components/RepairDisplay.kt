@@ -16,9 +16,9 @@ import org.w3c.dom.HTMLCanvasElement
 
 class RepairDisplay(
     val canvas: HTMLCanvasElement,
-    val xExpr: (CanvasDimensions) -> Double = { it.width * 0.5 - it.vmin * 37 },
+    val xExpr: (CanvasDimensions) -> Double = { it.width * 0.5 - it.vmin * 42 },
     val yExpr: (CanvasDimensions) -> Double = { it.height * 0.5 + it.vmin * 17 },
-    val widthExpr: (CanvasDimensions) -> Double = { it.vmin * 74 },
+    val widthExpr: (CanvasDimensions) -> Double = { it.vmin * 84 },
     val heightExpr: (CanvasDimensions) -> Double = { it.vmin * 34 }
 ) : PointerEventHandler {
 
@@ -35,25 +35,15 @@ class RepairDisplay(
     }
 
     fun draw(powerSettings: PowerMessage) {
-        if (powerSettings.repairProgress != null) {
-            visible = true
-            parseTiles(powerSettings.repairProgress!!)
-            ctx.draw()
-        } else {
-            visible = false
+        visible = powerSettings.repairProgress != null
+
+        powerSettings.repairProgress?.also {
+            parseTiles(it)
+            ctx.draw(it)
         }
     }
 
-    private fun parseTiles(repairProgress: RepairProgressMessage) {
-        tiles.clear()
-        repairProgress.tiles.split(";").forEachIndexed { rowIndex, row ->
-            row.split(",").forEachIndexed { columnIndex, tile ->
-                tiles += Tile(columnIndex, rowIndex, tile)
-            }
-        }
-    }
-
-    private fun CanvasRenderingContext2D.draw() {
+    private fun CanvasRenderingContext2D.draw(repairProgress: RepairProgressMessage) {
         val dim = ComponentDimensions.calculateRect(canvas, xExpr, yExpr, widthExpr, heightExpr)
 
         save()
@@ -69,9 +59,60 @@ class RepairDisplay(
         drawRect(dim)
         stroke()
 
+        drawStart(dim, repairProgress)
         tiles.forEach { it.drawTile(dim) }
+        drawEnd(dim, repairProgress)
 
         restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawStart(
+        dim: ComponentDimensions,
+        repairProgress: RepairProgressMessage
+    ) {
+        val x = dim.bottomX + 5.vmin
+        val y = dim.bottomY - dim.height + 9.vmin + repairProgress.start * 8.vmin
+
+        save()
+
+        strokeStyle = "#ccc"
+        lineWidth = UiStyle.buttonLineWidth.vmin
+
+        beginPath()
+        moveTo(x, y)
+        lineTo(x + 5.vmin, y)
+        stroke()
+
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawEnd(
+        dim: ComponentDimensions,
+        repairProgress: RepairProgressMessage
+    ) {
+        val x = dim.bottomX + dim.width - 10.vmin
+        val y = dim.bottomY - dim.height + 9.vmin + repairProgress.end * 8.vmin
+
+        save()
+
+        strokeStyle = UiStyle.buttonForegroundColor
+        lineWidth = UiStyle.buttonLineWidth.vmin
+
+        beginPath()
+        moveTo(x, y)
+        lineTo(x + 5.vmin, y)
+        stroke()
+
+        restore()
+    }
+
+    private fun parseTiles(repairProgress: RepairProgressMessage) {
+        tiles.clear()
+        repairProgress.tiles.split(";").forEachIndexed { rowIndex, row ->
+            row.split(",").forEachIndexed { columnIndex, tile ->
+                tiles += Tile(columnIndex, rowIndex, tile)
+            }
+        }
     }
 
     private val Int.vmin
@@ -96,7 +137,7 @@ class RepairDisplay(
         ) {
             width = 8.vmin
             height = 8.vmin
-            x = dim.bottomX + 5.vmin + column * width
+            x = dim.bottomX + 10.vmin + column * width
             y = dim.bottomY - dim.height + 5.vmin + row * height
 
             with(ctx) {
