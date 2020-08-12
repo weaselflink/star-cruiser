@@ -190,13 +190,13 @@ class CircuitPathGameTest {
             """
                  ┌─┐
                  └┐┐X
-                X│┘│
+                X─┘│
                 """
         )
 
         expectThat(
             game.encodedTiles
-        ).isEqualTo("12,13,23;01,23,23;02,03,02")
+        ).isEqualTo("+12,+13,+23;+01,+23,23;+13,+03,02")
     }
 
     @Test

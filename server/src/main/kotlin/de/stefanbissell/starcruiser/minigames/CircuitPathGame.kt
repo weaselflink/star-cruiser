@@ -12,32 +12,22 @@ class CircuitPathGame(
 
     val tiles = mutableListOf<Tile>()
     val isSolved: Boolean
-        get() {
-            val marked = mutableListOf(Tile(start.first, start.second, TileType.FULL))
-            val unmarked = mutableListOf(Tile(end.first, end.second, TileType.FULL)).also {
-                it.addAll(tiles)
-            }
-            var newlyMarked = unmarked.filter { candidate ->
-                marked.any { it.connectsTo(candidate) }
-            }
-            while (newlyMarked.isNotEmpty()) {
-                unmarked.removeAll(newlyMarked)
-                marked.addAll(newlyMarked)
-
-                newlyMarked = unmarked.filter { candidate ->
-                    marked.any { it.connectsTo(candidate) }
-                }
-            }
-            return marked.contains(Tile(end.first, end.second, TileType.FULL))
-        }
+        get() = markReachedTiles().contains(Tile(end.first, end.second, TileType.FULL))
     val encodedTiles: String
-        get() =
-            (0 until height).joinToString(";") { row ->
+        get() {
+            val reached = markReachedTiles()
+
+            return (0 until height).joinToString(";") { row ->
                 tiles.filter { it.row == row }
-                    .sortedBy { it.column }
-                    .map { it.connections }
-                    .joinToString(",") { it.joinToString("") }
+                    .sortedBy { it.column }.joinToString(",") { tile ->
+                        if (reached.any { it.column == tile.column && it.row == tile.row }) {
+                            "+" + tile.connections.joinToString("")
+                        } else {
+                            tile.connections.joinToString("")
+                        }
+                    }
             }
+        }
 
     fun rotateTile(column: Int, row: Int) {
         tiles.firstOrNull { it.column == column && it.row == row }
@@ -58,6 +48,25 @@ class CircuitPathGame(
         tiles.forEach {
             it.rotation = Random.nextInt(4)
         }
+    }
+
+    private fun markReachedTiles(): MutableList<Tile> {
+        val marked = mutableListOf(Tile(start.first, start.second, TileType.FULL))
+        val unmarked = mutableListOf(Tile(end.first, end.second, TileType.FULL)).also {
+            it.addAll(tiles)
+        }
+        var newlyMarked = unmarked.filter { candidate ->
+            marked.any { it.connectsTo(candidate) }
+        }
+        while (newlyMarked.isNotEmpty()) {
+            unmarked.removeAll(newlyMarked)
+            marked.addAll(newlyMarked)
+
+            newlyMarked = unmarked.filter { candidate ->
+                marked.any { it.connectsTo(candidate) }
+            }
+        }
+        return marked
     }
 
     companion object {
