@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.components
 import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.PowerMessage
+import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.RepairProgressMessage
 import de.stefanbissell.starcruiser.circle
 import de.stefanbissell.starcruiser.clientSocket
@@ -12,15 +13,17 @@ import de.stefanbissell.starcruiser.drawRect
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandler
 import de.stefanbissell.starcruiser.send
+import org.w3c.dom.BOTTOM
 import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HTMLCanvasElement
 
 class RepairDisplay(
     val canvas: HTMLCanvasElement,
     val xExpr: (CanvasDimensions) -> Double = { it.width * 0.5 - it.vmin * 42 },
-    val yExpr: (CanvasDimensions) -> Double = { it.height * 0.5 + it.vmin * 17 },
+    val yExpr: (CanvasDimensions) -> Double = { it.height * 0.5 + it.vmin * 25 },
     val widthExpr: (CanvasDimensions) -> Double = { it.vmin * 84 },
-    val heightExpr: (CanvasDimensions) -> Double = { it.vmin * 34 }
+    val heightExpr: (CanvasDimensions) -> Double = { it.vmin * 50 }
 ) : PointerEventHandler {
 
     private val ctx = canvas.context2D
@@ -60,9 +63,30 @@ class RepairDisplay(
         drawRect(dim)
         stroke()
 
+        drawHeader(dim, repairProgress.type)
+
         drawStart(dim, repairProgress)
         tiles.forEach { it.drawTile(dim) }
         drawEnd(dim, repairProgress)
+
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawHeader(
+        dim: ComponentDimensions,
+        type: PoweredSystemType
+    ) {
+        val x = dim.bottomX + 5.vmin
+        val y = dim.bottomY - dim.height + 10.vmin
+
+        val text = "Repairing ${type.label}"
+
+        save()
+
+        font = UiStyle.font(5.vmin)
+        textBaseline = CanvasTextBaseline.BOTTOM
+        fillStyle = UiStyle.buttonForegroundColor
+        fillText(text, x, y)
 
         restore()
     }
@@ -72,7 +96,7 @@ class RepairDisplay(
         repairProgress: RepairProgressMessage
     ) {
         val x = dim.bottomX + 5.vmin
-        val y = dim.bottomY - dim.height + 9.vmin + repairProgress.start * 8.vmin
+        val y = dim.bottomY - dim.height + 15.vmin + 4.vmin + repairProgress.start * 8.vmin
 
         save()
 
@@ -97,7 +121,7 @@ class RepairDisplay(
         repairProgress: RepairProgressMessage
     ) {
         val x = dim.bottomX + dim.width - 5.vmin
-        val y = dim.bottomY - dim.height + 9.vmin + repairProgress.end * 8.vmin
+        val y = dim.bottomY - dim.height + 15.vmin + 4.vmin + repairProgress.end * 8.vmin
 
         save()
 
@@ -153,7 +177,7 @@ class RepairDisplay(
             width = 8.vmin
             height = 8.vmin
             x = dim.bottomX + 10.vmin + column * width
-            y = dim.bottomY - dim.height + 5.vmin + row * height
+            y = dim.bottomY - dim.height + 15.vmin + row * height
 
             with(ctx) {
                 drawTileBackground()

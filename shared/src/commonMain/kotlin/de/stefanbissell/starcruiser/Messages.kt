@@ -375,14 +375,19 @@ sealed class JumpDriveMessage {
 }
 
 @Serializable
-enum class PoweredSystemType {
+enum class PoweredSystemType(
+    private val labelOverride: String? = null
+) {
     Sensors,
     Maneuver,
-    Impulse,
-    Jump,
+    Impulse("Impulse Engines"),
+    Jump("Jump Drive"),
     Shields,
     Weapons,
     Reactor;
+
+    val label: String
+        get() = labelOverride ?: name
 
     companion object {
         fun random(): PoweredSystemType = values()[Random.nextInt(values().size)]
