@@ -1,6 +1,5 @@
 package de.stefanbissell.starcruiser.minigames
 
-import kotlin.math.abs
 import kotlin.random.Random
 
 class CircuitPathGame(
@@ -260,8 +259,7 @@ class PathFinder(
     ) {
 
         fun isNextTo(other: Step) {
-            (column == other.column && abs(row - other.row) == 1) ||
-                (abs(column - other.column) == 1 && row == other.row)
+            (0..3).any { next(it) == other }
         }
 
         fun next(direction: Int) =
