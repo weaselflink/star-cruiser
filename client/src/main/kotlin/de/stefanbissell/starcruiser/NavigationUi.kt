@@ -46,7 +46,7 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
             zoomSlider,
             addWaypointButton,
             selectionDetails,
-            navigationMap.MapPointerEventHandler()
+            navigationMap
         )
     }
 

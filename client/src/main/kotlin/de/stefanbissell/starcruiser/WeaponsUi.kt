@@ -43,9 +43,9 @@ class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
 
     init {
         pointerEventDispatcher.addHandlers(
-            shortRangeScope.rotateButton,
             lockTargetButton,
-            shieldsButton
+            shieldsButton,
+            shortRangeScope
         )
     }
 

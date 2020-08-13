@@ -23,6 +23,7 @@ import de.stefanbissell.starcruiser.environmentContactStyle
 import de.stefanbissell.starcruiser.friendlyContactStyle
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandler
+import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.scanProgressStyle
 import de.stefanbissell.starcruiser.selectionMarkerStyle
 import de.stefanbissell.starcruiser.shipStyle
@@ -40,7 +41,7 @@ import kotlin.math.roundToInt
 class NavigationMap(
     private val canvas: HTMLCanvasElement,
     private val mapClickListener: (MapClick) -> Unit = {}
-) {
+) : PointerEventHandlerParent() {
 
     private val ctx = canvas.context2D
     private var dim = CanvasDimensions(100, 100)
@@ -62,6 +63,10 @@ class NavigationMap(
     private var contacts: List<MapContactMessage> = emptyList()
     private var asteroids: List<AsteroidMessage> = emptyList()
     private var waypoints: List<WaypointMessage> = emptyList()
+
+    init {
+        addChildren(MapPointerEventHandler())
+    }
 
     fun zoomIn() {
         scaleSetting = (scaleSetting - 1).clamp(0, 6)
@@ -253,7 +258,7 @@ class NavigationMap(
 
     private fun canvasCenter() = Vector2(canvas.width * 0.5, canvas.height * 0.5)
 
-    inner class MapPointerEventHandler : PointerEventHandler {
+    private inner class MapPointerEventHandler : PointerEventHandler {
 
         private var firstEvent: Vector2? = null
         private var previousEvent: Vector2? = null

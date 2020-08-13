@@ -75,7 +75,7 @@ class HelmUi : CanvasUi(Station.Helm, "helm-ui") {
             jumpSlider,
             rudderSlider,
             jumpButton,
-            shortRangeScope.rotateButton
+            shortRangeScope
         )
     }
 

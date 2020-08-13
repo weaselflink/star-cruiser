@@ -21,7 +21,9 @@ import de.stefanbissell.starcruiser.drawShipSymbol
 import de.stefanbissell.starcruiser.environmentContactStyle
 import de.stefanbissell.starcruiser.friendlyContactStyle
 import de.stefanbissell.starcruiser.historyStyle
-import de.stefanbissell.starcruiser.input.toVector2
+import de.stefanbissell.starcruiser.input.PointerEvent
+import de.stefanbissell.starcruiser.input.PointerEventHandler
+import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.lockMarkerStyle
 import de.stefanbissell.starcruiser.pad
 import de.stefanbissell.starcruiser.shipStyle
@@ -39,7 +41,6 @@ import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.MIDDLE
 import org.w3c.dom.ROUND
-import org.w3c.dom.events.MouseEvent
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -50,7 +51,7 @@ class ShortRangeScope(
     private val showLocks: Boolean = false,
     private val showRotateButton: Boolean = true,
     private val scopeClickListener: ((ObjectId) -> Unit)? = null
-) {
+) : PointerEventHandlerParent() {
 
     private val ctx = canvas.context2D
     private var dim = canvas.dimensions()
@@ -58,7 +59,7 @@ class ShortRangeScope(
     private var scopeRadius = dim.vmin * 47
     private var lastSnapshot: ShortRangeScopeStation? = null
 
-    val rotateButton = CanvasButton(
+    private val rotateButton = CanvasButton(
         canvas = canvas,
         xExpr = { it.width * 0.5 + it.vmin * 20 },
         yExpr = { it.height * 0.5 - it.vmin * 38 },
@@ -74,7 +75,7 @@ class ShortRangeScope(
     )
 
     init {
-        canvas.onclick = { scopeClicked(it) }
+        addChildren(rotateButton, ScopePointerEventHandler())
     }
 
     fun draw(snapshot: ShortRangeScopeStation) {
@@ -85,13 +86,13 @@ class ShortRangeScope(
         ctx.draw(snapshot)
     }
 
-    private fun scopeClicked(mouseEvent: MouseEvent) {
+    private fun scopeClicked(pointerEvent: PointerEvent) {
         if (scopeClickListener == null) return
 
-        val mouseOnScope = mouseEvent.adjustForScope()
+        val pointerOnScope = pointerEvent.adjustForScope()
 
         lastSnapshot?.contacts.orEmpty().map {
-            it to (it.relativePosition.adjustForScope() - mouseOnScope).length()
+            it to (it.relativePosition.adjustForScope() - pointerOnScope).length()
         }.filter {
             it.second <= 20.0
         }.minBy {
@@ -101,9 +102,9 @@ class ShortRangeScope(
         }
     }
 
-    private fun MouseEvent.adjustForScope(): Vector2 {
+    private fun PointerEvent.adjustForScope(): Vector2 {
         val center = Vector2(dim.width * 0.5, dim.height * 0.5)
-        return (toVector2() - center).rotate(-scopeRotation)
+        return (point - center).rotate(-scopeRotation)
     }
 
     private fun CanvasRenderingContext2D.draw(snapshot: ShortRangeScopeStation) {
@@ -454,6 +455,13 @@ class ShortRangeScope(
             val freeOffset = (0..offsets.size + 1).first { !offsets.contains(it) }
             added += angle to freeOffset
             return freeOffset
+        }
+    }
+
+    private inner class ScopePointerEventHandler : PointerEventHandler {
+
+        override fun handlePointerDown(pointerEvent: PointerEvent) {
+            scopeClicked(pointerEvent)
         }
     }
 }
