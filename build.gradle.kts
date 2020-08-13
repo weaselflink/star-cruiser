@@ -22,7 +22,7 @@ plugins {
 
 allprojects {
     group = "de.stefanbissell.starcruiser"
-    version = "0.19.0"
+    version = "0.20.0"
 
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
