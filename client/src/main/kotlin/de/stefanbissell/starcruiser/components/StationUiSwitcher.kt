@@ -3,8 +3,10 @@ package de.stefanbissell.starcruiser.components
 import de.stefanbissell.starcruiser.Station
 
 class StationUiSwitcher(
-    private val stations: List<StationUi>
+    vararg stationList: StationUi
 ) {
+
+    private val stations: List<StationUi> = stationList.toList()
 
     init {
         stations.forEach { it.hide() }

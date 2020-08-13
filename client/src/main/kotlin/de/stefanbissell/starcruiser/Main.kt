@@ -37,13 +37,11 @@ fun init() {
     engineeringUi = EngineeringUi()
     mainScreenUi = MainScreenUi()
     stationUiSwitcher = StationUiSwitcher(
-        listOf(
-            helmUi,
-            weaponsUi,
-            navigationUi,
-            engineeringUi,
-            mainScreenUi
-        )
+        helmUi,
+        weaponsUi,
+        navigationUi,
+        engineeringUi,
+        mainScreenUi
     )
 
     commonShipUi = CommonShipUi().apply {
