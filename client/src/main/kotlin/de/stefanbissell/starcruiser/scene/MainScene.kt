@@ -5,6 +5,7 @@ import de.stefanbissell.starcruiser.CameraMessage
 import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Vector2
+import kotlinx.browser.window
 import three.cameras.PerspectiveCamera
 import three.lights.AmbientLight
 import three.lights.DirectionalLight
@@ -16,7 +17,6 @@ import three.plusAssign
 import three.scenes.Scene
 import three.set
 import three.updateSize
-import kotlin.browser.window
 import kotlin.math.PI
 import kotlin.math.max
 

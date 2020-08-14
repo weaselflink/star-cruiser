@@ -1,22 +1,21 @@
 package de.stefanbissell.starcruiser
 
-import kotlinx.serialization.Decoder
-import kotlinx.serialization.Encoder
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.PrimitiveDescriptor
-import kotlinx.serialization.PrimitiveKind
-import kotlinx.serialization.SerialDescriptor
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import kotlin.random.Random
 
-val jsonConfiguration = JsonConfiguration.Stable.copy(
-    encodeDefaults = true,
-    isLenient = true,
+val configuredJson = Json {
+    encodeDefaults = true
+    isLenient = true
     prettyPrint = true
-)
+}
 
 interface Identifiable {
     val id: ObjectId
@@ -35,7 +34,7 @@ data class ObjectId(val id: String) {
 
     @Serializer(forClass = ObjectId::class)
     companion object : KSerializer<ObjectId> {
-        override val descriptor: SerialDescriptor = PrimitiveDescriptor("ShipId", PrimitiveKind.STRING)
+        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ShipId", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: ObjectId) {
             encoder.encodeString(value.id)
@@ -54,10 +53,10 @@ data class GameStateMessage(
     val counter: Long,
     val snapshot: SnapshotMessage
 ) {
-    fun toJson(): String = Json(jsonConfiguration).stringify(serializer(), this)
+    fun toJson(): String = configuredJson.encodeToString(serializer(), this)
 
     companion object {
-        fun parse(input: String): GameStateMessage = Json(jsonConfiguration).parse(serializer(), input)
+        fun parse(input: String): GameStateMessage = configuredJson.decodeFromString(serializer(), input)
     }
 }
 

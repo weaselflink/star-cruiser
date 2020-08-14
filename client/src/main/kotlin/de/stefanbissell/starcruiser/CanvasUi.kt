@@ -2,8 +2,8 @@ package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.components.StationUi
 import de.stefanbissell.starcruiser.input.PointerEventDispatcher
+import kotlinx.browser.document
 import org.w3c.dom.HTMLCanvasElement
-import kotlin.browser.document
 
 open class CanvasUi(
     override val station: Station,

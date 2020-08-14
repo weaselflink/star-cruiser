@@ -1,7 +1,6 @@
 package de.stefanbissell.starcruiser
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 
 @Serializable
 sealed class Command {
@@ -78,10 +77,10 @@ sealed class Command {
     @Serializable
     data class CommandMainScreenView(val mainScreenView: MainScreenView) : Command()
 
-    fun toJson() = Json(jsonConfiguration).stringify(serializer(), this)
+    fun toJson() = configuredJson.encodeToString(serializer(), this)
 
     companion object {
-        fun parse(input: String): Command = Json(jsonConfiguration).parse(serializer(), input)
+        fun parse(input: String): Command = configuredJson.decodeFromString(serializer(), input)
     }
 }
 

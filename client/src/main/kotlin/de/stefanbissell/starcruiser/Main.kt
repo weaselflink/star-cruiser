@@ -1,9 +1,9 @@
 package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.components.StationUiSwitcher
+import kotlinx.browser.document
+import kotlinx.browser.window
 import org.w3c.dom.events.KeyboardEvent
-import kotlin.browser.document
-import kotlin.browser.window
 
 lateinit var commonShipUi: CommonShipUi
 lateinit var joinUi: JoinUi

@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser.scene
 
 import de.stefanbissell.starcruiser.context2D
+import kotlinx.browser.document
 import org.w3c.dom.HTMLCanvasElement
 import three.AdditiveBlending
 import three.DoubleSide
@@ -12,7 +13,6 @@ import three.materials.MaterialParameters
 import three.materials.MeshBasicMaterial
 import three.objects.Mesh
 import three.textures.Texture
-import kotlin.browser.document
 import kotlin.math.PI
 
 class LaserBeam(

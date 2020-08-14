@@ -5,11 +5,11 @@ import de.stefanbissell.starcruiser.Station.Helm
 import de.stefanbissell.starcruiser.Station.MainScreen
 import de.stefanbissell.starcruiser.Station.Navigation
 import de.stefanbissell.starcruiser.Station.Weapons
+import kotlinx.browser.document
+import kotlinx.dom.addClass
+import kotlinx.dom.removeClass
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
-import kotlin.browser.document
-import kotlin.dom.addClass
-import kotlin.dom.removeClass
 
 class CommonShipUi {
 

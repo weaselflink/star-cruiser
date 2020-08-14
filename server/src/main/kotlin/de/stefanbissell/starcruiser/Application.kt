@@ -10,7 +10,6 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.http.cio.websocket.pingPeriod
 import io.ktor.http.cio.websocket.timeout
 import io.ktor.routing.routing
-import io.ktor.serialization.json
 import io.ktor.server.netty.EngineMain
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
@@ -49,7 +48,7 @@ fun Application.module() {
     }
 
     install(ContentNegotiation) {
-        json(jsonConfiguration)
+        configuredJson
     }
 
     routing {

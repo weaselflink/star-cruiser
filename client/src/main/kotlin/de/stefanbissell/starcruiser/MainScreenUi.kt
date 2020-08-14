@@ -5,12 +5,12 @@ import de.stefanbissell.starcruiser.components.ShortRangeScope
 import de.stefanbissell.starcruiser.components.StationUi
 import de.stefanbissell.starcruiser.input.PointerEventDispatcher
 import de.stefanbissell.starcruiser.scene.MainScene
+import kotlinx.browser.document
+import kotlinx.browser.window
 import org.w3c.dom.HTMLCanvasElement
 import three.cameras.Camera
 import three.renderers.WebGLRenderer
 import three.renderers.WebGLRendererParams
-import kotlin.browser.document
-import kotlin.browser.window
 
 class MainScreenUi : StationUi {
 

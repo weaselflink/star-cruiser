@@ -1,7 +1,7 @@
 package de.stefanbissell.starcruiser
 
+import kotlinx.browser.window
 import org.w3c.dom.WebSocket
-import kotlin.browser.window
 
 var clientSocket: WebSocket? = null
 var state: GameStateMessage? = null

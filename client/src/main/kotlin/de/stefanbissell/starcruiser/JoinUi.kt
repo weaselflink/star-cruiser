@@ -1,12 +1,12 @@
 package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.Station.Helm
+import kotlinx.browser.document
+import kotlinx.dom.addClass
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.asList
 import org.w3c.dom.events.MouseEvent
-import kotlin.browser.document
-import kotlin.dom.addClass
 import kotlin.math.max
 import kotlin.math.min
 
