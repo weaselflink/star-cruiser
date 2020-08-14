@@ -1,4 +1,3 @@
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 fun isNonStable(version: String): Boolean {
     val stableKeywords = listOf("release", "final", "ga").any { version.toLowerCase().contains(it) }
@@ -36,14 +35,10 @@ allprojects {
     }
 
     tasks {
-        withType<DependencyUpdatesTask> {
+        dependencyUpdates {
             rejectVersionIf {
                 isNonStable(candidate.version)
             }
         }
-    }
-
-    ktlint {
-        version.set("0.37.2")
     }
 }
