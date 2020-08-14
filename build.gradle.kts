@@ -1,3 +1,5 @@
+@file:Suppress("LocalVariableName")
+
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 fun isNonStable(version: String): Boolean {
@@ -11,13 +13,13 @@ fun isNonStable(version: String): Boolean {
 }
 
 plugins {
-    kotlin("multiplatform") version "1.3.72" apply false
-    kotlin("jvm") version "1.3.72" apply false
-    kotlin("js") version "1.3.72" apply false
-    kotlin("plugin.serialization") version "1.3.72" apply false
-    id("com.github.johnrengelman.shadow") version "6.0.0" apply false
-    id("com.github.ben-manes.versions") version "0.29.0"
-    id("org.jlleitschuh.gradle.ktlint") version "9.3.0"
+    kotlin("multiplatform") apply false
+    kotlin("jvm") apply false
+    kotlin("js") apply false
+    kotlin("plugin.serialization") apply false
+    id("com.github.johnrengelman.shadow") apply false
+    id("com.github.ben-manes.versions")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 allprojects {
@@ -25,6 +27,7 @@ allprojects {
     version = "0.20.0"
 
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
+    apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     repositories {
