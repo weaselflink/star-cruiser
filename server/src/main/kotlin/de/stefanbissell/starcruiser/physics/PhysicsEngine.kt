@@ -148,7 +148,7 @@ class PhysicsEngine {
 
     private fun World.createBody(block: BodyDef.() -> Unit): Body = createBody(BodyDef().apply(block))
 
-    private inner class ObstructionHolder : RayCastCallback {
+    private class ObstructionHolder : RayCastCallback {
 
         val obstructions = mutableListOf<ObjectId>()
 

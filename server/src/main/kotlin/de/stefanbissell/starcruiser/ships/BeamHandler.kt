@@ -92,7 +92,7 @@ class BeamHandler(
     private fun unobstructed(target: Ship, ship: Ship, physicsEngine: PhysicsEngine): Boolean {
         val ignore = listOf(ship.id, target.id)
         val obstructions = physicsEngine.findObstructions(getBeamPosition(ship), target.position, ignore)
-        return obstructions.size == 0
+        return obstructions.isEmpty()
     }
 
     private fun getBeamPosition(ship: Ship) = ship.position + (position2d.rotate(ship.rotation))

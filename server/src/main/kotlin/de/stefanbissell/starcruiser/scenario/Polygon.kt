@@ -21,8 +21,8 @@ data class Polygon(
 
     override val boundingBox: Box =
         Box(
-            Vector2(border.map { it.x }.min()!!, border.map { it.y }.min()!!),
-            Vector2(border.map { it.x }.max()!!, border.map { it.y }.max()!!)
+            Vector2(border.map { it.x }.minOrNull()!!, border.map { it.y }.minOrNull()!!),
+            Vector2(border.map { it.x }.maxOrNull()!!, border.map { it.y }.maxOrNull()!!)
         )
 
     override fun isInside(point: Vector2): Boolean {

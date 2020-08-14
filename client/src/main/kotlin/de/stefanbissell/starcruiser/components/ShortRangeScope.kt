@@ -95,7 +95,7 @@ class ShortRangeScope(
             it to (it.relativePosition.adjustForScope() - pointerOnScope).length()
         }.filter {
             it.second <= 20.0
-        }.minBy {
+        }.minByOrNull {
             it.second
         }?.also {
             scopeClickListener.invoke(it.first.id)
@@ -445,7 +445,7 @@ class ShortRangeScope(
     private val shortRangeScopeRange
         get() = lastSnapshot?.shortRangeScope?.shortRangeScopeRange ?: 100.0
 
-    private inner class WaypointConflictHandler {
+    private class WaypointConflictHandler {
         private val added = mutableListOf<Pair<Double, Int>>()
 
         fun addWaypoint(angle: Double): Int {

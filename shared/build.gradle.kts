@@ -12,9 +12,8 @@ plugins {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
-                implementation(kotlin("stdlib-common"))
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlin_serialization_version")
             }
         }
@@ -26,7 +25,6 @@ kotlin {
         compilations["main"].defaultSourceSet {
             dependencies {
                 implementation(kotlin("stdlib-jdk8"))
-                implementation("io.ktor:ktor-serialization:$ktor_version")
             }
         }
 
@@ -50,13 +48,6 @@ kotlin {
 
     js {
         browser()
-
-        compilations["main"].defaultSourceSet {
-            dependencies {
-                implementation(kotlin("stdlib-js"))
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlin_serialization_version")
-            }
-        }
     }
 }
 

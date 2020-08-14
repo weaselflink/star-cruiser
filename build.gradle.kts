@@ -1,5 +1,3 @@
-@file:Suppress("LocalVariableName")
-
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 fun isNonStable(version: String): Boolean {
