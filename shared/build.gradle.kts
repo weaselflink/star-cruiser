@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val kotlin_version: String by project
 val ktor_version: String by project
+val kotlin_serialization_version: String by project
 
 plugins {
     kotlin("multiplatform")
@@ -14,7 +15,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.20.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlin_serialization_version")
             }
         }
     }
@@ -53,7 +54,7 @@ kotlin {
         compilations["main"].defaultSourceSet {
             dependencies {
                 implementation(kotlin("stdlib-js"))
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.20.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlin_serialization_version")
             }
         }
     }
