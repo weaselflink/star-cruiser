@@ -51,6 +51,9 @@ class ShipTest {
         } returns BodyParameters(
             position = Vector2(3, -4)
         )
+        every {
+            physicsEngine.findObstructions(any(), any(), any())
+        } returns emptyList()
     }
 
     @Test
