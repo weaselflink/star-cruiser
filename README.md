@@ -2,6 +2,7 @@
 ![Last commit](https://img.shields.io/github/last-commit/weaselflink/star-cruiser)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/weaselflink/star-cruiser?style=flat-square)
 ![Using Kotlin 1.4.0-rc](https://img.shields.io/badge/kotlin-1.4.0--rc-blue)
+![License GPLv3](https://img.shields.io/github/license/weaselflink/star-cruiser)
 
 ## Star Cruiser Crew Simulator
 
