@@ -5,7 +5,7 @@ import de.stefanbissell.starcruiser.components.PowerDisplay
 import de.stefanbissell.starcruiser.components.RepairDisplay
 import org.w3c.dom.CanvasRenderingContext2D
 
-class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
+class EngineeringUi : CanvasUi(Station.Engineering) {
 
     private val capacitorsDisplay = CapacitorsDisplay(canvas)
     private val repairDisplay = RepairDisplay(canvas)
@@ -18,8 +18,8 @@ class EngineeringUi : CanvasUi(Station.Engineering, "engineering-ui") {
     }.associate { it.first to it.second }
 
     init {
-        pointerEventDispatcher.addHandlers(repairDisplay)
-        pointerEventDispatcher.addHandlers(powerDisplays.values)
+        addChildren(repairDisplay)
+        addChildren(powerDisplays.values)
     }
 
     fun draw(snapshot: SnapshotMessage.Engineering) {

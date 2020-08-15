@@ -11,7 +11,7 @@ import de.stefanbissell.starcruiser.components.SelectionDetails
 import de.stefanbissell.starcruiser.components.UiStyle
 import org.w3c.dom.CanvasRenderingContext2D
 
-class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
+class NavigationUi : CanvasUi(Station.Navigation) {
 
     private val navigationMap = NavigationMap(canvas) { handleMapClick(it) }
     private val selectionDetails = SelectionDetails(
@@ -42,7 +42,7 @@ class NavigationUi : CanvasUi(Station.Navigation, "navigation-ui") {
     private var buttonState: ButtonState = ButtonState.Initial
 
     init {
-        pointerEventDispatcher.addHandlers(
+        addChildren(
             zoomSlider,
             addWaypointButton,
             selectionDetails,

@@ -7,7 +7,7 @@ import de.stefanbissell.starcruiser.components.ShieldsDisplay
 import de.stefanbissell.starcruiser.components.ShortRangeScope
 import org.w3c.dom.CanvasRenderingContext2D
 
-class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
+class WeaponsUi : CanvasUi(Station.Weapons) {
 
     private val shortRangeScope = ShortRangeScope(canvas, true) { contactSelected(it) }
     private val lockTargetButton = CanvasButton(
@@ -42,7 +42,7 @@ class WeaponsUi : CanvasUi(Station.Weapons, "weapons-ui") {
     private var selectingTarget = false
 
     init {
-        pointerEventDispatcher.addHandlers(
+        addChildren(
             lockTargetButton,
             shieldsButton,
             shortRangeScope

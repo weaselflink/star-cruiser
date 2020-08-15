@@ -50,11 +50,7 @@ fun init() {
 
     window.requestAnimationFrame { step() }
     window.onresize = {
-        helmUi.resize()
-        weaponsUi.resize()
-        navigationUi.resize()
-        engineeringUi.resize()
-        mainScreenUi.resize()
+        stationUiSwitcher.resize()
     }
 
     createSocket()

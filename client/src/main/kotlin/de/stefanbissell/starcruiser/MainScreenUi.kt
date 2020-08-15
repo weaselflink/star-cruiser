@@ -2,8 +2,6 @@ package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.components.CanvasButton
 import de.stefanbissell.starcruiser.components.ShortRangeScope
-import de.stefanbissell.starcruiser.components.StationUi
-import de.stefanbissell.starcruiser.input.PointerEventDispatcher
 import de.stefanbissell.starcruiser.scene.MainScene
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -12,24 +10,19 @@ import three.cameras.Camera
 import three.renderers.WebGLRenderer
 import three.renderers.WebGLRendererParams
 
-class MainScreenUi : StationUi {
-
-    override val station = Station.MainScreen
+class MainScreenUi : CanvasUi(Station.MainScreen) {
 
     private val root = document.getHtmlElementById("main-screen-ui")
-    private val canvas: HTMLCanvasElement = root.byQuery(".canvas3d")
-    private val overlayCanvas: HTMLCanvasElement = root.byQuery(".canvas2d")
-    private val ctx = overlayCanvas.context2D
+    private val canvas3d: HTMLCanvasElement = root.byQuery(".canvas3d")
     private val renderer = WebGLRenderer(
         WebGLRendererParams(
-            canvas = canvas,
+            canvas = canvas3d,
             antialias = true
         )
     )
     private val mainScene = MainScene()
-    private val pointerEventDispatcher = PointerEventDispatcher(overlayCanvas)
     private val shortRangeScope = ShortRangeScope(
-        canvas = overlayCanvas,
+        canvas = canvas,
         showRotateButton = false
     )
     private var view = MainScreenView.Front
@@ -48,28 +41,27 @@ class MainScreenUi : StationUi {
 
     init {
         resize()
-        pointerEventDispatcher.addHandlers(
+        addChildren(
             frontViewButton,
             topViewButton,
             scopeViewButton
         )
     }
 
-    fun resize() {
+    override fun resize() {
         val windowWidth = window.innerWidth
         val windowHeight = window.innerHeight
 
         renderer.setSize(windowWidth, windowHeight)
         mainScene.updateSize(windowWidth, windowHeight)
-        overlayCanvas.updateSize()
     }
 
     override fun show() {
-        root.visibility = Visibility.visible
+        canvas3d.visibility = Visibility.visible
     }
 
     override fun hide() {
-        root.visibility = Visibility.hidden
+        canvas3d.visibility = Visibility.hidden
     }
 
     fun draw(snapshot: SnapshotMessage.MainScreen) {
@@ -118,7 +110,7 @@ class MainScreenUi : StationUi {
         mainScreenView: MainScreenView,
         xExpr: (CanvasDimensions) -> Double
     ) = CanvasButton(
-        canvas = overlayCanvas,
+        canvas = canvas,
         xExpr = xExpr,
         yExpr = { it.height - it.vmin * 3 },
         widthExpr = { it.vmin * 36 },

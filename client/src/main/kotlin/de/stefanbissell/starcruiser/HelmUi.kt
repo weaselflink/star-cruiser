@@ -13,7 +13,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class HelmUi : CanvasUi(Station.Helm, "helm-ui") {
+class HelmUi : CanvasUi(Station.Helm) {
 
     private val shortRangeScope = ShortRangeScope(canvas)
     private val throttleSlider = CanvasSlider(
@@ -70,7 +70,7 @@ class HelmUi : CanvasUi(Station.Helm, "helm-ui") {
     )
 
     init {
-        pointerEventDispatcher.addHandlers(
+        addChildren(
             throttleSlider,
             jumpSlider,
             rudderSlider,

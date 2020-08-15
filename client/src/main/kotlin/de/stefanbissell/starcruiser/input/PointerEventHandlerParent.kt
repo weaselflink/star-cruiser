@@ -6,6 +6,10 @@ open class PointerEventHandlerParent : PointerEventHandler {
     private var currentHandler: PointerEventHandler? = null
 
     fun addChildren(vararg handlersToAdd: PointerEventHandler) {
+        addChildren(handlersToAdd.toList())
+    }
+
+    fun addChildren(handlersToAdd: Iterable<PointerEventHandler>) {
         handlersToAdd.forEach { handlers += it }
     }
 
