@@ -3,9 +3,10 @@ package de.stefanbissell.starcruiser
 import de.stefanbissell.starcruiser.components.CapacitorsDisplay
 import de.stefanbissell.starcruiser.components.PowerDisplay
 import de.stefanbissell.starcruiser.components.RepairDisplay
+import de.stefanbissell.starcruiser.components.StationUi
 import org.w3c.dom.CanvasRenderingContext2D
 
-class EngineeringUi : CanvasUi(Station.Engineering) {
+class EngineeringUi : StationUi(Station.Engineering) {
 
     private val capacitorsDisplay = CapacitorsDisplay(canvas)
     private val repairDisplay = RepairDisplay(canvas)

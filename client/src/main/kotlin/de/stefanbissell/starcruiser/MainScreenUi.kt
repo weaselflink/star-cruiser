@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.components.CanvasButton
 import de.stefanbissell.starcruiser.components.ShortRangeScope
+import de.stefanbissell.starcruiser.components.StationUi
 import de.stefanbissell.starcruiser.scene.MainScene
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -10,10 +11,9 @@ import three.cameras.Camera
 import three.renderers.WebGLRenderer
 import three.renderers.WebGLRendererParams
 
-class MainScreenUi : CanvasUi(Station.MainScreen) {
+class MainScreenUi : StationUi(Station.MainScreen) {
 
-    private val root = document.getHtmlElementById("main-screen-ui")
-    private val canvas3d: HTMLCanvasElement = root.byQuery(".canvas3d")
+    private val canvas3d = document.body!!.querySelector(".canvas3d") as HTMLCanvasElement
     private val renderer = WebGLRenderer(
         WebGLRendererParams(
             canvas = canvas3d,

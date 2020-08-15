@@ -5,9 +5,10 @@ import de.stefanbissell.starcruiser.components.CanvasButton
 import de.stefanbissell.starcruiser.components.HullDisplay
 import de.stefanbissell.starcruiser.components.ShieldsDisplay
 import de.stefanbissell.starcruiser.components.ShortRangeScope
+import de.stefanbissell.starcruiser.components.StationUi
 import org.w3c.dom.CanvasRenderingContext2D
 
-class WeaponsUi : CanvasUi(Station.Weapons) {
+class WeaponsUi : StationUi(Station.Weapons) {
 
     private val shortRangeScope = ShortRangeScope(canvas, true) { contactSelected(it) }
     private val lockTargetButton = CanvasButton(

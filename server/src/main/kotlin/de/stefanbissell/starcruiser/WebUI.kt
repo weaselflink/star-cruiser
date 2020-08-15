@@ -108,10 +108,10 @@ fun Routing.webUi() {
                 color = white
                 fontFamily = "sans-serif"
             }
-            "body > canvas" {
+            "body .canvas2d" {
                 zIndex = 2
             }
-            "#main-screen-ui .canvas3d" {
+            "body .canvas3d" {
                 zIndex = 1
             }
             "::backdrop" {
@@ -159,11 +159,11 @@ fun Routing.webUi() {
                 }
             }
             body {
-                canvas {}
+                canvas(classes = "canvas2d") {}
+                canvas(classes = "canvas3d") {}
                 joinUi
                 destroyedUi
                 commonShipUi
-                mainScreenUi
             }
         }
     }
@@ -232,12 +232,6 @@ private val BODY.commonShipUi
                 +"Main screen"
             }
         }
-    }
-
-private val BODY.mainScreenUi
-    get() = div {
-        id = "main-screen-ui"
-        canvas(classes = "canvas3d") {}
     }
 
 private fun BODY.htmlUi(divId: String, block: DIV.() -> Unit = {}) {

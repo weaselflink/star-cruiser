@@ -8,12 +8,13 @@ import de.stefanbissell.starcruiser.components.CanvasButton
 import de.stefanbissell.starcruiser.components.CanvasSlider
 import de.stefanbissell.starcruiser.components.JumpDisplay
 import de.stefanbissell.starcruiser.components.ShortRangeScope
+import de.stefanbissell.starcruiser.components.StationUi
 import org.w3c.dom.CanvasRenderingContext2D
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class HelmUi : CanvasUi(Station.Helm) {
+class HelmUi : StationUi(Station.Helm) {
 
     private val shortRangeScope = ShortRangeScope(canvas)
     private val throttleSlider = CanvasSlider(

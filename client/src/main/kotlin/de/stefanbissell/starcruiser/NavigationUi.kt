@@ -8,10 +8,11 @@ import de.stefanbissell.starcruiser.components.CanvasSlider
 import de.stefanbissell.starcruiser.components.MapClick
 import de.stefanbissell.starcruiser.components.NavigationMap
 import de.stefanbissell.starcruiser.components.SelectionDetails
+import de.stefanbissell.starcruiser.components.StationUi
 import de.stefanbissell.starcruiser.components.UiStyle
 import org.w3c.dom.CanvasRenderingContext2D
 
-class NavigationUi : CanvasUi(Station.Navigation) {
+class NavigationUi : StationUi(Station.Navigation) {
 
     private val navigationMap = NavigationMap(canvas) { handleMapClick(it) }
     private val selectionDetails = SelectionDetails(
