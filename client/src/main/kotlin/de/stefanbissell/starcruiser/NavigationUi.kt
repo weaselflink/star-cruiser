@@ -39,6 +39,33 @@ class NavigationUi : StationUi(Station.Navigation) {
         activated = { buttonState == ButtonState.AddWaypoint },
         initialText = "Add waypoint"
     )
+    private val centerButton = CanvasButton(
+        canvas = canvas,
+        xExpr = {
+            if (it.width > it.vmin * 161) {
+                it.vmin * 94
+            } else {
+                it.vmin * 3
+            }
+        },
+        yExpr = {
+            when {
+                it.width > it.vmin * 161 -> {
+                    it.height - it.vmin * 3
+                }
+                it.width > it.vmin * 136 -> {
+                    it.height - it.vmin * 15
+                }
+                else -> {
+                    it.height - it.vmin * 27
+                }
+            }
+        },
+        widthExpr = { it.vmin * 23 },
+        heightExpr = { it.vmin * 10 },
+        onClick = { navigationMap.centerOnShip() },
+        initialText = "Center"
+    )
 
     private var buttonState: ButtonState = ButtonState.Initial
 
@@ -46,6 +73,7 @@ class NavigationUi : StationUi(Station.Navigation) {
         addChildren(
             zoomSlider,
             addWaypointButton,
+            centerButton,
             selectionDetails,
             navigationMap
         )
@@ -72,6 +100,7 @@ class NavigationUi : StationUi(Station.Navigation) {
         navigationMap.draw(snapshot)
         drawZoom()
         addWaypointButton.draw()
+        centerButton.draw()
     }
 
     private fun toggleAddWaypoint() {

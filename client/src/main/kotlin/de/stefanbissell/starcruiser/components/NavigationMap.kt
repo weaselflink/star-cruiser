@@ -60,6 +60,7 @@ class NavigationMap(
     private val scale: Double
         get() = 4.0 / 2.0.pow(scaleSetting.toDouble())
 
+    private var ownPosition = Vector2()
     private var contacts: List<MapContactMessage> = emptyList()
     private var asteroids: List<AsteroidMessage> = emptyList()
     private var waypoints: List<WaypointMessage> = emptyList()
@@ -80,8 +81,13 @@ class NavigationMap(
         scaleSetting = (6.0 - value * 6.0).roundToInt()
     }
 
+    fun centerOnShip() {
+        center = ownPosition
+    }
+
     fun draw(snapshot: SnapshotMessage.Navigation) {
         val ship = snapshot.ship
+        ownPosition = ship.position
         contacts = snapshot.contacts
         asteroids = snapshot.asteroids
         waypoints = ship.waypoints
