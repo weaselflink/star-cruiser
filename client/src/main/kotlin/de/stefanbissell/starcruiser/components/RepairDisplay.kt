@@ -122,14 +122,25 @@ class RepairDisplay(
 
         save()
 
-        strokeStyle = "#eee"
-        fillStyle = strokeStyle
-        lineWidth = UiStyle.buttonLineWidth.vmin
+        drawUnsolvedLine {
+            moveTo(x, y)
+            lineTo(x + 5.vmin, y)
+        }
+
+        fillStyle = UiStyle.buttonForegroundColor
 
         beginPath()
-        moveTo(x, y)
-        lineTo(x + 5.vmin, y)
-        stroke()
+        circle(x, y, 2.5.vmin)
+        fill()
+
+        restore()
+
+        drawSolvedLine {
+            moveTo(x, y)
+            lineTo(x + 5.vmin, y)
+        }
+
+        fillStyle = "#eee"
 
         beginPath()
         circle(x, y, 2.vmin)
@@ -147,22 +158,29 @@ class RepairDisplay(
 
         save()
 
-        strokeStyle = if (repairProgress.solved) {
-            "#eee"
-        } else {
-            UiStyle.buttonForegroundColor
+        drawUnsolvedLine {
+            moveTo(x, y)
+            lineTo(x - 5.vmin, y)
         }
-        fillStyle = strokeStyle
-        lineWidth = UiStyle.buttonLineWidth.vmin
+
+        fillStyle = UiStyle.buttonForegroundColor
 
         beginPath()
-        moveTo(x, y)
-        lineTo(x - 5.vmin, y)
-        stroke()
-
-        beginPath()
-        circle(x, y, 2.vmin)
+        circle(x, y, 2.5.vmin)
         fill()
+
+        if (repairProgress.solved) {
+            drawSolvedLine {
+                moveTo(x, y)
+                lineTo(x - 5.vmin, y)
+            }
+
+            fillStyle = "#eee"
+
+            beginPath()
+            circle(x, y, 2.vmin)
+            fill()
+        }
 
         restore()
     }
@@ -174,6 +192,36 @@ class RepairDisplay(
                 tiles += Tile(columnIndex, rowIndex, tile)
             }
         }
+    }
+
+    private fun CanvasRenderingContext2D.drawSolvedLine(
+        block: CanvasRenderingContext2D.() -> Unit
+    ) {
+        save()
+
+        strokeStyle = "#eee"
+        lineWidth = UiStyle.buttonLineWidth.vmin * 2
+
+        beginPath()
+        block()
+        stroke()
+
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawUnsolvedLine(
+        block: CanvasRenderingContext2D.() -> Unit
+    ) {
+        save()
+
+        strokeStyle = UiStyle.buttonForegroundColor
+        lineWidth = UiStyle.buttonLineWidth.vmin * 4
+
+        beginPath()
+        block()
+        stroke()
+
+        restore()
     }
 
     private val Int.vmin
@@ -203,7 +251,7 @@ class RepairDisplay(
 
             with(ctx) {
                 drawTileBackground()
-                drawTileConnections()
+                drawTileConnections(connections.contains("+"))
             }
         }
 
@@ -217,42 +265,35 @@ class RepairDisplay(
             restore()
         }
 
-        private fun CanvasRenderingContext2D.drawTileConnections() {
+        private fun CanvasRenderingContext2D.drawTileConnections(solved: Boolean) {
             save()
 
-            strokeStyle = if (connections.contains("+")) {
-                "#eee"
-            } else {
-                UiStyle.buttonForegroundColor
+            drawUnsolvedLine {
+                drawTileConnections()
             }
-            lineWidth = UiStyle.buttonLineWidth.vmin
-
-            if (connections.contains("0")) {
-                beginPath()
-                moveTo(x + width * 0.5, y + height * 0.5)
-                lineTo(x + width * 0.5, y)
-                stroke()
-            }
-            if (connections.contains("1")) {
-                beginPath()
-                moveTo(x + width * 0.5, y + height * 0.5)
-                lineTo(x + width, y + height * 0.5)
-                stroke()
-            }
-            if (connections.contains("2")) {
-                beginPath()
-                moveTo(x + width * 0.5, y + height * 0.5)
-                lineTo(x + width * 0.5, y + height)
-                stroke()
-            }
-            if (connections.contains("3")) {
-                beginPath()
-                moveTo(x + width * 0.5, y + height * 0.5)
-                lineTo(x, y + height * 0.5)
-                stroke()
+            if (solved) {
+                drawSolvedLine {
+                    drawTileConnections()
+                }
             }
 
             restore()
+        }
+
+        private fun CanvasRenderingContext2D.drawTileConnections() {
+            when {
+                connections.contains("0") -> moveTo(x + width * 0.5, y)
+                connections.contains("1") -> moveTo(x + width, y + height * 0.5)
+                connections.contains("2") -> moveTo(x + width * 0.5, y + height)
+                connections.contains("3") -> moveTo(x, y + height * 0.5)
+            }
+            lineTo(x + width * 0.5, y + height * 0.5)
+            when {
+                connections.contains("3") -> lineTo(x, y + height * 0.5)
+                connections.contains("2") -> lineTo(x + width * 0.5, y + height)
+                connections.contains("1") -> lineTo(x + width, y + height * 0.5)
+                connections.contains("0") -> lineTo(x + width * 0.5, y)
+            }
         }
 
         fun isInterestedIn(pointerEvent: PointerEvent) =
