@@ -14,9 +14,11 @@ import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandler
 import de.stefanbissell.starcruiser.send
 import org.w3c.dom.BOTTOM
+import org.w3c.dom.CanvasLineJoin
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.ROUND
 
 class RepairDisplay(
     val canvas: HTMLCanvasElement,
@@ -201,6 +203,7 @@ class RepairDisplay(
 
         strokeStyle = "#eee"
         lineWidth = UiStyle.buttonLineWidth.vmin * 2
+        lineJoin = CanvasLineJoin.ROUND
 
         beginPath()
         block()
@@ -216,6 +219,7 @@ class RepairDisplay(
 
         strokeStyle = UiStyle.buttonForegroundColor
         lineWidth = UiStyle.buttonLineWidth.vmin * 4
+        lineJoin = CanvasLineJoin.ROUND
 
         beginPath()
         block()
