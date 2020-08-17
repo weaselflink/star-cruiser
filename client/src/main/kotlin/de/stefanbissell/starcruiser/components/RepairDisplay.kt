@@ -199,26 +199,24 @@ class RepairDisplay(
     private fun CanvasRenderingContext2D.drawSolvedLine(
         block: CanvasRenderingContext2D.() -> Unit
     ) {
-        save()
-
-        strokeStyle = "#eee"
-        lineWidth = UiStyle.buttonLineWidth.vmin * 2
-        lineJoin = CanvasLineJoin.ROUND
-
-        beginPath()
-        block()
-        stroke()
-
-        restore()
+        drawLine("#eee", UiStyle.buttonLineWidth.vmin * 2, block)
     }
 
     private fun CanvasRenderingContext2D.drawUnsolvedLine(
         block: CanvasRenderingContext2D.() -> Unit
     ) {
+        drawLine(UiStyle.buttonForegroundColor, UiStyle.buttonLineWidth.vmin * 4, block)
+    }
+
+    private fun CanvasRenderingContext2D.drawLine(
+        strokeStyleToUse: String,
+        lineWidthToUse: Double,
+        block: CanvasRenderingContext2D.() -> Unit
+    ) {
         save()
 
-        strokeStyle = UiStyle.buttonForegroundColor
-        lineWidth = UiStyle.buttonLineWidth.vmin * 4
+        strokeStyle = strokeStyleToUse
+        lineWidth = lineWidthToUse
         lineJoin = CanvasLineJoin.ROUND
 
         beginPath()
