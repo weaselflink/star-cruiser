@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser
 import kotlin.random.Random
 import kotlin.random.nextUBytes
 
+@Suppress("EXPERIMENTAL_API_USAGE", "EXPERIMENTAL_UNSIGNED_LITERALS")
 class Uuid {
 
     private val bytes: UByteArray

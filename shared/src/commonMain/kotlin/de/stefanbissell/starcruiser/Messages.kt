@@ -32,6 +32,7 @@ interface Positional {
 @Serializable
 data class ObjectId(val id: String) {
 
+    @Suppress("EXPERIMENTAL_API_USAGE")
     @Serializer(forClass = ObjectId::class)
     companion object : KSerializer<ObjectId> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ShipId", PrimitiveKind.STRING)
