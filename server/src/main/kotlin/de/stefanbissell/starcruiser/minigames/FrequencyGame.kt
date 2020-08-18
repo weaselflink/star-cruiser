@@ -9,13 +9,13 @@ class FrequencyGame(
     val tolerance: Double
 ) {
 
-    private val solution: List<Double> = (0 until dimensions).map { Random.nextDouble() }
-    private val input: MutableList<Double> = solution.toMutableList()
+    val solution: List<Double> = (0 until dimensions).map { Random.nextDouble() }
+    val input: MutableList<Double> = solution.toMutableList()
 
     val isSolved: Boolean
         get() = solution
             .mapIndexed { index, value -> abs(value - input[index]) }
-            .sum() < tolerance * dimensions
+            .maxOrNull() ?: 0.0 < tolerance
 
     fun adjustInput(dimension: Int, value: Double) {
         if (dimension >= 0 && dimension < input.size) {
@@ -23,10 +23,25 @@ class FrequencyGame(
         }
     }
 
+    fun randomize() {
+        while (isSolved) {
+            (0 until input.size).forEach {
+                input[it] = Random.nextDouble()
+            }
+        }
+    }
+
     companion object {
-        fun createUnsolved(
+        fun createSolved(
             dimensions: Int,
             tolerance: Double = 0.1
         ) = FrequencyGame(dimensions, tolerance)
+
+        fun createUnsolved(
+            dimensions: Int,
+            tolerance: Double = 0.1
+        ) = createSolved(dimensions, tolerance).apply {
+            randomize()
+        }
     }
 }
