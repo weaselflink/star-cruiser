@@ -14,7 +14,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlin_serialization_version")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlin_serialization_version")
             }
         }
     }
@@ -57,12 +57,14 @@ tasks {
         kotlinOptions {
             jvmTarget = "1.8"
             freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
+            freeCompilerArgs += listOf("-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi")
         }
     }
 
     withType<org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompile>().configureEach {
         kotlinOptions {
             freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
+            freeCompilerArgs += listOf("-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi")
         }
     }
 
@@ -70,12 +72,14 @@ tasks {
         kotlinOptions {
             jvmTarget = "1.8"
             freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
+            freeCompilerArgs += listOf("-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi")
         }
     }
 
     withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>().configureEach {
         kotlinOptions {
             freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
+            freeCompilerArgs += listOf("-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi")
         }
     }
 
