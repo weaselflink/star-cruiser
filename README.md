@@ -9,6 +9,9 @@
 A cooperative game in which players man the stations of a sci-fi spaceship. Each player can only
 control a small part of the ship and relies heavily on information given by the other players.
 
+![Collage of stations](docs/collage.png)
+*All ship stations (from release 0.20.0)*
+
 This project is heavily inspired by games such as 
 [Artemis Spaceship Bridge Simulator](https://artemisspaceshipbridge.com/)(commercial software), 
 [Empty Epsilon](https://daid.github.io/EmptyEpsilon/) (open source, source at https://github.com/daid/EmptyEpsilon)
