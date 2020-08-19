@@ -13,7 +13,7 @@ control a small part of the ship and relies heavily on information given by the 
 *All ship stations (from release 0.20.0)*
 
 This project is heavily inspired by games such as 
-[Artemis Spaceship Bridge Simulator](https://artemisspaceshipbridge.com/)(commercial software), 
+[Artemis Spaceship Bridge Simulator](https://artemisspaceshipbridge.com/) (commercial software), 
 [Empty Epsilon](https://daid.github.io/EmptyEpsilon/) (open source, source at https://github.com/daid/EmptyEpsilon)
 and [Space Nerds In Space](https://smcameron.github.io/space-nerds-in-space/) 
 (open source, source at https://github.com/smcameron/space-nerds-in-space/).
