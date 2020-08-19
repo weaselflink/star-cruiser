@@ -2,8 +2,10 @@ package de.stefanbissell.starcruiser.minigames
 
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.containsExactly
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
+import kotlin.random.Random
 
 class FrequencyGameTest {
 
@@ -41,6 +43,25 @@ class FrequencyGameTest {
         game.adjustInput(1, wrapDouble(game.solution[1] + 0.05))
 
         expectThat(game.isSolved).isTrue()
+    }
+
+    @Test
+    fun `ignores wrong dimension index`() {
+        val game = FrequencyGame.createUnsolved(2)
+        val inputBeforeChanges = game.input.toList()
+        game.adjustInput(-1, Random.nextDouble())
+        game.adjustInput(2, Random.nextDouble())
+
+        expectThat(game.input).containsExactly(inputBeforeChanges)
+    }
+
+    @Test
+    fun `clamps input values`() {
+        val game = FrequencyGame.createUnsolved(2)
+        game.adjustInput(0, -0.1)
+        game.adjustInput(1, 1.1)
+
+        expectThat(game.input).containsExactly(0.0, 1.0)
     }
 
     private fun wrapDouble(value: Double) =
