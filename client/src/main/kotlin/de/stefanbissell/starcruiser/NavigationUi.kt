@@ -7,6 +7,7 @@ import de.stefanbissell.starcruiser.components.CanvasButton
 import de.stefanbissell.starcruiser.components.CanvasSlider
 import de.stefanbissell.starcruiser.components.MapClick
 import de.stefanbissell.starcruiser.components.NavigationMap
+import de.stefanbissell.starcruiser.components.ScanDisplay
 import de.stefanbissell.starcruiser.components.SelectionDetails
 import de.stefanbissell.starcruiser.components.StationUi
 import de.stefanbissell.starcruiser.components.UiStyle
@@ -66,11 +67,13 @@ class NavigationUi : StationUi(Station.Navigation) {
         onClick = { navigationMap.centerOnShip() },
         initialText = "Center"
     )
+    private val scanDisplay = ScanDisplay(canvas)
 
     private var buttonState: ButtonState = ButtonState.Initial
 
     init {
         addChildren(
+            scanDisplay,
             zoomSlider,
             addWaypointButton,
             centerButton,
@@ -91,6 +94,7 @@ class NavigationUi : StationUi(Station.Navigation) {
         ctx.draw(snapshot)
 
         selectionDetails.draw(snapshot.mapSelection)
+        scanDisplay.draw(snapshot.ship.scanProgress)
     }
 
     private fun CanvasRenderingContext2D.draw(snapshot: SnapshotMessage.Navigation) {

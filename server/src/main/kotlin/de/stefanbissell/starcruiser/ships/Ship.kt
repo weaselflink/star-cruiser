@@ -35,7 +35,7 @@ import kotlin.math.abs
 class Ship(
     val id: ObjectId = ObjectId.random(),
     val template: ShipTemplate = cruiserTemplate,
-    private val designation: String = randomShipName(),
+    val designation: String = randomShipName(),
     var position: Vector2 = Vector2(),
     var speed: Vector2 = Vector2(),
     var rotation: Double = 90.0.toRadians(),
@@ -236,11 +236,20 @@ class Ship(
             ) {
                 scanHandler = ScanHandler(
                     targetId = selection.targetId,
-                    scanningSpeed = template.scanSpeed,
                     boostLevel = { Sensors.boostLevel }
                 )
             }
         }
+    }
+
+    fun solveScanGame(dimension: Int, value: Double) {
+        scanHandler?.apply {
+            game.adjustInput(dimension, value)
+        }
+    }
+
+    fun abortScan() {
+        scanHandler = null
     }
 
     fun lockTarget(targetId: ObjectId) {
@@ -310,14 +319,14 @@ class Ship(
             frontCamera = template.frontCamera.toMessage()
         )
 
-    fun toNavigationMessage() =
+    fun toNavigationMessage(shipProvider: (ObjectId) -> Ship?) =
         NavigationShipMessage(
             id = id,
             position = position.twoDigits(),
             rotation = rotation.fiveDigits(),
             history = history.map { it.second.twoDigits() },
             waypoints = waypoints.map { it.toWaypointMessage() },
-            scanProgress = scanHandler?.toMessage()
+            scanProgress = scanHandler?.toMessage(shipProvider)
         )
 
     fun toShortRangeScopeMessage() =

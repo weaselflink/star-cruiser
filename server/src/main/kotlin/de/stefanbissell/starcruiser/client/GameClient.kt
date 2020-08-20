@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser.client
 
 import de.stefanbissell.starcruiser.AbortRepair
+import de.stefanbissell.starcruiser.AbortScan
 import de.stefanbissell.starcruiser.AddWaypoint
 import de.stefanbissell.starcruiser.ApplicationConfig.gameClientMaxInflightMessages
 import de.stefanbissell.starcruiser.ApplicationConfig.gameClientUpdateIntervalMillis
@@ -117,6 +118,9 @@ class GameClient(
                 )
                 is Command.CommandScanSelectedShip -> gameStateActor.send(
                     ScanSelectedShip(id)
+                )
+                is Command.CommandAbortScan -> gameStateActor.send(
+                    AbortScan(id)
                 )
                 is Command.CommandLockTarget -> gameStateActor.send(
                     LockTarget(id, command.targetId)

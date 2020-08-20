@@ -148,7 +148,7 @@ class PowerHandler(
     private fun updateRepairHandler(time: GameTime) {
         repairHandler?.apply {
             update(time)
-            if (solvedTimer > 1.0) {
+            if (isComplete) {
                 getPoweredSystem(type).apply {
                     damage -= shipTemplate.repairAmount
                 }
@@ -217,6 +217,9 @@ private class RepairHandler(
 ) {
     var solvedTimer = 0.0
     val game = CircuitPathGame.createUnsolved(8, 3)
+
+    val isComplete
+        get() = solvedTimer > 1.0
 
     fun update(time: GameTime) {
         if (game.isSolved) {

@@ -42,6 +42,7 @@ class MapSelectShip(val clientId: ClientId, val targetId: ObjectId) : GameStateC
 class AddWaypoint(val clientId: ClientId, val position: Vector2) : GameStateChange()
 class DeleteSelectedWaypoint(val clientId: ClientId) : GameStateChange()
 class ScanSelectedShip(val clientId: ClientId) : GameStateChange()
+class AbortScan(val clientId: ClientId) : GameStateChange()
 class LockTarget(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
 class ToggleShieldsUp(val clientId: ClientId) : GameStateChange()
 class StartRepair(val clientId: ClientId, val systemType: PoweredSystemType) : GameStateChange()
@@ -93,7 +94,7 @@ class GameState {
                         shield = ship.toShieldMessage()
                     )
                     Navigation -> SnapshotMessage.Navigation(
-                        ship = ship.toNavigationMessage(),
+                        ship = ship.toNavigationMessage { id -> ships[id] },
                         mapSelection = ship.toMapSelectionMessage { id -> ships[id] },
                         contacts = getMapContacts(ship),
                         asteroids = getAsteroids(ship)
@@ -250,6 +251,10 @@ class GameState {
         getClientShip(clientId)?.startScan()
     }
 
+    fun abortScan(clientId: ClientId) {
+        getClientShip(clientId)?.abortScan()
+    }
+
     fun lockTarget(clientId: ClientId, targetId: ObjectId) {
         ships[targetId]?.also {
             getClientShip(clientId)?.lockTarget(targetId)
@@ -364,6 +369,7 @@ class GameState {
                     is AddWaypoint -> gameState.addWaypoint(change.clientId, change.position)
                     is DeleteSelectedWaypoint -> gameState.deleteSelectedWaypoint(change.clientId)
                     is ScanSelectedShip -> gameState.scanSelectedShip(change.clientId)
+                    is AbortScan -> gameState.abortScan(change.clientId)
                     is LockTarget -> gameState.lockTarget(change.clientId, change.targetId)
                     is ToggleShieldsUp -> gameState.toggleShieldsUp(change.clientId)
                     is StartRepair -> gameState.startRepair(change.clientId, change.systemType)

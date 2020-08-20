@@ -158,7 +158,7 @@ data class NavigationShipMessage(
     val rotation: Double,
     val history: List<Vector2>,
     val waypoints: List<WaypointMessage>,
-    val scanProgress: ScanProgress?
+    val scanProgress: ScanProgressMessage?
 )
 
 @Serializable
@@ -254,12 +254,6 @@ enum class ScanLevel {
         private val highest = Basic
     }
 }
-
-@Serializable
-data class ScanProgress(
-    val targetId: ObjectId,
-    val progress: Double
-)
 
 @Serializable
 sealed class LockStatus {
@@ -420,4 +414,12 @@ data class RepairProgressMessage(
     val end: Int,
     val tiles: String,
     val solved: Boolean
+)
+
+@Serializable
+data class ScanProgressMessage(
+    val targetId: ObjectId,
+    val designation: String,
+    val noise: Double,
+    val input: List<Double>
 )

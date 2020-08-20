@@ -54,6 +54,9 @@ sealed class Command {
     object CommandScanSelectedShip : Command()
 
     @Serializable
+    object CommandAbortScan : Command()
+
+    @Serializable
     data class CommandLockTarget(val targetId: ObjectId) : Command()
 
     @Serializable

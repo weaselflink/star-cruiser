@@ -11,7 +11,10 @@ class FrequencyGame(
 
     val solution: List<Double> = (0 until dimensions).map { Random.nextDouble() }
     val input: MutableList<Double> = solution.toMutableList()
-
+    val noise
+        get() = solution
+            .mapIndexed { index, value -> abs(value - input[index]) }
+            .sum() / dimensions
     val isSolved: Boolean
         get() = solution
             .mapIndexed { index, value -> abs(value - input[index]) }

@@ -1,7 +1,6 @@
 package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.BeamStatus
-import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.ObjectId
@@ -27,7 +26,6 @@ import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isNotNull
-import strikt.assertions.isNull
 import strikt.assertions.isTrue
 import java.time.Instant
 
@@ -210,39 +208,8 @@ class ShipTest {
         ship.mapSelectShip(target2.id)
         ship.startScan()
 
-        expectThat(ship.toNavigationMessage().scanProgress).isNotNull()
+        expectThat(ship.toNavigationMessage { target1 }.scanProgress).isNotNull()
             .get { targetId }.isEqualTo(target1.id)
-    }
-
-    @Test
-    fun `scans target`() {
-        val target = Ship()
-
-        ship.mapSelectShip(target.id)
-        ship.startScan()
-        stepTimeTo(4)
-
-        expectThat(target.toMapContactMessage(ship).type).isEqualTo(ContactType.Unknown)
-
-        stepTimeTo(6)
-
-        expectThat(target.toMapContactMessage(ship).type).isEqualTo(ContactType.Friendly)
-    }
-
-    @Test
-    fun `does not scan target with maximum scan level`() {
-        val target = Ship()
-
-        ship.mapSelectShip(target.id)
-        ship.startScan()
-        stepTimeTo(6)
-
-        expectThat(target.toMapContactMessage(ship).type).isEqualTo(ContactType.Friendly)
-
-        ship.mapSelectShip(target.id)
-        ship.startScan()
-
-        expectThat(ship.toNavigationMessage().scanProgress).isNull()
     }
 
     @Test

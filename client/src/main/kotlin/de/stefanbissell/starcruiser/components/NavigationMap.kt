@@ -7,7 +7,6 @@ import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.MapSelectionMessage
 import de.stefanbissell.starcruiser.NavigationShipMessage
 import de.stefanbissell.starcruiser.Positional
-import de.stefanbissell.starcruiser.ScanProgress
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
@@ -34,7 +33,6 @@ import de.stefanbissell.starcruiser.unknownContactStyle
 import de.stefanbissell.starcruiser.wayPointStyle
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
-import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -46,14 +44,6 @@ class NavigationMap(
     private val ctx = canvas.context2D
     private var dim = CanvasDimensions(100, 100)
     private val mapGrid = MapGrid(canvas)
-    private val scanProgressComponent = CanvasProgress(
-        canvas = canvas,
-        xExpr = { dim.width * 0.5 - dim.vmin * 20 },
-        yExpr = { dim.vmin * 10 },
-        widthExpr = { dim.vmin * 40 },
-        heightExpr = { dim.vmin * 6 },
-        foregroundColorExpr = { "#ff6347" }
-    )
     var center = Vector2()
     var scaleSetting = 3
         private set
@@ -211,18 +201,10 @@ class NavigationMap(
         val progress = ship.scanProgress ?: return
         val contact = contacts.firstOrNull { it.id == progress.targetId } ?: return
 
-        val designation = contact.designation
-        drawScanProgressBar(designation, progress)
-        drawScanProgressMarker(contact, progress)
+        drawScanProgressMarker(contact)
     }
 
-    private fun drawScanProgressBar(designation: String, progress: ScanProgress) {
-        scanProgressComponent.centerText = "Scanning $designation"
-        scanProgressComponent.progress = progress.progress
-        scanProgressComponent.draw()
-    }
-
-    private fun CanvasRenderingContext2D.drawScanProgressMarker(contact: MapContactMessage, progress: ScanProgress) {
+    private fun CanvasRenderingContext2D.drawScanProgressMarker(contact: MapContactMessage) {
         save()
         scanProgressStyle(dim)
 
@@ -230,10 +212,7 @@ class NavigationMap(
         translateToCenter()
         translate(contact.position.adjustForMap())
         beginPath()
-        circle(
-            0.0, 0.0, dim.vmin * 2.3,
-            -PI * 0.5, PI * progress.progress * 2.0 - PI * 0.5
-        )
+        circle(0.0, 0.0, dim.vmin * 2.3)
         stroke()
 
         restore()
