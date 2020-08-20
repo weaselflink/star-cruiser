@@ -18,14 +18,15 @@ import org.w3c.dom.HTMLCanvasElement
 class ScanDisplay(
     val canvas: HTMLCanvasElement,
     val xExpr: (CanvasDimensions) -> Double = { it.width * 0.5 - it.vmin * 42 },
-    val yExpr: (CanvasDimensions) -> Double = { it.height * 0.5 + it.vmin * 30 },
+    var yExpr: (CanvasDimensions) -> Double = { it.height * 0.5 + it.vmin * 30 },
     val widthExpr: (CanvasDimensions) -> Double = { it.vmin * 84 },
-    val heightExpr: (CanvasDimensions) -> Double = { it.vmin * 60 }
+    var heightExpr: (CanvasDimensions) -> Double = { it.vmin * 60 }
 ) : PointerEventHandler {
 
     private val ctx = canvas.context2D
     private var visible = false
 
+    private val inputs = mutableListOf<CanvasSlider>()
     private val abortButton = CanvasButton(
         canvas = canvas,
         xExpr = { xExpr(it) + widthExpr(it) - it.vmin * 25 },
@@ -54,7 +55,32 @@ class ScanDisplay(
         visible = scanProgress != null
 
         if (scanProgress != null) {
+            updateInputs(scanProgress)
+
             ctx.draw(scanProgress)
+        }
+    }
+
+    private fun updateInputs(scanProgress: ScanProgressMessage) {
+        yExpr = { it.height * 0.5 + it.vmin * (scanProgress.input.size * 12 + 50) * 0.5 }
+        heightExpr = { it.vmin * (scanProgress.input.size * 12 + 50) }
+
+        if (inputs.size > scanProgress.input.size) {
+            repeat(inputs.size - scanProgress.input.size) {
+                inputs.removeAt(inputs.size - 1)
+            }
+        }
+        if (inputs.size < scanProgress.input.size) {
+            (inputs.size until scanProgress.input.size).forEach { index ->
+                inputs += CanvasSlider(
+                    canvas = canvas,
+                    xExpr = { xExpr(it) + 5.vmin },
+                    yExpr = { yExpr(it) - heightExpr(it) + it.vmin * 45 + it.vmin * 12 * index },
+                    widthExpr = { widthExpr(it) - it.vmin * 10 },
+                    heightExpr = { it.vmin * 10 },
+                    onChange = {}
+                )
+            }
         }
     }
 
@@ -76,7 +102,13 @@ class ScanDisplay(
 
         drawHeader(dim, scanProgress.designation)
 
+        drawNoise(dim, scanProgress.noise)
+
         restore()
+
+        scanProgress.input.forEachIndexed { index, value ->
+            inputs[index].draw(value)
+        }
 
         abortButton.draw()
     }
@@ -96,6 +128,23 @@ class ScanDisplay(
         textBaseline = CanvasTextBaseline.BOTTOM
         fillStyle = UiStyle.buttonForegroundColor
         fillText(text, x, y)
+
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawNoise(
+        dim: ComponentDimensions,
+        noise: Double
+    ) {
+        val x = dim.bottomX + 5.vmin
+        val y = dim.bottomY - dim.height + 15.vmin
+        val width = dim.width - 19.vmin
+        val height = 18.vmin
+
+        save()
+
+        fillStyle = UiStyle.buttonForegroundColor
+        fillRect(x, y, width * noise, height)
 
         restore()
     }
