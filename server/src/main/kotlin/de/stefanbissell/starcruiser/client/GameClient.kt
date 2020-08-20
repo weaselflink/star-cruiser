@@ -28,6 +28,7 @@ import de.stefanbissell.starcruiser.SetMainScreenView
 import de.stefanbissell.starcruiser.SetPower
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.SolveRepairGame
+import de.stefanbissell.starcruiser.SolveScanGame
 import de.stefanbissell.starcruiser.SpawnShip
 import de.stefanbissell.starcruiser.StartJump
 import de.stefanbissell.starcruiser.StartRepair
@@ -121,6 +122,9 @@ class GameClient(
                 )
                 is Command.CommandAbortScan -> gameStateActor.send(
                     AbortScan(id)
+                )
+                is Command.CommandSolveScanGame -> gameStateActor.send(
+                    SolveScanGame(id, command.dimension, command.value)
                 )
                 is Command.CommandLockTarget -> gameStateActor.send(
                     LockTarget(id, command.targetId)

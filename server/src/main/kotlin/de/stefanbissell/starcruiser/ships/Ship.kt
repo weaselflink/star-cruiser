@@ -244,7 +244,7 @@ class Ship(
 
     fun solveScanGame(dimension: Int, value: Double) {
         scanHandler?.apply {
-            game.adjustInput(dimension, value)
+            adjustInput(dimension, value)
         }
     }
 

@@ -13,6 +13,16 @@ open class PointerEventHandlerParent : PointerEventHandler {
         handlersToAdd.forEach { handlers += it }
     }
 
+    fun removeChildren(vararg handlersToRemove: PointerEventHandler) {
+        addChildren(handlersToRemove.toList())
+    }
+
+    fun removeChildren(handlersToRemove: Iterable<PointerEventHandler>) {
+        handlers.removeAll { handler ->
+            handlersToRemove.any { handler === it }
+        }
+    }
+
     override fun isInterestedIn(pointerEvent: PointerEvent): Boolean {
         return handlers.any { it.isInterestedIn(pointerEvent) }
     }

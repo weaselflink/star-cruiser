@@ -43,6 +43,7 @@ class AddWaypoint(val clientId: ClientId, val position: Vector2) : GameStateChan
 class DeleteSelectedWaypoint(val clientId: ClientId) : GameStateChange()
 class ScanSelectedShip(val clientId: ClientId) : GameStateChange()
 class AbortScan(val clientId: ClientId) : GameStateChange()
+class SolveScanGame(val clientId: ClientId, val dimension: Int, val value: Double) : GameStateChange()
 class LockTarget(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
 class ToggleShieldsUp(val clientId: ClientId) : GameStateChange()
 class StartRepair(val clientId: ClientId, val systemType: PoweredSystemType) : GameStateChange()
@@ -255,6 +256,10 @@ class GameState {
         getClientShip(clientId)?.abortScan()
     }
 
+    fun solveScanGame(clientId: ClientId, dimension: Int, value: Double) {
+        getClientShip(clientId)?.solveScanGame(dimension, value)
+    }
+
     fun lockTarget(clientId: ClientId, targetId: ObjectId) {
         ships[targetId]?.also {
             getClientShip(clientId)?.lockTarget(targetId)
@@ -370,6 +375,7 @@ class GameState {
                     is DeleteSelectedWaypoint -> gameState.deleteSelectedWaypoint(change.clientId)
                     is ScanSelectedShip -> gameState.scanSelectedShip(change.clientId)
                     is AbortScan -> gameState.abortScan(change.clientId)
+                    is SolveScanGame -> gameState.solveScanGame(change.clientId, change.dimension, change.value)
                     is LockTarget -> gameState.lockTarget(change.clientId, change.targetId)
                     is ToggleShieldsUp -> gameState.toggleShieldsUp(change.clientId)
                     is StartRepair -> gameState.startRepair(change.clientId, change.systemType)

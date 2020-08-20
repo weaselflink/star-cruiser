@@ -57,6 +57,9 @@ sealed class Command {
     object CommandAbortScan : Command()
 
     @Serializable
+    data class CommandSolveScanGame(val dimension: Int, val value: Double) : Command()
+
+    @Serializable
     data class CommandLockTarget(val targetId: ObjectId) : Command()
 
     @Serializable

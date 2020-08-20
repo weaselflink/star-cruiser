@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.ships
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ScanProgressMessage
+import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.minigames.FrequencyGame
 
 class ScanHandler(
@@ -10,7 +11,7 @@ class ScanHandler(
     private val boostLevel: BoostLevel
 ) {
 
-    val game = FrequencyGame.createUnsolved(2)
+    private val game = FrequencyGame.createUnsolved(2)
     private var solvedTimer = 0.0
 
     val isComplete: Boolean
@@ -24,11 +25,16 @@ class ScanHandler(
         }
     }
 
+    fun adjustInput(dimension: Int, value: Double) {
+        solvedTimer = 0.0
+        game.adjustInput(dimension, value)
+    }
+
     fun toMessage(shipProvider: (ObjectId) -> Ship?) =
         ScanProgressMessage(
             targetId = targetId,
             designation = shipProvider(targetId)?.designation ?: "unknown",
-            noise = game.noise,
-            input = game.input.toList()
+            noise = game.noise.fiveDigits(),
+            input = game.input.map { it.fiveDigits() }
         )
 }

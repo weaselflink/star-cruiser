@@ -8,7 +8,7 @@ import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.dimensions
 import de.stefanbissell.starcruiser.drawRect
 import de.stefanbissell.starcruiser.input.PointerEvent
-import de.stefanbissell.starcruiser.input.PointerEventHandler
+import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.send
 import org.w3c.dom.BOTTOM
 import org.w3c.dom.CanvasRenderingContext2D
@@ -21,7 +21,7 @@ class ScanDisplay(
     var yExpr: (CanvasDimensions) -> Double = { it.height * 0.5 + it.vmin * 30 },
     val widthExpr: (CanvasDimensions) -> Double = { it.vmin * 84 },
     var heightExpr: (CanvasDimensions) -> Double = { it.vmin * 60 }
-) : PointerEventHandler {
+) : PointerEventHandlerParent() {
 
     private val ctx = canvas.context2D
     private var visible = false
@@ -39,16 +39,8 @@ class ScanDisplay(
 
     override fun isInterestedIn(pointerEvent: PointerEvent) = visible
 
-    override fun handlePointerDown(pointerEvent: PointerEvent) {
-        if (abortButton.isInterestedIn(pointerEvent)) {
-            abortButton.handlePointerDown(pointerEvent)
-        }
-    }
-
-    override fun handlePointerUp(pointerEvent: PointerEvent) {
-        if (abortButton.isInterestedIn(pointerEvent)) {
-            abortButton.handlePointerUp(pointerEvent)
-        }
+    init {
+        addChildren(abortButton)
     }
 
     fun draw(scanProgress: ScanProgressMessage?) {
@@ -67,19 +59,24 @@ class ScanDisplay(
 
         if (inputs.size > scanProgress.input.size) {
             repeat(inputs.size - scanProgress.input.size) {
-                inputs.removeAt(inputs.size - 1)
+                val removed = inputs.removeAt(inputs.size - 1)
+                removeChildren(removed)
             }
         }
         if (inputs.size < scanProgress.input.size) {
             (inputs.size until scanProgress.input.size).forEach { index ->
-                inputs += CanvasSlider(
+                val slider = CanvasSlider(
                     canvas = canvas,
                     xExpr = { xExpr(it) + 5.vmin },
                     yExpr = { yExpr(it) - heightExpr(it) + it.vmin * 45 + it.vmin * 12 * index },
                     widthExpr = { widthExpr(it) - it.vmin * 10 },
                     heightExpr = { it.vmin * 10 },
-                    onChange = {}
+                    onChange = {
+                        clientSocket.send(Command.CommandSolveScanGame(index, it))
+                    }
                 )
+                inputs += slider
+                addChildren(slider)
             }
         }
     }
@@ -118,7 +115,7 @@ class ScanDisplay(
         designation: String
     ) {
         val x = dim.bottomX + 5.vmin
-        val y = dim.bottomY - dim.height + 10.vmin
+        val y = dim.bottomY - dim.height + 8.vmin
 
         val text = "Scanning $designation"
 
