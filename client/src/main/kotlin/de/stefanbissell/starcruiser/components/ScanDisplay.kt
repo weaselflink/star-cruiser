@@ -137,19 +137,26 @@ class ScanDisplay(
         noise: Double
     ) {
         val x = dim.bottomX + 5.vmin
+        val y = dim.bottomY - dim.height + 11.vmin
         val middle = dim.bottomY - dim.height + 20.vmin
         val width = dim.width - 10.vmin
         val height = 18.vmin
 
         val noiseFunction: (Int) -> Double = {
             val pos = it / 100.0 * PI * 6.0
-            sin(pos) * height * -0.5 + middle + (Random.nextDouble() - 0.5) * height * noise
+            val amplitude = height * 0.8
+            sin(pos) * amplitude * -0.5 + middle + (Random.nextDouble() - 0.5) * amplitude * noise
         }
 
         save()
 
-        fillStyle = UiStyle.buttonForegroundColor
         strokeStyle = UiStyle.buttonForegroundColor
+
+        strokeRect(x, y, width, height)
+        beginPath()
+        rect(x, y, width, height)
+        clip()
+
         beginPath()
         moveTo(x, middle)
         (1..99).forEach { index ->
