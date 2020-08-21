@@ -39,8 +39,8 @@ class FrequencyGameTest {
     @Test
     fun `can make solved`() {
         val game = FrequencyGame.createUnsolved(2)
-        game.adjustInput(0, wrapDouble(game.solution[0] + 0.05))
-        game.adjustInput(1, wrapDouble(game.solution[1] + 0.05))
+        game.adjustInput(0, game.solution[0] + 0.05)
+        game.adjustInput(1, game.solution[1] + 0.05)
 
         expectThat(game.isSolved).isTrue()
     }

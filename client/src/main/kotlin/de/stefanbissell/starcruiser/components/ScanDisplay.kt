@@ -14,6 +14,9 @@ import org.w3c.dom.BOTTOM
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HTMLCanvasElement
+import kotlin.math.PI
+import kotlin.math.sin
+import kotlin.random.Random
 
 class ScanDisplay(
     val canvas: HTMLCanvasElement,
@@ -134,14 +137,26 @@ class ScanDisplay(
         noise: Double
     ) {
         val x = dim.bottomX + 5.vmin
-        val y = dim.bottomY - dim.height + 15.vmin
-        val width = dim.width - 19.vmin
+        val middle = dim.bottomY - dim.height + 20.vmin
+        val width = dim.width - 10.vmin
         val height = 18.vmin
+
+        val noiseFunction: (Int) -> Double = {
+            val pos = it / 100.0 * PI * 6.0
+            sin(pos) * height * -0.5 + middle + (Random.nextDouble() - 0.5) * height * noise
+        }
 
         save()
 
         fillStyle = UiStyle.buttonForegroundColor
-        fillRect(x, y, width * noise, height)
+        strokeStyle = UiStyle.buttonForegroundColor
+        beginPath()
+        moveTo(x, middle)
+        (1..99).forEach { index ->
+            lineTo(x + width * 0.01 * index, noiseFunction(index))
+        }
+        lineTo(x + width, middle)
+        stroke()
 
         restore()
     }
