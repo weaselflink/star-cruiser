@@ -150,6 +150,12 @@ class ScanDisplay(
 
         save()
 
+        strokeStyle = UiStyle.backgroundColor
+        beginPath()
+        moveTo(x, middle)
+        lineTo(x + width, middle)
+        stroke()
+
         strokeStyle = UiStyle.buttonForegroundColor
 
         strokeRect(x, y, width, height)
