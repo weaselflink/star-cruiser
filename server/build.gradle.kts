@@ -33,7 +33,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.0-M1")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
-    testImplementation("io.strikt:strikt-core:0.26.1")
+    testImplementation("io.strikt:strikt-core:0.27.0")
     testImplementation("io.mockk:mockk:1.10.0")
 }
 

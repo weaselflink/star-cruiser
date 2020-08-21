@@ -32,7 +32,7 @@ kotlin {
         compilations["test"].defaultSourceSet {
             dependencies {
                 implementation("org.junit.jupiter:junit-jupiter:5.7.0-M1")
-                implementation("io.strikt:strikt-core:0.26.1")
+                implementation("io.strikt:strikt-core:0.27.0")
             }
         }
 
