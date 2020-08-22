@@ -15,6 +15,7 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.sin
 import kotlin.random.Random
 
@@ -144,9 +145,14 @@ class ScanDisplay(
 
         val noiseFunction: (Int) -> Double = {
             val pos = it / 100.0 * PI * 6.0
-            val amplitude = height * 0.8
-            sin(pos) * amplitude * -0.5 + middle + (Random.nextDouble() - 0.5) * amplitude * noise
+            sin(pos) * -1.0 + (Random.nextDouble() - 0.5) * 4.0 * noise
         }
+        val noiseValues = (1..99).map {
+            noiseFunction(it)
+        }
+        val maxNoise = noiseValues.map { abs(it) }.maxOrNull() ?: 1.0
+        val amplitude = height * 0.4
+        val scaledNoiseValues = noiseValues.map { it / maxNoise * amplitude + middle }
 
         save()
 
@@ -166,7 +172,7 @@ class ScanDisplay(
         beginPath()
         moveTo(x, middle)
         (1..99).forEach { index ->
-            lineTo(x + width * 0.01 * index, noiseFunction(index))
+            lineTo(x + width * 0.01 * index, scaledNoiseValues[index - 1])
         }
         lineTo(x + width, middle)
         stroke()
