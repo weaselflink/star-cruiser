@@ -6,13 +6,10 @@ import de.stefanbissell.starcruiser.ScanProgressMessage
 import de.stefanbissell.starcruiser.clientSocket
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.dimensions
-import de.stefanbissell.starcruiser.drawRect
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.send
-import org.w3c.dom.BOTTOM
 import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.PI
 import kotlin.math.abs
@@ -30,6 +27,7 @@ class ScanDisplay(
     private val ctx = canvas.context2D
     private var visible = false
 
+    private val canvasPopup = CanvasPopup(canvas)
     private val inputs = mutableListOf<CanvasSlider>()
     private val abortButton = CanvasButton(
         canvas = canvas,
@@ -88,20 +86,10 @@ class ScanDisplay(
     private fun CanvasRenderingContext2D.draw(scanProgress: ScanProgressMessage) {
         val dim = ComponentDimensions.calculateRect(canvas, xExpr, yExpr, widthExpr, heightExpr)
 
+        val title = "Scanning ${scanProgress.designation}"
+        canvasPopup.draw(dim, title)
+
         save()
-
-        fillStyle = UiStyle.buttonBackgroundColor
-        lineWidth = UiStyle.buttonLineWidth.vmin
-        beginPath()
-        drawRect(dim)
-        fill()
-
-        strokeStyle = UiStyle.buttonForegroundColor
-        beginPath()
-        drawRect(dim)
-        stroke()
-
-        drawHeader(dim, scanProgress.designation)
 
         drawNoise(dim, scanProgress.noise)
 
@@ -112,25 +100,6 @@ class ScanDisplay(
         }
 
         abortButton.draw()
-    }
-
-    private fun CanvasRenderingContext2D.drawHeader(
-        dim: ComponentDimensions,
-        designation: String
-    ) {
-        val x = dim.bottomX + 5.vmin
-        val y = dim.bottomY - dim.height + 8.vmin
-
-        val text = "Scanning $designation"
-
-        save()
-
-        font = UiStyle.font(5.vmin)
-        textBaseline = CanvasTextBaseline.BOTTOM
-        fillStyle = UiStyle.buttonForegroundColor
-        fillText(text, x, y)
-
-        restore()
     }
 
     private fun CanvasRenderingContext2D.drawNoise(
@@ -181,8 +150,5 @@ class ScanDisplay(
     }
 
     private val Int.vmin
-        get() = canvas.dimensions().vmin * this
-
-    private val Double.vmin
         get() = canvas.dimensions().vmin * this
 }

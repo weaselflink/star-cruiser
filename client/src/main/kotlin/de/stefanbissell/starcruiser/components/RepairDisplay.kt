@@ -3,20 +3,16 @@ package de.stefanbissell.starcruiser.components
 import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.PowerMessage
-import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.RepairProgressMessage
 import de.stefanbissell.starcruiser.circle
 import de.stefanbissell.starcruiser.clientSocket
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.dimensions
-import de.stefanbissell.starcruiser.drawRect
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandler
 import de.stefanbissell.starcruiser.send
-import org.w3c.dom.BOTTOM
 import org.w3c.dom.CanvasLineJoin
 import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.ROUND
 
@@ -32,6 +28,7 @@ class RepairDisplay(
     private var visible = false
     private val tiles = mutableListOf<Tile>()
 
+    private val canvasPopup = CanvasPopup(canvas)
     private val abortButton = CanvasButton(
         canvas = canvas,
         xExpr = { xExpr(it) + widthExpr(it) - it.vmin * 25 },
@@ -72,20 +69,10 @@ class RepairDisplay(
     private fun CanvasRenderingContext2D.draw(repairProgress: RepairProgressMessage) {
         val dim = ComponentDimensions.calculateRect(canvas, xExpr, yExpr, widthExpr, heightExpr)
 
+        val title = "Repairing ${repairProgress.type.label}"
+        canvasPopup.draw(dim, title)
+
         save()
-
-        fillStyle = UiStyle.buttonBackgroundColor
-        lineWidth = UiStyle.buttonLineWidth.vmin
-        beginPath()
-        drawRect(dim)
-        fill()
-
-        strokeStyle = UiStyle.buttonForegroundColor
-        beginPath()
-        drawRect(dim)
-        stroke()
-
-        drawHeader(dim, repairProgress.type)
 
         drawStart(dim, repairProgress)
         tiles.forEach { it.drawTile(dim) }
@@ -94,25 +81,6 @@ class RepairDisplay(
         restore()
 
         abortButton.draw()
-    }
-
-    private fun CanvasRenderingContext2D.drawHeader(
-        dim: ComponentDimensions,
-        type: PoweredSystemType
-    ) {
-        val x = dim.bottomX + 5.vmin
-        val y = dim.bottomY - dim.height + 10.vmin
-
-        val text = "Repairing ${type.label}"
-
-        save()
-
-        font = UiStyle.font(5.vmin)
-        textBaseline = CanvasTextBaseline.BOTTOM
-        fillStyle = UiStyle.buttonForegroundColor
-        fillText(text, x, y)
-
-        restore()
     }
 
     private fun CanvasRenderingContext2D.drawStart(
