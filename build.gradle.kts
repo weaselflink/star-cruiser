@@ -42,3 +42,7 @@ allprojects {
         }
     }
 }
+
+ktlint {
+    version.set("0.38.1")
+}
