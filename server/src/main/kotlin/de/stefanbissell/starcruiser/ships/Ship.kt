@@ -31,6 +31,7 @@ import de.stefanbissell.starcruiser.toHeading
 import de.stefanbissell.starcruiser.toRadians
 import de.stefanbissell.starcruiser.twoDigits
 import kotlin.math.abs
+import kotlin.math.max
 
 class Ship(
     val id: ObjectId = ObjectId.random(),
@@ -58,6 +59,8 @@ class Ship(
         jumpDrive = template.jumpDrive
     )
     var mainScreenView = MainScreenView.Front
+    val sensorRange: Double
+        get() = max(template.shortRangeScopeRange, template.sensorRange * Sensors.boostLevel)
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
         powerHandler.update(time)
@@ -326,6 +329,7 @@ class Ship(
             rotation = rotation.fiveDigits(),
             history = history.map { it.second.twoDigits() },
             waypoints = waypoints.map { it.toWaypointMessage() },
+            sensorRange = sensorRange,
             scanProgress = scanHandler?.toMessage(shipProvider)
         )
 

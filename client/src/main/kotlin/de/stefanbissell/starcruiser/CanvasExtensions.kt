@@ -227,6 +227,12 @@ fun CanvasRenderingContext2D.selectionMarkerStyle(dim: CanvasDimensions) {
     lineJoin = CanvasLineJoin.ROUND
 }
 
+fun CanvasRenderingContext2D.sensorRangeStyle(dim: CanvasDimensions) {
+    strokeStyle = "#801a00"
+    lineWidth = dim.vmin * 0.5
+    setLineDash(arrayOf(dim.vmin * 2, dim.vmin * 2))
+}
+
 fun HTMLCanvasElement.updateSize(square: Boolean = false) {
     val windowWidth = window.innerWidth
     val windowHeight = window.innerHeight

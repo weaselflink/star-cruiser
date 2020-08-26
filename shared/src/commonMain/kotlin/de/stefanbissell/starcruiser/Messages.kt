@@ -158,6 +158,7 @@ data class NavigationShipMessage(
     val rotation: Double,
     val history: List<Vector2>,
     val waypoints: List<WaypointMessage>,
+    val sensorRange: Double,
     val scanProgress: ScanProgressMessage?
 )
 

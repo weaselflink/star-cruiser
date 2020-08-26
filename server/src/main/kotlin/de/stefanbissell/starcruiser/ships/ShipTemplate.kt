@@ -18,6 +18,7 @@ data class ShipTemplate(
     val scanSpeed: Double = 0.2,
     val lockingSpeed: Double = 0.5,
     val shortRangeScopeRange: Double = 400.0,
+    val sensorRange: Double = 2000.0,
     val beams: List<BeamWeapon> = listOf(
         BeamWeapon(
             position = Vector3(

@@ -25,6 +25,7 @@ import de.stefanbissell.starcruiser.input.PointerEventHandler
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.scanProgressStyle
 import de.stefanbissell.starcruiser.selectionMarkerStyle
+import de.stefanbissell.starcruiser.sensorRangeStyle
 import de.stefanbissell.starcruiser.shipStyle
 import de.stefanbissell.starcruiser.transformReset
 import de.stefanbissell.starcruiser.translate
@@ -88,6 +89,7 @@ class NavigationMap(
             clear(UiStyle.mapBackgroundColor)
 
             drawGrid()
+            drawSensorRange(ship)
             drawHistory(ship)
             drawAsteroids()
             drawWaypoints(ship)
@@ -100,6 +102,19 @@ class NavigationMap(
 
     private fun drawGrid() {
         mapGrid.draw(center, scale)
+    }
+
+    private fun CanvasRenderingContext2D.drawSensorRange(ship: NavigationShipMessage) {
+        save()
+        translateToCenter()
+        translate(ship.position.adjustForMap())
+
+        sensorRangeStyle(dim)
+        beginPath()
+        circle(0.0, 0.0, ship.sensorRange * scale)
+        stroke()
+
+        restore()
     }
 
     private fun CanvasRenderingContext2D.drawAsteroids() {
