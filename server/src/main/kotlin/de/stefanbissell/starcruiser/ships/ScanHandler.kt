@@ -18,7 +18,7 @@ class ScanHandler(
         get() = solvedTimer > 1.0
 
     fun update(time: GameTime) {
-        if (game.isSolved) {
+        if (game.isSolved(0.1)) {
             solvedTimer += time.delta
         } else {
             solvedTimer = 0.0

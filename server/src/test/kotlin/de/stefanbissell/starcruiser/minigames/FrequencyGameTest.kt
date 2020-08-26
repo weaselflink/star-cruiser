@@ -66,4 +66,7 @@ class FrequencyGameTest {
 
     private fun wrapDouble(value: Double) =
         if (value >= 1.0) value - 1.0 else value
+
+    private val FrequencyGame.isSolved
+        get() = isSolved(0.1)
 }
