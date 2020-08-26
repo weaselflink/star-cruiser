@@ -5,6 +5,8 @@ import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ScanProgressMessage
 import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.minigames.FrequencyGame
+import kotlin.math.max
+import kotlin.math.min
 
 class ScanHandler(
     val targetId: ObjectId,
@@ -18,7 +20,7 @@ class ScanHandler(
         get() = solvedTimer > 1.0
 
     fun update(time: GameTime) {
-        if (game.isSolved(0.1)) {
+        if (adjustedNoise() < 0.1) {
             solvedTimer += time.delta
         } else {
             solvedTimer = 0.0
@@ -34,7 +36,11 @@ class ScanHandler(
         ScanProgressMessage(
             targetId = targetId,
             designation = shipProvider(targetId)?.designation ?: "unknown",
-            noise = game.noise.fiveDigits(),
+            noise = adjustedNoise().fiveDigits(),
             input = game.input.map { it.fiveDigits() }
         )
+
+    private fun boostLevelFactor() = 1.0 / max(0.1, boostLevel())
+
+    private fun adjustedNoise() = min(1.0, game.noise * boostLevelFactor())
 }

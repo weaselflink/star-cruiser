@@ -15,8 +15,6 @@ class FrequencyGame(
             .mapIndexed { index, value -> abs(value - input[index]) }
             .sum() / dimensions
 
-    fun isSolved(tolerance: Double) = noise < tolerance
-
     fun adjustInput(dimension: Int, value: Double) {
         if (dimension >= 0 && dimension < input.size) {
             input[dimension] = value.clamp(0.0, 1.0)
@@ -24,7 +22,7 @@ class FrequencyGame(
     }
 
     fun randomize() {
-        while (isSolved(0.2)) {
+        while (noise < 0.2) {
             (0 until input.size).forEach {
                 input[it] = Random.nextDouble()
             }

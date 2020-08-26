@@ -68,5 +68,5 @@ class FrequencyGameTest {
         if (value >= 1.0) value - 1.0 else value
 
     private val FrequencyGame.isSolved
-        get() = isSolved(0.1)
+        get() = noise < 0.1
 }
