@@ -329,7 +329,7 @@ class Ship(
             rotation = rotation.fiveDigits(),
             history = history.map { it.second.twoDigits() },
             waypoints = waypoints.map { it.toWaypointMessage() },
-            sensorRange = sensorRange,
+            sensorRange = sensorRange.twoDigits(),
             scanProgress = scanHandler?.toMessage(shipProvider)
         )
 

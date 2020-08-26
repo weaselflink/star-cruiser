@@ -7,6 +7,7 @@ import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PoweredSystemMessage
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.PoweredSystemType.Reactor
+import de.stefanbissell.starcruiser.PoweredSystemType.Sensors
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
 import de.stefanbissell.starcruiser.isNear
@@ -483,6 +484,33 @@ class ShipTest {
                     coolant = 0.6
                 )
             )
+    }
+
+    @Test
+    fun `increases sensor range when given more power`() {
+        ship.setPower(Sensors, 150)
+        expectThat(ship.sensorRange)
+            .isNear(ship.template.sensorRange * 1.5)
+        expectThat(ship.toNavigationMessage { null }.sensorRange)
+            .isNear(ship.template.sensorRange * 1.5)
+    }
+
+    @Test
+    fun `decreases sensor range when given less power`() {
+        ship.setPower(Sensors, 50)
+        expectThat(ship.sensorRange)
+            .isNear(ship.template.sensorRange * 0.5)
+        expectThat(ship.toNavigationMessage { null }.sensorRange)
+            .isNear(ship.template.sensorRange * 0.5)
+    }
+
+    @Test
+    fun `minimal sensor range is short range scope range`() {
+        ship.setPower(Sensors, 0)
+        expectThat(ship.sensorRange)
+            .isNear(ship.template.shortRangeScopeRange)
+        expectThat(ship.toNavigationMessage { null }.sensorRange)
+            .isNear(ship.template.shortRangeScopeRange)
     }
 
     private fun stepTimeTo(seconds: Number, shipProvider: (ObjectId) -> Ship? = { null }): ShipUpdateResult {
