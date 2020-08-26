@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.ships
 
+import de.stefanbissell.starcruiser.Asteroid
 import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
@@ -62,13 +63,13 @@ class Ship(
     val sensorRange: Double
         get() = max(template.shortRangeScopeRange, template.sensorRange * Sensors.boostLevel)
 
-    fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: (ObjectId) -> Ship?) {
+    fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: ShipProvider) {
         powerHandler.update(time)
         updateBeams(time, shipProvider, physicsEngine)
         shieldHandler.update(time, Shields.boostLevel)
         jumpHandler.update(time, Jump.boostLevel)
-        updateScan(time)
-        updateLock(time)
+        updateScan(time, shipProvider)
+        updateLock(time, shipProvider)
         updateThrust(time)
         val effectiveThrust = if (thrust < 0) {
             thrust * template.reverseThrustFactor * Impulse.boostLevel
@@ -85,22 +86,7 @@ class Ship(
         }
 
         updateHistory(time)
-    }
-
-    private fun updateBeams(
-        time: GameTime,
-        shipProvider: (ObjectId) -> Ship?,
-        physicsEngine: PhysicsEngine
-    ) {
-        beamHandlers.forEach {
-            it.update(
-                time = time,
-                boostLevel = Weapons.boostLevel,
-                shipProvider = shipProvider,
-                lockHandler = lockHandler,
-                physicsEngine = physicsEngine
-            )
-        }
+        updateMapSelection(shipProvider)
     }
 
     fun endUpdate(physicsEngine: PhysicsEngine): ShipUpdateResult {
@@ -125,52 +111,6 @@ class Ship(
         }
         if (lockHandler?.targetId == shipId) {
             lockHandler = null
-        }
-    }
-
-    private fun updateScan(time: GameTime) {
-        scanHandler?.also {
-            it.update(time)
-            if (it.isComplete) {
-                val scan = scans[it.targetId] ?: ScanLevel.None
-                scans[it.targetId] = scan.next
-                scanHandler = null
-            }
-        }
-    }
-
-    private fun updateLock(time: GameTime) {
-        lockHandler?.also {
-            if (!it.isComplete) {
-                it.update(time)
-            }
-        }
-    }
-
-    private fun updateThrust(time: GameTime) {
-        val responsiveness = template.throttleResponsiveness * time.delta
-        thrust = if (abs(thrust - throttle) <= responsiveness) {
-            throttle.toDouble()
-        } else {
-            val diff = when {
-                throttle > thrust -> responsiveness
-                throttle < thrust -> -responsiveness
-                else -> 0.0
-            }
-            (thrust + diff).clamp(-100.0, 100.0)
-        }
-    }
-
-    private fun updateHistory(time: GameTime) {
-        if (history.isEmpty()) {
-            history.add(Pair(time.current, position))
-        } else {
-            if (abs(history.last().first - time.current) > 1.0) {
-                history.add(Pair(time.current, position))
-            }
-            if (history.size > 10) {
-                history.removeAt(0)
-            }
         }
     }
 
@@ -301,6 +241,13 @@ class Ship(
         }
     }
 
+    fun inSensorRange(other: Ship?) = inSensorRange(other?.position)
+
+    fun inSensorRange(other: Asteroid?) = inSensorRange(other?.position)
+
+    fun inSensorRange(other: Vector2?) =
+        other != null && (other - position).length() <= sensorRange
+
     fun toPlayerShipMessage() =
         PlayerShipMessage(
             id = id,
@@ -322,7 +269,7 @@ class Ship(
             frontCamera = template.frontCamera.toMessage()
         )
 
-    fun toNavigationMessage(shipProvider: (ObjectId) -> Ship?) =
+    fun toNavigationMessage(shipProvider: ShipProvider) =
         NavigationShipMessage(
             id = id,
             position = position.twoDigits(),
@@ -374,7 +321,7 @@ class Ship(
             locked = relativeTo.isLocking(id)
         )
 
-    fun toMapSelectionMessage(shipProvider: (ObjectId) -> Ship?) =
+    fun toMapSelectionMessage(shipProvider: ShipProvider) =
         mapSelection.let { selection ->
             when (selection) {
                 is MapSelection.Waypoint -> {
@@ -386,6 +333,97 @@ class Ship(
                 else -> null
             }
         }
+
+    fun toPowerMessage() = powerHandler.toMessage()
+
+    fun toJumpDriveMessage() = jumpHandler.toMessage()
+
+    fun toShieldMessage() = shieldHandler.toMessage()
+
+    private fun updateBeams(
+        time: GameTime,
+        shipProvider: ShipProvider,
+        physicsEngine: PhysicsEngine
+    ) {
+        beamHandlers.forEach {
+            it.update(
+                time = time,
+                boostLevel = Weapons.boostLevel,
+                shipProvider = shipProvider,
+                lockHandler = lockHandler,
+                physicsEngine = physicsEngine
+            )
+        }
+    }
+
+    private fun updateScan(time: GameTime, shipProvider: ShipProvider) {
+        scanHandler?.also {
+            val target = shipProvider(it.targetId)
+            if (!inSensorRange(target)) {
+                scanHandler = null
+            }
+        }
+        scanHandler?.also {
+            it.update(time)
+            if (it.isComplete) {
+                val scan = scans[it.targetId] ?: ScanLevel.None
+                scans[it.targetId] = scan.next
+                scanHandler = null
+            }
+        }
+    }
+
+    private fun updateLock(time: GameTime, shipProvider: ShipProvider) {
+        lockHandler?.also {
+            val target = shipProvider(it.targetId)
+            if (!inSensorRange(target)) {
+                lockHandler = null
+            }
+        }
+        lockHandler?.also {
+            if (!it.isComplete) {
+                it.update(time)
+            }
+        }
+    }
+
+    private fun updateThrust(time: GameTime) {
+        val responsiveness = template.throttleResponsiveness * time.delta
+        thrust = if (abs(thrust - throttle) <= responsiveness) {
+            throttle.toDouble()
+        } else {
+            val diff = when {
+                throttle > thrust -> responsiveness
+                throttle < thrust -> -responsiveness
+                else -> 0.0
+            }
+            (thrust + diff).clamp(-100.0, 100.0)
+        }
+    }
+
+    private fun updateHistory(time: GameTime) {
+        if (history.isEmpty()) {
+            history.add(Pair(time.current, position))
+        } else {
+            if (abs(history.last().first - time.current) > 1.0) {
+                history.add(Pair(time.current, position))
+            }
+            if (history.size > 10) {
+                history.removeAt(0)
+            }
+        }
+    }
+
+    private fun updateMapSelection(shipProvider: ShipProvider) {
+        mapSelection.also {
+            if (it is MapSelection.Ship) {
+                val selected = shipProvider(it.targetId)
+                if (!inSensorRange(selected)) {
+                    mapSelection = MapSelection.None
+                }
+            }
+        }
+    }
 
     private fun toWaypointMapSelectionMessage(selection: MapSelection.Waypoint) =
         waypoints.firstOrNull { it.index == selection.index }
@@ -400,7 +438,7 @@ class Ship(
             }
 
     private fun toShipMapSelectionMessage(
-        shipProvider: (ObjectId) -> Ship?,
+        shipProvider: ShipProvider,
         selection: MapSelection.Ship
     ) =
         shipProvider(selection.targetId)?.let { ship ->
@@ -421,12 +459,6 @@ class Ship(
                 }
             }
         }
-
-    fun toPowerMessage() = powerHandler.toMessage()
-
-    fun toJumpDriveMessage() = jumpHandler.toMessage()
-
-    fun toShieldMessage() = shieldHandler.toMessage()
 
     private fun canIncreaseScanLevel(targetId: ObjectId) = getScanLevel(targetId).canBeIncreased
 
@@ -497,3 +529,5 @@ data class ShipUpdateResult(
     val id: ObjectId,
     val destroyed: Boolean
 )
+
+typealias ShipProvider = (ObjectId) -> Ship?

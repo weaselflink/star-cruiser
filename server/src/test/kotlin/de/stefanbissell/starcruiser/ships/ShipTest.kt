@@ -3,7 +3,6 @@ package de.stefanbissell.starcruiser.ships
 import de.stefanbissell.starcruiser.BeamStatus
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
-import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PoweredSystemMessage
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.PoweredSystemType.Reactor
@@ -288,11 +287,11 @@ class ShipTest {
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.NoLock>()
 
         ship.lockTarget(target.id)
-        stepTimeTo(1)
+        stepTimeTo(1) { target }
 
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.InProgress>()
 
-        stepTimeTo(10)
+        stepTimeTo(10) { target }
 
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
     }
@@ -304,7 +303,7 @@ class ShipTest {
         )
 
         ship.lockTarget(target.id)
-        stepTimeTo(10)
+        stepTimeTo(10) { target }
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
@@ -330,7 +329,7 @@ class ShipTest {
         )
 
         ship.lockTarget(target.id)
-        stepTimeTo(10)
+        stepTimeTo(10) { target }
         stepTimeTo(10.5) { target }
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Firing>()
         stepTimeTo(12) { target }
@@ -350,7 +349,7 @@ class ShipTest {
         )
 
         ship.lockTarget(target.id)
-        stepTimeTo(10)
+        stepTimeTo(10) { target }
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
@@ -365,7 +364,7 @@ class ShipTest {
         )
 
         ship.lockTarget(target.id)
-        stepTimeTo(10)
+        stepTimeTo(10) { target }
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
@@ -513,7 +512,7 @@ class ShipTest {
             .isNear(ship.template.shortRangeScopeRange)
     }
 
-    private fun stepTimeTo(seconds: Number, shipProvider: (ObjectId) -> Ship? = { null }): ShipUpdateResult {
+    private fun stepTimeTo(seconds: Number, shipProvider: ShipProvider = { null }): ShipUpdateResult {
         time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
         ship.update(time, physicsEngine, shipProvider)
         return ship.endUpdate(physicsEngine)
