@@ -8,6 +8,7 @@ import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isGreaterThan
 import strikt.assertions.isLessThan
+import strikt.assertions.isTrue
 import java.time.Instant
 
 class ScanHandlerTest {
@@ -31,28 +32,60 @@ class ScanHandlerTest {
 
     @Test
     fun `increases noise when given less power`() {
-        val noiseOnStandardPower = scanHandler.toMessage().noise
+        val noiseOnStandardPower = scanHandler.noise
         power = 0.5
-        expectThat(scanHandler.toMessage().noise)
+        expectThat(scanHandler.noise)
             .isGreaterThan(noiseOnStandardPower)
     }
 
     @Test
     fun `decrease noise when given more power`() {
-        val noiseOnStandardPower = scanHandler.toMessage().noise
+        val noiseOnStandardPower = scanHandler.noise
         power = 1.5
-        expectThat(scanHandler.toMessage().noise)
+        expectThat(scanHandler.noise)
             .isLessThan(noiseOnStandardPower)
     }
 
-    private fun stepTimeTo(seconds: Number) {
-        time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
+    @Test
+    fun `can solve game but is not complete`() {
+        solveGame()
+        expectThat(scanHandler.noise)
+            .isLessThan(0.05)
+        expectThat(scanHandler.isComplete)
+            .isFalse()
+    }
+
+    @Test
+    fun `can solve game and complete game`() {
+        solveGame()
+        stepTimeToTwoSeconds()
+        expectThat(scanHandler.isComplete)
+            .isTrue()
+    }
+
+    private fun stepTimeToTwoSeconds() {
+        time.update(Instant.EPOCH.plusMillis((2.0 * 1000).toLong()))
         scanHandler.update(time)
+    }
+
+    private fun solveGame() {
+        (0 until 2).forEach { dimension: Int ->
+            (0..100).map {
+                it / 100.0
+            }.map {
+                scanHandler.adjustInput(dimension, it)
+                it to scanHandler.noise
+            }.minByOrNull {
+                it.second
+            }?.also {
+                scanHandler.adjustInput(dimension, it.first)
+            }
+        }
     }
 
     private fun createScanHandler(): ScanHandler {
         var candidate = ScanHandler(targetId) { power }
-        while (candidate.toMessage().noise >= 1.0) {
+        while (candidate.noise >= 1.0) {
             candidate = ScanHandler(targetId) { power }
         }
         return candidate
@@ -60,4 +93,7 @@ class ScanHandlerTest {
 
     private fun ScanHandler.toMessage() =
         toMessage { Ship(designation = "dummy") }
+
+    private val ScanHandler.noise
+        get() = toMessage().noise
 }
