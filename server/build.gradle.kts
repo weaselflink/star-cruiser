@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val logback_version: String by project
 val ktor_version: String by project
 val kotlin_version: String by project
+val junit_version: String by project
 
 plugins {
     application
@@ -31,7 +32,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization:$ktor_version")
     implementation("org.jbox2d:jbox2d-library:2.2.1.1")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.7.0-M1")
+    testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("io.strikt:strikt-core:0.27.0")
     testImplementation("io.mockk:mockk:1.10.0")
