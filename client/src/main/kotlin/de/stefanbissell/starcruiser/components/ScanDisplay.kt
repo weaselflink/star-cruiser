@@ -112,16 +112,8 @@ class ScanDisplay(
         val width = dim.width - 10.vmin
         val height = 18.vmin
 
-        val noiseFunction: (Int) -> Double = {
-            val pos = it / 100.0 * PI * 6.0
-            sin(pos) * -1.0 + (Random.nextDouble() - 0.5) * 4.0 * noise
-        }
-        val noiseValues = (1..99).map {
-            noiseFunction(it)
-        }
-        val maxNoise = noiseValues.map { abs(it) }.maxOrNull() ?: 1.0
         val amplitude = height * 0.4
-        val scaledNoiseValues = noiseValues.map { it / maxNoise * amplitude + middle }
+        val noiseWave = createNoiseWave(noise)
 
         save()
 
@@ -140,13 +132,38 @@ class ScanDisplay(
 
         beginPath()
         moveTo(x, middle)
-        (1..99).forEach { index ->
-            lineTo(x + width * 0.01 * index, scaledNoiseValues[index - 1])
+        noiseWave.forEach {
+            lineTo(
+                x + width / noiseWave.size.toDouble() * it.first,
+                it.second * amplitude + middle
+            )
         }
         lineTo(x + width, middle)
         stroke()
 
         restore()
+    }
+
+    private fun createNoiseWave(noise: Double): List<Pair<Int, Double>> {
+        val points = 200
+        val noiseFunctions: List<(Int) -> Double> = (0..6).map {
+            createNoiseFunction(points, noise)
+        }
+        val finalFunction: (Int) -> Double = { index ->
+            val pos = index / points.toDouble() * 6.0 * PI
+            sin(pos) * -1.0 + noiseFunctions.map { it(index) }.sum()
+        }
+        val noiseValues = (1 until points).map {
+            it to finalFunction(it)
+        }
+        val maxNoise = noiseValues.map { abs(it.second) }.maxOrNull() ?: 1.0
+        return noiseValues.map { it.first to it.second / maxNoise }
+    }
+
+    private fun createNoiseFunction(points: Int, noise: Double): (Int) -> Double {
+        val frequency = (Random.nextDouble() * 24.0 + 12.0) * PI
+        val offset = Random.nextDouble() * 2.0 * PI
+        return { sin(it / points.toDouble() * frequency + offset) * noise }
     }
 
     private val Int.vmin
