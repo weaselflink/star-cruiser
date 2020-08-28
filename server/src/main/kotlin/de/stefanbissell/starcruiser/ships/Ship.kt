@@ -41,14 +41,13 @@ class Ship(
     var position: Vector2 = Vector2(),
     var speed: Vector2 = Vector2(),
     var rotation: Double = 90.0.toRadians(),
-    var throttle: Int = 0,
     var rudder: Int = 0
 ) {
 
-    var thrust = 0.0
     private val waypoints: MutableList<Waypoint> = mutableListOf()
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val scans = mutableMapOf<ObjectId, ScanLevel>()
+    private val throttleHandler = ThrottleHandler(template)
     private val powerHandler = PowerHandler(template)
     private val beamHandlers = template.beams.map { BeamHandler(it, this) }
     private val shieldHandler = ShieldHandler(template.shield)
@@ -62,6 +61,8 @@ class Ship(
     var mainScreenView = MainScreenView.Front
     val sensorRange: Double
         get() = max(template.shortRangeScopeRange, template.sensorRange * Sensors.boostLevel)
+    val throttle
+        get() = throttleHandler.requested
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: ShipProvider) {
         powerHandler.update(time)
@@ -70,12 +71,8 @@ class Ship(
         jumpHandler.update(time, Jump.boostLevel)
         updateScan(time, shipProvider)
         updateLock(time, shipProvider)
-        updateThrust(time)
-        val effectiveThrust = if (thrust < 0) {
-            thrust * template.reverseThrustFactor * Impulse.boostLevel
-        } else {
-            thrust * template.aheadThrustFactor * Impulse.boostLevel
-        }
+        throttleHandler.update(time)
+        val effectiveThrust = throttleHandler.effectiveThrust(Impulse.boostLevel)
         val effectiveRudder = rudder * template.rudderFactor * Maneuver.boostLevel
         physicsEngine.updateShip(id, effectiveThrust, effectiveRudder)
 
@@ -116,7 +113,7 @@ class Ship(
 
     fun changeThrottle(value: Int) {
         if (!jumpHandler.jumping) {
-            throttle = value.clamp(-100, 100)
+            throttleHandler.requested = value
         }
     }
 
@@ -129,7 +126,7 @@ class Ship(
     fun startJump() {
         if (jumpHandler.ready) {
             jumpHandler.startJump()
-            throttle = 0
+            throttleHandler.requested = 0
             rudder = 0
         }
     }
@@ -384,20 +381,6 @@ class Ship(
             if (!it.isComplete) {
                 it.update(time)
             }
-        }
-    }
-
-    private fun updateThrust(time: GameTime) {
-        val responsiveness = template.throttleResponsiveness * time.delta
-        thrust = if (abs(thrust - throttle) <= responsiveness) {
-            throttle.toDouble()
-        } else {
-            val diff = when {
-                throttle > thrust -> responsiveness
-                throttle < thrust -> -responsiveness
-                else -> 0.0
-            }
-            (thrust + diff).clamp(-100.0, 100.0)
         }
     }
 

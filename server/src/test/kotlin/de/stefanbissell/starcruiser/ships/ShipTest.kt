@@ -55,22 +55,6 @@ class ShipTest {
     }
 
     @Test
-    fun `updates positive thrust`() {
-        ship.changeThrottle(100)
-        stepTimeTo(2)
-
-        expectThat(ship.thrust).isNear(ship.template.throttleResponsiveness * 2)
-    }
-
-    @Test
-    fun `updates negative thrust`() {
-        ship.changeThrottle(-100)
-        stepTimeTo(2)
-
-        expectThat(ship.thrust).isNear(ship.template.throttleResponsiveness * -2)
-    }
-
-    @Test
     fun `sets positive throttle`() {
         ship.changeThrottle(50)
 
