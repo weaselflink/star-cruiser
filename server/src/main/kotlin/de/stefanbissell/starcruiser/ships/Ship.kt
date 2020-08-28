@@ -109,6 +109,7 @@ class Ship(
         if (lockHandler?.targetId == shipId) {
             lockHandler = null
         }
+        scans.remove(shipId)
     }
 
     fun changeThrottle(value: Int) {
@@ -142,7 +143,9 @@ class Ship(
     }
 
     fun mapSelectWaypoint(index: Int) {
-        mapSelection = MapSelection.Waypoint(index)
+        if (waypoints.any { it.index == index }) {
+            mapSelection = MapSelection.Waypoint(index)
+        }
     }
 
     fun mapSelectShip(targetId: ObjectId) {

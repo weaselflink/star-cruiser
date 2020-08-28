@@ -26,6 +26,7 @@ import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isNotNull
+import strikt.assertions.isNull
 import strikt.assertions.isTrue
 import java.time.Instant
 
@@ -494,6 +495,66 @@ class ShipTest {
             .isNear(ship.template.shortRangeScopeRange)
         expectThat(ship.toNavigationMessage { null }.sensorRange)
             .isNear(ship.template.shortRangeScopeRange)
+    }
+
+    @Test
+    fun `can select ship on map`() {
+        val target = Ship(
+            position = p(100, 0)
+        )
+        ship.mapSelectShip(target.id)
+
+        expectThat(ship.toMapSelectionMessage { target })
+            .isNotNull()
+            .get { label }.isEqualTo(target.designation)
+    }
+
+    @Test
+    fun `can select waypoint on map`() {
+        ship.addWaypoint(p(0, 0))
+        ship.mapSelectWaypoint(1)
+
+        expectThat(ship.toMapSelectionMessage { null })
+            .isNotNull()
+            .get { label }.isEqualTo("WP1")
+    }
+
+    @Test
+    fun `cannot select unknown waypoint on map`() {
+        ship.addWaypoint(p(0, 0))
+        ship.mapSelectWaypoint(2)
+
+        expectThat(ship.toMapSelectionMessage { null })
+            .isNull()
+    }
+
+    @Test
+    fun `cleans up destroyed target`() {
+        val target = Ship(
+            position = p(100, 0)
+        )
+
+        ship.lockTarget(target.id)
+        ship.mapSelectShip(target.id)
+        ship.startScan()
+
+        expectThat(ship.toShortRangeScopeMessage().lockProgress)
+            .isA<LockStatus.InProgress>()
+        expectThat(ship.toMapSelectionMessage { target })
+            .isNotNull()
+            .get { label }.isEqualTo(target.designation)
+        expectThat(ship.toNavigationMessage { target }.scanProgress)
+            .isNotNull()
+            .get { designation }.isEqualTo(target.designation)
+
+        ship.targetDestroyed(target.id)
+
+        expectThat(ship.toShortRangeScopeMessage().lockProgress)
+            .isEqualTo(LockStatus.NoLock)
+        expectThat(ship.toMapSelectionMessage { target })
+            .isNull()
+        expectThat(ship.toNavigationMessage { target }.scanProgress)
+            .isNull()
     }
 
     private fun stepTimeTo(seconds: Number, shipProvider: ShipProvider = { null }): ShipUpdateResult {
