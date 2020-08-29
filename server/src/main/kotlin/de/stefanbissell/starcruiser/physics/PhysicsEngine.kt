@@ -3,7 +3,7 @@ package de.stefanbissell.starcruiser.physics
 import de.stefanbissell.starcruiser.Asteroid
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.Vector2
-import de.stefanbissell.starcruiser.ships.ShipInterface
+import de.stefanbissell.starcruiser.ships.Ship
 import de.stefanbissell.starcruiser.ships.ShipTemplate
 import org.jbox2d.callbacks.RayCastCallback
 import org.jbox2d.collision.shapes.CircleShape
@@ -23,7 +23,7 @@ class PhysicsEngine {
 
     fun step(delta: Number) = world.step(delta.toFloat(), 6, 2)
 
-    fun addShip(ship: ShipInterface) {
+    fun addShip(ship: Ship) {
         bodies[ship.id] = ship.toBody()
     }
 
@@ -90,7 +90,7 @@ class PhysicsEngine {
             .toList()
     }
 
-    private fun ShipInterface.toBody() =
+    private fun Ship.toBody() =
         createDynamicBody(
             position,
             rotation

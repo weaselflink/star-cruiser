@@ -83,17 +83,17 @@ class BeamHandler(
         inRange(it, ship) && unobstructed(it, ship, physicsEngine)
     } ?: false
 
-    private fun inRange(target: ShipInterface, ship: ShipInterface) =
+    private fun inRange(target: Ship, ship: Ship) =
         (target.position - ship.position)
             .rotate(-ship.rotation)
             .let { beamWeapon.isInRange(it) }
 
     @Suppress("ReplaceSizeZeroCheckWithIsEmpty")
-    private fun unobstructed(target: ShipInterface, ship: ShipInterface, physicsEngine: PhysicsEngine): Boolean {
+    private fun unobstructed(target: Ship, ship: Ship, physicsEngine: PhysicsEngine): Boolean {
         val ignore = listOf(ship.id, target.id)
         val obstructions = physicsEngine.findObstructions(getBeamPosition(ship), target.position, ignore)
         return obstructions.isEmpty()
     }
 
-    private fun getBeamPosition(ship: ShipInterface) = ship.position + (position2d.rotate(ship.rotation))
+    private fun getBeamPosition(ship: Ship) = ship.position + (position2d.rotate(ship.rotation))
 }

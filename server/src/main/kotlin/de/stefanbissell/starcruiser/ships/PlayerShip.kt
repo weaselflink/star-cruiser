@@ -39,7 +39,7 @@ class PlayerShip(
     override val designation: String = randomShipName(),
     override var position: Vector2 = Vector2(),
     override var rotation: Double = 90.0.toRadians()
-) : ShipInterface {
+) : Ship {
 
     private val waypoints: MutableList<Waypoint> = mutableListOf()
     private val history = mutableListOf<Pair<Double, Vector2>>()
@@ -509,4 +509,4 @@ data class ShipUpdateResult(
     val destroyed: Boolean
 )
 
-typealias ShipProvider = (ObjectId) -> ShipInterface?
+typealias ShipProvider = (ObjectId) -> Ship?

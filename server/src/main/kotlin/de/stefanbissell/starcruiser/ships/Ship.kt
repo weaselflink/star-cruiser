@@ -11,7 +11,7 @@ import de.stefanbissell.starcruiser.ShieldMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 
-interface ShipInterface {
+interface Ship {
 
     val id: ObjectId
     val template: ShipTemplate
@@ -32,7 +32,7 @@ interface ShipInterface {
 
     fun toShieldMessage(): ShieldMessage
 
-    fun inSensorRange(other: ShipInterface?) = inSensorRange(other?.position)
+    fun inSensorRange(other: Ship?) = inSensorRange(other?.position)
 
     fun inSensorRange(other: Asteroid?) = inSensorRange(other?.position)
 

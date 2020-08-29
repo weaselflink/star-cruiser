@@ -12,7 +12,7 @@ import de.stefanbissell.starcruiser.client.ClientId
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.PlayerShip
-import de.stefanbissell.starcruiser.ships.ShipInterface
+import de.stefanbissell.starcruiser.ships.Ship
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
@@ -58,7 +58,7 @@ class SetMainScreenView(val clientId: ClientId, val mainScreenView: MainScreenVi
 class GameState {
 
     private var time = GameTime()
-    private val ships = mutableMapOf<ObjectId, ShipInterface>()
+    private val ships = mutableMapOf<ObjectId, Ship>()
     private val playerShips
         get() = ships.values
             .filterIsInstance<PlayerShip>()
