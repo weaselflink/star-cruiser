@@ -9,6 +9,7 @@ import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.ScopeContactMessage
 import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.ai.ShipAi
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.randomShipName
 import de.stefanbissell.starcruiser.toRadians
@@ -22,7 +23,8 @@ class NonPlayerShip(
     override var rotation: Double = 90.0.toRadians(),
 ) : Ship {
 
-    private val shieldHandler = ShieldHandler(template.shield)
+    private val shipAi = ShipAi()
+    val shieldHandler = ShieldHandler(template.shield)
     val sensorRange: Double
         get() = max(template.shortRangeScopeRange, template.sensorRange)
     var throttle: Int = 0
@@ -30,6 +32,7 @@ class NonPlayerShip(
     override var hull = template.hull
 
     override fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: ShipProvider) {
+        shipAi.update(time, this)
         shieldHandler.update(time)
 
         val effectiveThrust = if (throttle < 0) {

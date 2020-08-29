@@ -211,7 +211,7 @@ class PlayerShip(
     }
 
     fun setShieldsUp(value: Boolean) {
-        shieldHandler.setUp(value)
+        shieldHandler.up = value
     }
 
     fun toggleShieldsUp() {

@@ -10,7 +10,16 @@ class ShieldHandler(
     private val shieldTemplate: ShieldTemplate
 ) {
 
-    private var up: Boolean = true
+    var up: Boolean = true
+        set(value) {
+            if (value) {
+                if (activationAllowed()) {
+                    field = true
+                }
+            } else {
+                field = false
+            }
+        }
     private var damageSinceLastUpdate: Double = 0.0
     private var activated: Boolean = false
 
@@ -39,21 +48,11 @@ class ShieldHandler(
         }
     }
 
-    fun setUp(value: Boolean) {
-        if (value) {
-            if (activationAllowed()) {
-                up = true
-            }
-        } else {
-            up = false
-        }
-    }
-
     fun toggleUp() {
-        setUp(!up)
+        up = !up
     }
 
-    private fun activationAllowed() = currentStrength >= shieldTemplate.activationStrength
+    fun activationAllowed() = currentStrength >= shieldTemplate.activationStrength
 
     fun toMessage() =
         ShieldMessage(

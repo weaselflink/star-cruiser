@@ -93,7 +93,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `reports damage to hull if shields down`() {
-        shieldHandler.setUp(false)
+        shieldHandler.up = false
 
         expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0))
             .isEqualTo(3.0)
@@ -122,8 +122,8 @@ class ShieldHandlerTest {
     @Test
     fun `shield cannot go up if below activation strength`() {
         shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength - shieldTemplate.activationStrength + 3.0)
-        shieldHandler.setUp(false)
-        shieldHandler.setUp(true)
+        shieldHandler.up = false
+        shieldHandler.up = true
 
         expectThat(shieldHandler.toMessage().up)
             .isFalse()
@@ -132,11 +132,11 @@ class ShieldHandlerTest {
     @Test
     fun `shield can go up after reaching activation strength`() {
         shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength - shieldTemplate.activationStrength + 3.0)
-        shieldHandler.setUp(false)
+        shieldHandler.up = false
 
         stepTimeTo(4.0 / shieldTemplate.rechargeSpeed)
 
-        shieldHandler.setUp(true)
+        shieldHandler.up = true
 
         expectThat(shieldHandler.toMessage().up)
             .isTrue()
