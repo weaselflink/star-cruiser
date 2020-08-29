@@ -181,6 +181,7 @@ class GameState {
             position = Vector2.random(1050, 850),
             rotation = Random.nextDouble(PI * 2.0)
         ).also {
+            it.throttle = 50
             ships[it.id] = it
             physicsEngine.addShip(it)
         }
