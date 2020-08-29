@@ -19,7 +19,7 @@ class ShieldHandler(
             field = value.clamp(0.0, shieldTemplate.strength)
         }
 
-    fun update(time: GameTime, boostLevel: Double) {
+    fun update(time: GameTime, boostLevel: Double = 1.0) {
         currentStrength += rechargeAmount(time, boostLevel)
     }
 

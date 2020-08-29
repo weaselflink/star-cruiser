@@ -30,6 +30,8 @@ class NonPlayerShip(
     override var hull = template.hull
 
     override fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: ShipProvider) {
+        shieldHandler.update(time)
+
         val effectiveThrust = if (throttle < 0) {
             throttle * template.reverseThrustFactor
         } else {
