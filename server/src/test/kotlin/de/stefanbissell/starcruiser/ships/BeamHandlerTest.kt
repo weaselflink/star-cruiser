@@ -22,7 +22,7 @@ class BeamHandlerTest {
     private val beamWeapon = BeamWeapon(Vector3())
     private var power = 1.0
     private val ship = Ship()
-    private var shipProvider: (ObjectId) -> Ship? = { null }
+    private var shipProvider: ShipProvider = { null }
     private val target = Ship().apply {
         position = p(0, 1000)
         setShieldsUp(false)

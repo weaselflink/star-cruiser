@@ -178,6 +178,12 @@ fun CanvasRenderingContext2D.friendlyContactStyle(dim: CanvasDimensions) {
     contactStyle(dim)
 }
 
+fun CanvasRenderingContext2D.enemyContactStyle(dim: CanvasDimensions) {
+    strokeStyle = "#ff6347"
+    fillStyle = "#ff6347"
+    contactStyle(dim)
+}
+
 private fun CanvasRenderingContext2D.contactStyle(dim: CanvasDimensions) {
     lineWidth = dim.vmin * 0.3
     lineJoin = CanvasLineJoin.ROUND

@@ -250,13 +250,11 @@ class ShipTest {
             physicsEngine.getBodyParameters(ship.id)
         } returns BodyParameters(
             position = p(1, 2),
-            speed = p(3, 4),
             rotation = 5.0
         )
 
         ship.update(time, physicsEngine) { null }
 
-        expectThat(ship.speed).isEqualTo(p(3, 4))
         ship.toMessage().also {
             expectThat(it.position).isEqualTo(p(1, 2))
             expectThat(it.rotation).isEqualTo(5.0)

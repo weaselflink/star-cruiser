@@ -3,7 +3,6 @@ package de.stefanbissell.starcruiser.ships
 import de.stefanbissell.starcruiser.BeamMessage
 import de.stefanbissell.starcruiser.BeamStatus
 import de.stefanbissell.starcruiser.GameTime
-import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
@@ -20,7 +19,7 @@ class BeamHandler(
     fun update(
         time: GameTime,
         boostLevel: Double,
-        shipProvider: (ObjectId) -> Ship?,
+        shipProvider: ShipProvider,
         lockHandler: LockHandler?,
         physicsEngine: PhysicsEngine
     ) {
@@ -72,11 +71,11 @@ class BeamHandler(
     private fun getLockedTargetId(lockHandler: LockHandler?) =
         if (lockHandler?.isComplete == true) lockHandler.targetId else null
 
-    private fun getLockedTarget(shipProvider: (ObjectId) -> Ship?, lockHandler: LockHandler?) =
+    private fun getLockedTarget(shipProvider: ShipProvider, lockHandler: LockHandler?) =
         getLockedTargetId(lockHandler)?.let { shipProvider(it) }
 
     private fun isLockedTargetInRange(
-        shipProvider: (ObjectId) -> Ship?,
+        shipProvider: ShipProvider,
         lockHandler: LockHandler?,
         ship: Ship,
         physicsEngine: PhysicsEngine
@@ -84,17 +83,17 @@ class BeamHandler(
         inRange(it, ship) && unobstructed(it, ship, physicsEngine)
     } ?: false
 
-    private fun inRange(target: Ship, ship: Ship) =
+    private fun inRange(target: ShipInterface, ship: ShipInterface) =
         (target.position - ship.position)
             .rotate(-ship.rotation)
             .let { beamWeapon.isInRange(it) }
 
     @Suppress("ReplaceSizeZeroCheckWithIsEmpty")
-    private fun unobstructed(target: Ship, ship: Ship, physicsEngine: PhysicsEngine): Boolean {
+    private fun unobstructed(target: ShipInterface, ship: ShipInterface, physicsEngine: PhysicsEngine): Boolean {
         val ignore = listOf(ship.id, target.id)
         val obstructions = physicsEngine.findObstructions(getBeamPosition(ship), target.position, ignore)
         return obstructions.isEmpty()
     }
 
-    private fun getBeamPosition(ship: Ship) = ship.position + (position2d.rotate(ship.rotation))
+    private fun getBeamPosition(ship: ShipInterface) = ship.position + (position2d.rotate(ship.rotation))
 }

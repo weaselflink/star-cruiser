@@ -10,7 +10,9 @@ import de.stefanbissell.starcruiser.Station.Navigation
 import de.stefanbissell.starcruiser.Station.Weapons
 import de.stefanbissell.starcruiser.client.ClientId
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
+import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
+import de.stefanbissell.starcruiser.ships.ShipInterface
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
@@ -56,7 +58,11 @@ class SetMainScreenView(val clientId: ClientId, val mainScreenView: MainScreenVi
 class GameState {
 
     private var time = GameTime()
-    private val ships = mutableMapOf<ObjectId, Ship>()
+    private val ships = mutableMapOf<ObjectId, ShipInterface>()
+    private val playerShips
+        get() = ships.values
+            .filterIsInstance<Ship>()
+            .associateBy { it.id }
     private val asteroids = mutableListOf<Asteroid>()
     private val clients = mutableMapOf<ClientId, Client>()
 
@@ -66,13 +72,17 @@ class GameState {
         repeat(50) {
             spawnAsteroid()
         }
+        repeat(4) {
+            spawnNonPlayerShip()
+        }
     }
 
     fun toMessage(clientId: ClientId): SnapshotMessage {
         val client = getClient(clientId)
         return when (val state = client.state) {
             is ShipSelection -> SnapshotMessage.ShipSelection(
-                playerShips = ships.values.map(Ship::toPlayerShipMessage)
+                playerShips = playerShips.values
+                    .map(Ship::toPlayerShipMessage)
             )
             is ShipDestroyed -> SnapshotMessage.ShipDestroyed
             is InShip -> {
@@ -95,7 +105,7 @@ class GameState {
                         shield = ship.toShieldMessage()
                     )
                     Navigation -> SnapshotMessage.Navigation(
-                        ship = ship.toNavigationMessage { id -> ships[id] },
+                        ship = ship.toNavigationMessage { id -> playerShips[id] },
                         mapSelection = ship.toMapSelectionMessage { id -> ships[id] },
                         contacts = getMapContacts(ship),
                         asteroids = getMapAsteroids(ship)
@@ -138,7 +148,7 @@ class GameState {
     }
 
     fun joinShip(clientId: ClientId, objectId: ObjectId, station: Station) {
-        ships[objectId]?.also {
+        playerShips[objectId]?.also {
             getClient(clientId).joinShip(it, station)
         }
     }
@@ -163,6 +173,16 @@ class GameState {
             it.toggleShieldsUp()
             it.takeDamage(PoweredSystemType.Jump, 2.5)
             it.toggleShieldsUp()
+        }
+    }
+
+    fun spawnNonPlayerShip() {
+        NonPlayerShip(
+            position = Vector2.random(1050, 850),
+            rotation = Random.nextDouble(PI * 2.0)
+        ).also {
+            ships[it.id] = it
+            physicsEngine.addShip(it)
         }
     }
 

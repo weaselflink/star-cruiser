@@ -18,6 +18,7 @@ import de.stefanbissell.starcruiser.drawAsteroidSymbol
 import de.stefanbissell.starcruiser.drawLockMarker
 import de.stefanbissell.starcruiser.drawPill
 import de.stefanbissell.starcruiser.drawShipSymbol
+import de.stefanbissell.starcruiser.enemyContactStyle
 import de.stefanbissell.starcruiser.environmentContactStyle
 import de.stefanbissell.starcruiser.friendlyContactStyle
 import de.stefanbissell.starcruiser.historyStyle
@@ -371,6 +372,7 @@ class ShortRangeScope(
     private fun CanvasRenderingContext2D.drawContactShipSymbol(contact: ScopeContactMessage) {
         when (contact.type) {
             ContactType.Friendly -> friendlyContactStyle(dim)
+            ContactType.Enemy -> enemyContactStyle(dim)
             else -> unknownContactStyle(dim)
         }
         drawShipSymbol(contact.rotation, dim.vmin * 0.8)

@@ -3,7 +3,8 @@ package de.stefanbissell.starcruiser.physics
 import de.stefanbissell.starcruiser.Asteroid
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.Vector2
-import de.stefanbissell.starcruiser.ships.Ship
+import de.stefanbissell.starcruiser.ships.ShipInterface
+import de.stefanbissell.starcruiser.ships.ShipTemplate
 import org.jbox2d.callbacks.RayCastCallback
 import org.jbox2d.collision.shapes.CircleShape
 import org.jbox2d.collision.shapes.PolygonShape
@@ -22,7 +23,7 @@ class PhysicsEngine {
 
     fun step(delta: Number) = world.step(delta.toFloat(), 6, 2)
 
-    fun addShip(ship: Ship) {
+    fun addShip(ship: ShipInterface) {
         bodies[ship.id] = ship.toBody()
     }
 
@@ -89,17 +90,17 @@ class PhysicsEngine {
             .toList()
     }
 
-    private fun Ship.toBody() =
+    private fun ShipInterface.toBody() =
         createDynamicBody(
             position,
             rotation
         ).apply {
             m_userData = this@toBody.id
-            createFixtures(this@toBody)
+            createFixtures(this@toBody.template)
         }
 
-    private fun Body.createFixtures(ship: Ship) {
-        ship.template.physics.geometry.forEach { geometry ->
+    private fun Body.createFixtures(shipTemplate: ShipTemplate) {
+        shipTemplate.physics.geometry.forEach { geometry ->
             val points = geometry.shape.border.map {
                 Vec2(it.x.toFloat(), it.y.toFloat())
             }.toTypedArray()

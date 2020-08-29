@@ -1,6 +1,5 @@
 package de.stefanbissell.starcruiser.ships
 
-import de.stefanbissell.starcruiser.Asteroid
 import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
@@ -35,14 +34,12 @@ import kotlin.math.abs
 import kotlin.math.max
 
 class Ship(
-    val id: ObjectId = ObjectId.random(),
-    val template: ShipTemplate = cruiserTemplate,
-    val designation: String = randomShipName(),
-    var position: Vector2 = Vector2(),
-    var speed: Vector2 = Vector2(),
-    var rotation: Double = 90.0.toRadians(),
-    var rudder: Int = 0
-) {
+    override val id: ObjectId = ObjectId.random(),
+    override val template: ShipTemplate = cruiserTemplate,
+    override val designation: String = randomShipName(),
+    override var position: Vector2 = Vector2(),
+    override var rotation: Double = 90.0.toRadians()
+) : ShipInterface {
 
     private val waypoints: MutableList<Waypoint> = mutableListOf()
     private val history = mutableListOf<Pair<Double, Vector2>>()
@@ -54,7 +51,7 @@ class Ship(
     private var mapSelection: MapSelection = MapSelection.None
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
-    var hull = template.hull
+    override var hull = template.hull
     private val jumpHandler = JumpHandler(
         jumpDrive = template.jumpDrive
     )
@@ -63,8 +60,9 @@ class Ship(
         get() = max(template.shortRangeScopeRange, template.sensorRange * Sensors.boostLevel)
     val throttle
         get() = throttleHandler.requested
+    var rudder: Int = 0
 
-    fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: ShipProvider) {
+    override fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: ShipProvider) {
         powerHandler.update(time)
         updateBeams(time, shipProvider, physicsEngine)
         shieldHandler.update(time, Shields.boostLevel)
@@ -78,7 +76,6 @@ class Ship(
 
         physicsEngine.getBodyParameters(id)?.let {
             position = it.position
-            speed = it.speed
             rotation = it.rotation
         }
 
@@ -86,7 +83,7 @@ class Ship(
         updateMapSelection(shipProvider)
     }
 
-    fun endUpdate(physicsEngine: PhysicsEngine): ShipUpdateResult {
+    override fun endUpdate(physicsEngine: PhysicsEngine): ShipUpdateResult {
         shieldHandler.endUpdate()
         val destroyed = hull <= 0.0
         if (!destroyed && jumpHandler.jumpComplete) {
@@ -99,7 +96,15 @@ class Ship(
         )
     }
 
-    fun targetDestroyed(shipId: ObjectId) {
+    override fun takeDamage(targetSystemType: PoweredSystemType, amount: Double) {
+        val hullDamage = shieldHandler.takeDamageAndReportHullDamage(amount)
+        if (hullDamage > 0.0) {
+            hull -= hullDamage
+            powerHandler.takeDamage(targetSystemType, amount)
+        }
+    }
+
+    override fun targetDestroyed(shipId: ObjectId) {
         if (mapSelection.isShipSelected(shipId)) {
             mapSelection = MapSelection.None
         }
@@ -233,19 +238,7 @@ class Ship(
         powerHandler.setCoolant(systemType, coolant)
     }
 
-    fun takeDamage(targetSystemType: PoweredSystemType, amount: Double) {
-        val hullDamage = shieldHandler.takeDamageAndReportHullDamage(amount)
-        if (hullDamage > 0.0) {
-            hull -= hullDamage
-            powerHandler.takeDamage(targetSystemType, amount)
-        }
-    }
-
-    fun inSensorRange(other: Ship?) = inSensorRange(other?.position)
-
-    fun inSensorRange(other: Asteroid?) = inSensorRange(other?.position)
-
-    fun inSensorRange(other: Vector2?) =
+    override fun inSensorRange(other: Vector2?) =
         other != null && (other - position).length() <= sensorRange
 
     fun toPlayerShipMessage() =
@@ -290,7 +283,7 @@ class Ship(
             beams = beamHandlers.map { it.toMessage(lockHandler) }
         )
 
-    fun toContactMessage(relativeTo: Ship) =
+    override fun toContactMessage(relativeTo: Ship) =
         ContactMessage(
             id = id,
             model = template.model,
@@ -302,7 +295,7 @@ class Ship(
             jumpAnimation = jumpHandler.toMessage().animation
         )
 
-    fun toMapContactMessage(relativeTo: Ship) =
+    override fun toMapContactMessage(relativeTo: Ship) =
         MapContactMessage(
             id = id,
             type = getContactType(relativeTo),
@@ -311,7 +304,7 @@ class Ship(
             rotation = rotation
         )
 
-    fun toScopeContactMessage(relativeTo: Ship) =
+    override fun toScopeContactMessage(relativeTo: Ship) =
         ScopeContactMessage(
             id = id,
             type = getContactType(relativeTo),
@@ -320,6 +313,8 @@ class Ship(
             rotation = rotation,
             locked = relativeTo.isLocking(id)
         )
+
+    override fun toShieldMessage() = shieldHandler.toMessage()
 
     fun toMapSelectionMessage(shipProvider: ShipProvider) =
         mapSelection.let { selection ->
@@ -338,7 +333,14 @@ class Ship(
 
     fun toJumpDriveMessage() = jumpHandler.toMessage()
 
-    fun toShieldMessage() = shieldHandler.toMessage()
+    fun isLocking(targetId: ObjectId) =
+        if (lockHandler != null) {
+            lockHandler?.targetId == targetId
+        } else {
+            false
+        }
+
+    fun getScanLevel(targetId: ObjectId) = scans[targetId] ?: ScanLevel.None
 
     private fun updateBeams(
         time: GameTime,
@@ -448,20 +450,11 @@ class Ship(
 
     private fun canIncreaseScanLevel(targetId: ObjectId) = getScanLevel(targetId).canBeIncreased
 
-    private fun getScanLevel(targetId: ObjectId) = scans[targetId] ?: ScanLevel.None
-
     private fun getContactType(relativeTo: Ship) =
         if (relativeTo.getScanLevel(id) == ScanLevel.Basic) {
             ContactType.Friendly
         } else {
             ContactType.Unknown
-        }
-
-    private fun isLocking(targetId: ObjectId) =
-        if (lockHandler != null) {
-            lockHandler?.targetId == targetId
-        } else {
-            false
         }
 
     private val PoweredSystemType.boostLevel
@@ -516,4 +509,4 @@ data class ShipUpdateResult(
     val destroyed: Boolean
 )
 
-typealias ShipProvider = (ObjectId) -> Ship?
+typealias ShipProvider = (ObjectId) -> ShipInterface?
