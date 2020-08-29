@@ -30,9 +30,9 @@ import strikt.assertions.isNull
 import strikt.assertions.isTrue
 import java.time.Instant
 
-class ShipTest {
+class PlayerShipTest {
 
-    private val ship = Ship(
+    private val ship = PlayerShip(
         position = p(3, -4),
         template = carrierTemplate.let {
             it.copy(beams = it.beams.subList(0, 1))
@@ -185,8 +185,8 @@ class ShipTest {
 
     @Test
     fun `does not start scan with scan in progress`() {
-        val target1 = Ship()
-        val target2 = Ship()
+        val target1 = PlayerShip()
+        val target2 = PlayerShip()
 
         ship.mapSelectShip(target1.id)
         ship.startScan()
@@ -263,7 +263,7 @@ class ShipTest {
 
     @Test
     fun `updates target lock`() {
-        val target = Ship()
+        val target = PlayerShip()
 
         ship.update(time, physicsEngine) { target }
 
@@ -281,7 +281,7 @@ class ShipTest {
 
     @Test
     fun `updates beams`() {
-        val target = Ship(
+        val target = PlayerShip(
             position = p(100, 0)
         )
 
@@ -307,7 +307,7 @@ class ShipTest {
     fun `updates beams applying power level`() {
         ship.setPower(PoweredSystemType.Weapons, 200)
         ship.setCoolant(PoweredSystemType.Weapons, 1.0)
-        val target = Ship(
+        val target = PlayerShip(
             position = p(100, 0)
         )
 
@@ -327,7 +327,7 @@ class ShipTest {
 
     @Test
     fun `does not fire if target outside arc`() {
-        val target = Ship(
+        val target = PlayerShip(
             position = p(0, 100)
         )
 
@@ -342,7 +342,7 @@ class ShipTest {
 
     @Test
     fun `does not fire if target outside range`() {
-        val target = Ship(
+        val target = PlayerShip(
             position = p(ship.template.beams.first().range.last + 100, 0)
         )
 
@@ -497,7 +497,7 @@ class ShipTest {
 
     @Test
     fun `can select ship on map`() {
-        val target = Ship(
+        val target = PlayerShip(
             position = p(100, 0)
         )
         ship.mapSelectShip(target.id)
@@ -528,7 +528,7 @@ class ShipTest {
 
     @Test
     fun `cleans up destroyed target`() {
-        val target = Ship(
+        val target = PlayerShip(
             position = p(100, 0)
         )
 

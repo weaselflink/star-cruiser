@@ -11,7 +11,7 @@ import de.stefanbissell.starcruiser.Station.Weapons
 import de.stefanbissell.starcruiser.client.ClientId
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
-import de.stefanbissell.starcruiser.ships.Ship
+import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.ShipInterface
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -61,7 +61,7 @@ class GameState {
     private val ships = mutableMapOf<ObjectId, ShipInterface>()
     private val playerShips
         get() = ships.values
-            .filterIsInstance<Ship>()
+            .filterIsInstance<PlayerShip>()
             .associateBy { it.id }
     private val asteroids = mutableListOf<Asteroid>()
     private val clients = mutableMapOf<ClientId, Client>()
@@ -82,7 +82,7 @@ class GameState {
         return when (val state = client.state) {
             is ShipSelection -> SnapshotMessage.ShipSelection(
                 playerShips = playerShips.values
-                    .map(Ship::toPlayerShipMessage)
+                    .map(PlayerShip::toPlayerShipMessage)
             )
             is ShipDestroyed -> SnapshotMessage.ShipDestroyed
             is InShip -> {
@@ -119,20 +119,20 @@ class GameState {
         }
     }
 
-    private fun toMainScreenMessage(ship: Ship): SnapshotMessage =
+    private fun toMainScreenMessage(ship: PlayerShip): SnapshotMessage =
         when (ship.mainScreenView) {
             MainScreenView.Scope -> toMainScreenShortRangeScope(ship)
             else -> toMainScreen3d(ship)
         }
 
-    private fun toMainScreenShortRangeScope(ship: Ship) =
+    private fun toMainScreenShortRangeScope(ship: PlayerShip) =
         SnapshotMessage.MainScreenShortRangeScope(
             shortRangeScope = ship.toShortRangeScopeMessage(),
             contacts = getScopeContacts(ship),
             asteroids = getScopeAsteroids(ship)
         )
 
-    private fun toMainScreen3d(ship: Ship) =
+    private fun toMainScreen3d(ship: PlayerShip) =
         SnapshotMessage.MainScreen3d(
             ship = ship.toMessage(),
             contacts = getContacts(ship),
@@ -162,7 +162,7 @@ class GameState {
     }
 
     fun spawnShip() {
-        Ship(
+        PlayerShip(
             position = Vector2.random(300),
             rotation = Random.nextDouble(PI * 2.0)
         ).also {
@@ -323,19 +323,19 @@ class GameState {
     private fun getClient(clientId: ClientId) =
         clients.computeIfAbsent(clientId) { Client(clientId) }
 
-    private fun getClientShip(clientId: ClientId): Ship? =
+    private fun getClientShip(clientId: ClientId): PlayerShip? =
         getClient(clientId).state.let {
             if (it is InShip) it.ship else null
         }
 
-    private fun getContacts(clientShip: Ship): List<ContactMessage> {
+    private fun getContacts(clientShip: PlayerShip): List<ContactMessage> {
         return ships
             .filter { it.key != clientShip.id }
             .map { it.value }
             .map { it.toContactMessage(clientShip) }
     }
 
-    private fun getMapContacts(clientShip: Ship): List<MapContactMessage> {
+    private fun getMapContacts(clientShip: PlayerShip): List<MapContactMessage> {
         return ships
             .filter { it.key != clientShip.id }
             .filter { clientShip.inSensorRange(it.value) }
@@ -343,13 +343,13 @@ class GameState {
             .map { it.toMapContactMessage(clientShip) }
     }
 
-    private fun getMapAsteroids(clientShip: Ship): List<AsteroidMessage> {
+    private fun getMapAsteroids(clientShip: PlayerShip): List<AsteroidMessage> {
         return asteroids
             .filter { clientShip.inSensorRange(it) }
             .map { it.toMessage(clientShip) }
     }
 
-    private fun getScopeContacts(clientShip: Ship): List<ScopeContactMessage> {
+    private fun getScopeContacts(clientShip: PlayerShip): List<ScopeContactMessage> {
         return ships
             .filter { it.key != clientShip.id }
             .map { it.value }
@@ -359,7 +359,7 @@ class GameState {
             }
     }
 
-    private fun getScopeAsteroids(clientShip: Ship): List<AsteroidMessage> {
+    private fun getScopeAsteroids(clientShip: PlayerShip): List<AsteroidMessage> {
         return asteroids
             .map { it.toMessage(clientShip) }
             .filter {
@@ -367,7 +367,7 @@ class GameState {
             }
     }
 
-    private fun getAsteroids(clientShip: Ship): List<AsteroidMessage> {
+    private fun getAsteroids(clientShip: PlayerShip): List<AsteroidMessage> {
         return asteroids
             .map { it.toMessage(clientShip) }
     }
@@ -467,7 +467,7 @@ data class Client(
     var state: ClientState = ShipSelection
         private set
 
-    fun joinShip(ship: Ship, station: Station) {
+    fun joinShip(ship: PlayerShip, station: Station) {
         state = InShip(
             ship = ship,
             station = station
@@ -500,7 +500,7 @@ sealed class ClientState {
     object ShipDestroyed : ClientState()
 
     data class InShip(
-        val ship: Ship,
+        val ship: PlayerShip,
         val station: Station
     ) : ClientState()
 }

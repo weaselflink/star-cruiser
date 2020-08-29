@@ -92,7 +92,7 @@ class ScanHandlerTest {
     }
 
     private fun ScanHandler.toMessage() =
-        toMessage { Ship(designation = "dummy") }
+        toMessage { PlayerShip(designation = "dummy") }
 
     private val ScanHandler.noise
         get() = toMessage().noise

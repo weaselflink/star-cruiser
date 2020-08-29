@@ -33,7 +33,7 @@ import de.stefanbissell.starcruiser.twoDigits
 import kotlin.math.abs
 import kotlin.math.max
 
-class Ship(
+class PlayerShip(
     override val id: ObjectId = ObjectId.random(),
     override val template: ShipTemplate = cruiserTemplate,
     override val designation: String = randomShipName(),
@@ -283,7 +283,7 @@ class Ship(
             beams = beamHandlers.map { it.toMessage(lockHandler) }
         )
 
-    override fun toContactMessage(relativeTo: Ship) =
+    override fun toContactMessage(relativeTo: PlayerShip) =
         ContactMessage(
             id = id,
             model = template.model,
@@ -295,7 +295,7 @@ class Ship(
             jumpAnimation = jumpHandler.toMessage().animation
         )
 
-    override fun toMapContactMessage(relativeTo: Ship) =
+    override fun toMapContactMessage(relativeTo: PlayerShip) =
         MapContactMessage(
             id = id,
             type = getContactType(relativeTo),
@@ -304,7 +304,7 @@ class Ship(
             rotation = rotation
         )
 
-    override fun toScopeContactMessage(relativeTo: Ship) =
+    override fun toScopeContactMessage(relativeTo: PlayerShip) =
         ScopeContactMessage(
             id = id,
             type = getContactType(relativeTo),
@@ -450,7 +450,7 @@ class Ship(
 
     private fun canIncreaseScanLevel(targetId: ObjectId) = getScanLevel(targetId).canBeIncreased
 
-    private fun getContactType(relativeTo: Ship) =
+    private fun getContactType(relativeTo: PlayerShip) =
         if (relativeTo.getScanLevel(id) == ScanLevel.Basic) {
             ContactType.Friendly
         } else {
@@ -479,8 +479,8 @@ class Ship(
                 index = index,
                 name = label,
                 position = position.twoDigits(),
-                relativePosition = (position - this@Ship.position).twoDigits(),
-                bearing = (position - this@Ship.position).angle().toHeading().twoDigits()
+                relativePosition = (position - this@PlayerShip.position).twoDigits(),
+                bearing = (position - this@PlayerShip.position).angle().toHeading().twoDigits()
             )
     }
 }

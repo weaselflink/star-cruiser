@@ -9,7 +9,7 @@ import de.stefanbissell.starcruiser.physics.PhysicsEngine
 
 class BeamHandler(
     private val beamWeapon: BeamWeapon,
-    private val ship: Ship
+    private val ship: PlayerShip
 ) {
 
     private var status: BeamStatus = BeamStatus.Idle
@@ -77,7 +77,7 @@ class BeamHandler(
     private fun isLockedTargetInRange(
         shipProvider: ShipProvider,
         lockHandler: LockHandler?,
-        ship: Ship,
+        ship: PlayerShip,
         physicsEngine: PhysicsEngine
     ) = getLockedTarget(shipProvider, lockHandler)?.let {
         inRange(it, ship) && unobstructed(it, ship, physicsEngine)

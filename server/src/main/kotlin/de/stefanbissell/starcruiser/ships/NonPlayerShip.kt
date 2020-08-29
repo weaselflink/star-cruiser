@@ -62,7 +62,7 @@ class NonPlayerShip(
 
     override fun targetDestroyed(shipId: ObjectId) {}
 
-    override fun toContactMessage(relativeTo: Ship) =
+    override fun toContactMessage(relativeTo: PlayerShip) =
         ContactMessage(
             id = id,
             model = template.model,
@@ -74,7 +74,7 @@ class NonPlayerShip(
             jumpAnimation = null
         )
 
-    override fun toMapContactMessage(relativeTo: Ship) =
+    override fun toMapContactMessage(relativeTo: PlayerShip) =
         MapContactMessage(
             id = id,
             type = getContactType(relativeTo),
@@ -83,7 +83,7 @@ class NonPlayerShip(
             rotation = rotation
         )
 
-    override fun toScopeContactMessage(relativeTo: Ship) =
+    override fun toScopeContactMessage(relativeTo: PlayerShip) =
         ScopeContactMessage(
             id = id,
             type = getContactType(relativeTo),
@@ -98,7 +98,7 @@ class NonPlayerShip(
     override fun inSensorRange(other: Vector2?): Boolean =
         other != null && (other - position).length() <= sensorRange
 
-    private fun getContactType(relativeTo: Ship) =
+    private fun getContactType(relativeTo: PlayerShip) =
         if (relativeTo.getScanLevel(id) == ScanLevel.Basic) {
             ContactType.Enemy
         } else {

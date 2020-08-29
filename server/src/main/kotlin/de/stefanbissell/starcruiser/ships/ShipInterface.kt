@@ -24,11 +24,11 @@ interface ShipInterface {
 
     fun endUpdate(physicsEngine: PhysicsEngine): ShipUpdateResult
 
-    fun toContactMessage(relativeTo: Ship): ContactMessage
+    fun toContactMessage(relativeTo: PlayerShip): ContactMessage
 
-    fun toMapContactMessage(relativeTo: Ship): MapContactMessage
+    fun toMapContactMessage(relativeTo: PlayerShip): MapContactMessage
 
-    fun toScopeContactMessage(relativeTo: Ship): ScopeContactMessage
+    fun toScopeContactMessage(relativeTo: PlayerShip): ScopeContactMessage
 
     fun toShieldMessage(): ShieldMessage
 
