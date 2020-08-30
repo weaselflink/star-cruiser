@@ -54,7 +54,7 @@ class NonPlayerShipTest {
     }
 
     @Test
-    fun `repairs damages system`() {
+    fun `repairs damaged system`() {
         ship.takeDamage(PoweredSystemType.Sensors, shieldTemplate.strength)
         ship.takeDamage(PoweredSystemType.Sensors, carrierTemplate.poweredSystemDamageCapacity * 0.2)
         expectThat(ship.powerHandler.poweredSystems[PoweredSystemType.Sensors])
