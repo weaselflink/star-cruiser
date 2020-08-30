@@ -32,16 +32,16 @@ import java.time.Instant
 
 class PlayerShipTest {
 
+    private val time = GameTime().apply {
+        update(Instant.EPOCH)
+    }
+    private val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
     private val ship = PlayerShip(
         position = p(3, -4),
         template = carrierTemplate.let {
             it.copy(beams = it.beams.subList(0, 1))
         }
     )
-    private val time = GameTime().apply {
-        update(Instant.EPOCH)
-    }
-    private val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
 
     @BeforeEach
     fun setUp() {

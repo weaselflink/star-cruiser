@@ -24,6 +24,7 @@ class NonPlayerShip(
 ) : Ship {
 
     private val shipAi = ShipAi()
+    val powerHandler = SimplePowerHandler(template)
     val shieldHandler = ShieldHandler(template.shield)
     val sensorRange: Double
         get() = max(template.shortRangeScopeRange, template.sensorRange)
@@ -32,8 +33,9 @@ class NonPlayerShip(
     override var hull = template.hull
 
     override fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: ShipProvider) {
-        shipAi.update(time, this)
+        powerHandler.update(time)
         shieldHandler.update(time)
+        shipAi.update(time, this)
 
         val effectiveThrust = if (throttle < 0) {
             throttle * template.reverseThrustFactor
@@ -62,6 +64,7 @@ class NonPlayerShip(
         val hullDamage = shieldHandler.takeDamageAndReportHullDamage(amount)
         if (hullDamage > 0.0) {
             hull -= hullDamage
+            powerHandler.takeDamage(targetSystemType, amount)
         }
     }
 

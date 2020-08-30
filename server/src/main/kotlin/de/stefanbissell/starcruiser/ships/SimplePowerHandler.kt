@@ -8,10 +8,12 @@ class SimplePowerHandler(
     private val shipTemplate: ShipTemplate
 ) {
 
-    private val poweredSystems = PoweredSystemType.values()
+    val poweredSystems = PoweredSystemType.values()
         .associate { it to PoweredSystem() }
         .toMutableMap()
     private var repairHandler: TimedRepairHandler? = null
+    val repairing
+        get() = repairHandler != null
 
     fun update(time: GameTime) {
         repairHandler?.apply {
