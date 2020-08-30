@@ -255,7 +255,7 @@ enum class ScanLevel {
             }
 
     companion object {
-        private val highest = Basic
+        private val highest = Detailed
     }
 }
 
