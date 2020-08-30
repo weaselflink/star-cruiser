@@ -444,7 +444,8 @@ class PlayerShip(
                         message.copy(
                             hullRatio = (ship.hull / ship.template.hull).fiveDigits(),
                             shield = ship.toShieldMessage(),
-                            systemsDamage = ship.systemsDamage
+                            systemsDamage = ship.systemsDamage,
+                            canScan = false
                         )
                     }
                     ScanLevel.Basic -> {

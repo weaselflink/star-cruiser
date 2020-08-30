@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.formatThousands
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.pad
+import de.stefanbissell.starcruiser.toPercent
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextAlign
 import org.w3c.dom.HTMLCanvasElement
@@ -39,6 +40,16 @@ class SelectionDetails(
         widthExpr = { dim.width - it.vmin * 8 },
         heightExpr = { it.vmin * 4 }
     )
+    private val detailsButton = CanvasButton(
+        canvas = canvas,
+        xExpr = { dim.bottomX + dim.width - it.vmin * 14 },
+        yExpr = { dim.bottomY - dim.height + it.vmin * 7 },
+        widthExpr = { it.vmin * 12 },
+        heightExpr = { it.vmin * 5 },
+        onClick = { detailsButtonClicked() },
+        activated = { showDetails },
+        initialText = "Details"
+    )
     private val actionButton = CanvasButton(
         canvas = canvas,
         xExpr = { dim.bottomX + dim.width * 0.5 - it.vmin * 12 },
@@ -54,9 +65,10 @@ class SelectionDetails(
         get() = mapSelection != null
     private val innerX
         get() = dim.bottomX + dim.canvas.vmin * 4
+    private var showDetails = false
 
     init {
-        addChildren(actionButton)
+        addChildren(detailsButton, actionButton)
     }
 
     override fun isInterestedIn(pointerEvent: PointerEvent): Boolean {
@@ -70,6 +82,10 @@ class SelectionDetails(
         this.mapSelection = mapSelection?.also {
             ctx.draw(it)
         }
+    }
+
+    private fun detailsButtonClicked() {
+        showDetails = !showDetails
     }
 
     private fun actionButtonClicked() {
@@ -86,14 +102,15 @@ class SelectionDetails(
 
         drawBase()
         drawDesignation(mapSelection.label)
-        drawBearing(mapSelection.bearing)
-        drawRange(mapSelection.range)
 
-        mapSelection.hullRatio?.also {
-            hullDisplay.draw(it)
+        val hasDetails = mapSelection.systemsDamage != null
+        if (showDetails && hasDetails) {
+            drawDetails(mapSelection)
+        } else {
+            drawBasic(mapSelection)
         }
-        mapSelection.shield?.also {
-            shieldsDisplay.draw(it)
+        if (hasDetails) {
+            detailsButton.draw()
         }
         when {
             mapSelection.canScan -> {
@@ -104,6 +121,34 @@ class SelectionDetails(
                 actionButton.text = "Delete"
                 actionButton.draw()
             }
+        }
+    }
+
+    private fun CanvasRenderingContext2D.drawDetails(mapSelection: MapSelectionMessage) {
+        mapSelection.systemsDamage?.entries?.forEachIndexed { index, system ->
+            CanvasProgress(
+                canvas = canvas,
+                xExpr = { innerX },
+                yExpr = { dim.bottomY - dim.height + it.vmin * 14 + it.vmin * 5 * index },
+                widthExpr = { dim.width - it.vmin * 8 },
+                heightExpr = { it.vmin * 4 },
+            ).apply {
+                progress = system.value
+                leftText = system.key.label
+                rightText = "${system.value.toPercent()}%"
+            }.draw()
+        }
+    }
+
+    private fun CanvasRenderingContext2D.drawBasic(mapSelection: MapSelectionMessage) {
+        drawBearing(mapSelection.bearing)
+        drawRange(mapSelection.range)
+
+        mapSelection.hullRatio?.also {
+            hullDisplay.draw(it)
+        }
+        mapSelection.shield?.also {
+            shieldsDisplay.draw(it)
         }
     }
 

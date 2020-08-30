@@ -105,7 +105,7 @@ class GameState {
                         shield = ship.toShieldMessage()
                     )
                     Navigation -> SnapshotMessage.Navigation(
-                        ship = ship.toNavigationMessage { id -> playerShips[id] },
+                        ship = ship.toNavigationMessage { id -> ships[id] },
                         mapSelection = ship.toMapSelectionMessage { id -> ships[id] },
                         contacts = getMapContacts(ship),
                         asteroids = getMapAsteroids(ship)

@@ -35,7 +35,7 @@ class SimplePowerHandler(
     fun startRepair(type: PoweredSystemType) {
         getPoweredSystem(type).also {
             if (it.canRepair() && repairHandler?.type != type) {
-                repairHandler = TimedRepairHandler(type)
+                repairHandler = TimedRepairHandler(shipTemplate, type)
             }
         }
     }
@@ -63,6 +63,7 @@ class SimplePowerHandler(
 }
 
 private class TimedRepairHandler(
+    private val shipTemplate: ShipTemplate,
     val type: PoweredSystemType
 ) {
 
@@ -71,6 +72,6 @@ private class TimedRepairHandler(
         get() = progress > 1.0
 
     fun update(time: GameTime) {
-        progress += time.delta
+        progress += shipTemplate.repairSpeed * time.delta
     }
 }
