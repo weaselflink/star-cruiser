@@ -13,9 +13,7 @@ import java.time.Instant
 
 class ScanHandlerTest {
 
-    private val time = GameTime().apply {
-        update(Instant.EPOCH)
-    }
+    private val time = GameTime(Instant.EPOCH)
     private val targetId = ObjectId.random()
     private var power = 1.0
     private val scanHandler = createScanHandler()
@@ -58,13 +56,13 @@ class ScanHandlerTest {
     @Test
     fun `can solve game and complete game`() {
         solveGame()
-        stepTimeToTwoSeconds()
+        stepTimeTwoSeconds()
         expectThat(scanHandler.isComplete)
             .isTrue()
     }
 
-    private fun stepTimeToTwoSeconds() {
-        time.update(Instant.EPOCH.plusMillis((2.0 * 1000).toLong()))
+    private fun stepTimeTwoSeconds() {
+        time.update(2.0)
         scanHandler.update(time)
     }
 

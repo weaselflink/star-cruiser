@@ -11,9 +11,7 @@ import java.time.Instant
 
 class ShieldHandlerTest {
 
-    private val time = GameTime().apply {
-        update(Instant.EPOCH)
-    }
+    private val time = GameTime(Instant.EPOCH)
     private val shieldTemplate = ShieldTemplate()
     private var power = 1.0
     private val shieldHandler = ShieldHandler(shieldTemplate)
@@ -39,12 +37,12 @@ class ShieldHandlerTest {
     fun `shields are activated after taking damage since last update`() {
         shieldHandler.takeDamageAndReportHullDamage(3.0)
 
-        stepTimeTo(0.1)
+        stepTime(0.1)
 
         expectThat(shieldHandler.toMessage().activated)
             .isTrue()
 
-        stepTimeTo(0.1)
+        stepTime(0.1)
 
         expectThat(shieldHandler.toMessage().activated)
             .isFalse()
@@ -57,7 +55,7 @@ class ShieldHandlerTest {
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0)
 
-        stepTimeTo(5.0)
+        stepTime(5.0)
 
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0 + shieldTemplate.rechargeSpeed * 5.0)
@@ -71,7 +69,7 @@ class ShieldHandlerTest {
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0)
 
-        stepTimeTo(5.0)
+        stepTime(5.0)
 
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0 + shieldTemplate.rechargeSpeed * 5.0 * 0.5)
@@ -85,7 +83,7 @@ class ShieldHandlerTest {
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0)
 
-        stepTimeTo(5.0)
+        stepTime(5.0)
 
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0 + shieldTemplate.rechargeSpeed * 5.0 * 2.0)
@@ -113,7 +111,7 @@ class ShieldHandlerTest {
     fun `shields go down if below failure strength`() {
         shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength - shieldTemplate.failureStrength + 3.0)
 
-        stepTimeTo(0.1)
+        stepTime(0.1)
 
         expectThat(shieldHandler.toMessage().up)
             .isFalse()
@@ -134,7 +132,7 @@ class ShieldHandlerTest {
         shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength - shieldTemplate.activationStrength + 3.0)
         shieldHandler.up = false
 
-        stepTimeTo(4.0 / shieldTemplate.rechargeSpeed)
+        stepTime(4.0 / shieldTemplate.rechargeSpeed)
 
         shieldHandler.up = true
 
@@ -145,14 +143,14 @@ class ShieldHandlerTest {
     @Test
     fun `shield decays on low boost level`() {
         power = 0.05
-        stepTimeTo(4.0 / shieldTemplate.decaySpeed)
+        stepTime(4.0 / shieldTemplate.decaySpeed)
 
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 4.0)
     }
 
-    private fun stepTimeTo(seconds: Number) {
-        time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
+    private fun stepTime(seconds: Number) {
+        time.update(seconds.toDouble())
         shieldHandler.update(time, power)
         shieldHandler.endUpdate()
     }

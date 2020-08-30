@@ -16,9 +16,7 @@ import java.time.Instant
 
 class BeamHandlerTest {
 
-    private val time = GameTime().apply {
-        update(Instant.EPOCH)
-    }
+    private val time = GameTime(Instant.EPOCH)
     private val beamWeapon = BeamWeapon(Vector3())
     private var power = 1.0
     private val ship = PlayerShip()
@@ -46,7 +44,7 @@ class BeamHandlerTest {
 
     @Test
     fun `stays idle with no target locked`() {
-        stepTimeTo(1.0)
+        stepTime(1.0)
 
         expectThat(beamHandler.toMessage(lockHandler).status)
             .isEqualTo(BeamStatus.Idle)
@@ -55,7 +53,7 @@ class BeamHandlerTest {
     @Test
     fun `stays idle with target locked but out of range`() {
         targetLockedAndOutOfRange()
-        stepTimeTo(1.0)
+        stepTime(1.0)
 
         expectThat(beamHandler.toMessage(lockHandler).status)
             .isEqualTo(BeamStatus.Idle)
@@ -67,7 +65,7 @@ class BeamHandlerTest {
         every {
             physicsEngine.findObstructions(any(), any(), any())
         } returns listOf(ObjectId.random())
-        stepTimeTo(1.0)
+        stepTime(1.0)
 
         expectThat(beamHandler.toMessage(lockHandler).status)
             .isEqualTo(BeamStatus.Idle)
@@ -76,7 +74,7 @@ class BeamHandlerTest {
     @Test
     fun `fires when target in range`() {
         targetLockedAndInRange()
-        stepTimeTo(1.0)
+        stepTime(1.0)
 
         expectThat(beamHandler.toMessage(lockHandler).status)
             .isEqualTo(BeamStatus.Firing(0.0))
@@ -85,8 +83,8 @@ class BeamHandlerTest {
     @Test
     fun `updates firing progress`() {
         targetLockedAndInRange()
-        stepTimeTo(1.0)
-        stepTimeTo(1.5)
+        stepTime(1.0)
+        stepTime(0.5)
 
         expectThat(beamHandler.toMessage(lockHandler).status)
             .isEqualTo(BeamStatus.Firing(0.5))
@@ -95,8 +93,8 @@ class BeamHandlerTest {
     @Test
     fun `changes to recharging after firing`() {
         targetLockedAndInRange()
-        stepTimeTo(1.0)
-        stepTimeTo(2.0)
+        stepTime(1.0)
+        stepTime(1.0)
 
         expectThat(beamHandler.toMessage(lockHandler).status)
             .isEqualTo(BeamStatus.Recharging(0.0))
@@ -105,9 +103,9 @@ class BeamHandlerTest {
     @Test
     fun `commences firing after recharging`() {
         targetLockedAndInRange()
-        stepTimeTo(1.0)
-        stepTimeTo(2.0)
-        stepTimeTo(7.0)
+        stepTime(1.0)
+        stepTime(1.0)
+        stepTime(5.0)
 
         expectThat(beamHandler.toMessage(lockHandler).status)
             .isEqualTo(BeamStatus.Firing(0.0))
@@ -116,10 +114,10 @@ class BeamHandlerTest {
     @Test
     fun `aborts firing when target lock lost`() {
         targetLockedAndInRange()
-        stepTimeTo(1.0)
-        stepTimeTo(1.1)
+        stepTime(1.0)
+        stepTime(0.1)
         cancelLock()
-        stepTimeTo(1.2)
+        stepTime(0.1)
 
         expectThat(beamHandler.toMessage(lockHandler).status)
             .isEqualTo(BeamStatus.Recharging(0.0))
@@ -128,8 +126,8 @@ class BeamHandlerTest {
     @Test
     fun `deals damage to target`() {
         targetLockedAndInRange()
-        stepTimeTo(1.0)
-        stepTimeTo(2.0)
+        stepTime(1.0)
+        stepTime(1.0)
 
         expectThat(target.hull)
             .isEqualTo(target.template.hull - 1.0)
@@ -169,8 +167,8 @@ class BeamHandlerTest {
         target.position = p(0, 1000)
     }
 
-    private fun stepTimeTo(seconds: Number) {
-        time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
+    private fun stepTime(seconds: Number) {
+        time.update(seconds.toDouble())
         beamHandler.update(time, power, shipProvider, lockHandler, physicsEngine)
     }
 }

@@ -15,9 +15,7 @@ import java.time.Instant
 
 class NonPlayerShipTest {
 
-    private val time = GameTime().apply {
-        update(Instant.EPOCH)
-    }
+    private val time = GameTime(Instant.EPOCH)
     private val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
     private val shieldTemplate = carrierTemplate.shield
     private val ship = NonPlayerShip()
@@ -33,7 +31,7 @@ class NonPlayerShipTest {
     @Test
     fun `shields recharge`() {
         ship.takeDamage(PoweredSystemType.Reactor, 10.0)
-        stepTimeTo(5)
+        stepTime(5)
 
         expectThat(ship.shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 10.0 + shieldTemplate.rechargeSpeed * 5)
@@ -42,13 +40,13 @@ class NonPlayerShipTest {
     @Test
     fun `reactivates shields when possible`() {
         ship.takeDamage(PoweredSystemType.Reactor, shieldTemplate.strength)
-        stepTimeTo(0.01)
+        stepTime(0.01)
         expectThat(ship.shieldHandler.toMessage().up)
             .isFalse()
 
         val timeToActivationStrength = shieldTemplate.activationStrength / shieldTemplate.rechargeSpeed
-        stepTimeTo(timeToActivationStrength)
-        stepTimeTo(timeToActivationStrength * 1.2)
+        stepTime(timeToActivationStrength)
+        stepTime(timeToActivationStrength * 0.2)
         expectThat(ship.shieldHandler.toMessage().up)
             .isTrue()
     }
@@ -60,12 +58,12 @@ class NonPlayerShipTest {
         expectThat(ship.powerHandler.poweredSystems[PoweredSystemType.Sensors])
             .isNotNull()
             .get { damage }.isNear(0.2)
-        stepTimeTo(0.01)
+        stepTime(0.01)
 
         expectThat(ship.powerHandler.repairing)
             .isTrue()
 
-        stepTimeTo(1.1 / carrierTemplate.repairSpeed)
+        stepTime(1.1 / carrierTemplate.repairSpeed)
         expectThat(ship.powerHandler.repairing)
             .isFalse()
         expectThat(ship.powerHandler.poweredSystems[PoweredSystemType.Sensors])
@@ -73,8 +71,8 @@ class NonPlayerShipTest {
             .get { damage }.isEqualTo(0.0)
     }
 
-    private fun stepTimeTo(seconds: Number, shipProvider: ShipProvider = { null }): ShipUpdateResult {
-        time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
+    private fun stepTime(seconds: Number, shipProvider: ShipProvider = { null }): ShipUpdateResult {
+        time.update(seconds.toDouble())
         ship.update(time, physicsEngine, shipProvider)
         return ship.endUpdate(physicsEngine)
     }

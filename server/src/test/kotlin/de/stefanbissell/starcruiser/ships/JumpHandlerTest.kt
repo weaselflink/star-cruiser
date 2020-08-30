@@ -15,9 +15,7 @@ import java.time.Instant
 
 class JumpHandlerTest {
 
-    private val time = GameTime().apply {
-        update(Instant.EPOCH)
-    }
+    private val time = GameTime(Instant.EPOCH)
     private val jumpDrive = JumpDrive()
     private var power = 1.0
     private val jumpHandler = JumpHandler(jumpDrive)
@@ -41,7 +39,7 @@ class JumpHandlerTest {
     fun `updates progress when jumping`() {
         jumpHandler.startJump()
 
-        stepTimeTo(1.0 / jumpDrive.jumpingSpeed * 0.5)
+        stepTime(1.0 / jumpDrive.jumpingSpeed * 0.5)
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Jumping>()
@@ -54,7 +52,7 @@ class JumpHandlerTest {
     fun `reports jump complete`() {
         jumpHandler.startJump()
 
-        stepTimeTo(1.0 / jumpDrive.jumpingSpeed * 1.2)
+        stepTime(1.0 / jumpDrive.jumpingSpeed * 1.2)
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Jumping>()
@@ -67,7 +65,7 @@ class JumpHandlerTest {
     fun `stats recharging after jump ended`() {
         jumpHandler.startJump()
 
-        stepTimeTo(1.0 / jumpDrive.jumpingSpeed * 1.2)
+        stepTime(1.0 / jumpDrive.jumpingSpeed * 1.2)
 
         jumpHandler.endJump()
 
@@ -83,7 +81,7 @@ class JumpHandlerTest {
         jumpHandler.startJump()
         jumpHandler.endJump()
 
-        stepTimeTo(1.0 / jumpDrive.rechargeSpeed * 0.5)
+        stepTime(1.0 / jumpDrive.rechargeSpeed * 0.5)
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Recharging>()
@@ -98,7 +96,7 @@ class JumpHandlerTest {
         jumpHandler.startJump()
         jumpHandler.endJump()
 
-        stepTimeTo(1.0 / jumpDrive.rechargeSpeed * 0.5)
+        stepTime(1.0 / jumpDrive.rechargeSpeed * 0.5)
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Recharging>()
@@ -113,7 +111,7 @@ class JumpHandlerTest {
         jumpHandler.startJump()
         jumpHandler.endJump()
 
-        stepTimeTo(1.0 / jumpDrive.rechargeSpeed * 0.5)
+        stepTime(1.0 / jumpDrive.rechargeSpeed * 0.5)
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Recharging>()
@@ -127,7 +125,7 @@ class JumpHandlerTest {
         jumpHandler.startJump()
         jumpHandler.endJump()
 
-        stepTimeTo(1.0 / jumpDrive.rechargeSpeed * 1.2)
+        stepTime(1.0 / jumpDrive.rechargeSpeed * 1.2)
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Ready>()
@@ -142,19 +140,19 @@ class JumpHandlerTest {
 
         jumpHandler.startJump()
 
-        stepTimeTo(1.0 / jumpDrive.jumpingSpeed - 1.0)
+        stepTime(1.0 / jumpDrive.jumpingSpeed - 1.0)
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Jumping>()
             .get { animation }.isNotNull().isNear(-1.0)
 
-        stepTimeTo(1.0 / jumpDrive.jumpingSpeed - 0.8)
+        stepTime(0.2)
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Jumping>()
             .get { animation }.isNotNull().isNear(-0.8)
 
-        stepTimeTo(1.0 / jumpDrive.jumpingSpeed)
+        stepTime(0.8)
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Jumping>()
@@ -162,21 +160,21 @@ class JumpHandlerTest {
 
         jumpHandler.endJump()
 
-        stepTimeTo(1.0 / jumpDrive.jumpingSpeed + 0.2)
+        stepTime(0.2)
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Recharging>()
             .get { animation }.isNotNull().isNear(0.2)
 
-        stepTimeTo(1.0 / jumpDrive.jumpingSpeed + 1.2)
+        stepTime(1.2)
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Recharging>()
             .get { animation }.isNull()
     }
 
-    private fun stepTimeTo(seconds: Number) {
-        time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
+    private fun stepTime(seconds: Number) {
+        time.update(seconds.toDouble())
         jumpHandler.update(time, power)
     }
 }

@@ -32,9 +32,7 @@ import java.time.Instant
 
 class PlayerShipTest {
 
-    private val time = GameTime().apply {
-        update(Instant.EPOCH)
-    }
+    private val time = GameTime(Instant.EPOCH)
     private val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
     private val ship = PlayerShip(
         position = p(3, -4),
@@ -201,7 +199,7 @@ class PlayerShipTest {
     fun `updates physics engine`() {
         ship.changeThrottle(50)
         ship.changeRudder(50)
-        stepTimeTo(2)
+        stepTime(2)
 
         verify(exactly = 1) {
             physicsEngine.updateShip(
@@ -217,7 +215,7 @@ class PlayerShipTest {
         ship.setPower(PoweredSystemType.Impulse, 150)
         ship.changeThrottle(50)
         ship.changeRudder(50)
-        stepTimeTo(2)
+        stepTime(2)
 
         verify(exactly = 1) {
             physicsEngine.updateShip(
@@ -233,7 +231,7 @@ class PlayerShipTest {
         ship.setPower(PoweredSystemType.Maneuver, 80)
         ship.changeThrottle(50)
         ship.changeRudder(50)
-        stepTimeTo(2)
+        stepTime(2)
 
         verify(exactly = 1) {
             physicsEngine.updateShip(
@@ -270,11 +268,11 @@ class PlayerShipTest {
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.NoLock>()
 
         ship.lockTarget(target.id)
-        stepTimeTo(1) { target }
+        stepTime(1) { target }
 
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.InProgress>()
 
-        stepTimeTo(10) { target }
+        stepTime(9) { target }
 
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
     }
@@ -286,18 +284,18 @@ class PlayerShipTest {
         )
 
         ship.lockTarget(target.id)
-        stepTimeTo(10) { target }
+        stepTime(10) { target }
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
-        stepTimeTo(10.5) { target }
+        stepTime(0.5) { target }
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Firing>()
         expectThat(target.toMessage().shield.strength).isEqualTo(target.template.shield.strength - 0.5)
 
-        stepTimeTo(12) { target }
+        stepTime(1.5) { target }
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Recharging>()
 
-        stepTimeTo(14)
+        stepTime(2)
         expectThat(ship.toMessage().beams.first().status)
             .isA<BeamStatus.Recharging>()
             .get { progress }.isNear(ship.template.beams.first().rechargeSpeed * 2.0)
@@ -312,14 +310,14 @@ class PlayerShipTest {
         )
 
         ship.lockTarget(target.id)
-        stepTimeTo(10) { target }
-        stepTimeTo(10.5) { target }
+        stepTime(10) { target }
+        stepTime(0.5) { target }
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Firing>()
-        stepTimeTo(12) { target }
+        stepTime(1.5) { target }
         expectThat(ship.toMessage().beams.first().status)
             .isA<BeamStatus.Recharging>()
             .get { progress }.isNear(0.0)
-        stepTimeTo(14)
+        stepTime(2)
         expectThat(ship.toMessage().beams.first().status)
             .isA<BeamStatus.Recharging>()
             .get { progress }.isNear(ship.template.beams.first().rechargeSpeed * 4.0)
@@ -332,11 +330,11 @@ class PlayerShipTest {
         )
 
         ship.lockTarget(target.id)
-        stepTimeTo(10) { target }
+        stepTime(10) { target }
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
-        stepTimeTo(10.5) { target }
+        stepTime(0.5) { target }
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
     }
 
@@ -347,11 +345,11 @@ class PlayerShipTest {
         )
 
         ship.lockTarget(target.id)
-        stepTimeTo(10) { target }
+        stepTime(10) { target }
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
-        stepTimeTo(10.5) { target }
+        stepTime(0.5) { target }
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
     }
 
@@ -362,7 +360,7 @@ class PlayerShipTest {
         expectThat(ship.toMessage().shield.strength)
             .isNear(shieldTemplate.strength - damage)
 
-        stepTimeTo(4)
+        stepTime(4)
         expectThat(ship.toMessage().shield.strength)
             .isNear(shieldTemplate.strength - damage + shieldTemplate.rechargeSpeed * 4.0)
     }
@@ -375,7 +373,7 @@ class PlayerShipTest {
             .isNear(0.0)
         expectThat(ship.hull)
             .isNear(ship.template.hull - 5.0)
-        expectThat(stepTimeTo(0.1).destroyed)
+        expectThat(stepTime(0.1).destroyed)
             .isFalse()
     }
 
@@ -398,7 +396,7 @@ class PlayerShipTest {
             .isNear(0.0)
         expectThat(ship.hull)
             .isNear(-5.0)
-        expectThat(stepTimeTo(0.1).destroyed)
+        expectThat(stepTime(0.1).destroyed)
             .isTrue()
     }
 
@@ -420,7 +418,7 @@ class PlayerShipTest {
     fun `shield fails when below failure strength and cannot be activated again`() {
         val damage = shieldTemplate.strength - shieldTemplate.failureStrength * 0.5
         ship.takeDamage(Reactor, damage)
-        stepTimeTo(0.1)
+        stepTime(0.1)
 
         expectThat(ship.toMessage().shield.up)
             .isFalse()
@@ -429,7 +427,7 @@ class PlayerShipTest {
         expectThat(ship.toMessage().shield.up)
             .isFalse()
 
-        stepTimeTo(1000.0)
+        stepTime(1000.0)
         ship.setShieldsUp(true)
 
         expectThat(ship.toMessage().shield.up)
@@ -555,8 +553,8 @@ class PlayerShipTest {
             .isNull()
     }
 
-    private fun stepTimeTo(seconds: Number, shipProvider: ShipProvider = { null }): ShipUpdateResult {
-        time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
+    private fun stepTime(seconds: Number, shipProvider: ShipProvider = { null }): ShipUpdateResult {
+        time.update(seconds.toDouble())
         ship.update(time, physicsEngine, shipProvider)
         return ship.endUpdate(physicsEngine)
     }

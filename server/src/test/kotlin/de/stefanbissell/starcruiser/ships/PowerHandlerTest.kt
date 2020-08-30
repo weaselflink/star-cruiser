@@ -20,9 +20,7 @@ import java.time.Instant
 
 class PowerHandlerTest {
 
-    private val time = GameTime().apply {
-        update(Instant.EPOCH)
-    }
+    private val time = GameTime(Instant.EPOCH)
     private val powerHandler = PowerHandler(carrierTemplate)
 
     @Test
@@ -73,7 +71,7 @@ class PowerHandlerTest {
         expectThat(powerHandler.toMessage().capacitors)
             .isEqualTo(carrierTemplate.maxCapacitors)
 
-        stepTimeToOneMinute()
+        stepTime(60)
 
         expectThat(powerHandler.toMessage().capacitors)
             .isNear(carrierTemplate.maxCapacitors - 300.0)
@@ -81,19 +79,19 @@ class PowerHandlerTest {
 
     @Test
     fun `updates boost level modifier`() {
-        stepTimeTo(198)
+        stepTime(198)
 
         expectThat(powerHandler.toMessage().capacitors)
             .isNear(10.0)
 
-        stepTimeTo(208)
+        stepTime(10)
 
         expectThat(powerHandler.getBoostLevel(Weapons))
             .isEqualTo(0.6)
         expectThat(powerHandler.toMessage().capacitors)
             .isEqualTo(0.0)
 
-        stepTimeTo(218)
+        stepTime(10)
 
         expectThat(powerHandler.getBoostLevel(Weapons))
             .isEqualTo(0.5)
@@ -127,7 +125,7 @@ class PowerHandlerTest {
         powerHandler.setLevel(Shields, 0)
         powerHandler.setLevel(Jump, 0)
 
-        stepTimeTo(1)
+        stepTime(1)
 
         expectThat(powerHandler.toMessage().capacitorsPrediction)
             .isNull()
@@ -135,7 +133,7 @@ class PowerHandlerTest {
 
     @Test
     fun `show stable capacitors`() {
-        stepTimeTo(1)
+        stepTime(1)
 
         expectThat(powerHandler.toMessage().capacitorsPrediction)
             .isNotNull()
@@ -144,7 +142,7 @@ class PowerHandlerTest {
 
     @Test
     fun `predicts time to capacitors full`() {
-        stepTimeTo(60)
+        stepTime(60)
 
         expectThat(powerHandler.toMessage().capacitors)
             .isNear(700.0)
@@ -154,19 +152,15 @@ class PowerHandlerTest {
         powerHandler.setLevel(Jump, 0)
         powerHandler.setLevel(Sensors, 0)
 
-        stepTimeTo(120)
+        stepTime(60)
 
         expectThat(powerHandler.toMessage().capacitorsPrediction)
             .isNotNull()
             .isEqualTo(120)
     }
 
-    private fun stepTimeToOneMinute() {
-        stepTimeTo(60)
-    }
-
-    private fun stepTimeTo(seconds: Number) {
-        time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
+    private fun stepTime(seconds: Number) {
+        time.update(seconds.toDouble())
         powerHandler.update(time)
     }
 

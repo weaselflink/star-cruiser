@@ -14,9 +14,7 @@ import java.time.Instant
 
 class LockHandlerTest {
 
-    private val time = GameTime().apply {
-        update(Instant.EPOCH)
-    }
+    private val time = GameTime(Instant.EPOCH)
     private val targetId = ObjectId.random()
     private val lockingSpeed = 0.25
     private var power = 1.0
@@ -35,7 +33,7 @@ class LockHandlerTest {
 
     @Test
     fun `still in progress after insufficient time passed`() {
-        stepTimeTo(3)
+        stepTime(3)
 
         expectThat(lockHandler.isComplete).isFalse()
         expectThat(lockHandler.toMessage())
@@ -49,7 +47,7 @@ class LockHandlerTest {
     @Test
     fun `applies power level to progress`() {
         power = 1.5
-        stepTimeTo(2)
+        stepTime(2)
 
         expectThat(lockHandler.toMessage())
             .isA<LockStatus.InProgress>()
@@ -60,7 +58,7 @@ class LockHandlerTest {
 
     @Test
     fun `locked after sufficient time passed`() {
-        stepTimeTo(5)
+        stepTime(5)
 
         expectThat(lockHandler.isComplete).isTrue()
         expectThat(lockHandler.toMessage())
@@ -70,8 +68,8 @@ class LockHandlerTest {
             }
     }
 
-    private fun stepTimeTo(seconds: Number) {
-        time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
+    private fun stepTime(seconds: Number) {
+        time.update(seconds.toDouble())
         lockHandler.update(time)
     }
 }

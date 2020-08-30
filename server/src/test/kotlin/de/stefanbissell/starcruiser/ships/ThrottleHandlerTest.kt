@@ -8,20 +8,18 @@ import java.time.Instant
 
 class ThrottleHandlerTest {
 
-    private val time = GameTime().apply {
-        update(Instant.EPOCH)
-    }
+    private val time = GameTime(Instant.EPOCH)
     private val throttleHandler = ThrottleHandler(carrierTemplate)
 
     @Test
     fun `updates actual up to requested value`() {
         throttleHandler.requested = 50
 
-        stepTimeTo(1)
+        stepTime(1)
         expectThat(throttleHandler.actual)
             .isNear(carrierTemplate.throttleResponsiveness)
 
-        stepTimeTo(10)
+        stepTime(9)
         expectThat(throttleHandler.actual)
             .isNear(50.0)
     }
@@ -30,11 +28,11 @@ class ThrottleHandlerTest {
     fun `updates actual down to requested value`() {
         throttleHandler.requested = -50
 
-        stepTimeTo(1)
+        stepTime(1)
         expectThat(throttleHandler.actual)
             .isNear(-carrierTemplate.throttleResponsiveness)
 
-        stepTimeTo(10)
+        stepTime(9)
         expectThat(throttleHandler.actual)
             .isNear(-50.0)
     }
@@ -43,7 +41,7 @@ class ThrottleHandlerTest {
     fun `calculates ahead thrust`() {
         throttleHandler.requested = 50
 
-        stepTimeTo(10)
+        stepTime(10)
         expectThat(throttleHandler.effectiveThrust(1.0))
             .isNear(50 * carrierTemplate.aheadThrustFactor)
         expectThat(throttleHandler.effectiveThrust(0.2))
@@ -56,7 +54,7 @@ class ThrottleHandlerTest {
     fun `calculates reverse thrust`() {
         throttleHandler.requested = -50
 
-        stepTimeTo(10)
+        stepTime(10)
         expectThat(throttleHandler.effectiveThrust(1.0))
             .isNear(-50 * carrierTemplate.reverseThrustFactor)
         expectThat(throttleHandler.effectiveThrust(0.2))
@@ -65,8 +63,8 @@ class ThrottleHandlerTest {
             .isNear(1.2 * -50 * carrierTemplate.reverseThrustFactor)
     }
 
-    private fun stepTimeTo(seconds: Number) {
-        time.update(Instant.EPOCH.plusMillis((seconds.toDouble() * 1000).toLong()))
+    private fun stepTime(seconds: Number) {
+        time.update(seconds.toDouble())
         throttleHandler.update(time)
     }
 }
