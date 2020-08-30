@@ -240,7 +240,8 @@ enum class ContactType {
 
 enum class ScanLevel {
     None,
-    Basic;
+    Basic,
+    Detailed;
 
     val canBeIncreased
         get() = this != highest
@@ -249,7 +250,8 @@ enum class ScanLevel {
         get() =
             when (this) {
                 None -> Basic
-                Basic -> Basic
+                Basic -> Detailed
+                Detailed -> Detailed
             }
 
     companion object {

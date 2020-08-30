@@ -107,7 +107,7 @@ class NonPlayerShip(
         other != null && (other - position).length() <= sensorRange
 
     private fun getContactType(relativeTo: PlayerShip) =
-        if (relativeTo.getScanLevel(id) == ScanLevel.Basic) {
+        if (relativeTo.getScanLevel(id) >= ScanLevel.Basic) {
             ContactType.Enemy
         } else {
             ContactType.Unknown

@@ -437,7 +437,7 @@ class PlayerShip(
                 range = rangeTo(ship.position),
                 canScan = true
             ).let { message ->
-                if (getScanLevel(selection.targetId) == ScanLevel.Basic) {
+                if (getScanLevel(selection.targetId) >= ScanLevel.Basic) {
                     message.copy(
                         hullRatio = (ship.hull / ship.template.hull).fiveDigits(),
                         shield = ship.toShieldMessage()
@@ -451,7 +451,7 @@ class PlayerShip(
     private fun canIncreaseScanLevel(targetId: ObjectId) = getScanLevel(targetId).canBeIncreased
 
     private fun getContactType(relativeTo: PlayerShip) =
-        if (relativeTo.getScanLevel(id) == ScanLevel.Basic) {
+        if (relativeTo.getScanLevel(id) >= ScanLevel.Basic) {
             ContactType.Friendly
         } else {
             ContactType.Unknown
