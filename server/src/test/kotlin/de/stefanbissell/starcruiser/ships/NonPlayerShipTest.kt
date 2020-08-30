@@ -7,7 +7,9 @@ import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
+import strikt.assertions.isNotNull
 import strikt.assertions.isTrue
 import java.time.Instant
 
@@ -49,6 +51,26 @@ class NonPlayerShipTest {
         stepTimeTo(timeToActivationStrength * 1.2)
         expectThat(ship.shieldHandler.toMessage().up)
             .isTrue()
+    }
+
+    @Test
+    fun `repairs damages system`() {
+        ship.takeDamage(PoweredSystemType.Sensors, shieldTemplate.strength)
+        ship.takeDamage(PoweredSystemType.Sensors, carrierTemplate.poweredSystemDamageCapacity * 0.2)
+        expectThat(ship.powerHandler.poweredSystems[PoweredSystemType.Sensors])
+            .isNotNull()
+            .get { damage }.isNear(0.2)
+        stepTimeTo(0.01)
+
+        expectThat(ship.powerHandler.repairing)
+            .isTrue()
+
+        stepTimeTo(1.1 / carrierTemplate.repairSpeed)
+        expectThat(ship.powerHandler.repairing)
+            .isFalse()
+        expectThat(ship.powerHandler.poweredSystems[PoweredSystemType.Sensors])
+            .isNotNull()
+            .get { damage }.isEqualTo(0.0)
     }
 
     private fun stepTimeTo(seconds: Number, shipProvider: ShipProvider = { null }): ShipUpdateResult {

@@ -64,7 +64,7 @@ class NonPlayerShip(
         val hullDamage = shieldHandler.takeDamageAndReportHullDamage(amount)
         if (hullDamage > 0.0) {
             hull -= hullDamage
-            powerHandler.takeDamage(targetSystemType, amount)
+            powerHandler.takeDamage(targetSystemType, hullDamage)
         }
     }
 
