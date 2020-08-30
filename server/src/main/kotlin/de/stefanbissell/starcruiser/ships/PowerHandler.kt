@@ -26,7 +26,7 @@ class PowerHandler(
 
     private var powerGenerated: Double = 0.0
     private var powerUsed: Double = 0.0
-    private var repairHandler: RepairHandler? = null
+    private var repairHandler: MiniGameRepairHandler? = null
 
     fun update(time: GameTime) {
         generatePower(time)
@@ -45,7 +45,7 @@ class PowerHandler(
     fun startRepair(type: PoweredSystemType) {
         val system = getPoweredSystem(type)
         if (system.canRepair() && repairHandler?.type != type) {
-            repairHandler = RepairHandler(type)
+            repairHandler = MiniGameRepairHandler(type)
         }
     }
 
@@ -149,9 +149,7 @@ class PowerHandler(
         repairHandler?.apply {
             update(time)
             if (isComplete) {
-                getPoweredSystem(type).apply {
-                    damage -= shipTemplate.repairAmount
-                }
+                getPoweredSystem(type).repair(shipTemplate.repairAmount)
                 repairHandler = null
             }
         }
@@ -202,6 +200,10 @@ class PowerHandler(
 
         fun canRepair() = damage > 0.0
 
+        fun repair(amount: Double) {
+            damage -= amount
+        }
+
         fun toMessage() =
             PoweredSystemMessage(
                 damage = damage.fiveDigits(),
@@ -212,7 +214,7 @@ class PowerHandler(
     }
 }
 
-private class RepairHandler(
+private class MiniGameRepairHandler(
     val type: PoweredSystemType
 ) {
     var solvedTimer = 0.0
