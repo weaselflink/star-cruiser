@@ -80,6 +80,10 @@ class PowerHandler(
         }
     }
 
+    val systemsDamage
+        get() = poweredSystems.entries
+            .associate { it.key to 1.0 - it.value.damage }
+
     fun toMessage() =
         PowerMessage(
             capacitors = capacitors.oneDigit(),

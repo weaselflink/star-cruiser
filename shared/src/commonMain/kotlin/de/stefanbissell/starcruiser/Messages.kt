@@ -298,6 +298,7 @@ data class MapSelectionMessage(
     val range: Double,
     val hullRatio: Double? = null,
     val shield: ShieldMessage? = null,
+    val systemsDamage: Map<PoweredSystemType, Double>? = null,
     val canScan: Boolean = false,
     val canDelete: Boolean = false
 )

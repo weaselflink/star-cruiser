@@ -31,6 +31,8 @@ class NonPlayerShip(
     var throttle: Int = 0
     var rudder: Int = 0
     override var hull = template.hull
+    override val systemsDamage
+        get() = powerHandler.systemsDamage
 
     override fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: ShipProvider) {
         powerHandler.update(time)

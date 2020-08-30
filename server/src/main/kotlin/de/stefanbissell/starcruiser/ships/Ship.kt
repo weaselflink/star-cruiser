@@ -19,6 +19,7 @@ interface Ship {
     var position: Vector2
     var rotation: Double
     var hull: Double
+    val systemsDamage: Map<PoweredSystemType, Double>
 
     fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: ShipProvider)
 

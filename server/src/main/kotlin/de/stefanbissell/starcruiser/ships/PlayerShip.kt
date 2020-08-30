@@ -61,6 +61,8 @@ class PlayerShip(
     val throttle
         get() = throttleHandler.requested
     var rudder: Int = 0
+    override val systemsDamage
+        get() = powerHandler.systemsDamage
 
     override fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: ShipProvider) {
         powerHandler.update(time)
@@ -437,13 +439,23 @@ class PlayerShip(
                 range = rangeTo(ship.position),
                 canScan = true
             ).let { message ->
-                if (getScanLevel(selection.targetId) >= ScanLevel.Basic) {
-                    message.copy(
-                        hullRatio = (ship.hull / ship.template.hull).fiveDigits(),
-                        shield = ship.toShieldMessage()
-                    )
-                } else {
-                    message
+                when (getScanLevel(selection.targetId)) {
+                    ScanLevel.Detailed -> {
+                        message.copy(
+                            hullRatio = (ship.hull / ship.template.hull).fiveDigits(),
+                            shield = ship.toShieldMessage(),
+                            systemsDamage = ship.systemsDamage
+                        )
+                    }
+                    ScanLevel.Basic -> {
+                        message.copy(
+                            hullRatio = (ship.hull / ship.template.hull).fiveDigits(),
+                            shield = ship.toShieldMessage()
+                        )
+                    }
+                    else -> {
+                        message
+                    }
                 }
             }
         }

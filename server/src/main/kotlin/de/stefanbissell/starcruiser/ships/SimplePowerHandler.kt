@@ -14,6 +14,9 @@ class SimplePowerHandler(
     private var repairHandler: TimedRepairHandler? = null
     val repairing
         get() = repairHandler != null
+    val systemsDamage
+        get() = poweredSystems.entries
+            .associate { it.key to 1.0 - it.value.damage }
 
     fun update(time: GameTime) {
         repairHandler?.apply {
