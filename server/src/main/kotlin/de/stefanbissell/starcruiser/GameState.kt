@@ -213,9 +213,10 @@ class GameState {
     }
 
     private fun updateShips() {
-        ships.forEach {
-            it.value.apply {
-                update(time, physicsEngine) { id -> ships[id] }
+        ships.forEach { shipEntry ->
+            shipEntry.value.apply {
+                val contactList = ships.values.filter { it.id != shipEntry.key }
+                update(time, physicsEngine, contactList) { id -> ships[id] }
             }
         }
         ships.map {

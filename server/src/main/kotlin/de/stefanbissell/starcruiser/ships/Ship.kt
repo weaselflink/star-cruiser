@@ -21,7 +21,12 @@ interface Ship {
     var hull: Double
     val systemsDamage: Map<PoweredSystemType, Double>
 
-    fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: ShipProvider)
+    fun update(
+        time: GameTime,
+        physicsEngine: PhysicsEngine,
+        contactList: List<Ship> = emptyList(),
+        shipProvider: ShipProvider
+    )
 
     fun endUpdate(physicsEngine: PhysicsEngine): ShipUpdateResult
 
@@ -42,3 +47,5 @@ interface Ship {
     fun targetDestroyed(shipId: ObjectId)
     fun takeDamage(targetSystemType: PoweredSystemType, amount: Double)
 }
+
+typealias ShipProvider = (ObjectId) -> Ship?

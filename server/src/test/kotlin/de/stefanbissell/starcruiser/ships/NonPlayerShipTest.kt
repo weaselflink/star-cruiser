@@ -73,7 +73,12 @@ class NonPlayerShipTest {
 
     private fun stepTime(seconds: Number, shipProvider: ShipProvider = { null }): ShipUpdateResult {
         time.update(seconds.toDouble())
-        ship.update(time, physicsEngine, shipProvider)
+        ship.update(
+            time = time,
+            physicsEngine = physicsEngine,
+            contactList = emptyList(),
+            shipProvider = shipProvider
+        )
         return ship.endUpdate(physicsEngine)
     }
 }

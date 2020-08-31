@@ -26,6 +26,8 @@ class NonPlayerShip(
     private val shipAi = ShipAi()
     val powerHandler = SimplePowerHandler(template)
     val shieldHandler = ShieldHandler(template.shield)
+    val scans = mutableMapOf<ObjectId, ScanLevel>()
+    var scanHandler: TimedScanHandler? = null
     val sensorRange: Double
         get() = max(template.shortRangeScopeRange, template.sensorRange)
     var throttle: Int = 0
@@ -34,10 +36,21 @@ class NonPlayerShip(
     override val systemsDamage
         get() = powerHandler.systemsDamage
 
-    override fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: ShipProvider) {
+    override fun update(
+        time: GameTime,
+        physicsEngine: PhysicsEngine,
+        contactList: List<Ship>,
+        shipProvider: ShipProvider
+    ) {
         powerHandler.update(time)
         shieldHandler.update(time)
-        shipAi.update(time, this)
+        updateScan(time, shipProvider)
+        shipAi.update(
+            ship = this,
+            time = time,
+            contactList = contactList,
+            shipProvider = shipProvider
+        )
 
         val effectiveThrust = if (throttle < 0) {
             throttle * template.reverseThrustFactor
@@ -107,6 +120,23 @@ class NonPlayerShip(
 
     override fun inSensorRange(other: Vector2?): Boolean =
         other != null && (other - position).length() <= sensorRange
+
+    private fun updateScan(time: GameTime, shipProvider: ShipProvider) {
+        scanHandler?.also {
+            val target = shipProvider(it.targetId)
+            if (!inSensorRange(target)) {
+                scanHandler = null
+            }
+        }
+        scanHandler?.apply {
+            update(time)
+            if (isComplete) {
+                val scan = scans[targetId] ?: ScanLevel.None
+                scans[targetId] = scan.next
+                scanHandler = null
+            }
+        }
+    }
 
     private fun getContactType(relativeTo: PlayerShip) =
         if (relativeTo.getScanLevel(id) >= ScanLevel.Basic) {

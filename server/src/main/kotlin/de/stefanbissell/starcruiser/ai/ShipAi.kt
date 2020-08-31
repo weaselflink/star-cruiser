@@ -2,17 +2,30 @@ package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
+import de.stefanbissell.starcruiser.ships.Ship
+import de.stefanbissell.starcruiser.ships.ShipProvider
 
 class ShipAi {
 
     private val componentAis = listOf(
         ShieldAi(),
-        RepairAi()
+        RepairAi(),
+        ScanAi()
     )
 
-    fun update(time: GameTime, ship: NonPlayerShip) {
+    fun update(
+        ship: NonPlayerShip,
+        time: GameTime,
+        contactList: List<Ship>,
+        shipProvider: ShipProvider
+    ) {
         componentAis.forEach {
-            it.update(time, ship)
+            it.update(
+                ship = ship,
+                time = time,
+                contactList = contactList,
+                shipProvider = shipProvider
+            )
         }
     }
 }
@@ -23,19 +36,39 @@ abstract class ComponentAi(
 
     private var lastCheck: Double = -Double.MAX_VALUE
 
-    fun update(time: GameTime, ship: NonPlayerShip) {
+    fun update(
+        ship: NonPlayerShip,
+        time: GameTime,
+        contactList: List<Ship>,
+        shipProvider: ShipProvider
+    ) {
         if (time.current - lastCheck > interval) {
             lastCheck = time.current
-            execute(time, ship)
+            execute(
+                ship = ship,
+                time = time,
+                contactList = contactList,
+                shipProvider = shipProvider
+            )
         }
     }
 
-    abstract fun execute(time: GameTime, ship: NonPlayerShip)
+    abstract fun execute(
+        ship: NonPlayerShip,
+        time: GameTime,
+        contactList: List<Ship>,
+        shipProvider: ShipProvider
+    )
 }
 
 class ShieldAi : ComponentAi() {
 
-    override fun execute(time: GameTime, ship: NonPlayerShip) {
+    override fun execute(
+        ship: NonPlayerShip,
+        time: GameTime,
+        contactList: List<Ship>,
+        shipProvider: ShipProvider
+    ) {
         with(ship.shieldHandler) {
             if (!up && activationAllowed()) {
                 up = true
@@ -46,7 +79,12 @@ class ShieldAi : ComponentAi() {
 
 class RepairAi : ComponentAi() {
 
-    override fun execute(time: GameTime, ship: NonPlayerShip) {
+    override fun execute(
+        ship: NonPlayerShip,
+        time: GameTime,
+        contactList: List<Ship>,
+        shipProvider: ShipProvider
+    ) {
         with(ship.powerHandler) {
             if (!repairing) {
                 poweredSystems.entries

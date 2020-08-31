@@ -64,7 +64,12 @@ class PlayerShip(
     override val systemsDamage
         get() = powerHandler.systemsDamage
 
-    override fun update(time: GameTime, physicsEngine: PhysicsEngine, shipProvider: ShipProvider) {
+    override fun update(
+        time: GameTime,
+        physicsEngine: PhysicsEngine,
+        contactList: List<Ship>,
+        shipProvider: ShipProvider
+    ) {
         powerHandler.update(time)
         updateBeams(time, shipProvider, physicsEngine)
         shieldHandler.update(time, Shields.boostLevel)
@@ -367,11 +372,11 @@ class PlayerShip(
                 scanHandler = null
             }
         }
-        scanHandler?.also {
-            it.update(time)
-            if (it.isComplete) {
-                val scan = scans[it.targetId] ?: ScanLevel.None
-                scans[it.targetId] = scan.next
+        scanHandler?.apply {
+            update(time)
+            if (isComplete) {
+                val scan = scans[targetId] ?: ScanLevel.None
+                scans[targetId] = scan.next
                 scanHandler = null
             }
         }
@@ -521,5 +526,3 @@ data class ShipUpdateResult(
     val id: ObjectId,
     val destroyed: Boolean
 )
-
-typealias ShipProvider = (ObjectId) -> Ship?
