@@ -61,22 +61,6 @@ abstract class ComponentAi(
     )
 }
 
-class ShieldAi : ComponentAi() {
-
-    override fun execute(
-        ship: NonPlayerShip,
-        time: GameTime,
-        contactList: List<Ship>,
-        shipProvider: ShipProvider
-    ) {
-        with(ship.shieldHandler) {
-            if (!up && activationAllowed()) {
-                up = true
-            }
-        }
-    }
-}
-
 class RepairAi : ComponentAi() {
 
     override fun execute(
