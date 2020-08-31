@@ -60,23 +60,3 @@ abstract class ComponentAi(
         shipProvider: ShipProvider
     )
 }
-
-class RepairAi : ComponentAi() {
-
-    override fun execute(
-        ship: NonPlayerShip,
-        time: GameTime,
-        contactList: List<Ship>,
-        shipProvider: ShipProvider
-    ) {
-        with(ship.powerHandler) {
-            if (!repairing) {
-                poweredSystems.entries
-                    .firstOrNull { it.value.canRepair() }
-                    ?.also {
-                        startRepair(it.key)
-                    }
-            }
-        }
-    }
-}
