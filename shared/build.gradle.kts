@@ -1,6 +1,7 @@
 @file:Suppress("PropertyName", "SuspiciousCollectionReassignment", "UNUSED_VARIABLE")
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 val kotlin_version: String by project
 val ktor_version: String by project
@@ -54,33 +55,16 @@ kotlin {
 }
 
 tasks {
-    withType<KotlinCompile>().all {
+    withType<KotlinCompile<*>>().all {
+        kotlinOptions {
+            freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
+            freeCompilerArgs += listOf("-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi")
+        }
+    }
+
+    withType<KotlinJvmCompile>().configureEach {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
-            freeCompilerArgs += listOf("-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi")
-        }
-    }
-
-    withType<org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompile>().configureEach {
-        kotlinOptions {
-            freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
-            freeCompilerArgs += listOf("-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi")
-        }
-    }
-
-    withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = "1.8"
-            freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
-            freeCompilerArgs += listOf("-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi")
-        }
-    }
-
-    withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>().configureEach {
-        kotlinOptions {
-            freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
-            freeCompilerArgs += listOf("-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi")
         }
     }
 
