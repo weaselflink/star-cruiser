@@ -440,7 +440,7 @@ class PlayerShip(
                     position = waypoint.position,
                     label = waypoint.label,
                     bearing = bearingTo(waypoint.position),
-                    range = rangeTo(waypoint.position),
+                    range = rangeTo(waypoint.position).twoDigits(),
                     canDelete = true
                 )
             }
@@ -454,7 +454,7 @@ class PlayerShip(
                 position = ship.position,
                 label = ship.designation,
                 bearing = bearingTo(ship.position),
-                range = rangeTo(ship.position),
+                range = rangeTo(ship.position).twoDigits(),
                 canScan = true
             ).let { message ->
                 when (getScanLevel(selection.targetId)) {
@@ -483,9 +483,6 @@ class PlayerShip(
 
     private val PoweredSystemType.boostLevel
         get() = powerHandler.getBoostLevel(this)
-
-    private fun rangeTo(to: Vector2) =
-        (to - position).length().twoDigits()
 
     private fun bearingTo(to: Vector2) =
         (to - position).angle().toHeading().twoDigits()

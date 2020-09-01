@@ -54,6 +54,9 @@ interface Ship {
     fun getScanLevel(targetId: ObjectId): ScanLevel
 
     fun getContactType(relativeTo: Ship): ContactType
+
+    fun rangeTo(other: Vector2) =
+        (other - position).length()
 }
 
 typealias ShipProvider = (ObjectId) -> Ship?

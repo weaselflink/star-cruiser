@@ -120,7 +120,7 @@ class NonPlayerShip(
     override fun toShieldMessage() = shieldHandler.toMessage()
 
     override fun inSensorRange(other: Vector2?): Boolean =
-        other != null && (other - position).length() <= sensorRange
+        other != null && rangeTo(other) <= sensorRange
 
     override fun getScanLevel(targetId: ObjectId) =
         scans[targetId] ?: ScanLevel.None

@@ -2,7 +2,10 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.PoweredSystemType
+import de.stefanbissell.starcruiser.ScanLevel
+import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.isNear
+import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
@@ -19,6 +22,8 @@ class NonPlayerShipTest {
     private val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
     private val shieldTemplate = carrierTemplate.shield
     private val ship = NonPlayerShip()
+
+    private var contactList = emptyList<Ship>()
 
     @Test
     fun `takes damage to shields`() {
@@ -38,7 +43,8 @@ class NonPlayerShipTest {
     }
 
     @Test
-    fun `reactivates shields when possible`() {
+    fun `reactivates shields when possible and near threat`() {
+        addHostileShip(p(100, 100))
         ship.takeDamage(PoweredSystemType.Reactor, shieldTemplate.strength)
         stepTime(0.01)
         expectThat(ship.shieldHandler.toMessage().up)
@@ -76,9 +82,15 @@ class NonPlayerShipTest {
         ship.update(
             time = time,
             physicsEngine = physicsEngine,
-            contactList = emptyList(),
+            contactList = contactList,
             shipProvider = shipProvider
         )
         return ship.endUpdate(physicsEngine)
+    }
+
+    private fun addHostileShip(position: Vector2) {
+        val target = PlayerShip(position = position)
+        contactList = listOf(target)
+        ship.scans[target.id] = ScanLevel.Detailed
     }
 }
