@@ -1,12 +1,14 @@
 package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.BeamStatus
+import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.PoweredSystemMessage
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.PoweredSystemType.Reactor
 import de.stefanbissell.starcruiser.PoweredSystemType.Sensors
+import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
 import de.stefanbissell.starcruiser.isNear
@@ -551,6 +553,32 @@ class PlayerShipTest {
             .isNull()
         expectThat(ship.toNavigationMessage { target }.scanProgress)
             .isNull()
+    }
+
+    @Test
+    fun `unscanned ship is unknown`() {
+        val target = PlayerShip()
+
+        expectThat(target.getContactType(ship))
+            .isEqualTo(ContactType.Unknown)
+    }
+
+    @Test
+    fun `scanned ship of same faction is friendly`() {
+        val target = PlayerShip()
+        ship.scans[target.id] = ScanLevel.Basic
+
+        expectThat(target.getContactType(ship))
+            .isEqualTo(ContactType.Friendly)
+    }
+
+    @Test
+    fun `scanned ship of other faction is enemy`() {
+        val target = PlayerShip(faction = Faction.Enemy)
+        ship.scans[target.id] = ScanLevel.Basic
+
+        expectThat(target.getContactType(ship))
+            .isEqualTo(ContactType.Enemy)
     }
 
     private fun stepTime(seconds: Number, shipProvider: ShipProvider = { null }): ShipUpdateResult {

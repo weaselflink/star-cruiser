@@ -18,6 +18,7 @@ import kotlin.math.max
 class NonPlayerShip(
     override val id: ObjectId = ObjectId.random(),
     override val template: ShipTemplate = carrierTemplate,
+    override val faction: Faction = Faction.Enemy,
     override val designation: String = randomShipName(),
     override var position: Vector2 = Vector2(),
     override var rotation: Double = 90.0.toRadians(),
@@ -121,6 +122,20 @@ class NonPlayerShip(
     override fun inSensorRange(other: Vector2?): Boolean =
         other != null && (other - position).length() <= sensorRange
 
+    override fun getScanLevel(targetId: ObjectId) =
+        scans[targetId] ?: ScanLevel.None
+
+    override fun getContactType(relativeTo: Ship) =
+        if (relativeTo.getScanLevel(id) >= ScanLevel.Basic) {
+            if (relativeTo.faction == faction) {
+                ContactType.Friendly
+            } else {
+                ContactType.Enemy
+            }
+        } else {
+            ContactType.Unknown
+        }
+
     private fun updateScan(time: GameTime, shipProvider: ShipProvider) {
         scanHandler?.also {
             val target = shipProvider(it.targetId)
@@ -137,11 +152,4 @@ class NonPlayerShip(
             }
         }
     }
-
-    private fun getContactType(relativeTo: PlayerShip) =
-        if (relativeTo.getScanLevel(id) >= ScanLevel.Basic) {
-            ContactType.Enemy
-        } else {
-            ContactType.Unknown
-        }
 }

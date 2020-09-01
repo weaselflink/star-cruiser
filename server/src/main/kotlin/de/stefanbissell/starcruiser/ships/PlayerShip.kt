@@ -36,6 +36,7 @@ import kotlin.math.max
 class PlayerShip(
     override val id: ObjectId = ObjectId.random(),
     override val template: ShipTemplate = cruiserTemplate,
+    override val faction: Faction = Faction.Player,
     override val designation: String = randomShipName(),
     override var position: Vector2 = Vector2(),
     override var rotation: Double = 90.0.toRadians()
@@ -43,12 +44,12 @@ class PlayerShip(
 
     private val waypoints: MutableList<Waypoint> = mutableListOf()
     private val history = mutableListOf<Pair<Double, Vector2>>()
-    private val scans = mutableMapOf<ObjectId, ScanLevel>()
     private val throttleHandler = ThrottleHandler(template)
     private val powerHandler = PowerHandler(template)
     private val beamHandlers = template.beams.map { BeamHandler(it, this) }
     private val shieldHandler = ShieldHandler(template.shield)
     private var mapSelection: MapSelection = MapSelection.None
+    val scans = mutableMapOf<ObjectId, ScanLevel>()
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
     override var hull = template.hull
@@ -248,6 +249,20 @@ class PlayerShip(
     override fun inSensorRange(other: Vector2?) =
         other != null && (other - position).length() <= sensorRange
 
+    override fun getScanLevel(targetId: ObjectId) =
+        scans[targetId] ?: ScanLevel.None
+
+    override fun getContactType(relativeTo: Ship) =
+        if (relativeTo.getScanLevel(id) >= ScanLevel.Basic) {
+            if (relativeTo.faction == faction) {
+                ContactType.Friendly
+            } else {
+                ContactType.Enemy
+            }
+        } else {
+            ContactType.Unknown
+        }
+
     fun toPlayerShipMessage() =
         PlayerShipMessage(
             id = id,
@@ -346,8 +361,6 @@ class PlayerShip(
         } else {
             false
         }
-
-    fun getScanLevel(targetId: ObjectId) = scans[targetId] ?: ScanLevel.None
 
     private fun updateBeams(
         time: GameTime,
@@ -467,13 +480,6 @@ class PlayerShip(
         }
 
     private fun canIncreaseScanLevel(targetId: ObjectId) = getScanLevel(targetId).canBeIncreased
-
-    private fun getContactType(relativeTo: PlayerShip) =
-        if (relativeTo.getScanLevel(id) >= ScanLevel.Basic) {
-            ContactType.Friendly
-        } else {
-            ContactType.Unknown
-        }
 
     private val PoweredSystemType.boostLevel
         get() = powerHandler.getBoostLevel(this)
