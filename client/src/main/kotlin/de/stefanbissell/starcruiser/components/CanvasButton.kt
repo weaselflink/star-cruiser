@@ -81,8 +81,6 @@ class CanvasButton(
     private fun CanvasRenderingContext2D.drawText(dim: ComponentDimensions) {
         val currentText = text
         if (currentText != null) {
-            save()
-
             fillStyle = if (activated()) {
                 UiStyle.buttonBackgroundColor
             } else {
