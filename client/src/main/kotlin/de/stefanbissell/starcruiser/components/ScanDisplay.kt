@@ -117,6 +117,8 @@ class ScanDisplay(
 
         save()
 
+        lineWidth = 0.4.vmin
+
         strokeStyle = UiStyle.backgroundColor
         beginPath()
         moveTo(x, middle)
@@ -167,5 +169,8 @@ class ScanDisplay(
     }
 
     private val Int.vmin
+        get() = canvas.dimensions().vmin * this
+
+    private val Double.vmin
         get() = canvas.dimensions().vmin * this
 }
