@@ -69,7 +69,7 @@ private class TimedRepairHandler(
 
     private var progress: Double = 0.0
     val isComplete
-        get() = progress > 1.0
+        get() = progress >= 1.0
 
     fun update(time: GameTime) {
         progress += shipTemplate.repairSpeed * time.delta

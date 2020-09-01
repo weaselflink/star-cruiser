@@ -59,7 +59,7 @@ class NonPlayerShipTest {
 
     @Test
     fun `repairs damaged system`() {
-        ship.takeDamage(PoweredSystemType.Sensors, shieldTemplate.strength)
+        ship.shieldHandler.toggleUp()
         ship.takeDamage(PoweredSystemType.Sensors, carrierTemplate.poweredSystemDamageCapacity * 0.2)
         expectThat(ship.powerHandler.poweredSystems[PoweredSystemType.Sensors])
             .isNotNull()
@@ -69,7 +69,7 @@ class NonPlayerShipTest {
         expectThat(ship.powerHandler.repairing)
             .isTrue()
 
-        stepTime(1.1 / carrierTemplate.repairSpeed)
+        stepTime(carrierTemplate.poweredSystemDamageCapacity * 0.21 / carrierTemplate.repairSpeed)
         expectThat(ship.powerHandler.repairing)
             .isFalse()
         expectThat(ship.powerHandler.poweredSystems[PoweredSystemType.Sensors])
