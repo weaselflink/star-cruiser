@@ -34,6 +34,7 @@ import de.stefanbissell.starcruiser.StartJump
 import de.stefanbissell.starcruiser.StartRepair
 import de.stefanbissell.starcruiser.TogglePause
 import de.stefanbissell.starcruiser.ToggleShieldsUp
+import de.stefanbissell.starcruiser.Uuid
 import de.stefanbissell.starcruiser.client.ThrottleMessage.AcknowledgeInflightMessage
 import de.stefanbissell.starcruiser.client.ThrottleMessage.AddInflightMessage
 import de.stefanbissell.starcruiser.client.ThrottleMessage.GetInflightMessageCount
@@ -47,12 +48,11 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 data class ClientId(private val id: String) {
 
     companion object {
-        fun random() = ClientId(UUID.randomUUID().toString())
+        fun random() = ClientId(Uuid().toString())
     }
 }
 
