@@ -1,10 +1,13 @@
 package de.stefanbissell.starcruiser.client
 
 import de.stefanbissell.starcruiser.GameStateChange
+import de.stefanbissell.starcruiser.GameStateMessage
 import de.stefanbissell.starcruiser.GetGameStateSnapshot
 import de.stefanbissell.starcruiser.NewGameClient
+import de.stefanbissell.starcruiser.SnapshotMessage
 import io.ktor.http.cio.websocket.Frame
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -13,6 +16,8 @@ import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isA
+import strikt.assertions.isEqualTo
+import strikt.assertions.isNotNull
 import strikt.assertions.one
 
 class GameClientTest {
@@ -54,6 +59,30 @@ class GameClientTest {
         }
     }
 
+    @Test
+    fun `sends update`() {
+        withGameClient {
+            expectWithTimeout(1000) {
+                val request = gameStateChanges
+                    .filterIsInstance<GetGameStateSnapshot>()
+                    .firstOrNull()
+                expectThat(request).isNotNull()
+
+                request!!.response.complete(SnapshotMessage.ShipSelection(emptyList()))
+            }
+            expectWithTimeout(1000) {
+                expectThat(messages).one {
+                    isA<Frame.Text>()
+                        .get {
+                            GameStateMessage.parse(String(data))
+                        }
+                        .get { snapshot }
+                        .isEqualTo(SnapshotMessage.ShipSelection(emptyList()))
+                }
+            }
+        }
+    }
+
     private fun withGameClient(block: suspend () -> Unit) {
         runBlocking {
             val supervisorJob = SupervisorJob()
@@ -85,14 +114,25 @@ class GameClientTest {
     }
 
     private suspend fun expectWithTimeout(timeMillis: Long, block: suspend () -> Unit) {
-        withTimeout(timeMillis) {
-            var waiting = true
-            while (waiting) {
-                try {
-                    block()
-                    waiting = false
-                } catch (ignore: Error) {}
-                delay(100)
+        var exception: Throwable? = null
+        try {
+            withTimeout(timeMillis) {
+                var waiting = true
+                while (waiting) {
+                    try {
+                        block()
+                        waiting = false
+                    } catch (ex: Throwable) {
+                        exception = ex
+                    }
+                    delay(100)
+                }
+            }
+        } catch (ex: Throwable) {
+            if (ex is TimeoutCancellationException && exception != null) {
+                throw exception!!
+            } else {
+                throw ex
             }
         }
     }
