@@ -59,8 +59,13 @@ class PlayerShip(
     var mainScreenView = MainScreenView.Front
     val sensorRange: Double
         get() = max(template.shortRangeScopeRange, template.sensorRange * Sensors.boostLevel)
-    val throttle
+    var throttle: Int
         get() = throttleHandler.requested
+        set(value) {
+            if (!jumpHandler.jumping) {
+                throttleHandler.requested = value
+            }
+        }
     var rudder: Int = 0
         set(value) {
             if (!jumpHandler.jumping) {
@@ -128,12 +133,6 @@ class PlayerShip(
             lockHandler = null
         }
         scans.remove(shipId)
-    }
-
-    fun setThrottle(value: Int) {
-        if (!jumpHandler.jumping) {
-            throttleHandler.requested = value
-        }
     }
 
     fun changeJumpDistance(value: Double) {

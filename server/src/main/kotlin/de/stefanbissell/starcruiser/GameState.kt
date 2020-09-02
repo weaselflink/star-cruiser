@@ -235,7 +235,7 @@ class GameState {
     }
 
     fun setThrottle(clientId: ClientId, value: Int) {
-        getClientShip(clientId)?.setThrottle(value)
+        getClientShip(clientId)?.throttle = value
     }
 
     fun changeJumpDistance(clientId: ClientId, value: Double) {

@@ -57,28 +57,28 @@ class PlayerShipTest {
 
     @Test
     fun `sets positive throttle`() {
-        ship.setThrottle(50)
+        ship.throttle = 50
 
         expectThat(ship.throttle).isEqualTo(50)
     }
 
     @Test
     fun `sets negative throttle`() {
-        ship.setThrottle(-50)
+        ship.throttle = -50
 
         expectThat(ship.throttle).isEqualTo(-50)
     }
 
     @Test
     fun `clamps throttle to lower bound`() {
-        ship.setThrottle(-150)
+        ship.throttle = -150
 
         expectThat(ship.throttle).isEqualTo(-100)
     }
 
     @Test
     fun `clamps throttle to upper bound`() {
-        ship.setThrottle(150)
+        ship.throttle = 150
 
         expectThat(ship.throttle).isEqualTo(100)
     }
@@ -199,7 +199,7 @@ class PlayerShipTest {
 
     @Test
     fun `updates physics engine`() {
-        ship.setThrottle(50)
+        ship.throttle = 50
         ship.rudder = 50
         stepTime(2)
 
@@ -215,7 +215,7 @@ class PlayerShipTest {
     @Test
     fun `updates physics engine applying impulse power level`() {
         ship.setPower(PoweredSystemType.Impulse, 150)
-        ship.setThrottle(50)
+        ship.throttle = 50
         ship.rudder = 50
         stepTime(2)
 
@@ -231,7 +231,7 @@ class PlayerShipTest {
     @Test
     fun `updates physics engine applying maneuver power level`() {
         ship.setPower(PoweredSystemType.Maneuver, 80)
-        ship.setThrottle(50)
+        ship.throttle = 50
         ship.rudder = 50
         stepTime(2)
 
