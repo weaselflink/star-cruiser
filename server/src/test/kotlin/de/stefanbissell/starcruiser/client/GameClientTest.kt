@@ -1,19 +1,24 @@
 package de.stefanbissell.starcruiser.client
 
+import de.stefanbissell.starcruiser.Command
+import de.stefanbissell.starcruiser.ExitShip
 import de.stefanbissell.starcruiser.GameStateChange
 import de.stefanbissell.starcruiser.GameStateMessage
 import de.stefanbissell.starcruiser.GetGameStateSnapshot
 import de.stefanbissell.starcruiser.NewGameClient
 import de.stefanbissell.starcruiser.SnapshotMessage
 import io.ktor.http.cio.websocket.Frame
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.Test
+import strikt.api.Assertion
 import strikt.api.expectThat
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
@@ -26,7 +31,9 @@ class GameClientTest {
     private val statisticsActor = Channel<StatisticsMessage>()
     private val outgoing = Channel<Frame>()
     private val incoming = Channel<Frame>()
+    private val clientId = ClientId.random()
     private val gameClient = GameClient(
+        id = clientId,
         gameStateActor = gameStateActor,
         statisticsActor = statisticsActor,
         outgoing = outgoing,
@@ -42,7 +49,7 @@ class GameClientTest {
         withGameClient {
             expectWithTimeout(1000) {
                 expectThat(gameStateChanges).one {
-                    isA<NewGameClient>()
+                    isEqualTo(NewGameClient(clientId))
                 }
             }
         }
@@ -54,6 +61,7 @@ class GameClientTest {
             expectWithTimeout(1000) {
                 expectThat(gameStateChanges).one {
                     isA<GetGameStateSnapshot>()
+                        .get { clientId }.isEqualTo(clientId)
                 }
             }
         }
@@ -61,29 +69,57 @@ class GameClientTest {
 
     @Test
     fun `sends update`() {
+        val update = SnapshotMessage.ShipSelection(emptyList())
         withGameClient {
             expectWithTimeout(1000) {
                 val request = gameStateChanges
                     .filterIsInstance<GetGameStateSnapshot>()
-                    .firstOrNull()
+                    .firstOrNull { it.clientId == clientId }
                 expectThat(request).isNotNull()
 
-                request!!.response.complete(SnapshotMessage.ShipSelection(emptyList()))
+                request!!.response.complete(update)
             }
             expectWithTimeout(1000) {
                 expectThat(messages).one {
-                    isA<Frame.Text>()
-                        .get {
-                            GameStateMessage.parse(String(data))
-                        }
-                        .get { snapshot }
-                        .isEqualTo(SnapshotMessage.ShipSelection(emptyList()))
+                    expectGameStateMessage()
+                        .isEqualTo(GameStateMessage(1L, update))
                 }
             }
         }
     }
 
-    private fun withGameClient(block: suspend () -> Unit) {
+    @Test
+    fun `modifies game state on incoming command`() {
+        withGameClient {
+            launch {
+                sendCommand(Command.CommandExitShip)
+            }
+            expectWithTimeout(1000) {
+                expectThat(gameStateChanges).one {
+                    isEqualTo(ExitShip(clientId))
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `skips invalid command`() {
+        withGameClient {
+            launch {
+                incoming.send(Frame.Text("invalid"))
+            }
+            launch {
+                sendCommand(Command.CommandExitShip)
+            }
+            expectWithTimeout(1000) {
+                expectThat(gameStateChanges).one {
+                    isEqualTo(ExitShip(clientId))
+                }
+            }
+        }
+    }
+
+    private fun withGameClient(block: suspend CoroutineScope.() -> Unit) {
         runBlocking {
             val supervisorJob = SupervisorJob()
             launch(supervisorJob) {
@@ -106,7 +142,9 @@ class GameClientTest {
             }
 
             try {
-                block()
+                withContext(supervisorJob) {
+                    block()
+                }
             } finally {
                 supervisorJob.complete()
             }
@@ -136,4 +174,11 @@ class GameClientTest {
             }
         }
     }
+
+    private suspend fun sendCommand(command: Command) {
+        incoming.send(Frame.Text(command.toJson()))
+    }
+
+    private fun Assertion.Builder<Frame>.expectGameStateMessage() =
+        get { GameStateMessage.parse(String(data)) }
 }

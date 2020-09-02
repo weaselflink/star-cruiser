@@ -72,8 +72,7 @@ class GameClient(
 
         for (frame in incoming) {
             statisticsActor.send(StatisticsMessage.MessageReceived(frame.data.size))
-            val input = String(frame.data)
-            when (val command = Command.parse(input)) {
+            when (val command = parseCommandSafely(frame)) {
                 is Command.UpdateAcknowledge -> throttleActor.send(AcknowledgeInflightMessage(command.counter))
                 is Command.CommandTogglePause -> gameStateActor.send(
                     TogglePause
@@ -155,6 +154,15 @@ class GameClient(
 
         updateJob.cancelAndJoin()
         gameStateActor.send(GameClientDisconnected(id))
+    }
+
+    private fun parseCommandSafely(frame: Frame): Command? {
+        val input = String(frame.data)
+        return try {
+            Command.parse(input)
+        } catch (ex: Exception) {
+            null
+        }
     }
 
     private fun CoroutineScope.launchUpdateJob(
