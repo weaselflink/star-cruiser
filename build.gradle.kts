@@ -21,7 +21,7 @@ plugins {
 
 allprojects {
     group = "de.stefanbissell.starcruiser"
-    version = "0.23.0"
+    version = "0.24.0"
 
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
     apply(plugin = "com.github.ben-manes.versions")
