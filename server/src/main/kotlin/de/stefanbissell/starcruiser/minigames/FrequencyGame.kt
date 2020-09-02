@@ -8,26 +8,29 @@ class FrequencyGame(
     val dimensions: Int
 ) {
 
-    val solution: List<Double> = (0 until dimensions).map { Random.nextDouble() }
-    val input: MutableList<Double> = solution.toMutableList()
+    val solutions: List<Double> = (0 until dimensions).map { Random.nextDouble() }
+    val inputs: MutableList<Double> = solutions.toMutableList()
     val noise
-        get() = solution
-            .mapIndexed { index, value -> abs(value - input[index]) }
+        get() = (0 until dimensions)
+            .map(::singleDimensionNoise)
             .sum() / dimensions
 
     fun adjustInput(dimension: Int, value: Double) {
-        if (dimension >= 0 && dimension < input.size) {
-            input[dimension] = value.clamp(0.0, 1.0)
+        if (dimension >= 0 && dimension < inputs.size) {
+            inputs[dimension] = value.clamp(0.0, 1.0)
         }
     }
 
     fun randomize() {
         while (noise < 0.2) {
-            (0 until input.size).forEach {
-                input[it] = Random.nextDouble()
+            (0 until inputs.size).forEach {
+                inputs[it] = Random.nextDouble()
             }
         }
     }
+
+    private fun singleDimensionNoise(dimension: Int) =
+        abs(solutions[dimension] - inputs[dimension])
 
     companion object {
         fun createSolved(dimensions: Int) =

@@ -37,7 +37,7 @@ class ScanHandler(
             targetId = targetId,
             designation = shipProvider(targetId)?.designation ?: "unknown",
             noise = adjustedNoise().fiveDigits(),
-            input = game.input.map { it.fiveDigits() }
+            input = game.inputs.map { it.fiveDigits() }
         )
 
     private fun boostLevelFactor() = 1.0 / max(0.1, boostLevel())

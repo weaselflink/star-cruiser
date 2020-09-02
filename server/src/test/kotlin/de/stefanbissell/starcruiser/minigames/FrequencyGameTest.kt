@@ -30,8 +30,8 @@ class FrequencyGameTest {
     @Test
     fun `can make unsolved`() {
         val game = FrequencyGame.createSolved(2)
-        game.adjustInput(0, wrapDouble(game.solution[0] + 0.2))
-        game.adjustInput(1, wrapDouble(game.solution[1] + 0.2))
+        game.adjustInput(0, wrapDouble(game.solutions[0] + 0.2))
+        game.adjustInput(1, wrapDouble(game.solutions[1] + 0.2))
 
         expectThat(game.isSolved).isFalse()
     }
@@ -39,8 +39,8 @@ class FrequencyGameTest {
     @Test
     fun `can make solved`() {
         val game = FrequencyGame.createUnsolved(2)
-        game.adjustInput(0, game.solution[0] + 0.05)
-        game.adjustInput(1, game.solution[1] + 0.05)
+        game.adjustInput(0, game.solutions[0] + 0.05)
+        game.adjustInput(1, game.solutions[1] + 0.05)
 
         expectThat(game.isSolved).isTrue()
     }
@@ -48,11 +48,11 @@ class FrequencyGameTest {
     @Test
     fun `ignores wrong dimension index`() {
         val game = FrequencyGame.createUnsolved(2)
-        val inputBeforeChanges = game.input.toList()
+        val inputBeforeChanges = game.inputs.toList()
         game.adjustInput(-1, Random.nextDouble())
         game.adjustInput(2, Random.nextDouble())
 
-        expectThat(game.input).containsExactly(inputBeforeChanges)
+        expectThat(game.inputs).containsExactly(inputBeforeChanges)
     }
 
     @Test
@@ -61,7 +61,7 @@ class FrequencyGameTest {
         game.adjustInput(0, -0.1)
         game.adjustInput(1, 1.1)
 
-        expectThat(game.input).containsExactly(0.0, 1.0)
+        expectThat(game.inputs).containsExactly(0.0, 1.0)
     }
 
     private fun wrapDouble(value: Double) =
