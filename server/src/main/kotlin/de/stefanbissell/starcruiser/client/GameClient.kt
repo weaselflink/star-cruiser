@@ -48,6 +48,7 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import org.slf4j.Logger
 
 data class ClientId(private val id: String) {
 
@@ -61,7 +62,8 @@ class GameClient(
     private val gameStateActor: SendChannel<GameStateChange>,
     private val statisticsActor: SendChannel<StatisticsMessage>,
     private val outgoing: SendChannel<Frame>,
-    private val incoming: ReceiveChannel<Frame>
+    private val incoming: ReceiveChannel<Frame>,
+    private val log: Logger
 ) {
 
     suspend fun start(coroutineScope: CoroutineScope) {
@@ -161,6 +163,7 @@ class GameClient(
         return try {
             Command.parse(input)
         } catch (ex: Exception) {
+            log.warn("invalid command: $input")
             null
         }
     }
@@ -216,13 +219,15 @@ class GameClient(
             gameStateActor: SendChannel<GameStateChange>,
             statisticsActor: SendChannel<StatisticsMessage>,
             outgoing: SendChannel<Frame>,
-            incoming: ReceiveChannel<Frame>
+            incoming: ReceiveChannel<Frame>,
+            log: Logger
         ) =
             GameClient(
                 gameStateActor = gameStateActor,
                 statisticsActor = statisticsActor,
                 outgoing = outgoing,
-                incoming = incoming
+                incoming = incoming,
+                log = log
             ).start(this)
     }
 }

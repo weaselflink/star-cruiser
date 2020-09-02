@@ -6,6 +6,7 @@ import de.stefanbissell.starcruiser.client.GameClient.Companion.startGameClient
 import de.stefanbissell.starcruiser.client.createStatisticsActor
 import io.ktor.application.Application
 import io.ktor.application.install
+import io.ktor.application.log
 import io.ktor.features.ContentNegotiation
 import io.ktor.http.cio.websocket.pingPeriod
 import io.ktor.http.cio.websocket.timeout
@@ -59,7 +60,8 @@ fun Application.module() {
                 gameStateActor = gameStateActor,
                 statisticsActor = statisticsActor,
                 outgoing = outgoing,
-                incoming = incoming
+                incoming = incoming,
+                log = log
             )
         }
     }

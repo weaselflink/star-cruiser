@@ -18,6 +18,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.Test
+import org.slf4j.helpers.NOPLogger.NOP_LOGGER
 import strikt.api.Assertion
 import strikt.api.expectThat
 import strikt.assertions.isA
@@ -37,7 +38,8 @@ class GameClientTest {
         gameStateActor = gameStateActor,
         statisticsActor = statisticsActor,
         outgoing = outgoing,
-        incoming = incoming
+        incoming = incoming,
+        log = NOP_LOGGER
     )
 
     private val gameStateChanges = mutableListOf<GameStateChange>()
