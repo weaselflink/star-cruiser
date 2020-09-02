@@ -37,12 +37,13 @@ There are also some technical goals:
 
     ./gradlew :server:run
     
-Then open the URL shown in the logs in a browser
+Then open the following URL in a browser
 
     http://localhost:35667
 
 Spawn a ship and click it, now you should see a radar-like UI.
-Try pressing W,A,S,D,P or clicking stuff.
+Try clicking or dragging stuff, also works for touch devices.
+Change ship stations via the buttons on the right.
 
 ### Thanks to
 
