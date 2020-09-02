@@ -62,6 +62,11 @@ class PlayerShip(
     val throttle
         get() = throttleHandler.requested
     var rudder: Int = 0
+        set(value) {
+            if (!jumpHandler.jumping) {
+                field = value.clamp(-100, 100)
+            }
+        }
     override val systemsDamage
         get() = powerHandler.systemsDamage
 
@@ -125,7 +130,7 @@ class PlayerShip(
         scans.remove(shipId)
     }
 
-    fun changeThrottle(value: Int) {
+    fun setThrottle(value: Int) {
         if (!jumpHandler.jumping) {
             throttleHandler.requested = value
         }
@@ -142,12 +147,6 @@ class PlayerShip(
             jumpHandler.startJump()
             throttleHandler.requested = 0
             rudder = 0
-        }
-    }
-
-    fun changeRudder(value: Int) {
-        if (!jumpHandler.jumping) {
-            rudder = value.clamp(-100, 100)
         }
     }
 

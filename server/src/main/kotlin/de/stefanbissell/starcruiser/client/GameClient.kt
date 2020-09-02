@@ -6,9 +6,7 @@ import de.stefanbissell.starcruiser.AddWaypoint
 import de.stefanbissell.starcruiser.ApplicationConfig.gameClientMaxInflightMessages
 import de.stefanbissell.starcruiser.ApplicationConfig.gameClientUpdateIntervalMillis
 import de.stefanbissell.starcruiser.ChangeJumpDistance
-import de.stefanbissell.starcruiser.ChangeRudder
 import de.stefanbissell.starcruiser.ChangeStation
-import de.stefanbissell.starcruiser.ChangeThrottle
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.DeleteSelectedWaypoint
 import de.stefanbissell.starcruiser.ExitShip
@@ -26,6 +24,8 @@ import de.stefanbissell.starcruiser.ScanSelectedShip
 import de.stefanbissell.starcruiser.SetCoolant
 import de.stefanbissell.starcruiser.SetMainScreenView
 import de.stefanbissell.starcruiser.SetPower
+import de.stefanbissell.starcruiser.SetRudder
+import de.stefanbissell.starcruiser.SetThrottle
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.SolveRepairGame
 import de.stefanbissell.starcruiser.SolveScanGame
@@ -92,7 +92,7 @@ class GameClient(
                     ExitShip(id)
                 )
                 is Command.CommandChangeThrottle -> gameStateActor.send(
-                    ChangeThrottle(id, command.value)
+                    SetThrottle(id, command.value)
                 )
                 is Command.CommandChangeJumpDistance -> gameStateActor.send(
                     ChangeJumpDistance(id, command.value)
@@ -101,7 +101,7 @@ class GameClient(
                     StartJump(id)
                 )
                 is Command.CommandChangeRudder -> gameStateActor.send(
-                    ChangeRudder(id, command.value)
+                    SetRudder(id, command.value)
                 )
                 is Command.CommandMapSelectWaypoint -> gameStateActor.send(
                     MapSelectWaypoint(id, command.index)

@@ -57,28 +57,28 @@ class PlayerShipTest {
 
     @Test
     fun `sets positive throttle`() {
-        ship.changeThrottle(50)
+        ship.setThrottle(50)
 
         expectThat(ship.throttle).isEqualTo(50)
     }
 
     @Test
     fun `sets negative throttle`() {
-        ship.changeThrottle(-50)
+        ship.setThrottle(-50)
 
         expectThat(ship.throttle).isEqualTo(-50)
     }
 
     @Test
     fun `clamps throttle to lower bound`() {
-        ship.changeThrottle(-150)
+        ship.setThrottle(-150)
 
         expectThat(ship.throttle).isEqualTo(-100)
     }
 
     @Test
     fun `clamps throttle to upper bound`() {
-        ship.changeThrottle(150)
+        ship.setThrottle(150)
 
         expectThat(ship.throttle).isEqualTo(100)
     }
@@ -113,28 +113,28 @@ class PlayerShipTest {
 
     @Test
     fun `sets positive rudder`() {
-        ship.changeRudder(50)
+        ship.rudder = 50
 
         expectThat(ship.rudder).isEqualTo(50)
     }
 
     @Test
     fun `sets negative rudder`() {
-        ship.changeRudder(-50)
+        ship.rudder = -50
 
         expectThat(ship.rudder).isEqualTo(-50)
     }
 
     @Test
     fun `clamps rudder to lower bound`() {
-        ship.changeRudder(-150)
+        ship.rudder = -150
 
         expectThat(ship.rudder).isEqualTo(-100)
     }
 
     @Test
     fun `clamps rudder to upper bound`() {
-        ship.changeRudder(150)
+        ship.rudder = 150
 
         expectThat(ship.rudder).isEqualTo(100)
     }
@@ -199,8 +199,8 @@ class PlayerShipTest {
 
     @Test
     fun `updates physics engine`() {
-        ship.changeThrottle(50)
-        ship.changeRudder(50)
+        ship.setThrottle(50)
+        ship.rudder = 50
         stepTime(2)
 
         verify(exactly = 1) {
@@ -215,8 +215,8 @@ class PlayerShipTest {
     @Test
     fun `updates physics engine applying impulse power level`() {
         ship.setPower(PoweredSystemType.Impulse, 150)
-        ship.changeThrottle(50)
-        ship.changeRudder(50)
+        ship.setThrottle(50)
+        ship.rudder = 50
         stepTime(2)
 
         verify(exactly = 1) {
@@ -231,8 +231,8 @@ class PlayerShipTest {
     @Test
     fun `updates physics engine applying maneuver power level`() {
         ship.setPower(PoweredSystemType.Maneuver, 80)
-        ship.changeThrottle(50)
-        ship.changeRudder(50)
+        ship.setThrottle(50)
+        ship.rudder = 50
         stepTime(2)
 
         verify(exactly = 1) {

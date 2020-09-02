@@ -26,6 +26,7 @@ import kotlin.random.Random
 sealed class GameStateChange
 
 object Update : GameStateChange()
+data class GetGameStateSnapshot(val clientId: ClientId, val response: CompletableDeferred<SnapshotMessage>) : GameStateChange()
 object TogglePause : GameStateChange()
 object SpawnShip : GameStateChange()
 data class JoinShip(val clientId: ClientId, val objectId: ObjectId, val station: Station) : GameStateChange()
@@ -33,11 +34,10 @@ data class ChangeStation(val clientId: ClientId, val station: Station) : GameSta
 data class ExitShip(val clientId: ClientId) : GameStateChange()
 data class NewGameClient(val clientId: ClientId) : GameStateChange()
 data class GameClientDisconnected(val clientId: ClientId) : GameStateChange()
-data class ChangeThrottle(val clientId: ClientId, val value: Int) : GameStateChange()
+data class SetThrottle(val clientId: ClientId, val value: Int) : GameStateChange()
 data class ChangeJumpDistance(val clientId: ClientId, val value: Double) : GameStateChange()
 data class StartJump(val clientId: ClientId) : GameStateChange()
-data class ChangeRudder(val clientId: ClientId, val value: Int) : GameStateChange()
-data class GetGameStateSnapshot(val clientId: ClientId, val response: CompletableDeferred<SnapshotMessage>) : GameStateChange()
+data class SetRudder(val clientId: ClientId, val value: Int) : GameStateChange()
 data class MapClearSelection(val clientId: ClientId) : GameStateChange()
 data class MapSelectWaypoint(val clientId: ClientId, val index: Int) : GameStateChange()
 data class MapSelectShip(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
@@ -234,8 +234,8 @@ class GameState {
         }
     }
 
-    fun changeThrottle(clientId: ClientId, value: Int) {
-        getClientShip(clientId)?.changeThrottle(value)
+    fun setThrottle(clientId: ClientId, value: Int) {
+        getClientShip(clientId)?.setThrottle(value)
     }
 
     fun changeJumpDistance(clientId: ClientId, value: Double) {
@@ -246,8 +246,8 @@ class GameState {
         getClientShip(clientId)?.startJump()
     }
 
-    fun changeRudder(clientId: ClientId, value: Int) {
-        getClientShip(clientId)?.changeRudder(value)
+    fun setRudder(clientId: ClientId, value: Int) {
+        getClientShip(clientId)?.rudder = value
     }
 
     fun mapClearSelection(clientId: ClientId) {
@@ -401,10 +401,10 @@ class GameState {
                     is ChangeStation -> gameState.changeStation(change.clientId, change.station)
                     is ExitShip -> gameState.exitShip(change.clientId)
                     is SpawnShip -> gameState.spawnShip()
-                    is ChangeThrottle -> gameState.changeThrottle(change.clientId, change.value)
+                    is SetThrottle -> gameState.setThrottle(change.clientId, change.value)
                     is ChangeJumpDistance -> gameState.changeJumpDistance(change.clientId, change.value)
                     is StartJump -> gameState.startJump(change.clientId)
-                    is ChangeRudder -> gameState.changeRudder(change.clientId, change.value)
+                    is SetRudder -> gameState.setRudder(change.clientId, change.value)
                     is MapClearSelection -> gameState.mapClearSelection(change.clientId)
                     is MapSelectWaypoint -> gameState.mapSelectWaypoint(change.clientId, change.index)
                     is MapSelectShip -> gameState.mapSelectShip(change.clientId, change.targetId)

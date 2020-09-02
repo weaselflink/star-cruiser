@@ -47,7 +47,7 @@ class Simulator(
         }
 
         fun analyzeLinearAcceleration(): LinearAccelerationData {
-            ship.changeThrottle(100)
+            ship.setThrottle(100)
             val points = tickUntil { before, after ->
                 abs(before.bodyParameters.speed.length() - after.bodyParameters.speed.length()) < 0.00001
             }
@@ -74,7 +74,7 @@ class Simulator(
         }
 
         fun analyzeAngularAcceleration(): AngularAccelerationData {
-            ship.changeRudder(100)
+            ship.rudder = 100
             val points = tickUntil { before, after ->
                 abs(before.bodyParameters.rotationSpeed - after.bodyParameters.rotationSpeed) < 0.00001
             }
