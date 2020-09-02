@@ -31,7 +31,7 @@ There are also some technical goals:
 
 ### Preconditions
 
-* Java 8+, tested with 8,13 and 14 (e.g. [OpenJDK Azul](https://www.azul.com/downloads/zulu-community/?version=java-14&package=jdk))
+* Java 8+, tested with 8, 13 and 14 (e.g. [OpenJDK Azul](https://www.azul.com/downloads/zulu-community/?version=java-14&package=jdk))
 
 ### How to run
 
