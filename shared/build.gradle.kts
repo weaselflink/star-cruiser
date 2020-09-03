@@ -37,16 +37,6 @@ kotlin {
                 implementation("io.strikt:strikt-core:0.27.0")
             }
         }
-
-        val main by compilations.getting {
-            compileKotlinTask
-            output
-        }
-
-        val test by compilations.getting {
-            compileKotlinTask
-            output
-        }
     }
 
     js {
