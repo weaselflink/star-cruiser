@@ -26,96 +26,30 @@ class MainScreenUi : StationUi(Station.MainScreen) {
         showRotateButton = false
     )
     private var view = MainScreenView.Front
-    private val viewButtons = listOf(
-        createViewButton(
-            mainScreenView = MainScreenView.Front,
-            xExpr = {
-                if (it.width >= it.vmin * 152) {
-                    it.width * 0.5 - it.vmin * 74
-                } else {
-                    it.width * 0.5 - it.vmin * 48
+    private val viewButtons = MainScreenView.values()
+        .mapIndexed { index, view ->
+            createViewButton(
+                mainScreenView = view,
+                xExpr = {
+                    if (it.width >= it.vmin * 152) {
+                        it.width * 0.5 - it.vmin * 74 + index * it.vmin * 25
+                    } else {
+                        if (index < 4) {
+                            it.width * 0.5 - it.vmin * 48 + index * it.vmin * 25
+                        } else {
+                            it.width * 0.5 - it.vmin * 24 + (index - 4) * it.vmin * 25
+                        }
+                    }
+                },
+                yExpr = {
+                    if (it.width >= it.vmin * 152 || index >= 4) {
+                        it.height - it.vmin * 3
+                    } else {
+                        it.height - it.vmin * 15
+                    }
                 }
-            },
-            yExpr = {
-                if (it.width >= it.vmin * 152) {
-                    it.height - it.vmin * 3
-                } else {
-                    it.height - it.vmin * 15
-                }
-            }
-        ),
-        createViewButton(
-            mainScreenView = MainScreenView.Left,
-            xExpr = {
-                if (it.width >= it.vmin * 152) {
-                    it.width * 0.5 - it.vmin * 49
-                } else {
-                    it.width * 0.5 - it.vmin * 24
-                }
-            },
-            yExpr = {
-                if (it.width >= it.vmin * 152) {
-                    it.height - it.vmin * 3
-                } else {
-                    it.height - it.vmin * 15
-                }
-            }
-        ),
-        createViewButton(
-            mainScreenView = MainScreenView.Right,
-            xExpr = {
-                if (it.width >= it.vmin * 152) {
-                    it.width * 0.5 - it.vmin * 24
-                } else {
-                    it.width * 0.5 + it.vmin * 1
-                }
-            },
-            yExpr = {
-                if (it.width >= it.vmin * 152) {
-                    it.height - it.vmin * 3
-                } else {
-                    it.height - it.vmin * 15
-                }
-            }
-        ),
-        createViewButton(
-            mainScreenView = MainScreenView.Rear,
-            xExpr = {
-                if (it.width >= it.vmin * 152) {
-                    it.width * 0.5 + it.vmin * 1
-                } else {
-                    it.width * 0.5 + it.vmin * 26
-                }
-            },
-            yExpr = {
-                if (it.width >= it.vmin * 152) {
-                    it.height - it.vmin * 3
-                } else {
-                    it.height - it.vmin * 15
-                }
-            }
-        ),
-        createViewButton(
-            mainScreenView = MainScreenView.Top,
-            xExpr = {
-                if (it.width >= it.vmin * 152) {
-                    it.width * 0.5 + it.vmin * 26
-                } else {
-                    it.width * 0.5 - it.vmin * 24
-                }
-            }
-        ),
-        createViewButton(
-            mainScreenView = MainScreenView.Scope,
-            xExpr = {
-                if (it.width >= it.vmin * 152) {
-                    it.width * 0.5 + it.vmin * 51
-                } else {
-                    it.width * 0.5 + it.vmin * 1
-                }
-            }
-        )
-    )
+            )
+        }
 
     init {
         resize()
