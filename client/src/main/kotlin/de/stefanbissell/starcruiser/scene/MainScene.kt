@@ -61,7 +61,10 @@ class MainScene {
     private val objectModels = mutableMapOf<String, Group>()
     private var shieldModel: Group? = null
 
-    val frontCamera = createFrontCamera().also { ownShip += it }
+    val frontCamera = createCamera().also { ownShip += it }
+    val leftCamera = createCamera().also { ownShip += it }
+    val rightCamera = createCamera().also { ownShip += it }
+    val rearCamera = createCamera().also { ownShip += it }
     val topCamera = createTopCamera().also { ownShip += it }
 
     init {
@@ -73,6 +76,9 @@ class MainScene {
 
     fun updateSize(windowWidth: Int, windowHeight: Int) {
         frontCamera.updateSize(windowWidth, windowHeight)
+        rightCamera.updateSize(windowWidth, windowHeight)
+        leftCamera.updateSize(windowWidth, windowHeight)
+        rearCamera.updateSize(windowWidth, windowHeight)
         topCamera.updateSize(windowWidth, windowHeight)
     }
 
@@ -87,7 +93,10 @@ class MainScene {
             objectModels[model]?.let {
                 ownShip.model = it
             }
-            updateFrontCamera(snapshot.ship.frontCamera)
+            updateCamera(frontCamera, snapshot.ship.frontCamera)
+            updateCamera(leftCamera, snapshot.ship.leftCamera)
+            updateCamera(rightCamera, snapshot.ship.rightCamera)
+            updateCamera(rearCamera, snapshot.ship.rearCamera)
         }
 
         val contacts = snapshot.contacts
@@ -139,21 +148,21 @@ class MainScene {
         }
     }
 
-    private fun createFrontCamera(): PerspectiveCamera {
+    private fun createCamera(): PerspectiveCamera {
         return PerspectiveCamera(
             fov = 75,
             aspect = window.innerWidth.toDouble() / window.innerHeight.toDouble(),
             near = 0.1,
             far = 10_000
-        ).apply {
-            position.y = 1.0
-            position.z = -12.3
-        }
+        )
     }
 
-    private fun updateFrontCamera(cameraMessage: CameraMessage) {
-        frontCamera.fov = cameraMessage.fov
-        frontCamera.position.set(cameraMessage.position)
+    private fun updateCamera(camera: PerspectiveCamera, cameraMessage: CameraMessage) {
+        with(camera) {
+            fov = cameraMessage.fov
+            position.set(cameraMessage.position)
+            rotation.y = cameraMessage.rotation
+        }
     }
 
     private fun createTopCamera(): PerspectiveCamera {

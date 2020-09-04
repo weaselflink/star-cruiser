@@ -70,6 +70,9 @@ class MainScreenUi : StationUi(Station.MainScreen) {
             is SnapshotMessage.MainScreen3d -> {
                 when (snapshot.ship.mainScreenView) {
                     MainScreenView.Front -> draw3d(snapshot, mainScene.frontCamera)
+                    MainScreenView.Left -> draw3d(snapshot, mainScene.leftCamera)
+                    MainScreenView.Right -> draw3d(snapshot, mainScene.rightCamera)
+                    MainScreenView.Rear -> draw3d(snapshot, mainScene.rearCamera)
                     else -> draw3d(snapshot, mainScene.topCamera)
                 }
             }

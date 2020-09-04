@@ -225,12 +225,18 @@ data class CameraMessage(
 
 enum class MainScreenView {
     Front,
+    Left,
+    Right,
+    Rear,
     Top,
     Scope;
 
     val next: MainScreenView
         get() = when (this) {
-            Front -> Top
+            Front -> Left
+            Left -> Rear
+            Rear -> Right
+            Right -> Top
             Top -> Scope
             Scope -> Front
         }
