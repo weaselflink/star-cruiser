@@ -279,7 +279,10 @@ class PlayerShip(
             shield = shieldHandler.toMessage(),
             jumpDrive = jumpHandler.toMessage(),
             mainScreenView = mainScreenView,
-            frontCamera = template.frontCamera.toMessage()
+            frontCamera = template.frontCamera.toMessage(),
+            leftCamera = template.frontCamera.toMessage(),
+            rightCamera = template.frontCamera.toMessage(),
+            rearCamera = template.frontCamera.toMessage()
         )
 
     fun toNavigationMessage(shipProvider: ShipProvider) =

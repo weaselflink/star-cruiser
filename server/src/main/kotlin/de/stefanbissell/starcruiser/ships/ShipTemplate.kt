@@ -6,6 +6,7 @@ import de.stefanbissell.starcruiser.Vector3
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.scenario.Polygon
 import de.stefanbissell.starcruiser.toRadians
+import kotlin.math.PI
 import kotlin.math.roundToInt
 
 data class ShipTemplate(
@@ -51,6 +52,18 @@ data class ShipTemplate(
     val repairAmount: Double = 0.25,
     val frontCamera: CameraTemplate = CameraTemplate(
         position = Vector3(0.0, 1.0, -12.3)
+    ),
+    val leftCamera: CameraTemplate = CameraTemplate(
+        position = Vector3(-2.3, 1.0, -11.1),
+        rotation = PI * 0.5
+    ),
+    val rightCamera: CameraTemplate = CameraTemplate(
+        position = Vector3(2.3, 1.0, -11.1),
+        rotation = -PI * 0.5
+    ),
+    val rearCamera: CameraTemplate = CameraTemplate(
+        position = Vector3(0.0, 1.0, 13.5),
+        rotation = PI
     ),
     val physics: PhysicsTemplate = PhysicsTemplate()
 )
@@ -147,12 +160,14 @@ data class Geometry(
 
 data class CameraTemplate(
     val fov: Double = 75.0,
-    val position: Vector3
+    val position: Vector3,
+    val rotation: Double = 0.0
 ) {
 
     fun toMessage() =
         CameraMessage(
             fov = fov,
-            position = position
+            position = position,
+            rotation = rotation
         )
 }

@@ -148,7 +148,10 @@ data class ShipMessage(
     val shield: ShieldMessage,
     val jumpDrive: JumpDriveMessage,
     val mainScreenView: MainScreenView,
-    val frontCamera: CameraMessage
+    val frontCamera: CameraMessage,
+    val leftCamera: CameraMessage,
+    val rightCamera: CameraMessage,
+    val rearCamera: CameraMessage
 )
 
 @Serializable
@@ -216,7 +219,8 @@ data class AsteroidMessage(
 @Serializable
 data class CameraMessage(
     val fov: Double,
-    val position: Vector3
+    val position: Vector3,
+    val rotation: Double
 )
 
 enum class MainScreenView {

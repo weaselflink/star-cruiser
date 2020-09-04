@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.ships
 import de.stefanbissell.starcruiser.Vector3
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.scenario.Polygon
+import kotlin.math.PI
 
 val carrierTemplate = ShipTemplate()
 
@@ -27,6 +28,18 @@ val cruiserTemplate = ShipTemplate().copy(
     ),
     frontCamera = CameraTemplate(
         position = Vector3(0.0, 5.0, -4.7)
+    ),
+    leftCamera = CameraTemplate(
+        position = Vector3(-1.5, 5.0, -4.3),
+        rotation = PI * 0.5
+    ),
+    rightCamera = CameraTemplate(
+        position = Vector3(1.5, 5.0, -4.3),
+        rotation = -PI * 0.5
+    ),
+    rearCamera = CameraTemplate(
+        position = Vector3(0.0, 5.0, 4.7),
+        rotation = PI
     ),
     physics = PhysicsTemplate(
         geometry = listOf(
