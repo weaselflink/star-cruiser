@@ -26,105 +26,100 @@ class MainScreenUi : StationUi(Station.MainScreen) {
         showRotateButton = false
     )
     private var view = MainScreenView.Front
-    private val frontViewButton = createViewButton(
-        mainScreenView = MainScreenView.Front,
-        xExpr = {
-            if (it.width >= it.vmin * 152) {
-                it.width * 0.5 - it.vmin * 74
-            } else {
-                it.width * 0.5 - it.vmin * 48
+    private val viewButtons = listOf(
+        createViewButton(
+            mainScreenView = MainScreenView.Front,
+            xExpr = {
+                if (it.width >= it.vmin * 152) {
+                    it.width * 0.5 - it.vmin * 74
+                } else {
+                    it.width * 0.5 - it.vmin * 48
+                }
+            },
+            yExpr = {
+                if (it.width >= it.vmin * 152) {
+                    it.height - it.vmin * 3
+                } else {
+                    it.height - it.vmin * 15
+                }
             }
-        },
-        yExpr = {
-            if (it.width >= it.vmin * 152) {
-                it.height - it.vmin * 3
-            } else {
-                it.height - it.vmin * 15
+        ),
+        createViewButton(
+            mainScreenView = MainScreenView.Left,
+            xExpr = {
+                if (it.width >= it.vmin * 152) {
+                    it.width * 0.5 - it.vmin * 49
+                } else {
+                    it.width * 0.5 - it.vmin * 24
+                }
+            },
+            yExpr = {
+                if (it.width >= it.vmin * 152) {
+                    it.height - it.vmin * 3
+                } else {
+                    it.height - it.vmin * 15
+                }
             }
-        }
-    )
-    private val leftViewButton = createViewButton(
-        mainScreenView = MainScreenView.Left,
-        xExpr = {
-            if (it.width >= it.vmin * 152) {
-                it.width * 0.5 - it.vmin * 49
-            } else {
-                it.width * 0.5 - it.vmin * 24
+        ),
+        createViewButton(
+            mainScreenView = MainScreenView.Right,
+            xExpr = {
+                if (it.width >= it.vmin * 152) {
+                    it.width * 0.5 - it.vmin * 24
+                } else {
+                    it.width * 0.5 + it.vmin * 1
+                }
+            },
+            yExpr = {
+                if (it.width >= it.vmin * 152) {
+                    it.height - it.vmin * 3
+                } else {
+                    it.height - it.vmin * 15
+                }
             }
-        },
-        yExpr = {
-            if (it.width >= it.vmin * 152) {
-                it.height - it.vmin * 3
-            } else {
-                it.height - it.vmin * 15
+        ),
+        createViewButton(
+            mainScreenView = MainScreenView.Rear,
+            xExpr = {
+                if (it.width >= it.vmin * 152) {
+                    it.width * 0.5 + it.vmin * 1
+                } else {
+                    it.width * 0.5 + it.vmin * 26
+                }
+            },
+            yExpr = {
+                if (it.width >= it.vmin * 152) {
+                    it.height - it.vmin * 3
+                } else {
+                    it.height - it.vmin * 15
+                }
             }
-        }
-    )
-    private val rightViewButton = createViewButton(
-        mainScreenView = MainScreenView.Right,
-        xExpr = {
-            if (it.width >= it.vmin * 152) {
-                it.width * 0.5 - it.vmin * 24
-            } else {
-                it.width * 0.5 + it.vmin * 1
+        ),
+        createViewButton(
+            mainScreenView = MainScreenView.Top,
+            xExpr = {
+                if (it.width >= it.vmin * 152) {
+                    it.width * 0.5 + it.vmin * 26
+                } else {
+                    it.width * 0.5 - it.vmin * 24
+                }
             }
-        },
-        yExpr = {
-            if (it.width >= it.vmin * 152) {
-                it.height - it.vmin * 3
-            } else {
-                it.height - it.vmin * 15
+        ),
+        createViewButton(
+            mainScreenView = MainScreenView.Scope,
+            xExpr = {
+                if (it.width >= it.vmin * 152) {
+                    it.width * 0.5 + it.vmin * 51
+                } else {
+                    it.width * 0.5 + it.vmin * 1
+                }
             }
-        }
-    )
-    private val rearViewButton = createViewButton(
-        mainScreenView = MainScreenView.Rear,
-        xExpr = {
-            if (it.width >= it.vmin * 152) {
-                it.width * 0.5 + it.vmin * 1
-            } else {
-                it.width * 0.5 + it.vmin * 26
-            }
-        },
-        yExpr = {
-            if (it.width >= it.vmin * 152) {
-                it.height - it.vmin * 3
-            } else {
-                it.height - it.vmin * 15
-            }
-        }
-    )
-    private val topViewButton = createViewButton(
-        mainScreenView = MainScreenView.Top,
-        xExpr = {
-            if (it.width >= it.vmin * 152) {
-                it.width * 0.5 + it.vmin * 26
-            } else {
-                it.width * 0.5 - it.vmin * 24
-            }
-        }
-    )
-    private val scopeViewButton = createViewButton(
-        mainScreenView = MainScreenView.Scope,
-        xExpr = {
-            if (it.width >= it.vmin * 152) {
-                it.width * 0.5 + it.vmin * 51
-            } else {
-                it.width * 0.5 + it.vmin * 1
-            }
-        }
+        )
     )
 
     init {
         resize()
-        addChildren(
-            frontViewButton,
-            leftViewButton,
-            rightViewButton,
-            rearViewButton,
-            topViewButton,
-            scopeViewButton
-        )
+        addChildren(viewButtons)
     }
 
     override fun resize() {
@@ -177,12 +172,9 @@ class MainScreenUi : StationUi(Station.MainScreen) {
     }
 
     private fun drawButtons() {
-        frontViewButton.draw()
-        leftViewButton.draw()
-        rightViewButton.draw()
-        rearViewButton.draw()
-        topViewButton.draw()
-        scopeViewButton.draw()
+        viewButtons.forEach {
+            it.draw()
+        }
     }
 
     private fun createViewButton(
