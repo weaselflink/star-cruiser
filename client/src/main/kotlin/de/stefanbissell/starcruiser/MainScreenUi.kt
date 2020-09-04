@@ -146,15 +146,7 @@ class MainScreenUi : StationUi(Station.MainScreen) {
     fun draw(snapshot: SnapshotMessage.MainScreen) {
         when (snapshot) {
             is SnapshotMessage.MainScreenShortRangeScope -> drawScope(snapshot)
-            is SnapshotMessage.MainScreen3d -> {
-                when (snapshot.ship.mainScreenView) {
-                    MainScreenView.Front -> draw3d(snapshot, mainScene.frontCamera)
-                    MainScreenView.Left -> draw3d(snapshot, mainScene.leftCamera)
-                    MainScreenView.Right -> draw3d(snapshot, mainScene.rightCamera)
-                    MainScreenView.Rear -> draw3d(snapshot, mainScene.rearCamera)
-                    else -> draw3d(snapshot, mainScene.topCamera)
-                }
-            }
+            is SnapshotMessage.MainScreen3d -> draw3d(snapshot)
         }
     }
 
@@ -162,12 +154,12 @@ class MainScreenUi : StationUi(Station.MainScreen) {
         clientSocket.send(Command.CommandMainScreenView(view.next))
     }
 
-    private fun draw3d(snapshot: SnapshotMessage.MainScreen3d, camera: Camera) {
+    private fun draw3d(snapshot: SnapshotMessage.MainScreen3d) {
         view = snapshot.ship.mainScreenView
         with(ctx) {
             clear()
 
-            mainScene.update(snapshot)
+            val camera = mainScene.update(snapshot)
             render(camera)
 
             drawButtons()

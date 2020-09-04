@@ -3,9 +3,11 @@ package de.stefanbissell.starcruiser.scene
 import de.stefanbissell.starcruiser.AsteroidMessage
 import de.stefanbissell.starcruiser.CameraMessage
 import de.stefanbissell.starcruiser.ContactMessage
+import de.stefanbissell.starcruiser.MainScreenView
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Vector2
 import kotlinx.browser.window
+import three.cameras.Camera
 import three.cameras.PerspectiveCamera
 import three.lights.AmbientLight
 import three.lights.DirectionalLight
@@ -61,11 +63,14 @@ class MainScene {
     private val objectModels = mutableMapOf<String, Group>()
     private var shieldModel: Group? = null
 
-    val frontCamera = createCamera().also { ownShip += it }
-    val leftCamera = createCamera().also { ownShip += it }
-    val rightCamera = createCamera().also { ownShip += it }
-    val rearCamera = createCamera().also { ownShip += it }
-    val topCamera = createTopCamera().also { ownShip += it }
+    private val cameras = CameraPosition.values()
+        .associate { pos ->
+            if (pos == CameraPosition.Top) {
+                pos to createTopCamera().also { ownShip += it }
+            } else {
+                pos to createCamera().also { ownShip += it }
+            }
+        }
 
     init {
         createLights()
@@ -75,14 +80,13 @@ class MainScene {
     }
 
     fun updateSize(windowWidth: Int, windowHeight: Int) {
-        frontCamera.updateSize(windowWidth, windowHeight)
-        rightCamera.updateSize(windowWidth, windowHeight)
-        leftCamera.updateSize(windowWidth, windowHeight)
-        rearCamera.updateSize(windowWidth, windowHeight)
-        topCamera.updateSize(windowWidth, windowHeight)
+        cameras.values
+            .forEach {
+                it.updateSize(windowWidth, windowHeight)
+            }
     }
 
-    fun update(snapshot: SnapshotMessage.MainScreen3d) {
+    fun update(snapshot: SnapshotMessage.MainScreen3d): Camera {
         ownShip.rotation.y = snapshot.ship.rotation
         jumpAnimationScale(snapshot.ship.jumpDrive.animation).also {
             ownShip.scale.set(it, it, it)
@@ -93,10 +97,10 @@ class MainScene {
             objectModels[model]?.let {
                 ownShip.model = it
             }
-            updateCamera(frontCamera, snapshot.ship.frontCamera)
-            updateCamera(leftCamera, snapshot.ship.leftCamera)
-            updateCamera(rightCamera, snapshot.ship.rightCamera)
-            updateCamera(rearCamera, snapshot.ship.rearCamera)
+            updateCamera(cameras[CameraPosition.Front], snapshot.ship.frontCamera)
+            updateCamera(cameras[CameraPosition.Left], snapshot.ship.leftCamera)
+            updateCamera(cameras[CameraPosition.Right], snapshot.ship.rightCamera)
+            updateCamera(cameras[CameraPosition.Rear], snapshot.ship.rearCamera)
         }
 
         val contacts = snapshot.contacts
@@ -117,7 +121,12 @@ class MainScene {
 
         updateBeams(snapshot)
         updateShields(snapshot)
+
+        return CameraPosition.fromMessage(snapshot.ship.mainScreenView).getCamera()
     }
+
+    private fun CameraPosition.getCamera() =
+        cameras[this] ?: cameras.values.first()
 
     private fun updateBeams(snapshot: SnapshotMessage.MainScreen3d) {
         ownShip.updateBeams(snapshot, snapshot.ship.beams)
@@ -157,8 +166,8 @@ class MainScene {
         )
     }
 
-    private fun updateCamera(camera: PerspectiveCamera, cameraMessage: CameraMessage) {
-        with(camera) {
+    private fun updateCamera(camera: PerspectiveCamera?, cameraMessage: CameraMessage) {
+        camera?.apply {
             fov = cameraMessage.fov
             position.set(cameraMessage.position)
             rotation.y = cameraMessage.rotation
@@ -239,6 +248,25 @@ class MainScene {
             url = "/assets/models/$name",
             onLoad = { onLoad(it.scene) }
         )
+    }
+}
+
+enum class CameraPosition {
+    Front,
+    Left,
+    Right,
+    Rear,
+    Top;
+
+    companion object {
+        fun fromMessage(mainScreenView: MainScreenView) =
+            when (mainScreenView) {
+                MainScreenView.Front -> Front
+                MainScreenView.Left -> Left
+                MainScreenView.Right -> Right
+                MainScreenView.Rear -> Rear
+                else -> Top
+            }
     }
 }
 
