@@ -10,8 +10,8 @@ pluginManagement {
         kotlin("js") version kotlin_version
         kotlin("plugin.serialization") version kotlin_version
         id("com.github.johnrengelman.shadow") version "6.0.0"
-        id("com.github.ben-manes.versions") version "0.29.0"
-        id("org.jlleitschuh.gradle.ktlint") version "9.3.0"
+        id("com.github.ben-manes.versions") version "0.30.0"
+        id("org.jlleitschuh.gradle.ktlint") version "9.4.0"
     }
 }
 
