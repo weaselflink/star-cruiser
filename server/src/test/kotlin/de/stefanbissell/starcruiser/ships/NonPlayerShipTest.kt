@@ -93,6 +93,22 @@ class NonPlayerShipTest {
             .isNull()
     }
 
+    @Test
+    fun `scans ships and stops when out of range`() {
+        val targetId = addShip(p(100, 0)).id
+        stepTime(0.1)
+
+        expectThat(ship.scanHandler)
+            .isNotNull()
+            .get { targetId }.isEqualTo(targetId)
+
+        contactList.first().position = p(ship.template.sensorRange * 2, 0)
+        stepTime(0.1)
+
+        expectThat(ship.scanHandler)
+            .isNull()
+    }
+
     private fun stepTime(seconds: Number, shipProvider: ShipProvider = { null }): ShipUpdateResult {
         time.update(seconds.toDouble())
         ship.update(
