@@ -8,11 +8,6 @@ import org.w3c.dom.events.KeyboardEvent
 lateinit var commonShipUi: CommonShipUi
 lateinit var joinUi: JoinUi
 lateinit var destroyedUi: DestroyedUi
-lateinit var helmUi: HelmUi
-lateinit var weaponsUi: WeaponsUi
-lateinit var navigationUi: NavigationUi
-lateinit var engineeringUi: EngineeringUi
-lateinit var mainScreenUi: MainScreenUi
 lateinit var stationUiSwitcher: StationUiSwitcher
 
 object ClientState {
@@ -31,18 +26,7 @@ fun init() {
     joinUi = JoinUi().apply { show() }
 
     destroyedUi = DestroyedUi().apply { hide() }
-    helmUi = HelmUi()
-    weaponsUi = WeaponsUi()
-    navigationUi = NavigationUi()
-    engineeringUi = EngineeringUi()
-    mainScreenUi = MainScreenUi()
-    stationUiSwitcher = StationUiSwitcher(
-        helmUi,
-        weaponsUi,
-        navigationUi,
-        engineeringUi,
-        mainScreenUi
-    )
+    stationUiSwitcher = StationUiSwitcher()
 
     commonShipUi = CommonShipUi().apply {
         hide()
@@ -62,13 +46,6 @@ fun keyHandler(event: KeyboardEvent) {
     clientSocket.apply {
         when (event.code) {
             "KeyP" -> send(Command.CommandTogglePause)
-            "KeyX" -> navigationUi.zoomIn()
-            "KeyZ" -> navigationUi.zoomOut()
-            "KeyR" -> {
-                ClientState.toggleRotateScope()
-            }
-            "KeyC" -> mainScreenUi.cycleViewType()
-            "KeyJ" -> send(Command.CommandStartJump)
             else -> println("not bound: ${event.code}")
         }
     }
@@ -112,26 +89,5 @@ fun drawShipUi(snapshot: SnapshotMessage.CrewSnapshot) {
         show()
         draw(snapshot)
     }
-    when (snapshot) {
-        is SnapshotMessage.Helm -> {
-            stationUiSwitcher.switchTo(Station.Helm)
-            helmUi.draw(snapshot)
-        }
-        is SnapshotMessage.Weapons -> {
-            stationUiSwitcher.switchTo(Station.Weapons)
-            weaponsUi.draw(snapshot)
-        }
-        is SnapshotMessage.Navigation -> {
-            stationUiSwitcher.switchTo(Station.Navigation)
-            navigationUi.draw(snapshot)
-        }
-        is SnapshotMessage.Engineering -> {
-            stationUiSwitcher.switchTo(Station.Engineering)
-            engineeringUi.draw(snapshot)
-        }
-        is SnapshotMessage.MainScreen -> {
-            stationUiSwitcher.switchTo(Station.MainScreen)
-            mainScreenUi.draw(snapshot)
-        }
-    }
+    stationUiSwitcher.draw(snapshot)
 }
