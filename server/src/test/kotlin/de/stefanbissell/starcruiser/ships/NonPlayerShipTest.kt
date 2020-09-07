@@ -13,6 +13,7 @@ import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isNotNull
+import strikt.assertions.isNull
 import strikt.assertions.isTrue
 import java.time.Instant
 
@@ -77,6 +78,21 @@ class NonPlayerShipTest {
             .get { damage }.isEqualTo(0.0)
     }
 
+    @Test
+    fun `scans ships and stops when target destroyed`() {
+        val targetId = addShip(p(100, 100)).id
+        stepTime(1)
+
+        expectThat(ship.scanHandler)
+            .isNotNull()
+            .get { targetId }.isEqualTo(targetId)
+
+        ship.targetDestroyed(targetId)
+
+        expectThat(ship.scanHandler)
+            .isNull()
+    }
+
     private fun stepTime(seconds: Number, shipProvider: ShipProvider = { null }): ShipUpdateResult {
         time.update(seconds.toDouble())
         ship.update(
@@ -88,9 +104,14 @@ class NonPlayerShipTest {
         return ship.endUpdate(physicsEngine)
     }
 
-    private fun addHostileShip(position: Vector2) {
+    private fun addShip(position: Vector2): Ship {
         val target = PlayerShip(position = position)
         contactList = listOf(target)
+        return target
+    }
+
+    private fun addHostileShip(position: Vector2) {
+        val target = addShip(position)
         ship.scans[target.id] = ScanLevel.Detailed
     }
 }

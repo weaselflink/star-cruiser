@@ -84,7 +84,11 @@ class NonPlayerShip(
         }
     }
 
-    override fun targetDestroyed(shipId: ObjectId) {}
+    override fun targetDestroyed(shipId: ObjectId) {
+        if (scanHandler?.targetId == shipId) {
+            scanHandler = null
+        }
+    }
 
     override fun toContactMessage(relativeTo: PlayerShip) =
         ContactMessage(
