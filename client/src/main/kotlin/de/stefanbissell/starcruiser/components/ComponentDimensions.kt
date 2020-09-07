@@ -33,12 +33,11 @@ data class ComponentDimensions(
             heightExpr: (CanvasDimensions) -> Double
         ) =
             canvas.dimensions().let { dim ->
-                val bottomX = xExpr(dim)
                 val width = widthExpr(dim)
                 val height = heightExpr(dim)
                 ComponentDimensions(
                     canvas = dim,
-                    bottomX = bottomX,
+                    bottomX = xExpr(dim),
                     bottomY = yExpr(dim),
                     width = width,
                     height = height,
