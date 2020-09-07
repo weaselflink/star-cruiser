@@ -408,8 +408,10 @@ class ShortRangeScope(
         fillStyle = UiStyle.buttonBackgroundColor
         beginPath()
         drawPill(
-            centerX - width / 2.0, centerY - scopeRadius + height / 2.0,
-            width, height
+            x = centerX - width / 2.0,
+            y = centerY - scopeRadius + height / 2.0,
+            width = width,
+            height = height
         )
         fill()
 
@@ -417,8 +419,10 @@ class ShortRangeScope(
         lineWidth = dim.vmin * 0.4
         beginPath()
         drawPill(
-            centerX - width / 2.0, centerY - scopeRadius + height / 2.0,
-            width, height
+            x = centerX - width / 2.0,
+            y = centerY - scopeRadius + height / 2.0,
+            width = width,
+            height = height
         )
         stroke()
 

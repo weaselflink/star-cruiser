@@ -36,8 +36,9 @@ class PhysicsEngineTest {
 
         expectThat(
             physicsEngine.findObstructions(
-                p(-100, 0),
-                p(100, 0), listOf(asteroid1.id)
+                start = p(-100, 0),
+                end = p(100, 0),
+                ignore = listOf(asteroid1.id)
             )
         ).isEqualTo(listOf(asteroid2.id))
     }
