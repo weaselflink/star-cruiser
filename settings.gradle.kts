@@ -12,6 +12,7 @@ pluginManagement {
         id("com.github.johnrengelman.shadow") version "6.0.0"
         id("com.github.ben-manes.versions") version "0.31.0"
         id("org.jlleitschuh.gradle.ktlint") version "9.4.0"
+        id("com.adarshr.test-logger") version "2.1.0"
     }
 }
 

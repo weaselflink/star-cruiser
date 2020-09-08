@@ -17,6 +17,7 @@ plugins {
     id("com.github.johnrengelman.shadow") apply false
     id("com.github.ben-manes.versions")
     id("org.jlleitschuh.gradle.ktlint")
+    id("com.adarshr.test-logger")
 }
 
 allprojects {
@@ -26,12 +27,17 @@ allprojects {
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
     apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    apply(plugin = "com.adarshr.test-logger")
 
     repositories {
         mavenCentral()
         jcenter()
         maven(url = "https://kotlin.bintray.com/ktor")
         maven(url = "https://jitpack.io")
+    }
+
+    testlogger {
+        setTheme("mocha")
     }
 
     tasks {
