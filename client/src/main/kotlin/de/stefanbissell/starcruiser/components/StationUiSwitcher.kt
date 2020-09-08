@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.components
 
+import de.stefanbissell.starcruiser.CommonShipUi
 import de.stefanbissell.starcruiser.EngineeringUi
 import de.stefanbissell.starcruiser.HelmUi
 import de.stefanbissell.starcruiser.MainScreenUi
@@ -19,11 +20,14 @@ import org.w3c.dom.HTMLCanvasElement
 
 class StationUiSwitcher {
 
-    private var helmUi = HelmUi()
-    private var weaponsUi = WeaponsUi()
-    private var navigationUi = NavigationUi()
-    private var engineeringUi = EngineeringUi()
-    private var mainScreenUi = MainScreenUi()
+    private val commonShipUi = CommonShipUi().apply {
+        hide()
+    }
+    private val helmUi = HelmUi()
+    private val weaponsUi = WeaponsUi()
+    private val navigationUi = NavigationUi()
+    private val engineeringUi = EngineeringUi()
+    private val mainScreenUi = MainScreenUi()
     private val stations: List<StationUi> = listOf(
         helmUi,
         weaponsUi,
@@ -50,22 +54,16 @@ class StationUiSwitcher {
         }
     }
 
-    fun switchTo(station: Station?) {
-        stations.forEach {
-            if (it.station == station) {
-                it.visible = true
-                it.show()
-            } else {
-                it.visible = false
-                it.hide()
-            }
-        }
-        if (stations.none { it.visible }) {
-            canvas.context2D.clear()
-        }
+    fun hideAll() {
+        commonShipUi.hide()
+        switchTo(null)
     }
 
     fun draw(snapshot: SnapshotMessage.CrewSnapshot) {
+        commonShipUi.apply {
+            show()
+            draw(snapshot)
+        }
         when (snapshot) {
             is SnapshotMessage.Helm -> {
                 stationUiSwitcher.switchTo(Station.Helm)
@@ -87,6 +85,21 @@ class StationUiSwitcher {
                 stationUiSwitcher.switchTo(Station.MainScreen)
                 mainScreenUi.draw(snapshot)
             }
+        }
+    }
+
+    private fun switchTo(station: Station?) {
+        stations.forEach {
+            if (it.station == station) {
+                it.visible = true
+                it.show()
+            } else {
+                it.visible = false
+                it.hide()
+            }
+        }
+        if (stations.none { it.visible }) {
+            canvas.context2D.clear()
         }
     }
 }

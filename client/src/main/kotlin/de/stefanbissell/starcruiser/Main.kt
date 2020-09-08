@@ -5,7 +5,6 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.events.KeyboardEvent
 
-lateinit var commonShipUi: CommonShipUi
 lateinit var joinUi: JoinUi
 lateinit var destroyedUi: DestroyedUi
 lateinit var stationUiSwitcher: StationUiSwitcher
@@ -27,10 +26,6 @@ fun init() {
 
     destroyedUi = DestroyedUi().apply { hide() }
     stationUiSwitcher = StationUiSwitcher()
-
-    commonShipUi = CommonShipUi().apply {
-        hide()
-    }
 
     window.requestAnimationFrame { step() }
     window.onresize = {
@@ -63,8 +58,7 @@ fun drawUi(stateCopy: GameStateMessage) {
     when (val snapshot = stateCopy.snapshot) {
         is SnapshotMessage.ShipSelection -> {
             destroyedUi.hide()
-            commonShipUi.hide()
-            stationUiSwitcher.switchTo(null)
+            stationUiSwitcher.hideAll()
             joinUi.apply {
                 show()
                 draw(snapshot)
@@ -72,8 +66,7 @@ fun drawUi(stateCopy: GameStateMessage) {
         }
         is SnapshotMessage.ShipDestroyed -> {
             joinUi.hide()
-            commonShipUi.hide()
-            stationUiSwitcher.switchTo(null)
+            stationUiSwitcher.hideAll()
             destroyedUi.show()
         }
         is SnapshotMessage.CrewSnapshot -> {
@@ -85,9 +78,5 @@ fun drawUi(stateCopy: GameStateMessage) {
 fun drawShipUi(snapshot: SnapshotMessage.CrewSnapshot) {
     joinUi.hide()
     destroyedUi.hide()
-    commonShipUi.apply {
-        show()
-        draw(snapshot)
-    }
     stationUiSwitcher.draw(snapshot)
 }
