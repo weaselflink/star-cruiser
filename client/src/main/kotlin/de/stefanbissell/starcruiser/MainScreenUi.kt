@@ -79,10 +79,6 @@ class MainScreenUi : StationUi(Station.MainScreen) {
         }
     }
 
-    fun cycleViewType() {
-        clientSocket.send(Command.CommandMainScreenView(view.next))
-    }
-
     private fun draw3d(snapshot: SnapshotMessage.MainScreen3d) {
         view = snapshot.ship.mainScreenView
         with(ctx) {
