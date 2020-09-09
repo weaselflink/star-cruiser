@@ -8,7 +8,6 @@ import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.dimensions
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
-import de.stefanbissell.starcruiser.send
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.PI

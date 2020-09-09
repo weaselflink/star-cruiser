@@ -8,6 +8,7 @@ import org.w3c.dom.events.KeyboardEvent
 lateinit var joinUi: JoinUi
 lateinit var destroyedUi: DestroyedUi
 lateinit var stationUiSwitcher: StationUiSwitcher
+val clientSocket = ClientSocket()
 
 object ClientState {
     var rotateScope = false
@@ -32,22 +33,20 @@ fun init() {
         stationUiSwitcher.resize()
     }
 
-    createSocket()
+    clientSocket.createSocket()
 
     document.onkeydown = { keyHandler(it) }
 }
 
 fun keyHandler(event: KeyboardEvent) {
-    clientSocket.apply {
-        when (event.code) {
-            "KeyP" -> send(Command.CommandTogglePause)
-            else -> println("not bound: ${event.code}")
-        }
+    when (event.code) {
+        "KeyP" -> clientSocket.send(Command.CommandTogglePause)
+        else -> println("not bound: ${event.code}")
     }
 }
 
 fun step() {
-    state?.also {
+    clientSocket.state?.also {
         drawUi(it)
     }
 

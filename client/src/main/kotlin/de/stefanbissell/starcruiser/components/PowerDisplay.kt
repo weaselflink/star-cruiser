@@ -7,7 +7,6 @@ import de.stefanbissell.starcruiser.PoweredSystemMessage
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.clientSocket
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
-import de.stefanbissell.starcruiser.send
 import de.stefanbissell.starcruiser.toPercent
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.roundToInt
