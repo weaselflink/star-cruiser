@@ -10,34 +10,40 @@ class ClientSocket {
     var state: GameStateMessage? = null
         private set
 
-    fun createSocket() {
-        val protocol = if (window.location.protocol == "https:") {
+    private val host
+        get() = window.location.host
+    private val protocol
+        get() = if (window.location.protocol == "https:") {
             "wss:"
         } else {
             "ws:"
         }
-        val host = window.location.host
+
+    fun createSocket() {
         webSocket = WebSocket("$protocol//$host/ws/client").apply {
-            onopen = {
-                Unit
-            }
             onclose = {
-                webSocket = null
-                Unit
+                invalidateSocket()
             }
-            onmessage = { event ->
-                state = parse(event).apply {
-                    send(Command.UpdateAcknowledge(counter = counter))
-                }
-                Unit
+            onmessage = {
+                it.parseAndAcknowledge()
             }
         }
+    }
+
+    private fun invalidateSocket() {
+        webSocket = null
     }
 
     fun send(command: Command) {
         webSocket?.send(command.toJson())
     }
 
-    private fun parse(event: MessageEvent) =
-        GameStateMessage.parse(event.data.toString())
+    private fun MessageEvent.parseAndAcknowledge() {
+        state = parse().apply {
+            send(Command.UpdateAcknowledge(counter = counter))
+        }
+    }
+
+    private fun MessageEvent.parse() =
+        GameStateMessage.parse(data.toString())
 }
