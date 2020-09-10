@@ -109,7 +109,66 @@ class NonPlayerShipTest {
             .isNull()
     }
 
-    private fun stepTime(seconds: Number, shipProvider: ShipProvider = { null }): ShipUpdateResult {
+    @Test
+    fun `updates scan progress`() {
+        val targetId = addShip().id
+        ship.startScan(targetId)
+
+        expectThat(ship.scanHandler)
+            .isNotNull()
+            .get { progress }.isNear(0.0)
+
+        stepTime(1)
+
+        expectThat(ship.scanHandler)
+            .isNotNull()
+            .get { progress }.isNear(ship.template.scanSpeed)
+    }
+
+    @Test
+    fun `aborts scan when target destroyed`() {
+        val targetId = addShip().id
+        ship.startScan(targetId)
+
+        ship.targetDestroyed(targetId)
+
+        expectThat(ship.scanHandler)
+            .isNull()
+    }
+
+    @Test
+    fun `updates lock progress`() {
+        val targetId = addShip().id
+        ship.startLock(targetId)
+
+        expectThat(ship.lockHandler)
+            .isNotNull()
+            .get { progress }.isNear(0.0)
+
+        stepTime(1)
+
+        expectThat(ship.lockHandler)
+            .isNotNull()
+            .get { progress }.isNear(ship.template.lockingSpeed)
+    }
+
+    @Test
+    fun `aborts lock when target destroyed`() {
+        val targetId = addShip().id
+        ship.startLock(targetId)
+
+        ship.targetDestroyed(targetId)
+
+        expectThat(ship.lockHandler)
+            .isNull()
+    }
+
+    private fun stepTime(
+        seconds: Number,
+        shipProvider: ShipProvider = { id ->
+            contactList.firstOrNull { it.id == id }
+        }
+    ): ShipUpdateResult {
         time.update(seconds.toDouble())
         ship.update(
             time = time,
@@ -120,7 +179,7 @@ class NonPlayerShipTest {
         return ship.endUpdate(physicsEngine)
     }
 
-    private fun addShip(position: Vector2): Ship {
+    private fun addShip(position: Vector2 = p(100, 100)): Ship {
         val target = PlayerShip(position = position)
         contactList = listOf(target)
         return target

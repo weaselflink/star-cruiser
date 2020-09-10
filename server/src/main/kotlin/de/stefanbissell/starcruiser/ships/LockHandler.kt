@@ -7,10 +7,10 @@ import de.stefanbissell.starcruiser.ObjectId
 class LockHandler(
     val targetId: ObjectId,
     private val lockingSpeed: Double,
-    private val boostLevel: BoostLevel
+    private val boostLevel: BoostLevel = { 1.0 }
 ) {
 
-    private var progress: Double = 0.0
+    var progress: Double = 0.0
 
     val isComplete: Boolean
         get() = progress >= 1.0

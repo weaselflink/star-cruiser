@@ -29,6 +29,7 @@ class NonPlayerShip(
     val shieldHandler = ShieldHandler(template.shield)
     val scans = mutableMapOf<ObjectId, ScanLevel>()
     var scanHandler: TimedScanHandler? = null
+    var lockHandler: LockHandler? = null
     val sensorRange: Double
         get() = max(template.shortRangeScopeRange, template.sensorRange)
     var throttle: Int = 0
@@ -46,6 +47,7 @@ class NonPlayerShip(
         powerHandler.update(time)
         shieldHandler.update(time)
         updateScan(time, shipProvider)
+        updateLock(time, shipProvider)
         shipAi.update(
             ship = this,
             time = time,
@@ -87,6 +89,9 @@ class NonPlayerShip(
     override fun targetDestroyed(shipId: ObjectId) {
         if (scanHandler?.targetId == shipId) {
             scanHandler = null
+        }
+        if (lockHandler?.targetId == shipId) {
+            lockHandler = null
         }
     }
 
@@ -140,9 +145,17 @@ class NonPlayerShip(
             ContactType.Unknown
         }
 
+    fun startScan(targetId: ObjectId) {
+        scanHandler = TimedScanHandler(targetId, template.scanSpeed)
+    }
+
+    fun startLock(targetId: ObjectId) {
+        lockHandler = LockHandler(targetId, template.lockingSpeed)
+    }
+
     private fun updateScan(time: GameTime, shipProvider: ShipProvider) {
-        scanHandler?.also {
-            val target = shipProvider(it.targetId)
+        scanHandler?.apply {
+            val target = shipProvider(targetId)
             if (!inSensorRange(target)) {
                 scanHandler = null
             }
@@ -153,6 +166,20 @@ class NonPlayerShip(
                 val scan = scans[targetId] ?: ScanLevel.None
                 scans[targetId] = scan.next
                 scanHandler = null
+            }
+        }
+    }
+
+    private fun updateLock(time: GameTime, shipProvider: ShipProvider) {
+        lockHandler?.also {
+            val target = shipProvider(it.targetId)
+            if (!inSensorRange(target)) {
+                lockHandler = null
+            }
+        }
+        lockHandler?.also {
+            if (!it.isComplete) {
+                it.update(time)
             }
         }
     }

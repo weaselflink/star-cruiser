@@ -6,7 +6,6 @@ import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
-import de.stefanbissell.starcruiser.ships.TimedScanHandler
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -43,7 +42,7 @@ class ScanAiTest {
         val target = NonPlayerShip().apply { position = p(100, 100) }
         contactList = listOf(target)
         val dummyId = ObjectId.random()
-        ship.scanHandler = TimedScanHandler(dummyId, ship.template.scanSpeed)
+        ship.startScan(dummyId)
         executeAi()
 
         expectScanStarted(dummyId)

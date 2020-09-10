@@ -153,7 +153,7 @@ class BeamHandlerTest {
             update(Instant.EPOCH)
         }
         lockTime.update(Instant.EPOCH.plusSeconds(10))
-        lockHandler = LockHandler(ObjectId.random(), 1.0) { 1.0 }.apply {
+        lockHandler = LockHandler(ObjectId.random(), 1.0).apply {
             update(lockTime)
         }
         shipProvider = { target }

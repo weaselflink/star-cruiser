@@ -5,7 +5,6 @@ import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
 import de.stefanbissell.starcruiser.ships.ShipProvider
-import de.stefanbissell.starcruiser.ships.TimedScanHandler
 
 class ScanAi(interval: Double = 5.0) : ComponentAi(interval) {
 
@@ -17,7 +16,7 @@ class ScanAi(interval: Double = 5.0) : ComponentAi(interval) {
     ) {
         if (ship.scanHandler == null) {
             selectScanTarget(ship, contactList)?.also {
-                ship.scanHandler = TimedScanHandler(it.id, ship.template.scanSpeed)
+                ship.startScan(it.id)
             }
         }
     }
