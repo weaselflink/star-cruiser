@@ -9,6 +9,7 @@ class TimedScanHandler(
 ) {
 
     var progress: Double = 0.0
+        private set
 
     val isComplete: Boolean
         get() = progress >= 1.0
