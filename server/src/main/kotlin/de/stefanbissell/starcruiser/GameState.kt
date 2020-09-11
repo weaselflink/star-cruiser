@@ -13,6 +13,7 @@ import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
+import de.stefanbissell.starcruiser.ships.ShipContactList
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
@@ -215,8 +216,8 @@ class GameState {
     private fun updateShips() {
         ships.forEach { shipEntry ->
             shipEntry.value.apply {
-                val contactList = ships.values.filter { it.id != shipEntry.key }
-                update(time, physicsEngine, contactList) { id -> ships[id] }
+                val contactList = ShipContactList(this, ships)
+                update(time, physicsEngine, contactList.shipList) { id -> contactList[id]?.ship }
             }
         }
         ships.map {

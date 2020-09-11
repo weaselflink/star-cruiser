@@ -28,7 +28,7 @@ interface Ship {
         time: GameTime,
         physicsEngine: PhysicsEngine,
         contactList: List<Ship> = emptyList(),
-        shipProvider: ShipProvider
+        shipProvider: ShipProvider = { null }
     )
 
     fun endUpdate(physicsEngine: PhysicsEngine): ShipUpdateResult

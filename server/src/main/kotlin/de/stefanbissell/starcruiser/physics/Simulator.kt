@@ -117,7 +117,7 @@ class Simulator(
         private fun tick(): Pair<SimulationState, SimulationState> {
             val before = SimulationState(physicsEngine.getBodyParameters(ship.id)!!, gameTime.current)
             gameTime.update(0.01)
-            ship.update(gameTime, physicsEngine) { null }
+            ship.update(gameTime, physicsEngine)
             physicsEngine.step(gameTime.delta)
             val after = SimulationState(physicsEngine.getBodyParameters(ship.id)!!, gameTime.current)
             return before to after

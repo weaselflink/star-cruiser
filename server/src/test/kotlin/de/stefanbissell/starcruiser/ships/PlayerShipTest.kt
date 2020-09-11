@@ -253,7 +253,7 @@ class PlayerShipTest {
             rotation = 5.0
         )
 
-        ship.update(time, physicsEngine) { null }
+        ship.update(time, physicsEngine)
 
         ship.toMessage().also {
             expectThat(it.position).isEqualTo(p(1, 2))
