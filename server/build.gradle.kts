@@ -50,6 +50,7 @@ tasks {
         kotlinOptions {
             jvmTarget = "1.8"
             freeCompilerArgs += listOf("-Xuse-experimental=kotlinx.coroutines.ObsoleteCoroutinesApi")
+            freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
         }
     }
 

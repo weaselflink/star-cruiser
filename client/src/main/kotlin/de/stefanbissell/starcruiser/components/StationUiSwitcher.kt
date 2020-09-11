@@ -34,7 +34,7 @@ class StationUiSwitcher {
         engineeringUi,
         mainScreenUi,
     )
-    private val canvas = document.body!!.querySelector(".canvas2d") as HTMLCanvasElement
+    private val canvas = document.querySelector(".canvas2d") as HTMLCanvasElement
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
 
     init {
@@ -109,7 +109,7 @@ abstract class StationUi(
 
     var visible = false
 
-    val canvas = document.body!!.querySelector(".canvas2d") as HTMLCanvasElement
+    val canvas = document.querySelector(".canvas2d") as HTMLCanvasElement
     val ctx = canvas.context2D
 
     override fun isInterestedIn(pointerEvent: PointerEvent): Boolean {

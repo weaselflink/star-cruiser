@@ -13,7 +13,7 @@ import three.renderers.WebGLRendererParams
 
 class MainScreenUi : StationUi(Station.MainScreen) {
 
-    private val canvas3d = document.body!!.querySelector(".canvas3d") as HTMLCanvasElement
+    private val canvas3d = document.querySelector(".canvas3d") as HTMLCanvasElement
     private val renderer = WebGLRenderer(
         WebGLRendererParams(
             canvas = canvas3d,

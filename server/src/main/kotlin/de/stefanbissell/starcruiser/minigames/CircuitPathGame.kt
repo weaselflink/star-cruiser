@@ -1,5 +1,7 @@
 package de.stefanbissell.starcruiser.minigames
 
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import kotlin.random.Random
 
 class CircuitPathGame(
@@ -222,7 +224,7 @@ class PathFinder(
         path += start
         var next = continueOnPath()
         while (isValid(next) && !path.contains(end)) {
-            path += next!!
+            path += next
             pos++
             next = continueOnPath()
         }
@@ -238,10 +240,16 @@ class PathFinder(
         return path.last().next(valid[decisions[pos]])
     }
 
-    private fun isValid(toCheck: Step?) =
-        toCheck != null && !path.contains(toCheck) &&
+    @OptIn(ExperimentalContracts::class)
+    private fun isValid(toCheck: Step?): Boolean {
+        contract {
+            returns(true) implies (toCheck != null)
+        }
+
+        return toCheck != null && !path.contains(toCheck) &&
             toCheck.column >= 0 && toCheck.column < width &&
             toCheck.row >= 0 && toCheck.row < height
+    }
 
     private fun permutation(): List<Int> {
         val initial = (0..3).toMutableList()
