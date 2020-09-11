@@ -13,7 +13,6 @@ import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventDispatcher
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
-import de.stefanbissell.starcruiser.stationUiSwitcher
 import de.stefanbissell.starcruiser.updateSize
 import kotlinx.browser.document
 import org.w3c.dom.HTMLCanvasElement
@@ -66,23 +65,23 @@ class StationUiSwitcher {
         }
         when (snapshot) {
             is SnapshotMessage.Helm -> {
-                stationUiSwitcher.switchTo(Station.Helm)
+                switchTo(Station.Helm)
                 helmUi.draw(snapshot)
             }
             is SnapshotMessage.Weapons -> {
-                stationUiSwitcher.switchTo(Station.Weapons)
+                switchTo(Station.Weapons)
                 weaponsUi.draw(snapshot)
             }
             is SnapshotMessage.Navigation -> {
-                stationUiSwitcher.switchTo(Station.Navigation)
+                switchTo(Station.Navigation)
                 navigationUi.draw(snapshot)
             }
             is SnapshotMessage.Engineering -> {
-                stationUiSwitcher.switchTo(Station.Engineering)
+                switchTo(Station.Engineering)
                 engineeringUi.draw(snapshot)
             }
             is SnapshotMessage.MainScreen -> {
-                stationUiSwitcher.switchTo(Station.MainScreen)
+                switchTo(Station.MainScreen)
                 mainScreenUi.draw(snapshot)
             }
         }
