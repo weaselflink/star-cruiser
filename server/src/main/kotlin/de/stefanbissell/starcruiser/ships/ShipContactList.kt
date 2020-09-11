@@ -20,9 +20,18 @@ class ShipContactList(
 
     operator fun get(key: ObjectId) = contacts[key]
 
+    fun allInSensorRange() =
+        contacts.values.filter { it.inSensorRange }
+
     inner class ShipContact(val ship: Ship) {
+        val id = ship.id
+        val position = ship.position
         val range by lazy {
-            (ship.position - relativeTo.position).length()
+            (position - relativeTo.position).length()
         }
+        val inSensorRange by lazy {
+            relativeTo.inSensorRange(ship)
+        }
+        val contactType = ship.getContactType(relativeTo)
     }
 }

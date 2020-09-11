@@ -20,13 +20,11 @@ class ScanAi(interval: Double = 5.0) : ComponentAi(interval) {
         }
     }
 
-    private fun selectScanTarget(ship: NonPlayerShip, contactList: ShipContactList): Ship? {
-        return contactList.shipList
+    private fun selectScanTarget(ship: NonPlayerShip, contactList: ShipContactList): ShipContactList.ShipContact? {
+        return contactList
+            .allInSensorRange()
             .filter {
-                ship.inSensorRange(it)
-            }
-            .filter {
-                scanLevel(ship, it).canBeIncreased
+                scanLevel(ship, it.ship).canBeIncreased
             }
             .minByOrNull {
                 (it.position - ship.position).length()

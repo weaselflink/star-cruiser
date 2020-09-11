@@ -13,7 +13,7 @@ class ShieldAi : ComponentAi() {
         contactList: ShipContactList
     ) {
         with(ship.shieldHandler) {
-            val hostile = closestHostile(ship, contactList)
+            val hostile = contactList.closestHostile()
             if (hostile != null && ship.rangeTo(hostile.position) <= 500.0) {
                 if (!up && activationAllowed()) {
                     up = true
@@ -26,11 +26,9 @@ class ShieldAi : ComponentAi() {
         }
     }
 
-    private fun closestHostile(ship: NonPlayerShip, contactList: ShipContactList) =
-        contactList.shipList
-            .filter {
-                ship.inSensorRange(it)
-            }.firstOrNull {
-                it.getContactType(ship) == ContactType.Enemy
+    private fun ShipContactList.closestHostile() =
+        allInSensorRange()
+            .firstOrNull {
+                it.contactType == ContactType.Enemy
             }
 }
