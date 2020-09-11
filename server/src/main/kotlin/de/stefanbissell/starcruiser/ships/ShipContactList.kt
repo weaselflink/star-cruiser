@@ -33,5 +33,6 @@ class ShipContactList(
             relativeTo.inSensorRange(ship)
         }
         val contactType = ship.getContactType(relativeTo)
+        val scanLevel = relativeTo.getScanLevel(ship.id)
     }
 }
