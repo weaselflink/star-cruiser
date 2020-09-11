@@ -78,9 +78,10 @@ class PlayerShip(
     override fun update(
         time: GameTime,
         physicsEngine: PhysicsEngine,
-        contactList: List<Ship>,
-        shipProvider: ShipProvider
+        contactList: ShipContactList
     ) {
+        val shipProvider: ShipProvider = { contactList[it]?.ship }
+
         powerHandler.update(time)
         updateBeams(time, shipProvider, physicsEngine)
         shieldHandler.update(time, Shields.boostLevel)

@@ -43,6 +43,8 @@ class PlayerShipTest {
         }
     )
 
+    private var contactList = emptyList<Ship>()
+
     @BeforeEach
     fun setUp() {
         every {
@@ -263,38 +265,36 @@ class PlayerShipTest {
 
     @Test
     fun `updates target lock`() {
-        val target = PlayerShip()
+        val target = addShip()
 
-        ship.update(time, physicsEngine) { target }
+        stepTime(0.01)
 
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.NoLock>()
 
         ship.lockTarget(target.id)
-        stepTime(1) { target }
+        stepTime(1)
 
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.InProgress>()
 
-        stepTime(9) { target }
+        stepTime(9)
 
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
     }
 
     @Test
     fun `updates beams`() {
-        val target = PlayerShip(
-            position = p(100, 0)
-        )
+        val target = addShip(p(100, 0))
 
         ship.lockTarget(target.id)
-        stepTime(10) { target }
+        stepTime(10)
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
-        stepTime(0.5) { target }
+        stepTime(0.5)
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Firing>()
         expectThat(target.toMessage().shield.strength).isEqualTo(target.template.shield.strength - 0.5)
 
-        stepTime(1.5) { target }
+        stepTime(1.5)
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Recharging>()
 
         stepTime(2)
@@ -307,15 +307,13 @@ class PlayerShipTest {
     fun `updates beams applying power level`() {
         ship.setPower(PoweredSystemType.Weapons, 200)
         ship.setCoolant(PoweredSystemType.Weapons, 1.0)
-        val target = PlayerShip(
-            position = p(100, 0)
-        )
+        val target = addShip(p(100, 0))
 
         ship.lockTarget(target.id)
-        stepTime(10) { target }
-        stepTime(0.5) { target }
+        stepTime(10)
+        stepTime(0.5)
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Firing>()
-        stepTime(1.5) { target }
+        stepTime(1.5)
         expectThat(ship.toMessage().beams.first().status)
             .isA<BeamStatus.Recharging>()
             .get { progress }.isNear(0.0)
@@ -327,31 +325,27 @@ class PlayerShipTest {
 
     @Test
     fun `does not fire if target outside arc`() {
-        val target = PlayerShip(
-            position = p(0, 100)
-        )
+        val target = addShip(p(0, 100))
 
         ship.lockTarget(target.id)
-        stepTime(10) { target }
+        stepTime(10)
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
-        stepTime(0.5) { target }
+        stepTime(0.5)
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
     }
 
     @Test
     fun `does not fire if target outside range`() {
-        val target = PlayerShip(
-            position = p(ship.template.beams.first().range.last + 100, 0)
-        )
+        val target = addShip(p(ship.template.beams.first().range.last + 100, 0))
 
         ship.lockTarget(target.id)
-        stepTime(10) { target }
+        stepTime(10)
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
-        stepTime(0.5) { target }
+        stepTime(0.5)
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
     }
 
@@ -581,15 +575,16 @@ class PlayerShipTest {
             .isEqualTo(ContactType.Enemy)
     }
 
-    private fun stepTime(seconds: Number, shipProvider: ShipProvider = { null }): ShipUpdateResult {
+    private fun stepTime(seconds: Number): ShipUpdateResult {
         time.update(seconds.toDouble())
-        ship.update(
-            time = time,
-            physicsEngine = physicsEngine,
-            contactList = emptyList(),
-            shipProvider = shipProvider
-        )
+        ship.update(time, physicsEngine, ShipContactList(ship, contactList.associateBy { it.id }))
         return ship.endUpdate(physicsEngine)
+    }
+
+    private fun addShip(position: Vector2 = p(100, 100)): PlayerShip {
+        val target = PlayerShip(position = position)
+        contactList = listOf(target)
+        return target
     }
 
     private val shieldTemplate

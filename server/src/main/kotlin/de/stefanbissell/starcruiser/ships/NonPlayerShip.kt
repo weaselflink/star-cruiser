@@ -41,9 +41,10 @@ class NonPlayerShip(
     override fun update(
         time: GameTime,
         physicsEngine: PhysicsEngine,
-        contactList: List<Ship>,
-        shipProvider: ShipProvider
+        contactList: ShipContactList
     ) {
+        val shipProvider: ShipProvider = { contactList[it]?.ship }
+
         powerHandler.update(time)
         shieldHandler.update(time)
         updateScan(time, shipProvider)
@@ -51,7 +52,7 @@ class NonPlayerShip(
         shipAi.update(
             ship = this,
             time = time,
-            contactList = contactList,
+            contactList = contactList.shipList,
             shipProvider = shipProvider
         )
 

@@ -164,17 +164,13 @@ class NonPlayerShipTest {
     }
 
     private fun stepTime(
-        seconds: Number,
-        shipProvider: ShipProvider = { id ->
-            contactList.firstOrNull { it.id == id }
-        }
+        seconds: Number
     ): ShipUpdateResult {
         time.update(seconds.toDouble())
         ship.update(
             time = time,
             physicsEngine = physicsEngine,
-            contactList = contactList,
-            shipProvider = shipProvider
+            contactList = ShipContactList(ship, contactList.associateBy { it.id })
         )
         return ship.endUpdate(physicsEngine)
     }

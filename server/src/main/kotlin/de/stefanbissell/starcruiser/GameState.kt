@@ -217,7 +217,7 @@ class GameState {
         ships.forEach { shipEntry ->
             shipEntry.value.apply {
                 val contactList = ShipContactList(this, ships)
-                update(time, physicsEngine, contactList.shipList) { id -> contactList[id]?.ship }
+                update(time, physicsEngine, contactList)
             }
         }
         ships.map {
