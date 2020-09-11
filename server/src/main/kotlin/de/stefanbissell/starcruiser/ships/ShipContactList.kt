@@ -32,7 +32,7 @@ class ShipContactList(
         val inSensorRange by lazy {
             relativeTo.inSensorRange(ship)
         }
-        val contactType = ship.getContactType(relativeTo)
+        val contactType = relativeTo.getContactType(ship)
         val scanLevel = relativeTo.getScanLevel(ship.id)
     }
 }

@@ -110,7 +110,7 @@ class NonPlayerShip(
     override fun toMapContactMessage(relativeTo: PlayerShip) =
         MapContactMessage(
             id = id,
-            type = getContactType(relativeTo),
+            type = relativeTo.getContactType(this),
             designation = designation,
             position = position,
             rotation = rotation
@@ -119,7 +119,7 @@ class NonPlayerShip(
     override fun toScopeContactMessage(relativeTo: PlayerShip) =
         ScopeContactMessage(
             id = id,
-            type = getContactType(relativeTo),
+            type = relativeTo.getContactType(this),
             designation = designation,
             relativePosition = (position - relativeTo.position),
             rotation = rotation,
@@ -134,9 +134,9 @@ class NonPlayerShip(
     override fun getScanLevel(targetId: ObjectId) =
         scans[targetId] ?: ScanLevel.None
 
-    override fun getContactType(relativeTo: Ship) =
-        if (relativeTo.getScanLevel(id) >= ScanLevel.Basic) {
-            if (relativeTo.faction == faction) {
+    override fun getContactType(other: Ship) =
+        if (getScanLevel(other.id) >= ScanLevel.Basic) {
+            if (other.faction == faction) {
                 ContactType.Friendly
             } else {
                 ContactType.Enemy

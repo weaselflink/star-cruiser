@@ -553,7 +553,7 @@ class PlayerShipTest {
     fun `unscanned ship is unknown`() {
         val target = PlayerShip()
 
-        expectThat(target.getContactType(ship))
+        expectThat(ship.getContactType(target))
             .isEqualTo(ContactType.Unknown)
     }
 
@@ -562,7 +562,7 @@ class PlayerShipTest {
         val target = PlayerShip()
         ship.scans[target.id] = ScanLevel.Basic
 
-        expectThat(target.getContactType(ship))
+        expectThat(ship.getContactType(target))
             .isEqualTo(ContactType.Friendly)
     }
 
@@ -571,7 +571,7 @@ class PlayerShipTest {
         val target = PlayerShip(faction = Faction.Enemy)
         ship.scans[target.id] = ScanLevel.Basic
 
-        expectThat(target.getContactType(ship))
+        expectThat(ship.getContactType(target))
             .isEqualTo(ContactType.Enemy)
     }
 
