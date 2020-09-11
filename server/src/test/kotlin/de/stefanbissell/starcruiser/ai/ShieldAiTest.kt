@@ -7,6 +7,7 @@ import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
+import de.stefanbissell.starcruiser.ships.ShipContactList
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isFalse
@@ -76,6 +77,6 @@ class ShieldAiTest {
     }
 
     private fun executeAi() {
-        shieldAi.execute(ship, time, contactList) { null }
+        shieldAi.execute(ship, time, ShipContactList(ship, contactList))
     }
 }

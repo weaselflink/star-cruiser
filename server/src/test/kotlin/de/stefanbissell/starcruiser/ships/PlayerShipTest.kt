@@ -577,7 +577,7 @@ class PlayerShipTest {
 
     private fun stepTime(seconds: Number): ShipUpdateResult {
         time.update(seconds.toDouble())
-        ship.update(time, physicsEngine, ShipContactList(ship, contactList.associateBy { it.id }))
+        ship.update(time, physicsEngine, ShipContactList(ship, contactList))
         return ship.endUpdate(physicsEngine)
     }
 

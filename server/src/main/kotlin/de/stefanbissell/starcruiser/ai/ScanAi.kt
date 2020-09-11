@@ -4,15 +4,14 @@ import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
-import de.stefanbissell.starcruiser.ships.ShipProvider
+import de.stefanbissell.starcruiser.ships.ShipContactList
 
 class ScanAi(interval: Double = 5.0) : ComponentAi(interval) {
 
     override fun execute(
         ship: NonPlayerShip,
         time: GameTime,
-        contactList: List<Ship>,
-        shipProvider: ShipProvider
+        contactList: ShipContactList
     ) {
         if (ship.scanHandler == null) {
             selectScanTarget(ship, contactList)?.also {
@@ -21,8 +20,8 @@ class ScanAi(interval: Double = 5.0) : ComponentAi(interval) {
         }
     }
 
-    private fun selectScanTarget(ship: NonPlayerShip, contactList: List<Ship>): Ship? {
-        return contactList
+    private fun selectScanTarget(ship: NonPlayerShip, contactList: ShipContactList): Ship? {
+        return contactList.shipList
             .filter {
                 ship.inSensorRange(it)
             }

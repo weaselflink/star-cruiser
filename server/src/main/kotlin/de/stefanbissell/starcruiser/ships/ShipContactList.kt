@@ -7,6 +7,11 @@ class ShipContactList(
     allShips: Map<ObjectId, Ship>,
 ) {
 
+    constructor(
+        relativeTo: Ship,
+        list: List<Ship>
+    ) : this(relativeTo, list.associateBy { it.id })
+
     val contacts: Map<ObjectId, ShipContact> = allShips
         .filterKeys { it != relativeTo.id }
         .mapValues { ShipContact(it.value) }

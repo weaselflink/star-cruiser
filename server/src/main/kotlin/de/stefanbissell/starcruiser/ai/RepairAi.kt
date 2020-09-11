@@ -2,16 +2,14 @@ package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
-import de.stefanbissell.starcruiser.ships.Ship
-import de.stefanbissell.starcruiser.ships.ShipProvider
+import de.stefanbissell.starcruiser.ships.ShipContactList
 
 class RepairAi : ComponentAi() {
 
     override fun execute(
         ship: NonPlayerShip,
         time: GameTime,
-        contactList: List<Ship>,
-        shipProvider: ShipProvider
+        contactList: ShipContactList
     ) {
         with(ship.powerHandler) {
             if (!repairing) {

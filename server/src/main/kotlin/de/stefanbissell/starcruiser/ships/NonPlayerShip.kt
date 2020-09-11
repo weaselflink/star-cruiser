@@ -52,8 +52,7 @@ class NonPlayerShip(
         shipAi.update(
             ship = this,
             time = time,
-            contactList = contactList.shipList,
-            shipProvider = shipProvider
+            contactList = contactList
         )
 
         val effectiveThrust = if (throttle < 0) {

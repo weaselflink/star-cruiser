@@ -170,7 +170,7 @@ class NonPlayerShipTest {
         ship.update(
             time = time,
             physicsEngine = physicsEngine,
-            contactList = ShipContactList(ship, contactList.associateBy { it.id })
+            contactList = ShipContactList(ship, contactList)
         )
         return ship.endUpdate(physicsEngine)
     }

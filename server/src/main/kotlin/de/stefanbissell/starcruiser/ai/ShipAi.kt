@@ -2,8 +2,7 @@ package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
-import de.stefanbissell.starcruiser.ships.Ship
-import de.stefanbissell.starcruiser.ships.ShipProvider
+import de.stefanbissell.starcruiser.ships.ShipContactList
 
 class ShipAi {
 
@@ -16,15 +15,13 @@ class ShipAi {
     fun update(
         ship: NonPlayerShip,
         time: GameTime,
-        contactList: List<Ship>,
-        shipProvider: ShipProvider
+        contactList: ShipContactList
     ) {
         componentAis.forEach {
             it.update(
                 ship = ship,
                 time = time,
-                contactList = contactList,
-                shipProvider = shipProvider
+                contactList = contactList
             )
         }
     }
@@ -39,16 +36,14 @@ abstract class ComponentAi(
     fun update(
         ship: NonPlayerShip,
         time: GameTime,
-        contactList: List<Ship>,
-        shipProvider: ShipProvider
+        contactList: ShipContactList
     ) {
         if (time.current - lastCheck > interval) {
             lastCheck = time.current
             execute(
                 ship = ship,
                 time = time,
-                contactList = contactList,
-                shipProvider = shipProvider
+                contactList = contactList
             )
         }
     }
@@ -56,7 +51,6 @@ abstract class ComponentAi(
     abstract fun execute(
         ship: NonPlayerShip,
         time: GameTime,
-        contactList: List<Ship>,
-        shipProvider: ShipProvider
+        contactList: ShipContactList
     )
 }

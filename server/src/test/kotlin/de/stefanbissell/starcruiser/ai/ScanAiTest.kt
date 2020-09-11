@@ -6,6 +6,7 @@ import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
+import de.stefanbissell.starcruiser.ships.ShipContactList
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -105,10 +106,10 @@ class ScanAiTest {
     }
 
     private fun updateAi() {
-        scanAi.update(ship, time, contactList) { null }
+        scanAi.update(ship, time, ShipContactList(ship, contactList))
     }
 
     private fun executeAi() {
-        scanAi.execute(ship, time, contactList) { null }
+        scanAi.execute(ship, time, ShipContactList(ship, contactList))
     }
 }

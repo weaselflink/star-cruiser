@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.ai
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
+import de.stefanbissell.starcruiser.ships.ShipContactList
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isFalse
@@ -29,6 +30,6 @@ class RepairAiTest {
     }
 
     private fun executeAi() {
-        repairAi.execute(ship, time, emptyList()) { null }
+        repairAi.execute(ship, time, ShipContactList(ship, emptyMap()))
     }
 }
