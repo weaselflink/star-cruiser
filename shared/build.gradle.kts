@@ -7,6 +7,7 @@ val kotlin_version: String by project
 val ktor_version: String by project
 val kotlin_serialization_version: String by project
 val junit_version: String by project
+val strikt_version: String by project
 
 plugins {
     kotlin("multiplatform")
@@ -34,7 +35,7 @@ kotlin {
         compilations["test"].defaultSourceSet {
             dependencies {
                 implementation("org.junit.jupiter:junit-jupiter:$junit_version")
-                implementation("io.strikt:strikt-core:0.27.0")
+                implementation("io.strikt:strikt-core:$strikt_version")
             }
         }
     }

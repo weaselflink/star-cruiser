@@ -6,6 +6,7 @@ val logback_version: String by project
 val ktor_version: String by project
 val kotlin_version: String by project
 val junit_version: String by project
+val strikt_version: String by project
 
 plugins {
     application
@@ -22,7 +23,7 @@ dependencies {
     implementation(project(":shared"))
 
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains:kotlin-css:1.0.0-pre.114-kotlin-1.4.0")
+    implementation("org.jetbrains:kotlin-css:1.0.0-pre.110-kotlin-$kotlin_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-core:$ktor_version")
@@ -33,7 +34,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
-    testImplementation("io.strikt:strikt-core:0.27.0")
+    testImplementation("io.strikt:strikt-core:$strikt_version")
     testImplementation("io.mockk:mockk:1.10.0")
 }
 
