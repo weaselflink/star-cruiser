@@ -86,8 +86,8 @@ class PlayerShip(
         updateBeams(time, shipProvider, physicsEngine)
         shieldHandler.update(time, Shields.boostLevel)
         jumpHandler.update(time, Jump.boostLevel)
-        updateScan(time, shipProvider)
-        updateLock(time, shipProvider)
+        updateScan(time, contactList)
+        updateLock(time, contactList)
         throttleHandler.update(time)
         val effectiveThrust = throttleHandler.effectiveThrust(Impulse.boostLevel)
         val effectiveRudder = rudder * template.rudderFactor * Maneuver.boostLevel
@@ -380,35 +380,32 @@ class PlayerShip(
         }
     }
 
-    private fun updateScan(time: GameTime, shipProvider: ShipProvider) {
-        scanHandler?.also {
-            val target = shipProvider(it.targetId)
-            if (!inSensorRange(target)) {
+    private fun updateScan(time: GameTime, contactList: ShipContactList) {
+        scanHandler?.apply {
+            val target = contactList[targetId]
+            if (target == null || !target.inSensorRange) {
                 scanHandler = null
             }
         }
         scanHandler?.apply {
             update(time)
+            val target = contactList[targetId]
             if (isComplete) {
-                val scan = scans[targetId] ?: ScanLevel.None
+                val scan = target?.scanLevel ?: ScanLevel.None
                 scans[targetId] = scan.next
                 scanHandler = null
             }
         }
     }
 
-    private fun updateLock(time: GameTime, shipProvider: ShipProvider) {
-        lockHandler?.also {
-            val target = shipProvider(it.targetId)
-            if (!inSensorRange(target)) {
+    private fun updateLock(time: GameTime, contactList: ShipContactList) {
+        lockHandler?.apply {
+            val target = contactList[targetId]
+            if (target == null || !target.inSensorRange) {
                 lockHandler = null
             }
         }
-        lockHandler?.also {
-            if (!it.isComplete) {
-                it.update(time)
-            }
-        }
+        lockHandler?.update(time)
     }
 
     private fun updateHistory(time: GameTime) {

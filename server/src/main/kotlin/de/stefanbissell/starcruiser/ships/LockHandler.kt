@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.ships
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.clamp
 
 class LockHandler(
     val targetId: ObjectId,
@@ -24,6 +25,6 @@ class LockHandler(
         if (isComplete) {
             LockStatus.Locked(targetId)
         } else {
-            LockStatus.InProgress(targetId, progress)
+            LockStatus.InProgress(targetId, progress.clamp(0.0, 1.0))
         }
 }

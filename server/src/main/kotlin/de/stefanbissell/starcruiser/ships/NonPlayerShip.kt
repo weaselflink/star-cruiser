@@ -43,12 +43,10 @@ class NonPlayerShip(
         physicsEngine: PhysicsEngine,
         contactList: ShipContactList
     ) {
-        val shipProvider: ShipProvider = { contactList[it]?.ship }
-
         powerHandler.update(time)
         shieldHandler.update(time)
-        updateScan(time, shipProvider)
-        updateLock(time, shipProvider)
+        updateScan(time, contactList)
+        updateLock(time, contactList)
         shipAi.update(
             ship = this,
             time = time,
@@ -153,34 +151,31 @@ class NonPlayerShip(
         lockHandler = LockHandler(targetId, template.lockingSpeed)
     }
 
-    private fun updateScan(time: GameTime, shipProvider: ShipProvider) {
+    private fun updateScan(time: GameTime, contactList: ShipContactList) {
         scanHandler?.apply {
-            val target = shipProvider(targetId)
-            if (!inSensorRange(target)) {
+            val target = contactList[targetId]
+            if (target == null || !target.inSensorRange) {
                 scanHandler = null
             }
         }
         scanHandler?.apply {
             update(time)
+            val target = contactList[targetId]
             if (isComplete) {
-                val scan = scans[targetId] ?: ScanLevel.None
+                val scan = target?.scanLevel ?: ScanLevel.None
                 scans[targetId] = scan.next
                 scanHandler = null
             }
         }
     }
 
-    private fun updateLock(time: GameTime, shipProvider: ShipProvider) {
-        lockHandler?.also {
-            val target = shipProvider(it.targetId)
-            if (!inSensorRange(target)) {
+    private fun updateLock(time: GameTime, contactList: ShipContactList) {
+        lockHandler?.apply {
+            val target = contactList[targetId]
+            if (target == null || !target.inSensorRange) {
                 lockHandler = null
             }
         }
-        lockHandler?.also {
-            if (!it.isComplete) {
-                it.update(time)
-            }
-        }
+        lockHandler?.update(time)
     }
 }
