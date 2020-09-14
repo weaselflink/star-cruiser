@@ -43,7 +43,7 @@ class PlayerShipTest {
         }
     )
 
-    private var contactList = emptyList<Ship>()
+    private var contactList = ShipContactList(ship, emptyList())
 
     @BeforeEach
     fun setUp() {
@@ -491,12 +491,10 @@ class PlayerShipTest {
 
     @Test
     fun `can select ship on map`() {
-        val target = PlayerShip(
-            position = p(100, 0)
-        )
+        val target = addShip(p(100, 0))
         ship.mapSelectShip(target.id)
 
-        expectThat(ship.toMapSelectionMessage { target })
+        expectThat(ship.toMapSelectionMessage(contactList))
             .isNotNull()
             .get { label }.isEqualTo(target.designation)
     }
@@ -506,7 +504,7 @@ class PlayerShipTest {
         ship.addWaypoint(p(0, 0))
         ship.mapSelectWaypoint(1)
 
-        expectThat(ship.toMapSelectionMessage { null })
+        expectThat(ship.toMapSelectionMessage(contactList))
             .isNotNull()
             .get { label }.isEqualTo("WP1")
     }
@@ -516,15 +514,13 @@ class PlayerShipTest {
         ship.addWaypoint(p(0, 0))
         ship.mapSelectWaypoint(2)
 
-        expectThat(ship.toMapSelectionMessage { null })
+        expectThat(ship.toMapSelectionMessage(contactList))
             .isNull()
     }
 
     @Test
     fun `cleans up destroyed target`() {
-        val target = PlayerShip(
-            position = p(100, 0)
-        )
+        val target = addShip(p(100, 0))
 
         ship.lockTarget(target.id)
         ship.mapSelectShip(target.id)
@@ -532,7 +528,7 @@ class PlayerShipTest {
 
         expectThat(ship.toShortRangeScopeMessage().lockProgress)
             .isA<LockStatus.InProgress>()
-        expectThat(ship.toMapSelectionMessage { target })
+        expectThat(ship.toMapSelectionMessage(contactList))
             .isNotNull()
             .get { label }.isEqualTo(target.designation)
         expectThat(ship.toNavigationMessage { target }.scanProgress)
@@ -543,7 +539,7 @@ class PlayerShipTest {
 
         expectThat(ship.toShortRangeScopeMessage().lockProgress)
             .isEqualTo(LockStatus.NoLock)
-        expectThat(ship.toMapSelectionMessage { target })
+        expectThat(ship.toMapSelectionMessage(contactList))
             .isNull()
         expectThat(ship.toNavigationMessage { target }.scanProgress)
             .isNull()
@@ -551,7 +547,7 @@ class PlayerShipTest {
 
     @Test
     fun `unscanned ship is unknown`() {
-        val target = PlayerShip()
+        val target = addShip()
 
         expectThat(ship.getContactType(target))
             .isEqualTo(ContactType.Unknown)
@@ -559,7 +555,7 @@ class PlayerShipTest {
 
     @Test
     fun `scanned ship of same faction is friendly`() {
-        val target = PlayerShip()
+        val target = addShip()
         ship.scans[target.id] = ScanLevel.Basic
 
         expectThat(ship.getContactType(target))
@@ -577,13 +573,13 @@ class PlayerShipTest {
 
     private fun stepTime(seconds: Number): ShipUpdateResult {
         time.update(seconds.toDouble())
-        ship.update(time, physicsEngine, ShipContactList(ship, contactList))
+        ship.update(time, physicsEngine, contactList)
         return ship.endUpdate(physicsEngine)
     }
 
     private fun addShip(position: Vector2 = p(100, 100)): PlayerShip {
         val target = PlayerShip(position = position)
-        contactList = listOf(target)
+        contactList = ShipContactList(ship, listOf(target))
         return target
     }
 

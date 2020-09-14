@@ -33,6 +33,7 @@ class ShipContactList(
 
     inner class ShipContact(val ship: Ship) {
         val id = ship.id
+        val designation = ship.designation
         val position = ship.position
         val relativePosition by lazy {
             position - relativeTo.position

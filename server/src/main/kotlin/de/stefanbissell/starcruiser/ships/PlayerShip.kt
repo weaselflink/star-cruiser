@@ -338,14 +338,14 @@ class PlayerShip(
 
     override fun toShieldMessage() = shieldHandler.toMessage()
 
-    fun toMapSelectionMessage(shipProvider: ShipProvider) =
+    fun toMapSelectionMessage(contactList: ShipContactList) =
         mapSelection.let { selection ->
             when (selection) {
                 is MapSelection.Waypoint -> {
                     toWaypointMapSelectionMessage(selection)
                 }
                 is MapSelection.Ship -> {
-                    toShipMapSelectionMessage(shipProvider, selection)
+                    toShipMapSelectionMessage(contactList, selection)
                 }
                 else -> null
             }
@@ -438,18 +438,19 @@ class PlayerShip(
             }
 
     private fun toShipMapSelectionMessage(
-        shipProvider: ShipProvider,
+        contactList: ShipContactList,
         selection: MapSelection.Ship
     ) =
-        shipProvider(selection.targetId)?.let { ship ->
+        contactList[selection.targetId]?.let { contact ->
             MapSelectionMessage(
-                position = ship.position,
-                label = ship.designation,
-                bearing = bearingTo(ship.position),
-                range = rangeTo(ship.position).twoDigits(),
+                position = contact.position,
+                label = contact.designation,
+                bearing = bearingTo(contact.position),
+                range = rangeTo(contact.position).twoDigits(),
                 canScan = true
             ).let { message ->
-                when (getScanLevel(selection.targetId)) {
+                val ship = contact.ship
+                when (contact.scanLevel) {
                     ScanLevel.Detailed -> {
                         message.copy(
                             hullRatio = (ship.hull / ship.template.hull).fiveDigits(),
