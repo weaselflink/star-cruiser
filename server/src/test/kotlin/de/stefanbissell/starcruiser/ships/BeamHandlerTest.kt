@@ -2,7 +2,6 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.BeamStatus
 import de.stefanbissell.starcruiser.GameTime
-import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.Vector3
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
@@ -20,7 +19,7 @@ class BeamHandlerTest {
     private val beamWeapon = BeamWeapon(Vector3())
     private var power = 1.0
     private val ship = PlayerShip()
-    private var shipProvider: ShipProvider = { null }
+    private var contactList: ShipContactList = ShipContactList(ship, emptyList())
     private val target = PlayerShip().apply {
         position = p(0, 1000)
         setShieldsUp(false)
@@ -64,7 +63,7 @@ class BeamHandlerTest {
         targetLockedAndInRange()
         every {
             physicsEngine.findObstructions(any(), any(), any())
-        } returns listOf(ObjectId.random())
+        } returns listOf(target.id)
         stepTime(1.0)
 
         expectThat(beamHandler.toMessage(lockHandler).status)
@@ -134,7 +133,7 @@ class BeamHandlerTest {
     }
 
     private fun cancelLock() {
-        shipProvider = { null }
+        contactList = ShipContactList(ship, emptyList())
         lockHandler = null
     }
 
@@ -153,10 +152,10 @@ class BeamHandlerTest {
             update(Instant.EPOCH)
         }
         lockTime.update(Instant.EPOCH.plusSeconds(10))
-        lockHandler = LockHandler(ObjectId.random(), 1.0).apply {
+        lockHandler = LockHandler(target.id, 1.0).apply {
             update(lockTime)
         }
-        shipProvider = { target }
+        contactList = ShipContactList(ship, listOf(target))
     }
 
     private fun targetInRange() {
@@ -169,6 +168,6 @@ class BeamHandlerTest {
 
     private fun stepTime(seconds: Number) {
         time.update(seconds.toDouble())
-        beamHandler.update(time, power, shipProvider, lockHandler, physicsEngine)
+        beamHandler.update(time, power, contactList, lockHandler, physicsEngine)
     }
 }

@@ -23,6 +23,14 @@ class ShipContactList(
     fun allInSensorRange() =
         contacts.values.filter { it.inSensorRange }
 
+    fun outOfSensorRange(targetId: ObjectId) =
+        this[targetId]?.let {
+            !it.inSensorRange
+        } ?: false
+
+    val shipProvider: ShipProvider =
+        { this[it]?.ship }
+
     inner class ShipContact(val ship: Ship) {
         val id = ship.id
         val position = ship.position

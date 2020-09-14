@@ -153,8 +153,7 @@ class NonPlayerShip(
 
     private fun updateScan(time: GameTime, contactList: ShipContactList) {
         scanHandler?.apply {
-            val target = contactList[targetId]
-            if (target == null || !target.inSensorRange) {
+            if (contactList.outOfSensorRange(targetId)) {
                 scanHandler = null
             }
         }
@@ -171,8 +170,7 @@ class NonPlayerShip(
 
     private fun updateLock(time: GameTime, contactList: ShipContactList) {
         lockHandler?.apply {
-            val target = contactList[targetId]
-            if (target == null || !target.inSensorRange) {
+            if (contactList.outOfSensorRange(targetId)) {
                 lockHandler = null
             }
         }

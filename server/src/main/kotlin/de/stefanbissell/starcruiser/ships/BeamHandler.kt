@@ -21,10 +21,12 @@ class BeamHandler(
     fun update(
         time: GameTime,
         boostLevel: Double,
-        shipProvider: ShipProvider,
+        contactList: ShipContactList,
         lockHandler: LockHandler?,
         physicsEngine: PhysicsEngine
     ) {
+        val shipProvider = contactList.shipProvider
+
         val lockedTargetInRange = isLockedTargetInRange(shipProvider, lockHandler, physicsEngine)
         when (val current = status) {
             is BeamStatus.Idle -> if (lockedTargetInRange) {

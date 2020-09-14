@@ -80,10 +80,8 @@ class PlayerShip(
         physicsEngine: PhysicsEngine,
         contactList: ShipContactList
     ) {
-        val shipProvider: ShipProvider = { contactList[it]?.ship }
-
         powerHandler.update(time)
-        updateBeams(time, shipProvider, physicsEngine)
+        updateBeams(time, contactList, physicsEngine)
         shieldHandler.update(time, Shields.boostLevel)
         jumpHandler.update(time, Jump.boostLevel)
         updateScan(time, contactList)
@@ -99,7 +97,7 @@ class PlayerShip(
         }
 
         updateHistory(time)
-        updateMapSelection(shipProvider)
+        updateMapSelection(contactList)
     }
 
     override fun endUpdate(physicsEngine: PhysicsEngine): ShipUpdateResult {
@@ -366,14 +364,14 @@ class PlayerShip(
 
     private fun updateBeams(
         time: GameTime,
-        shipProvider: ShipProvider,
+        contactList: ShipContactList,
         physicsEngine: PhysicsEngine
     ) {
         beamHandlers.forEach {
             it.update(
                 time = time,
                 boostLevel = Weapons.boostLevel,
-                shipProvider = shipProvider,
+                contactList = contactList,
                 lockHandler = lockHandler,
                 physicsEngine = physicsEngine
             )
@@ -382,8 +380,7 @@ class PlayerShip(
 
     private fun updateScan(time: GameTime, contactList: ShipContactList) {
         scanHandler?.apply {
-            val target = contactList[targetId]
-            if (target == null || !target.inSensorRange) {
+            if (contactList.outOfSensorRange(targetId)) {
                 scanHandler = null
             }
         }
@@ -400,8 +397,7 @@ class PlayerShip(
 
     private fun updateLock(time: GameTime, contactList: ShipContactList) {
         lockHandler?.apply {
-            val target = contactList[targetId]
-            if (target == null || !target.inSensorRange) {
+            if (contactList.outOfSensorRange(targetId)) {
                 lockHandler = null
             }
         }
@@ -421,13 +417,10 @@ class PlayerShip(
         }
     }
 
-    private fun updateMapSelection(shipProvider: ShipProvider) {
+    private fun updateMapSelection(contactList: ShipContactList) {
         mapSelection.also {
-            if (it is MapSelection.Ship) {
-                val selected = shipProvider(it.targetId)
-                if (!inSensorRange(selected)) {
-                    mapSelection = MapSelection.None
-                }
+            if (it is MapSelection.Ship && contactList.outOfSensorRange(it.targetId)) {
+                mapSelection = MapSelection.None
             }
         }
     }
