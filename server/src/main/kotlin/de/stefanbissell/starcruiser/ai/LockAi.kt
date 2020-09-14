@@ -1,29 +1,28 @@
 package de.stefanbissell.starcruiser.ai
 
+import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 
-class ScanAi(interval: Double = 5.0) : ComponentAi(interval) {
+class LockAi(interval: Double = 5.0) : ComponentAi(interval) {
 
     override fun execute(
         ship: NonPlayerShip,
         time: GameTime,
         contactList: ShipContactList
     ) {
-        if (ship.scanHandler == null) {
-            contactList.selectScanTarget()?.also {
-                ship.startScan(it.id)
+        if (ship.lockHandler == null) {
+            contactList.selectLockTarget()?.also {
+                ship.startLock(it.id)
             }
         }
     }
 
-    private fun ShipContactList.selectScanTarget() =
+    private fun ShipContactList.selectLockTarget() =
         allInSensorRange()
             .filter {
-                it.scanLevel.canBeIncreased
+                it.contactType == ContactType.Enemy
             }
-            .minByOrNull {
-                it.range
-            }
+            .minByOrNull { it.range }
 }

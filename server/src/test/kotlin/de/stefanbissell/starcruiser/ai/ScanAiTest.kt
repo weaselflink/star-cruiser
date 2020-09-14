@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.ai
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ScanLevel
+import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
@@ -20,13 +21,12 @@ class ScanAiTest {
     private val time = GameTime(Instant.EPOCH)
     private val scanAi = ScanAi()
 
-    private var contactList = emptyList<Ship>()
+    private val shipList = mutableListOf<Ship>()
 
     @Test
     fun `does not start scan before interval expired`() {
         updateAi()
-        val target = NonPlayerShip().apply { position = p(100, 100) }
-        contactList = listOf(target)
+        val target = addShip()
         time.update(4.9)
         updateAi()
 
@@ -40,8 +40,7 @@ class ScanAiTest {
 
     @Test
     fun `does not interrupt scan in progress`() {
-        val target = NonPlayerShip().apply { position = p(100, 100) }
-        contactList = listOf(target)
+        addShip()
         val dummyId = ObjectId.random()
         ship.startScan(dummyId)
         executeAi()
@@ -51,8 +50,7 @@ class ScanAiTest {
 
     @Test
     fun `scans until detailed scan`() {
-        val target = NonPlayerShip().apply { position = p(100, 100) }
-        contactList = listOf(target)
+        val target = addShip()
         executeAi()
 
         expectScanStarted(target.id)
@@ -70,11 +68,10 @@ class ScanAiTest {
 
     @Test
     fun `scans nearest possible target`() {
-        val farTarget = NonPlayerShip().apply { position = p(200, 200) }
+        addShip(p(200, 200))
         val invalidTarget = NonPlayerShip().apply { position = p(50, 50) }
         ship.scans[invalidTarget.id] = ScanLevel.Detailed
-        val nearTarget = NonPlayerShip().apply { position = p(100, 100) }
-        contactList = listOf(farTarget, nearTarget)
+        val nearTarget = addShip(p(100, 100))
         executeAi()
 
         expectScanStarted(nearTarget.id)
@@ -82,8 +79,7 @@ class ScanAiTest {
 
     @Test
     fun `does not scan targets out of range`() {
-        val target = NonPlayerShip().apply { position = p(ship.template.sensorRange * 2.0, 0.0) }
-        contactList = listOf(target)
+        addShip(p(ship.template.sensorRange * 2.0, 0.0))
         executeAi()
 
         expectNoScanStarted()
@@ -106,10 +102,16 @@ class ScanAiTest {
     }
 
     private fun updateAi() {
-        scanAi.update(ship, time, ShipContactList(ship, contactList))
+        scanAi.update(ship, time, ShipContactList(ship, shipList))
     }
 
     private fun executeAi() {
-        scanAi.execute(ship, time, ShipContactList(ship, contactList))
+        scanAi.execute(ship, time, ShipContactList(ship, shipList))
+    }
+
+    private fun addShip(position: Vector2 = p(100, 100)): Ship {
+        val target = NonPlayerShip(position = position)
+        shipList.add(target)
+        return target
     }
 }
