@@ -34,8 +34,11 @@ class ShipContactList(
     inner class ShipContact(val ship: Ship) {
         val id = ship.id
         val position = ship.position
+        val relativePosition by lazy {
+            position - relativeTo.position
+        }
         val range by lazy {
-            (position - relativeTo.position).length()
+            relativePosition.length()
         }
         val inSensorRange by lazy {
             relativeTo.inSensorRange(ship)

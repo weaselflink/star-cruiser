@@ -88,6 +88,7 @@ class GameState {
             is ShipDestroyed -> SnapshotMessage.ShipDestroyed
             is InShip -> {
                 val ship = state.ship
+                val contactList = ShipContactList(ship, ships)
                 when (state.station) {
                     Helm -> SnapshotMessage.Helm(
                         shortRangeScope = ship.toShortRangeScopeMessage(),
@@ -106,8 +107,8 @@ class GameState {
                         shield = ship.toShieldMessage()
                     )
                     Navigation -> SnapshotMessage.Navigation(
-                        ship = ship.toNavigationMessage { id -> ships[id] },
-                        mapSelection = ship.toMapSelectionMessage { id -> ships[id] },
+                        ship = ship.toNavigationMessage(contactList.shipProvider),
+                        mapSelection = ship.toMapSelectionMessage(contactList.shipProvider),
                         contacts = getMapContacts(ship),
                         asteroids = getMapAsteroids(ship)
                     )

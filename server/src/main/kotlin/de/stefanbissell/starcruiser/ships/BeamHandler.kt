@@ -25,9 +25,7 @@ class BeamHandler(
         lockHandler: LockHandler?,
         physicsEngine: PhysicsEngine
     ) {
-        val shipProvider = contactList.shipProvider
-
-        val lockedTargetInRange = isLockedTargetInRange(shipProvider, lockHandler, physicsEngine)
+        val lockedTargetInRange = isLockedTargetInRange(contactList, lockHandler, physicsEngine)
         when (val current = status) {
             is BeamStatus.Idle -> if (lockedTargetInRange) {
                 targetSystemType = PoweredSystemType.random()
@@ -57,7 +55,7 @@ class BeamHandler(
             }
         }
         if (status is BeamStatus.Firing) {
-            getLockedTarget(shipProvider, lockHandler)?.takeDamage(targetSystemType, time.delta)
+            getLockedTarget(contactList, lockHandler)?.ship?.takeDamage(targetSystemType, time.delta)
         }
     }
 
@@ -75,26 +73,26 @@ class BeamHandler(
     private fun getLockedTargetId(lockHandler: LockHandler?) =
         if (lockHandler?.isComplete == true) lockHandler.targetId else null
 
-    private fun getLockedTarget(shipProvider: ShipProvider, lockHandler: LockHandler?) =
-        getLockedTargetId(lockHandler)?.let { shipProvider(it) }
+    private fun getLockedTarget(contactList: ShipContactList, lockHandler: LockHandler?) =
+        getLockedTargetId(lockHandler)?.let { contactList[it] }
 
     private fun isLockedTargetInRange(
-        shipProvider: ShipProvider,
+        contactList: ShipContactList,
         lockHandler: LockHandler?,
         physicsEngine: PhysicsEngine
-    ) = getLockedTarget(shipProvider, lockHandler)?.let {
+    ) = getLockedTarget(contactList, lockHandler)?.let {
         inRange(it) && unobstructed(it, physicsEngine)
     } ?: false
 
-    private fun inRange(target: Ship) =
-        (target.position - ship.position)
+    private fun inRange(contact: ShipContactList.ShipContact) =
+        contact.relativePosition
             .rotate(-ship.rotation)
             .let { beamWeapon.isInRange(it) }
 
     @Suppress("ReplaceSizeZeroCheckWithIsEmpty")
-    private fun unobstructed(target: Ship, physicsEngine: PhysicsEngine): Boolean {
-        val ignore = listOf(ship.id, target.id)
-        val obstructions = physicsEngine.findObstructions(beamPosition, target.position, ignore)
+    private fun unobstructed(contact: ShipContactList.ShipContact, physicsEngine: PhysicsEngine): Boolean {
+        val ignore = listOf(ship.id, contact.id)
+        val obstructions = physicsEngine.findObstructions(beamPosition, contact.position, ignore)
         return obstructions.isEmpty()
     }
 }
