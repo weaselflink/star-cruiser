@@ -57,5 +57,3 @@ interface Ship {
     fun rangeTo(other: Vector2) =
         (other - position).length()
 }
-
-typealias ShipProvider = (ObjectId) -> Ship?

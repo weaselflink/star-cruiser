@@ -90,7 +90,12 @@ class ScanHandlerTest {
     }
 
     private fun ScanHandler.toMessage() =
-        toMessage { PlayerShip(designation = "dummy") }
+        toMessage(
+            ShipContactList(
+                PlayerShip(),
+                listOf(PlayerShip(id = targetId, designation = "dummy"))
+            )
+        )
 
     private val ScanHandler.noise
         get() = toMessage().noise

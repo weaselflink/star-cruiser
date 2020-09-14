@@ -32,10 +32,10 @@ class ScanHandler(
         game.adjustInput(dimension, value)
     }
 
-    fun toMessage(shipProvider: ShipProvider) =
+    fun toMessage(contactList: ShipContactList) =
         ScanProgressMessage(
             targetId = targetId,
-            designation = shipProvider(targetId)?.designation ?: "unknown",
+            designation = contactList[targetId]?.designation ?: "unknown",
             noise = adjustedNoise().fiveDigits(),
             input = game.inputs.map { it.fiveDigits() }
         )

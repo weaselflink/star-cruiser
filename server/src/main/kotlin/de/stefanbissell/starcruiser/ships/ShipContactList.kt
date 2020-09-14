@@ -28,9 +28,6 @@ class ShipContactList(
             !it.inSensorRange
         } ?: false
 
-    val shipProvider: ShipProvider =
-        { this[it]?.ship }
-
     inner class ShipContact(val ship: Ship) {
         val id = ship.id
         val designation = ship.designation

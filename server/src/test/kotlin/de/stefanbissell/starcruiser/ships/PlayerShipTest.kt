@@ -187,15 +187,15 @@ class PlayerShipTest {
 
     @Test
     fun `does not start scan with scan in progress`() {
-        val target1 = PlayerShip()
-        val target2 = PlayerShip()
+        val target1 = addShip()
+        val target2 = addShip()
 
         ship.mapSelectShip(target1.id)
         ship.startScan()
         ship.mapSelectShip(target2.id)
         ship.startScan()
 
-        expectThat(ship.toNavigationMessage { target1 }.scanProgress).isNotNull()
+        expectThat(ship.toNavigationMessage(contactList).scanProgress).isNotNull()
             .get { targetId }.isEqualTo(target1.id)
     }
 
@@ -467,7 +467,7 @@ class PlayerShipTest {
         ship.setPower(Sensors, 150)
         expectThat(ship.sensorRange)
             .isNear(ship.template.sensorRange * 1.5)
-        expectThat(ship.toNavigationMessage { null }.sensorRange)
+        expectThat(ship.toNavigationMessage(contactList).sensorRange)
             .isNear(ship.template.sensorRange * 1.5)
     }
 
@@ -476,7 +476,7 @@ class PlayerShipTest {
         ship.setPower(Sensors, 50)
         expectThat(ship.sensorRange)
             .isNear(ship.template.sensorRange * 0.5)
-        expectThat(ship.toNavigationMessage { null }.sensorRange)
+        expectThat(ship.toNavigationMessage(contactList).sensorRange)
             .isNear(ship.template.sensorRange * 0.5)
     }
 
@@ -485,7 +485,7 @@ class PlayerShipTest {
         ship.setPower(Sensors, 0)
         expectThat(ship.sensorRange)
             .isNear(ship.template.shortRangeScopeRange)
-        expectThat(ship.toNavigationMessage { null }.sensorRange)
+        expectThat(ship.toNavigationMessage(contactList).sensorRange)
             .isNear(ship.template.shortRangeScopeRange)
     }
 
@@ -531,7 +531,7 @@ class PlayerShipTest {
         expectThat(ship.toMapSelectionMessage(contactList))
             .isNotNull()
             .get { label }.isEqualTo(target.designation)
-        expectThat(ship.toNavigationMessage { target }.scanProgress)
+        expectThat(ship.toNavigationMessage(contactList).scanProgress)
             .isNotNull()
             .get { designation }.isEqualTo(target.designation)
 
@@ -541,7 +541,7 @@ class PlayerShipTest {
             .isEqualTo(LockStatus.NoLock)
         expectThat(ship.toMapSelectionMessage(contactList))
             .isNull()
-        expectThat(ship.toNavigationMessage { target }.scanProgress)
+        expectThat(ship.toNavigationMessage(contactList).scanProgress)
             .isNull()
     }
 

@@ -284,7 +284,7 @@ class PlayerShip(
             rearCamera = template.rearCamera.toMessage()
         )
 
-    fun toNavigationMessage(shipProvider: ShipProvider) =
+    fun toNavigationMessage(contactList: ShipContactList) =
         NavigationShipMessage(
             id = id,
             position = position.twoDigits(),
@@ -292,7 +292,7 @@ class PlayerShip(
             history = history.map { it.second.twoDigits() },
             waypoints = waypoints.map { it.toWaypointMessage() },
             sensorRange = sensorRange.twoDigits(),
-            scanProgress = scanHandler?.toMessage(shipProvider)
+            scanProgress = scanHandler?.toMessage(contactList)
         )
 
     fun toShortRangeScopeMessage() =
