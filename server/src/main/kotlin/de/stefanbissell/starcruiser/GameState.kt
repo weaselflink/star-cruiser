@@ -126,7 +126,7 @@ class GameState {
     private fun toMainScreenMessage(ship: PlayerShip, contactList: ShipContactList): SnapshotMessage =
         when (ship.mainScreenView) {
             MainScreenView.Scope -> toMainScreenShortRangeScope(ship, contactList)
-            else -> toMainScreen3d(ship)
+            else -> toMainScreen3d(ship, contactList)
         }
 
     private fun toMainScreenShortRangeScope(ship: PlayerShip, contactList: ShipContactList) =
@@ -136,10 +136,10 @@ class GameState {
             asteroids = getScopeAsteroids(ship)
         )
 
-    private fun toMainScreen3d(ship: PlayerShip) =
+    private fun toMainScreen3d(ship: PlayerShip, contactList: ShipContactList) =
         SnapshotMessage.MainScreen3d(
             ship = ship.toMessage(),
-            contacts = getContacts(ship),
+            contacts = contactList.getContacts(),
             asteroids = getAsteroids(ship)
         )
 
@@ -330,11 +330,9 @@ class GameState {
             if (it is InShip) it.ship else null
         }
 
-    private fun getContacts(clientShip: PlayerShip): List<ContactMessage> {
-        return ships
-            .filter { it.key != clientShip.id }
-            .map { it.value }
-            .map { it.toContactMessage(clientShip) }
+    private fun ShipContactList.getContacts(): List<ContactMessage> {
+        return contacts.values
+            .map { it.toContactMessage() }
     }
 
     private fun ShipContactList.getMapContacts(): List<MapContactMessage> {
@@ -356,7 +354,7 @@ class GameState {
             .map { it.toScopeContactMessage() }
     }
 
-    private fun getScopeAsteroids(clientShip: PlayerShip): List<AsteroidMessage> {
+    private fun getScopeAsteroids(clientShip: Ship): List<AsteroidMessage> {
         return asteroids
             .map { it.toMessage(clientShip) }
             .filter {

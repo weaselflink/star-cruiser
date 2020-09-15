@@ -93,19 +93,21 @@ class NonPlayerShip(
         }
     }
 
-    override fun toContactMessage(relativeTo: PlayerShip) =
+    override fun toContactMessage(relativeTo: Ship) =
         ContactMessage(
             id = id,
             model = template.model,
             position = position,
             relativePosition = (position - relativeTo.position),
             rotation = rotation,
-            beams = beamHandlers.map { it.toMessage(lockHandler) },
-            shield = shieldHandler.toMessage(),
+            beams = toBeamMessages(),
+            shield = toShieldMessage(),
             jumpAnimation = null
         )
 
     override fun toShieldMessage() = shieldHandler.toMessage()
+
+    override fun toBeamMessages() = beamHandlers.map { it.toMessage(lockHandler) }
 
     override fun inSensorRange(other: Vector2?): Boolean =
         other != null && rangeTo(other) <= sensorRange

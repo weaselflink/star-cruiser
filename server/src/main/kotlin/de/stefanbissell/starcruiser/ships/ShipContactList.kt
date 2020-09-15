@@ -47,6 +47,9 @@ class ShipContactList(
         val contactType = relativeTo.getContactType(ship)
         val scanLevel = relativeTo.getScanLevel(ship.id)
 
+        fun toContactMessage() =
+            ship.toContactMessage(relativeTo)
+
         fun toMapContactMessage() =
             MapContactMessage(
                 id = id,

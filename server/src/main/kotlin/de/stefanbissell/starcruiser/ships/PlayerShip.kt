@@ -303,19 +303,21 @@ class PlayerShip(
             beams = beamHandlers.map { it.toMessage(lockHandler) }
         )
 
-    override fun toContactMessage(relativeTo: PlayerShip) =
+    override fun toContactMessage(relativeTo: Ship) =
         ContactMessage(
             id = id,
             model = template.model,
             position = position,
             relativePosition = (position - relativeTo.position),
             rotation = rotation,
-            beams = beamHandlers.map { it.toMessage(lockHandler) },
-            shield = shieldHandler.toMessage(),
+            beams = toBeamMessages(),
+            shield = toShieldMessage(),
             jumpAnimation = jumpHandler.toMessage().animation
         )
 
     override fun toShieldMessage() = shieldHandler.toMessage()
+
+    override fun toBeamMessages() = beamHandlers.map { it.toMessage(lockHandler) }
 
     fun toMapSelectionMessage(contactList: ShipContactList) =
         mapSelection.let { selection ->

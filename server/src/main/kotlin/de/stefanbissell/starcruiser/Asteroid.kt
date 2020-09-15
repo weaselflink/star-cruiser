@@ -1,7 +1,7 @@
 package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
-import de.stefanbissell.starcruiser.ships.PlayerShip
+import de.stefanbissell.starcruiser.ships.Ship
 
 class Asteroid(
     val id: ObjectId = ObjectId.random(),
@@ -17,7 +17,7 @@ class Asteroid(
         }
     }
 
-    fun toMessage(relativeTo: PlayerShip) =
+    fun toMessage(relativeTo: Ship) =
         AsteroidMessage(
             id = id,
             model = "asteroid01",
