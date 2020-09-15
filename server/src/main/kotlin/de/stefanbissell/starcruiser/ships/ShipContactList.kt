@@ -25,6 +25,9 @@ class ShipContactList(
     fun allInSensorRange() =
         contacts.values.filter { it.inSensorRange }
 
+    fun allNearScopeRange() =
+        contacts.values.filter { it.nearScopeRange }
+
     fun outOfSensorRange(targetId: ObjectId) =
         this[targetId]?.let {
             !it.inSensorRange
@@ -43,6 +46,9 @@ class ShipContactList(
         }
         val inSensorRange by lazy {
             relativeTo.inSensorRange(ship)
+        }
+        val nearScopeRange by lazy {
+            range <= relativeTo.template.shortRangeScopeRange * 1.1
         }
         val contactType = relativeTo.getContactType(ship)
         val scanLevel = relativeTo.getScanLevel(ship.id)

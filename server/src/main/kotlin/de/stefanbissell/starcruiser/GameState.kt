@@ -347,10 +347,7 @@ class GameState {
     }
 
     private fun ShipContactList.getScopeContacts(): List<ScopeContactMessage> {
-        return allInSensorRange()
-            .filter {
-                it.range < relativeTo.template.shortRangeScopeRange * 1.1
-            }
+        return allNearScopeRange()
             .map { it.toScopeContactMessage() }
     }
 
