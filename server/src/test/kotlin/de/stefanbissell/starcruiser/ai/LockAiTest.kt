@@ -23,6 +23,8 @@ class LockAiTest {
     private val lockAi = LockAi()
 
     private val shipList = mutableListOf<Ship>()
+    private val halfScopeRange = ship.template.shortRangeScopeRange * 0.5
+    private val doubleScopeRange = ship.template.shortRangeScopeRange * 2
 
     @Test
     fun `does not start lock before interval expired`() {
@@ -50,11 +52,19 @@ class LockAiTest {
     }
 
     @Test
-    fun `locks hostile ship`() {
+    fun `locks hostile in scope range ship`() {
         val target = addShip()
         executeAi()
 
         expectLockStarted(target.id)
+    }
+
+    @Test
+    fun `does not lock hostile outside scope range ship`() {
+        addShip(p(doubleScopeRange, 0))
+        executeAi()
+
+        expectNoLockStarted()
     }
 
     @Test
@@ -72,6 +82,21 @@ class LockAiTest {
         executeAi()
 
         expectLockStarted(nearTarget.id)
+    }
+
+    @Test
+    fun `locks onto another target if current is out of scope range`() {
+        val targetMovingAway = addShip(p(halfScopeRange, 0))
+        val targetApproaching = addShip(p(doubleScopeRange, 0))
+        executeAi()
+
+        expectLockStarted(targetMovingAway.id)
+
+        targetMovingAway.position = p(doubleScopeRange, 0)
+        targetApproaching.position = p(halfScopeRange, 0)
+        executeAi()
+
+        expectLockStarted(targetApproaching.id)
     }
 
     private fun expectLockStarted(id: ObjectId) {
@@ -94,7 +119,7 @@ class LockAiTest {
     }
 
     private fun addShip(
-        position: Vector2 = p(100, 100),
+        position: Vector2 = p(halfScopeRange, 0),
         hostile: Boolean = true
     ): Ship {
         val target = NonPlayerShip(

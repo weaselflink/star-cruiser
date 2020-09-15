@@ -12,6 +12,10 @@ class LockAi(interval: Double = 5.0) : ComponentAi(interval) {
         time: GameTime,
         contactList: ShipContactList
     ) {
+        val lockTarget = ship.lockHandler?.targetId?.let { contactList[it] }
+        if (lockTarget != null && lockTarget.range > ship.template.shortRangeScopeRange) {
+            ship.abortLock()
+        }
         if (ship.lockHandler == null) {
             contactList.selectLockTarget()?.also {
                 ship.startLock(it.id)
@@ -21,6 +25,9 @@ class LockAi(interval: Double = 5.0) : ComponentAi(interval) {
 
     private fun ShipContactList.selectLockTarget() =
         allInSensorRange()
+            .filter {
+                it.range <= relativeTo.template.shortRangeScopeRange
+            }
             .filter {
                 it.contactType == ContactType.Enemy
             }

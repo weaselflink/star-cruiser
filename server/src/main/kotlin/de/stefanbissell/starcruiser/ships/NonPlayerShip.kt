@@ -86,10 +86,10 @@ class NonPlayerShip(
 
     override fun targetDestroyed(shipId: ObjectId) {
         if (scanHandler?.targetId == shipId) {
-            scanHandler = null
+            abortScan()
         }
         if (lockHandler?.targetId == shipId) {
-            lockHandler = null
+            abortLock()
         }
     }
 
@@ -135,8 +135,16 @@ class NonPlayerShip(
         scanHandler = TimedScanHandler(targetId, template.scanSpeed)
     }
 
+    fun abortScan() {
+        scanHandler = null
+    }
+
     fun startLock(targetId: ObjectId) {
         lockHandler = LockHandler(targetId, template.lockingSpeed)
+    }
+
+    fun abortLock() {
+        lockHandler = null
     }
 
     private fun updateBeams(
@@ -157,7 +165,7 @@ class NonPlayerShip(
     private fun updateScan(time: GameTime, contactList: ShipContactList) {
         scanHandler?.apply {
             if (contactList.outOfSensorRange(targetId)) {
-                scanHandler = null
+                abortScan()
             }
         }
         scanHandler?.apply {
@@ -166,7 +174,7 @@ class NonPlayerShip(
             if (isComplete) {
                 val scan = target?.scanLevel ?: ScanLevel.None
                 scans[targetId] = scan.next
-                scanHandler = null
+                abortScan()
             }
         }
     }
@@ -174,7 +182,7 @@ class NonPlayerShip(
     private fun updateLock(time: GameTime, contactList: ShipContactList) {
         lockHandler?.apply {
             if (contactList.outOfSensorRange(targetId)) {
-                lockHandler = null
+                abortLock()
             }
         }
         lockHandler?.update(time)
