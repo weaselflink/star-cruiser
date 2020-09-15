@@ -1,6 +1,8 @@
 package de.stefanbissell.starcruiser.ships
 
+import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.ScopeContactMessage
 
 class ShipContactList(
     val relativeTo: Ship,
@@ -32,6 +34,7 @@ class ShipContactList(
         val id = ship.id
         val designation = ship.designation
         val position = ship.position
+        val rotation = ship.rotation
         val relativePosition by lazy {
             position - relativeTo.position
         }
@@ -43,5 +46,24 @@ class ShipContactList(
         }
         val contactType = relativeTo.getContactType(ship)
         val scanLevel = relativeTo.getScanLevel(ship.id)
+
+        fun toMapContactMessage() =
+            MapContactMessage(
+                id = id,
+                type = contactType,
+                designation = designation,
+                position = position,
+                rotation = rotation
+            )
+
+        fun toScopeContactMessage() =
+            ScopeContactMessage(
+                id = id,
+                type = contactType,
+                designation = designation,
+                relativePosition = relativePosition,
+                rotation = rotation,
+                locked = relativeTo is PlayerShip && relativeTo.isLocking(id)
+            )
     }
 }

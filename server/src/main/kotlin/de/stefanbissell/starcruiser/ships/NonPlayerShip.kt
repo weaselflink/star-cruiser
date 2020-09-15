@@ -3,11 +3,9 @@ package de.stefanbissell.starcruiser.ships
 import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
-import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.ScanLevel
-import de.stefanbissell.starcruiser.ScopeContactMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.ai.ShipAi
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
@@ -103,25 +101,6 @@ class NonPlayerShip(
             beams = emptyList(),
             shield = shieldHandler.toMessage(),
             jumpAnimation = null
-        )
-
-    override fun toMapContactMessage(relativeTo: PlayerShip) =
-        MapContactMessage(
-            id = id,
-            type = relativeTo.getContactType(this),
-            designation = designation,
-            position = position,
-            rotation = rotation
-        )
-
-    override fun toScopeContactMessage(relativeTo: PlayerShip) =
-        ScopeContactMessage(
-            id = id,
-            type = relativeTo.getContactType(this),
-            designation = designation,
-            relativePosition = (position - relativeTo.position),
-            rotation = rotation,
-            locked = relativeTo.isLocking(id)
         )
 
     override fun toShieldMessage() = shieldHandler.toMessage()

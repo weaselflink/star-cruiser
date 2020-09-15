@@ -109,7 +109,7 @@ class GameState {
                     Navigation -> SnapshotMessage.Navigation(
                         ship = ship.toNavigationMessage(contactList),
                         mapSelection = ship.toMapSelectionMessage(contactList),
-                        contacts = getMapContacts(ship),
+                        contacts = contactList.getMapContacts(),
                         asteroids = getMapAsteroids(ship)
                     )
                     Engineering -> SnapshotMessage.Engineering(
@@ -339,12 +339,9 @@ class GameState {
             .map { it.toContactMessage(clientShip) }
     }
 
-    private fun getMapContacts(clientShip: PlayerShip): List<MapContactMessage> {
-        return ships
-            .filter { it.key != clientShip.id }
-            .filter { clientShip.inSensorRange(it.value) }
-            .map { it.value }
-            .map { it.toMapContactMessage(clientShip) }
+    private fun ShipContactList.getMapContacts(): List<MapContactMessage> {
+        return allInSensorRange()
+            .map { it.toMapContactMessage() }
     }
 
     private fun getMapAsteroids(clientShip: PlayerShip): List<AsteroidMessage> {

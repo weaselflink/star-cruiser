@@ -4,7 +4,6 @@ import de.stefanbissell.starcruiser.Asteroid
 import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
-import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.ScanLevel
@@ -34,9 +33,15 @@ interface Ship {
 
     fun toContactMessage(relativeTo: PlayerShip): ContactMessage
 
-    fun toMapContactMessage(relativeTo: PlayerShip): MapContactMessage
-
-    fun toScopeContactMessage(relativeTo: PlayerShip): ScopeContactMessage
+    fun toScopeContactMessage(relativeTo: PlayerShip) =
+        ScopeContactMessage(
+            id = id,
+            type = relativeTo.getContactType(this),
+            designation = designation,
+            relativePosition = (position - relativeTo.position),
+            rotation = rotation,
+            locked = relativeTo.isLocking(id)
+        )
 
     fun toShieldMessage(): ShieldMessage
 

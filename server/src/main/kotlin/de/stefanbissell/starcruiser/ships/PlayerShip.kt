@@ -5,7 +5,6 @@ import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.MainScreenView
-import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.MapSelectionMessage
 import de.stefanbissell.starcruiser.NavigationShipMessage
 import de.stefanbissell.starcruiser.ObjectId
@@ -18,7 +17,6 @@ import de.stefanbissell.starcruiser.PoweredSystemType.Sensors
 import de.stefanbissell.starcruiser.PoweredSystemType.Shields
 import de.stefanbissell.starcruiser.PoweredSystemType.Weapons
 import de.stefanbissell.starcruiser.ScanLevel
-import de.stefanbissell.starcruiser.ScopeContactMessage
 import de.stefanbissell.starcruiser.ShipMessage
 import de.stefanbissell.starcruiser.ShortRangeScopeMessage
 import de.stefanbissell.starcruiser.Vector2
@@ -315,25 +313,6 @@ class PlayerShip(
             beams = beamHandlers.map { it.toMessage(lockHandler) },
             shield = shieldHandler.toMessage(),
             jumpAnimation = jumpHandler.toMessage().animation
-        )
-
-    override fun toMapContactMessage(relativeTo: PlayerShip) =
-        MapContactMessage(
-            id = id,
-            type = relativeTo.getContactType(this),
-            designation = designation,
-            position = position,
-            rotation = rotation
-        )
-
-    override fun toScopeContactMessage(relativeTo: PlayerShip) =
-        ScopeContactMessage(
-            id = id,
-            type = relativeTo.getContactType(this),
-            designation = designation,
-            relativePosition = (position - relativeTo.position),
-            rotation = rotation,
-            locked = relativeTo.isLocking(id)
         )
 
     override fun toShieldMessage() = shieldHandler.toMessage()
