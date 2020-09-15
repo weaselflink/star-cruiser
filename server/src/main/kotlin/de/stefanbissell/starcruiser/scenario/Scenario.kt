@@ -33,7 +33,7 @@ class ScenarioDefinition {
 class AsteroidFieldDefinition {
 
     lateinit var shape: Shape
-    var density: Number = 100
+    var density: Number = 1
 
     private val asteroidCount: Int
         get() {

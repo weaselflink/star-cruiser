@@ -10,6 +10,7 @@ import de.stefanbissell.starcruiser.Station.Navigation
 import de.stefanbissell.starcruiser.Station.Weapons
 import de.stefanbissell.starcruiser.client.ClientId
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
+import de.stefanbissell.starcruiser.scenario.TestScenario
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
@@ -70,8 +71,9 @@ class GameState {
     private val physicsEngine = PhysicsEngine()
 
     init {
-        repeat(50) {
-            spawnAsteroid()
+        val scenario = TestScenario.create()
+        scenario.asteroids.forEach {
+            spawnAsteroid(it)
         }
         repeat(4) {
             spawnNonPlayerShip()
@@ -189,12 +191,8 @@ class GameState {
         }
     }
 
-    private fun spawnAsteroid() {
-        Asteroid(
-            position = Vector2.random(800, 200),
-            rotation = Random.nextDouble(PI * 2.0),
-            radius = Random.nextDouble(8.0, 32.0)
-        ).also {
+    private fun spawnAsteroid(asteroid: Asteroid) {
+        asteroid.also {
             asteroids += it
             physicsEngine.addAsteroid(it)
         }
