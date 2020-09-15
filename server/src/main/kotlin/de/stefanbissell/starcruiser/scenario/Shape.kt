@@ -2,7 +2,7 @@ package de.stefanbissell.starcruiser.scenario
 
 import de.stefanbissell.starcruiser.Vector2
 
-interface Area {
+interface Shape {
 
     val boundingBox: Box
 

@@ -7,10 +7,11 @@ import kotlin.random.Random
 data class Box(
     val bottomLeft: Vector2,
     val topRight: Vector2
-) : Area {
+) : Shape {
 
     val width = abs(topRight.x - bottomLeft.x)
     val height = abs(topRight.y - bottomLeft.y)
+    val area = width * height
 
     override val boundingBox: Box = this
 

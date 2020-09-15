@@ -7,7 +7,7 @@ object TestScenario : Scenario() {
     override val definition =
         scenario {
             asteroidField {
-                density = 25.0
+                density = 25
                 area(
                     p(0, 0),
                     p(0, 500),

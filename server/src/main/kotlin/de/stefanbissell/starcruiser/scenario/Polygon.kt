@@ -4,7 +4,7 @@ import de.stefanbissell.starcruiser.Vector2
 
 data class Polygon(
     val border: List<Vector2>
-) : Area {
+) : Shape {
 
     private val edges: List<Pair<Vector2, Vector2>> =
         border.mapIndexed { index, point ->

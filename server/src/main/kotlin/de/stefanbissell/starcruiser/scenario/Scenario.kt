@@ -32,17 +32,17 @@ class ScenarioDefinition {
 
 class AsteroidFieldDefinition {
 
-    lateinit var area: Area
-    var density = 100.0
+    lateinit var shape: Shape
+    var density: Number = 100
 
     private val asteroidCount: Int
         get() {
-            val box = area.boundingBox
-            return (box.width * box.height / 10_000.0 * density).roundToInt()
+            val box = shape.boundingBox
+            return (box.area / 10_000 * density.toDouble()).roundToInt()
         }
 
     fun area(vararg boundary: Vector2) {
-        area = Polygon.of(*boundary)
+        shape = Polygon.of(*boundary)
     }
 
     fun createAsteroids(): List<Asteroid> =
@@ -55,9 +55,9 @@ class AsteroidFieldDefinition {
         }
 
     private fun randomPointInside(): Vector2 {
-        val box = area.boundingBox
+        val box = shape.boundingBox
         var position = box.randomPointInside()
-        while (!area.isInside(position)) {
+        while (!shape.isInside(position)) {
             position = box.randomPointInside()
         }
         return position
