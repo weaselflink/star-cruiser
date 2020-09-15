@@ -122,6 +122,13 @@ class NonPlayerShip(
             ContactType.Unknown
         }
 
+    override fun isLocking(targetId: ObjectId) =
+        if (lockHandler != null) {
+            lockHandler?.targetId == targetId
+        } else {
+            false
+        }
+
     fun startScan(targetId: ObjectId) {
         scanHandler = TimedScanHandler(targetId, template.scanSpeed)
     }

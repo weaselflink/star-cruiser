@@ -92,7 +92,7 @@ class GameState {
                 when (state.station) {
                     Helm -> SnapshotMessage.Helm(
                         shortRangeScope = ship.toShortRangeScopeMessage(),
-                        contacts = getScopeContacts(ship),
+                        contacts = contactList.getScopeContacts(),
                         asteroids = getScopeAsteroids(ship),
                         throttle = ship.throttle,
                         rudder = ship.rudder,
@@ -100,7 +100,7 @@ class GameState {
                     )
                     Weapons -> SnapshotMessage.Weapons(
                         shortRangeScope = ship.toShortRangeScopeMessage(),
-                        contacts = getScopeContacts(ship),
+                        contacts = contactList.getScopeContacts(),
                         asteroids = getScopeAsteroids(ship),
                         hull = ship.hull,
                         hullMax = ship.template.hull,
@@ -115,22 +115,22 @@ class GameState {
                     Engineering -> SnapshotMessage.Engineering(
                         powerSettings = ship.toPowerMessage()
                     )
-                    MainScreen -> toMainScreenMessage(ship)
+                    MainScreen -> toMainScreenMessage(ship, contactList)
                 }
             }
         }
     }
 
-    private fun toMainScreenMessage(ship: PlayerShip): SnapshotMessage =
+    private fun toMainScreenMessage(ship: PlayerShip, contactList: ShipContactList): SnapshotMessage =
         when (ship.mainScreenView) {
-            MainScreenView.Scope -> toMainScreenShortRangeScope(ship)
+            MainScreenView.Scope -> toMainScreenShortRangeScope(ship, contactList)
             else -> toMainScreen3d(ship)
         }
 
-    private fun toMainScreenShortRangeScope(ship: PlayerShip) =
+    private fun toMainScreenShortRangeScope(ship: PlayerShip, contactList: ShipContactList) =
         SnapshotMessage.MainScreenShortRangeScope(
             shortRangeScope = ship.toShortRangeScopeMessage(),
-            contacts = getScopeContacts(ship),
+            contacts = contactList.getScopeContacts(),
             asteroids = getScopeAsteroids(ship)
         )
 
@@ -350,14 +350,12 @@ class GameState {
             .map { it.toMessage(clientShip) }
     }
 
-    private fun getScopeContacts(clientShip: PlayerShip): List<ScopeContactMessage> {
-        return ships
-            .filter { it.key != clientShip.id }
-            .map { it.value }
-            .map { it.toScopeContactMessage(clientShip) }
+    private fun ShipContactList.getScopeContacts(): List<ScopeContactMessage> {
+        return allInSensorRange()
             .filter {
-                it.relativePosition.length() < clientShip.template.shortRangeScopeRange * 1.1
+                it.range < relativeTo.template.shortRangeScopeRange * 1.1
             }
+            .map { it.toScopeContactMessage() }
     }
 
     private fun getScopeAsteroids(clientShip: PlayerShip): List<AsteroidMessage> {

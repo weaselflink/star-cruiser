@@ -63,7 +63,7 @@ class ShipContactList(
                 designation = designation,
                 relativePosition = relativePosition,
                 rotation = rotation,
-                locked = relativeTo is PlayerShip && relativeTo.isLocking(id)
+                locked = relativeTo.isLocking(id)
             )
     }
 }

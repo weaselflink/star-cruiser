@@ -45,6 +45,8 @@ interface Ship {
 
     fun toShieldMessage(): ShieldMessage
 
+    fun isLocking(targetId: ObjectId): Boolean
+
     fun inSensorRange(other: Ship?) = inSensorRange(other?.position)
 
     fun inSensorRange(other: Asteroid?) = inSensorRange(other?.position)

@@ -334,7 +334,7 @@ class PlayerShip(
 
     fun toJumpDriveMessage() = jumpHandler.toMessage()
 
-    fun isLocking(targetId: ObjectId) =
+    override fun isLocking(targetId: ObjectId) =
         if (lockHandler != null) {
             lockHandler?.targetId == targetId
         } else {
