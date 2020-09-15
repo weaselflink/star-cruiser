@@ -79,7 +79,7 @@ class PlayerShip(
         contactList: ShipContactList
     ) {
         powerHandler.update(time)
-        updateBeams(time, contactList, physicsEngine)
+        updateBeams(time, physicsEngine, contactList)
         shieldHandler.update(time, Shields.boostLevel)
         jumpHandler.update(time, Jump.boostLevel)
         updateScan(time, contactList)
@@ -343,8 +343,8 @@ class PlayerShip(
 
     private fun updateBeams(
         time: GameTime,
-        contactList: ShipContactList,
-        physicsEngine: PhysicsEngine
+        physicsEngine: PhysicsEngine,
+        contactList: ShipContactList
     ) {
         beamHandlers.forEach {
             it.update(

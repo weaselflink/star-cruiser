@@ -20,7 +20,7 @@ class BeamHandler(
 
     fun update(
         time: GameTime,
-        boostLevel: Double,
+        boostLevel: Double = 1.0,
         contactList: ShipContactList,
         lockHandler: LockHandler?,
         physicsEngine: PhysicsEngine

@@ -24,6 +24,7 @@ class NonPlayerShip(
 
     private val shipAi = ShipAi()
     val powerHandler = SimplePowerHandler(template)
+    private val beamHandlers = template.beams.map { BeamHandler(it, this) }
     val shieldHandler = ShieldHandler(template.shield)
     val scans = mutableMapOf<ObjectId, ScanLevel>()
     var scanHandler: TimedScanHandler? = null
@@ -42,6 +43,7 @@ class NonPlayerShip(
         contactList: ShipContactList
     ) {
         powerHandler.update(time)
+        updateBeams(time, physicsEngine, contactList)
         shieldHandler.update(time)
         updateScan(time, contactList)
         updateLock(time, contactList)
@@ -98,7 +100,7 @@ class NonPlayerShip(
             position = position,
             relativePosition = (position - relativeTo.position),
             rotation = rotation,
-            beams = emptyList(),
+            beams = beamHandlers.map { it.toMessage(lockHandler) },
             shield = shieldHandler.toMessage(),
             jumpAnimation = null
         )
@@ -135,6 +137,21 @@ class NonPlayerShip(
 
     fun startLock(targetId: ObjectId) {
         lockHandler = LockHandler(targetId, template.lockingSpeed)
+    }
+
+    private fun updateBeams(
+        time: GameTime,
+        physicsEngine: PhysicsEngine,
+        contactList: ShipContactList
+    ) {
+        beamHandlers.forEach {
+            it.update(
+                time = time,
+                contactList = contactList,
+                lockHandler = lockHandler,
+                physicsEngine = physicsEngine
+            )
+        }
     }
 
     private fun updateScan(time: GameTime, contactList: ShipContactList) {

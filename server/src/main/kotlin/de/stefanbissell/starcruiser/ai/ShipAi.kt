@@ -9,7 +9,8 @@ class ShipAi {
     private val componentAis = listOf(
         ShieldAi(),
         RepairAi(),
-        ScanAi()
+        ScanAi(),
+        LockAi()
     )
 
     fun update(
