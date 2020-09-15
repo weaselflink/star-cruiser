@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser.physics
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.ShipTemplate
 import de.stefanbissell.starcruiser.ships.cruiserTemplate
@@ -43,7 +44,7 @@ class Simulator(
         val ship = PlayerShip(template = shipTemplate, rotation = 0.0)
 
         init {
-            physicsEngine.addShip(ship)
+            physicsEngine.addShip(ship, false)
         }
 
         fun analyzeLinearAcceleration(): LinearAccelerationData {
@@ -56,7 +57,7 @@ class Simulator(
             val pointAt99 = points.first { it.bodyParameters.speed.length() > absoluteMax * 0.99 }
             return LinearAccelerationData(
                 maxSpeed = pointAt99.bodyParameters.speed.length().twoDigits(),
-                timeToMax = pointAt99.time.twoDigits(),
+                timeToMax = pointAt99.time.fiveDigits(),
                 distanceToMax = pointAt99.bodyParameters.position.x.twoDigits()
             )
         }
@@ -68,7 +69,7 @@ class Simulator(
             }
 
             return LinearDecelerationData(
-                timeToStop = points.last().time.twoDigits(),
+                timeToStop = points.last().time.fiveDigits(),
                 distanceToStop = points.last().bodyParameters.position.x.twoDigits()
             )
         }
@@ -80,23 +81,38 @@ class Simulator(
             }
 
             val absoluteMax = points.last().bodyParameters.rotationSpeed
-            val pointAt99 = points.first { it.bodyParameters.rotationSpeed > absoluteMax * 0.99 }
+            val indexAt99 = points.indexOfFirst { it.bodyParameters.rotationSpeed > absoluteMax * 0.99 }
+            val pointAt99 = points[indexAt99]
             return AngularAccelerationData(
-                maxRotationSpeed = pointAt99.bodyParameters.rotationSpeed.twoDigits(),
-                timeToMax = pointAt99.time.twoDigits(),
-                rotationToMax = pointAt99.bodyParameters.rotation.twoDigits()
+                maxRotationSpeed = pointAt99.bodyParameters.rotationSpeed.fiveDigits(),
+                timeToMax = pointAt99.time.fiveDigits(),
+                rotationToMax = pointAt99.bodyParameters.rotation.fiveDigits(),
+                points = points.subList(0, indexAt99 + 1).map {
+                    AngularState(
+                        time = it.time.fiveDigits(),
+                        rotation = it.bodyParameters.rotation.fiveDigits(),
+                        rotationSpeed = it.bodyParameters.rotationSpeed.fiveDigits()
+                    )
+                }
             )
         }
 
         fun analyzeAngularDeceleration(maxRotationSpeed: Double): AngularDecelerationData {
             physicsEngine.setShipRotationSpeed(ship.id, maxRotationSpeed)
             val points = tickUntil { _, after ->
-                after.bodyParameters.rotationSpeed < 0.00001
+                after.bodyParameters.rotationSpeed < maxRotationSpeed * 0.01
             }
 
             return AngularDecelerationData(
-                timeToStop = points.last().time.twoDigits(),
-                rotationToStop = points.last().bodyParameters.rotation.twoDigits()
+                timeToStop = points.last().time.fiveDigits(),
+                rotationToStop = points.last().bodyParameters.rotation.fiveDigits(),
+                points = points.map {
+                    AngularState(
+                        time = it.time.fiveDigits(),
+                        rotation = it.bodyParameters.rotation.fiveDigits(),
+                        rotationSpeed = it.bodyParameters.rotationSpeed.fiveDigits()
+                    )
+                }
             )
         }
 
@@ -144,12 +160,20 @@ data class LinearDecelerationData(
 data class AngularAccelerationData(
     val maxRotationSpeed: Double,
     val timeToMax: Double,
-    val rotationToMax: Double
+    val rotationToMax: Double,
+    val points: List<AngularState>
 )
 
 data class AngularDecelerationData(
     val timeToStop: Double,
-    val rotationToStop: Double
+    val rotationToStop: Double,
+    val points: List<AngularState>
+)
+
+data class AngularState(
+    val time: Double,
+    val rotation: Double,
+    val rotationSpeed: Double
 )
 
 data class PerformanceAnalysis(
@@ -160,11 +184,12 @@ data class PerformanceAnalysis(
 )
 
 fun main() {
-    println(
-        Simulator(
-            cruiserTemplate.copy(
-                throttleResponsiveness = 10_000.0
-            )
-        ).analyzeShip()
-    )
+    val analysis = Simulator(
+        cruiserTemplate.copy(
+            throttleResponsiveness = 10_000.0
+        )
+    ).analyzeShip()
+    println(analysis)
+    println(analysis.angularAccelerationData.points.size)
+    println(analysis.angularDecelerationData.points.size)
 }

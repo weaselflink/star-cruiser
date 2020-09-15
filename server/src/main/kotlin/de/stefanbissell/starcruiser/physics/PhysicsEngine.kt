@@ -23,8 +23,8 @@ class PhysicsEngine {
 
     fun step(delta: Number) = world.step(delta.toFloat(), 6, 2)
 
-    fun addShip(ship: Ship) {
-        bodies[ship.id] = ship.toBody()
+    fun addShip(ship: Ship, sleepingAllowed: Boolean = true) {
+        bodies[ship.id] = ship.toBody(sleepingAllowed)
     }
 
     fun addAsteroid(asteroid: Asteroid) {
@@ -90,11 +90,12 @@ class PhysicsEngine {
             .toList()
     }
 
-    private fun Ship.toBody() =
+    private fun Ship.toBody(sleepingAllowed: Boolean = true) =
         createDynamicBody(
             position,
             rotation
         ).apply {
+            isSleepingAllowed = sleepingAllowed
             m_userData = this@toBody.id
             createFixtures(this@toBody.template)
         }
