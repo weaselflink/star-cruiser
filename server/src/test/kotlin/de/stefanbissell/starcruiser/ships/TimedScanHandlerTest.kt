@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
-import java.time.Instant
 
 class TimedScanHandlerTest {
 
@@ -36,7 +35,7 @@ class TimedScanHandlerTest {
     }
 
     private fun stepTime(seconds: Number) {
-        val time = GameTime(Instant.EPOCH).apply { update(seconds.toDouble()) }
+        val time = GameTime.atEpoch().apply { update(seconds.toDouble()) }
         scanHandler.update(time)
     }
 }

@@ -11,11 +11,10 @@ import strikt.assertions.isFalse
 import strikt.assertions.isNotNull
 import strikt.assertions.isNull
 import strikt.assertions.isTrue
-import java.time.Instant
 
 class JumpHandlerTest {
 
-    private val time = GameTime(Instant.EPOCH)
+    private val time = GameTime.atEpoch()
     private val jumpDrive = JumpDrive()
     private var power = 1.0
     private val jumpHandler = JumpHandler(jumpDrive)

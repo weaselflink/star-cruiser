@@ -7,7 +7,6 @@ import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.ShipTemplate
 import de.stefanbissell.starcruiser.ships.cruiserTemplate
 import de.stefanbissell.starcruiser.twoDigits
-import java.time.Instant
 import kotlin.math.abs
 
 class Simulator(
@@ -39,7 +38,7 @@ class Simulator(
         SimulationRun().analyzeAngularDeceleration(maxRotationSpeed)
 
     private inner class SimulationRun {
-        val gameTime = GameTime(Instant.EPOCH)
+        val gameTime = GameTime.atEpoch()
         val physicsEngine = PhysicsEngine()
         val ship = PlayerShip(template = shipTemplate, rotation = 0.0)
 

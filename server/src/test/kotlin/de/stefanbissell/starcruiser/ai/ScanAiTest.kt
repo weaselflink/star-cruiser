@@ -13,12 +13,11 @@ import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotNull
 import strikt.assertions.isNull
-import java.time.Instant
 
 class ScanAiTest {
 
     private val ship = NonPlayerShip()
-    private val time = GameTime(Instant.EPOCH)
+    private val time = GameTime.atEpoch()
     private val scanAi = ScanAi()
 
     private val shipList = mutableListOf<Ship>()

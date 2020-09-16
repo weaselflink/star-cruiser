@@ -10,11 +10,10 @@ import strikt.assertions.isA
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
-import java.time.Instant
 
 class LockHandlerTest {
 
-    private val time = GameTime(Instant.EPOCH)
+    private val time = GameTime.atEpoch()
     private val targetId = ObjectId.random()
     private val lockingSpeed = 0.25
     private var power = 1.0

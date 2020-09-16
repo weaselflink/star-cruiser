@@ -7,11 +7,10 @@ import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
-import java.time.Instant
 
 class ShieldHandlerTest {
 
-    private val time = GameTime(Instant.EPOCH)
+    private val time = GameTime.atEpoch()
     private val shieldTemplate = ShieldTemplate()
     private var power = 1.0
     private val shieldHandler = ShieldHandler(shieldTemplate)

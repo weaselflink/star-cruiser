@@ -445,10 +445,14 @@ class GameTime(
         lastUpdate = now
     }
 
-    fun update(seconds: Double) {
-        delta = seconds
+    fun update(seconds: Number) {
+        delta = seconds.toDouble()
         current += delta
-        lastUpdate = lastUpdate?.plusMillis((seconds * 1_000).roundToLong())
+        lastUpdate = lastUpdate?.plusMillis((delta * 1_000).roundToLong())
+    }
+
+    companion object {
+        fun atEpoch() = GameTime(Instant.EPOCH)
     }
 }
 

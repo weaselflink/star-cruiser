@@ -4,11 +4,10 @@ import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.isNear
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
-import java.time.Instant
 
 class ThrottleHandlerTest {
 
-    private val time = GameTime(Instant.EPOCH)
+    private val time = GameTime.atEpoch()
     private val throttleHandler = ThrottleHandler(carrierTemplate)
 
     @Test

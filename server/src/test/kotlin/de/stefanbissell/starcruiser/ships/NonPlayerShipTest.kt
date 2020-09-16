@@ -15,11 +15,10 @@ import strikt.assertions.isFalse
 import strikt.assertions.isNotNull
 import strikt.assertions.isNull
 import strikt.assertions.isTrue
-import java.time.Instant
 
 class NonPlayerShipTest {
 
-    private val time = GameTime(Instant.EPOCH)
+    private val time = GameTime.atEpoch()
     private val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
     private val shieldTemplate = carrierTemplate.shield
     private val ship = NonPlayerShip()

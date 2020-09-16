@@ -8,12 +8,11 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
-import java.time.Instant
 
 class RepairAiTest {
 
     private val ship = NonPlayerShip()
-    private val time = GameTime(Instant.EPOCH)
+    private val time = GameTime.atEpoch()
     private val repairAi = RepairAi()
 
     @Test

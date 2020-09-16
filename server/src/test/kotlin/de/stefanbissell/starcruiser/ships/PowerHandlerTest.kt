@@ -16,11 +16,10 @@ import strikt.assertions.isEqualTo
 import strikt.assertions.isNotEqualTo
 import strikt.assertions.isNotNull
 import strikt.assertions.isNull
-import java.time.Instant
 
 class PowerHandlerTest {
 
-    private val time = GameTime(Instant.EPOCH)
+    private val time = GameTime.atEpoch()
     private val powerHandler = PowerHandler(carrierTemplate)
 
     @Test

@@ -9,11 +9,10 @@ import strikt.assertions.isFalse
 import strikt.assertions.isGreaterThan
 import strikt.assertions.isLessThan
 import strikt.assertions.isTrue
-import java.time.Instant
 
 class ScanHandlerTest {
 
-    private val time = GameTime(Instant.EPOCH)
+    private val time = GameTime.atEpoch()
     private val targetId = ObjectId.random()
     private var power = 1.0
     private val scanHandler = createScanHandler()

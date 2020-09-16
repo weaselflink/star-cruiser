@@ -11,11 +11,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import java.time.Instant
 
 class BeamHandlerTest {
 
-    private val time = GameTime(Instant.EPOCH)
+    private val time = GameTime.atEpoch()
     private val beamWeapon = BeamWeapon(Vector3())
     private var power = 1.0
     private val ship = PlayerShip()
@@ -148,10 +147,9 @@ class BeamHandlerTest {
     }
 
     private fun targetLocked() {
-        val lockTime = GameTime().apply {
-            update(Instant.EPOCH)
+        val lockTime = GameTime.atEpoch().apply {
+            update(10)
         }
-        lockTime.update(Instant.EPOCH.plusSeconds(10))
         lockHandler = LockHandler(target.id, 1.0).apply {
             update(lockTime)
         }
