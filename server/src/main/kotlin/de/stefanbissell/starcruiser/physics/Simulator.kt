@@ -189,7 +189,13 @@ fun main() {
             throttleResponsiveness = 10_000.0
         )
     ).analyzeShip()
-    println(analysis)
-    println(analysis.angularAccelerationData.points.size)
-    println(analysis.angularDecelerationData.points.size)
+    println("time,rotation,speed")
+    analysis.angularAccelerationData.points.forEach {
+        println("${it.time},${it.rotation},${it.rotationSpeed}")
+    }
+    val lastTime = analysis.angularAccelerationData.points.last().time
+    val lastRotation = analysis.angularAccelerationData.points.last().rotation
+    analysis.angularDecelerationData.points.forEach {
+        println("${it.time + lastTime},${it.rotation + lastRotation},${it.rotationSpeed}")
+    }
 }
