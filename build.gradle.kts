@@ -44,5 +44,5 @@ allprojects {
 }
 
 ktlint {
-    version.set("0.38.1")
+    version.set("0.39.0")
 }
