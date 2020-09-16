@@ -1,12 +1,6 @@
 
 fun isNonStable(version: String): Boolean {
-    val stableKeywords = listOf("release", "final", "ga").any { version.toLowerCase().contains(it) }
-    val unstableKeywords = listOf("alpha", "dev").any { version.toLowerCase().contains(it) }
-    val stableRegex = "^[0-9,.v-]+(-r)?$".toRegex()
-    val unstableRegex = "^.*M\\d.*$".toRegex()
-    val isStable = (stableKeywords || stableRegex.matches(version)) &&
-        !(unstableKeywords || unstableRegex.matches(version))
-    return isStable.not()
+    return listOf("alpha", "dev").any { version.toLowerCase().contains(it) }
 }
 
 plugins {
