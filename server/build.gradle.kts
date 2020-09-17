@@ -58,7 +58,7 @@ tasks {
         manifest {
             attributes(
                 mapOf(
-                    "Main-Class" to application.mainClassName
+                    "Main-Class" to application.mainClass.get()
                 )
             )
         }
