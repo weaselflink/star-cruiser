@@ -6,12 +6,15 @@ import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.ShipTemplate
 import de.stefanbissell.starcruiser.ships.cruiserTemplate
+import de.stefanbissell.starcruiser.toRadians
 import de.stefanbissell.starcruiser.twoDigits
 import kotlin.math.abs
 
 class Simulator(
     val shipTemplate: ShipTemplate
 ) {
+
+    private val angularInterval = 0.2.toRadians()
 
     fun analyzeShip(): PerformanceAnalysis {
         val linearAccelerationData = analyzeLinearAcceleration()
@@ -82,17 +85,12 @@ class Simulator(
             val absoluteMax = points.last().bodyParameters.rotationSpeed
             val indexAt99 = points.indexOfFirst { it.bodyParameters.rotationSpeed > absoluteMax * 0.99 }
             val pointAt99 = points[indexAt99]
+            val relevantPoints = points.subList(0, indexAt99 + 1)
             return AngularAccelerationData(
                 maxRotationSpeed = pointAt99.bodyParameters.rotationSpeed.fiveDigits(),
                 timeToMax = pointAt99.time.fiveDigits(),
                 rotationToMax = pointAt99.bodyParameters.rotation.fiveDigits(),
-                points = points.subList(0, indexAt99 + 1).map {
-                    AngularState(
-                        time = it.time.fiveDigits(),
-                        rotation = it.bodyParameters.rotation.fiveDigits(),
-                        rotationSpeed = it.bodyParameters.rotationSpeed.fiveDigits()
-                    )
-                }
+                profile = createAngularAccelerationProfile(relevantPoints)
             )
         }
 
@@ -105,14 +103,49 @@ class Simulator(
             return AngularDecelerationData(
                 timeToStop = points.last().time.fiveDigits(),
                 rotationToStop = points.last().bodyParameters.rotation.fiveDigits(),
-                points = points.map {
-                    AngularState(
-                        time = it.time.fiveDigits(),
-                        rotation = it.bodyParameters.rotation.fiveDigits(),
-                        rotationSpeed = it.bodyParameters.rotationSpeed.fiveDigits()
-                    )
-                }
+                profile = createAngularDecelerationProfile(points)
             )
+        }
+
+        private fun createAngularAccelerationProfile(points: List<SimulationState>): List<AngularState> {
+            val profile = mutableListOf<AngularState>()
+            points.map {
+                AngularState(
+                    time = it.time.fiveDigits(),
+                    rotation = it.bodyParameters.rotation.fiveDigits(),
+                    rotationSpeed = it.bodyParameters.rotationSpeed.fiveDigits()
+                )
+            }.forEachIndexed { index, point ->
+                if (index == 0 || index == points.size - 1) {
+                    profile += point
+                } else {
+                    if (abs(profile.last().rotation - point.rotation) >= angularInterval) {
+                        profile += point
+                    }
+                }
+            }
+            return profile
+        }
+
+        private fun createAngularDecelerationProfile(points: List<SimulationState>): List<AngularState> {
+            val profile = mutableListOf<AngularState>()
+            val rotationToStop = points.last().bodyParameters.rotation
+            points.map {
+                AngularState(
+                    time = it.time.fiveDigits(),
+                    rotation = (rotationToStop - it.bodyParameters.rotation).fiveDigits(),
+                    rotationSpeed = it.bodyParameters.rotationSpeed.fiveDigits()
+                )
+            }.forEachIndexed { index, point ->
+                if (index == 0 || index == points.size - 1) {
+                    profile += point
+                } else {
+                    if (abs(profile.last().rotation - point.rotation) >= angularInterval) {
+                        profile += point
+                    }
+                }
+            }
+            return profile
         }
 
         private fun tickUntil(condition: (SimulationState, SimulationState) -> Boolean): List<SimulationState> {
@@ -160,13 +193,13 @@ data class AngularAccelerationData(
     val maxRotationSpeed: Double,
     val timeToMax: Double,
     val rotationToMax: Double,
-    val points: List<AngularState>
+    val profile: List<AngularState>
 )
 
 data class AngularDecelerationData(
     val timeToStop: Double,
     val rotationToStop: Double,
-    val points: List<AngularState>
+    val profile: List<AngularState>
 )
 
 data class AngularState(
@@ -189,12 +222,10 @@ fun main() {
         )
     ).analyzeShip()
     println("time,rotation,speed")
-    analysis.angularAccelerationData.points.forEach {
+    analysis.angularAccelerationData.profile.forEach {
         println("${it.time},${it.rotation},${it.rotationSpeed}")
     }
-    val lastTime = analysis.angularAccelerationData.points.last().time
-    val lastRotation = analysis.angularAccelerationData.points.last().rotation
-    analysis.angularDecelerationData.points.forEach {
-        println("${it.time + lastTime},${it.rotation + lastRotation},${it.rotationSpeed}")
+    analysis.angularDecelerationData.profile.forEach {
+        println("${it.time},${it.rotation},${it.rotationSpeed}")
     }
 }
