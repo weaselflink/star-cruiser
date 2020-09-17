@@ -14,8 +14,6 @@ class Simulator(
     val shipTemplate: ShipTemplate
 ) {
 
-    private val angularInterval = 0.2.toRadians()
-
     fun analyzeShip(): PerformanceAnalysis {
         val linearAccelerationData = analyzeLinearAcceleration()
         val angularAccelerationData = analyzeAngularAcceleration()
