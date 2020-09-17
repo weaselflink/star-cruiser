@@ -108,44 +108,25 @@ class Simulator(
         }
 
         private fun createAngularAccelerationProfile(points: List<SimulationState>): List<AngularState> {
-            val profile = mutableListOf<AngularState>()
-            points.map {
+            return points.map {
                 AngularState(
                     time = it.time.fiveDigits(),
                     rotation = it.bodyParameters.rotation.fiveDigits(),
                     rotationSpeed = it.bodyParameters.rotationSpeed.fiveDigits()
                 )
-            }.forEachIndexed { index, point ->
-                if (index == 0 || index == points.size - 1) {
-                    profile += point
-                } else {
-                    if (abs(profile.last().rotation - point.rotation) >= angularInterval) {
-                        profile += point
-                    }
-                }
             }
-            return profile
         }
 
         private fun createAngularDecelerationProfile(points: List<SimulationState>): List<AngularState> {
-            val profile = mutableListOf<AngularState>()
+            val timeToStop = points.last().time
             val rotationToStop = points.last().bodyParameters.rotation
-            points.map {
+            return points.map {
                 AngularState(
-                    time = it.time.fiveDigits(),
+                    time = (timeToStop - it.time).fiveDigits(),
                     rotation = (rotationToStop - it.bodyParameters.rotation).fiveDigits(),
                     rotationSpeed = it.bodyParameters.rotationSpeed.fiveDigits()
                 )
-            }.forEachIndexed { index, point ->
-                if (index == 0 || index == points.size - 1) {
-                    profile += point
-                } else {
-                    if (abs(profile.last().rotation - point.rotation) >= angularInterval) {
-                        profile += point
-                    }
-                }
             }
-            return profile
         }
 
         private fun tickUntil(condition: (SimulationState, SimulationState) -> Boolean): List<SimulationState> {
@@ -213,7 +194,31 @@ data class PerformanceAnalysis(
     val linearDecelerationData: LinearDecelerationData,
     val angularAccelerationData: AngularAccelerationData,
     val angularDecelerationData: AngularDecelerationData
-)
+) {
+
+    fun calculateTurn(angle: Double): Double {
+        val accelerationProfile = angularAccelerationData.profile
+        val decelerationProfile = angularDecelerationData.profile.reversed()
+
+        val result = accelerationProfile.lastOrNull { acc ->
+            val corresponding = decelerationProfile.firstOrNull { dec ->
+                dec.rotationSpeed >= acc.rotationSpeed
+            }
+            if (corresponding != null) {
+                acc.rotation + corresponding.rotation <= angle
+            } else {
+                false
+            }
+        }?.rotation ?: 0.0
+
+        val rotationToStop = decelerationProfile.last().rotation
+        return if (result + rotationToStop < angle) {
+            angle - rotationToStop
+        } else {
+            result
+        }.fiveDigits()
+    }
+}
 
 fun main() {
     val analysis = Simulator(
@@ -227,5 +232,9 @@ fun main() {
     }
     analysis.angularDecelerationData.profile.forEach {
         println("${it.time},${it.rotation},${it.rotationSpeed}")
+    }
+    println("=======================")
+    (1..90).forEach {
+        println("$it, ${it.toRadians()} - " + analysis.calculateTurn(it.toRadians()))
     }
 }
