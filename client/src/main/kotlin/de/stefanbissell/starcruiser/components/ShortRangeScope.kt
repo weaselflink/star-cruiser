@@ -28,7 +28,7 @@ import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.lockMarkerStyle
 import de.stefanbissell.starcruiser.pad
 import de.stefanbissell.starcruiser.shipStyle
-import de.stefanbissell.starcruiser.toHeading
+import de.stefanbissell.starcruiser.toIntHeading
 import de.stefanbissell.starcruiser.toRadians
 import de.stefanbissell.starcruiser.translate
 import de.stefanbissell.starcruiser.translateToCenter
@@ -45,7 +45,6 @@ import org.w3c.dom.ROUND
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
-import kotlin.math.roundToInt
 
 class ShortRangeScope(
     private val canvas: HTMLCanvasElement,
@@ -401,7 +400,8 @@ class ShortRangeScope(
         val width = dim.vmin * 12
         val height = dim.vmin * 5
         val textSize = (dim.vmin * 4).toInt()
-        val headingText = snapshot.shortRangeScope.rotation.toHeading().roundToInt().pad(3)
+        val heading = snapshot.shortRangeScope.rotation.toIntHeading()
+        val headingText = heading.pad(3)
 
         save()
 

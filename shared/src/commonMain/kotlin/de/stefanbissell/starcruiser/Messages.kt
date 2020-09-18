@@ -296,16 +296,15 @@ data class WaypointMessage(
     val index: Int,
     val name: String,
     override val position: Vector2,
-    val relativePosition: Vector2,
-    val bearing: Double
+    val relativePosition: Vector2
 ) : Positional
 
 @Serializable
 data class MapSelectionMessage(
     val position: Vector2,
     val label: String,
-    val bearing: Double,
-    val range: Double,
+    val bearing: Int,
+    val range: Int,
     val hullRatio: Double? = null,
     val shield: ShieldMessage? = null,
     val systemsDamage: Map<PoweredSystemType, Double>? = null,

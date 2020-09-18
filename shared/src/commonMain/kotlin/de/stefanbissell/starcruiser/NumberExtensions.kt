@@ -29,6 +29,15 @@ fun Double.toHeading() =
         }
     }
 
+fun Double.toIntHeading() =
+    (90.0 - this.toDegrees()).let {
+        if (it < 0.0) {
+            it % 360.0 + 360.0
+        } else {
+            it % 360.0
+        }
+    }.roundToInt() % 360
+
 fun Double.round(digits: Int) =
     (this * 10.0.pow(digits.absoluteValue)).roundToInt() / 10.0.pow(digits.absoluteValue)
 

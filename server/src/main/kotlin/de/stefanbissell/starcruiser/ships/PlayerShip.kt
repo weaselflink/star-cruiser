@@ -25,11 +25,12 @@ import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.randomShipName
-import de.stefanbissell.starcruiser.toHeading
+import de.stefanbissell.starcruiser.toIntHeading
 import de.stefanbissell.starcruiser.toRadians
 import de.stefanbissell.starcruiser.twoDigits
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 class PlayerShip(
     override val id: ObjectId = ObjectId.random(),
@@ -413,7 +414,7 @@ class PlayerShip(
                     position = waypoint.position,
                     label = waypoint.label,
                     bearing = bearingTo(waypoint.position),
-                    range = rangeTo(waypoint.position).twoDigits(),
+                    range = rangeTo(waypoint.position).roundToInt(),
                     canDelete = true
                 )
             }
@@ -427,7 +428,7 @@ class PlayerShip(
                 position = contact.position,
                 label = contact.designation,
                 bearing = bearingTo(contact.position),
-                range = rangeTo(contact.position).twoDigits(),
+                range = rangeTo(contact.position).roundToInt(),
                 canScan = true
             ).let { message ->
                 val ship = contact.ship
@@ -459,7 +460,7 @@ class PlayerShip(
         get() = powerHandler.getBoostLevel(this)
 
     private fun bearingTo(to: Vector2) =
-        (to - position).angle().toHeading().twoDigits()
+        (to - position).angle().toIntHeading()
 
     private inner class Waypoint(
         val index: Int,
@@ -474,8 +475,7 @@ class PlayerShip(
                 index = index,
                 name = label,
                 position = position.twoDigits(),
-                relativePosition = (position - this@PlayerShip.position).twoDigits(),
-                bearing = (position - this@PlayerShip.position).angle().toHeading().twoDigits()
+                relativePosition = (position - this@PlayerShip.position).twoDigits()
             )
     }
 }

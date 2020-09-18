@@ -13,7 +13,6 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextAlign
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.RIGHT
-import kotlin.math.roundToInt
 
 class SelectionDetails(
     private val canvas: HTMLCanvasElement,
@@ -178,7 +177,7 @@ class SelectionDetails(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawBearing(bearing: Double) {
+    private fun CanvasRenderingContext2D.drawBearing(bearing: Int) {
         save()
 
         font = UiStyle.font(dim.canvas.vmin * 3)
@@ -189,7 +188,7 @@ class SelectionDetails(
             dim.bottomY - dim.height + dim.canvas.vmin * 12
         )
         textAlign = CanvasTextAlign.RIGHT
-        val text = bearing.roundToInt().pad(3)
+        val text = bearing.pad(3)
         fillText(
             text,
             dim.bottomX + dim.width - dim.canvas.vmin * 4,
@@ -199,7 +198,7 @@ class SelectionDetails(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawRange(range: Double) {
+    private fun CanvasRenderingContext2D.drawRange(range: Int) {
         save()
 
         font = UiStyle.font(dim.canvas.vmin * 3)
@@ -210,7 +209,7 @@ class SelectionDetails(
             dim.bottomY - dim.height + dim.canvas.vmin * 16
         )
         textAlign = CanvasTextAlign.RIGHT
-        val text = range.roundToInt().formatThousands()
+        val text = range.formatThousands()
         fillText(
             text,
             dim.bottomX + dim.width - dim.canvas.vmin * 4,

@@ -42,6 +42,15 @@ class NumberExtensionsTest {
     }
 
     @Test
+    fun `converts to rounded heading`() {
+        expectThat(0.49.toRadians().toIntHeading()).isEqualTo(90)
+        expectThat(0.51.toRadians().toIntHeading()).isEqualTo(89)
+        expectThat(89.51.toRadians().toIntHeading()).isEqualTo(0)
+        expectThat(90.49.toRadians().toIntHeading()).isEqualTo(0)
+        expectThat(90.51.toRadians().toIntHeading()).isEqualTo(359)
+    }
+
+    @Test
     fun `rounds to given digits`() {
         expectThat(PI.round(0)).isNear(3.0)
         expectThat(PI.round(2)).isNear(3.14)

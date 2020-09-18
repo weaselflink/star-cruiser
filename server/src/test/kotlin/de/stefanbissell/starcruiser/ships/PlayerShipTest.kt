@@ -145,7 +145,7 @@ class PlayerShipTest {
         ship.addWaypoint(p(5, -4))
 
         expectThat(ship.toShortRangeScopeMessage().waypoints).containsExactly(
-            WaypointMessage(1, "WP1", p(5, -4), p(2, 0), 90.0)
+            WaypointMessage(1, "WP1", p(5, -4), p(2, 0))
         )
     }
 
@@ -166,7 +166,7 @@ class PlayerShipTest {
         ship.deleteSelectedWaypoint()
 
         expectThat(ship.toShortRangeScopeMessage().waypoints).containsExactly(
-            WaypointMessage(2, "WP2", p(10, -4), p(7, 0), 90.0)
+            WaypointMessage(2, "WP2", p(10, -4), p(7, 0))
         )
     }
 
@@ -179,8 +179,8 @@ class PlayerShipTest {
         ship.addWaypoint(p(15, -4))
 
         expectThat(ship.toShortRangeScopeMessage().waypoints).containsExactly(
-            WaypointMessage(1, "WP1", p(15, -4), p(12, 0), 90.0),
-            WaypointMessage(2, "WP2", p(10, -4), p(7, 0), 90.0)
+            WaypointMessage(1, "WP1", p(15, -4), p(12, 0)),
+            WaypointMessage(2, "WP2", p(10, -4), p(7, 0))
         )
     }
 
