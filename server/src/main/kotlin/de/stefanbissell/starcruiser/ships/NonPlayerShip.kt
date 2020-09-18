@@ -22,7 +22,7 @@ class NonPlayerShip(
     override var rotation: Double = 90.0.toRadians(),
 ) : Ship {
 
-    private val shipAi = ShipAi()
+    private val shipAi = ShipAi(this)
     val powerHandler = SimplePowerHandler(template)
     private val beamHandlers = template.beams.map { BeamHandler(it, this) }
     val shieldHandler = ShieldHandler(template.shield)
@@ -48,7 +48,6 @@ class NonPlayerShip(
         updateScan(time, contactList)
         updateLock(time, contactList)
         shipAi.update(
-            ship = this,
             time = time,
             contactList = contactList
         )

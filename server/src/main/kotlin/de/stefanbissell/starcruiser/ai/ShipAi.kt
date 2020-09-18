@@ -4,7 +4,9 @@ import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 
-class ShipAi {
+class ShipAi(
+    val ship: NonPlayerShip
+) {
 
     private val componentAis = listOf(
         ShieldAi(),
@@ -14,7 +16,6 @@ class ShipAi {
     )
 
     fun update(
-        ship: NonPlayerShip,
         time: GameTime,
         contactList: ShipContactList
     ) {

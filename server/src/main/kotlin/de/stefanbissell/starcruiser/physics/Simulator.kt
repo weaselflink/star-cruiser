@@ -3,7 +3,7 @@ package de.stefanbissell.starcruiser.physics
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.fiveDigits
-import de.stefanbissell.starcruiser.ships.PlayerShip
+import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipTemplate
 import de.stefanbissell.starcruiser.ships.cruiserTemplate
 import de.stefanbissell.starcruiser.toRadians
@@ -19,6 +19,7 @@ class Simulator(
         val angularAccelerationData = analyzeAngularAcceleration()
 
         return PerformanceAnalysis(
+            className = shipTemplate.className,
             linearAccelerationData = linearAccelerationData,
             linearDecelerationData = analyzeLinearDeceleration(linearAccelerationData.maxSpeed),
             angularAccelerationData = angularAccelerationData,
@@ -41,7 +42,7 @@ class Simulator(
     private inner class SimulationRun {
         val gameTime = GameTime.atEpoch()
         val physicsEngine = PhysicsEngine()
-        val ship = PlayerShip(template = shipTemplate, rotation = 0.0)
+        val ship = NonPlayerShip(template = shipTemplate, rotation = 0.0)
 
         init {
             physicsEngine.addShip(ship, false)
@@ -152,71 +153,10 @@ class Simulator(
     }
 }
 
-data class SimulationState(
+private data class SimulationState(
     val bodyParameters: BodyParameters,
     val time: Double
 )
-
-data class LinearAccelerationData(
-    val maxSpeed: Double,
-    val timeToMax: Double,
-    val distanceToMax: Double
-)
-
-data class LinearDecelerationData(
-    val timeToStop: Double,
-    val distanceToStop: Double
-)
-
-data class AngularAccelerationData(
-    val maxRotationSpeed: Double,
-    val timeToMax: Double,
-    val rotationToMax: Double,
-    val profile: List<AngularState>
-)
-
-data class AngularDecelerationData(
-    val timeToStop: Double,
-    val rotationToStop: Double,
-    val profile: List<AngularState>
-)
-
-data class AngularState(
-    val time: Double,
-    val rotation: Double,
-    val rotationSpeed: Double
-)
-
-data class PerformanceAnalysis(
-    val linearAccelerationData: LinearAccelerationData,
-    val linearDecelerationData: LinearDecelerationData,
-    val angularAccelerationData: AngularAccelerationData,
-    val angularDecelerationData: AngularDecelerationData
-) {
-
-    fun calculateTurn(angle: Double): Double {
-        val accelerationProfile = angularAccelerationData.profile
-        val decelerationProfile = angularDecelerationData.profile.reversed()
-
-        val result = accelerationProfile.lastOrNull { acc ->
-            val corresponding = decelerationProfile.firstOrNull { dec ->
-                dec.rotationSpeed >= acc.rotationSpeed
-            }
-            if (corresponding != null) {
-                acc.rotation + corresponding.rotation <= angle
-            } else {
-                false
-            }
-        }?.rotation ?: 0.0
-
-        val rotationToStop = decelerationProfile.last().rotation
-        return if (result + rotationToStop < angle) {
-            angle - rotationToStop
-        } else {
-            result
-        }.fiveDigits()
-    }
-}
 
 fun main() {
     val analysis = Simulator(
