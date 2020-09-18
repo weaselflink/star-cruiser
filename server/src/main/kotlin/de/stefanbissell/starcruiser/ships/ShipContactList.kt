@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.ships
 
+import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ScopeContactMessage
@@ -17,8 +18,9 @@ class ShipContactList(
     val contacts: Map<ObjectId, ShipContact> = allShips
         .filterKeys { it != relativeTo.id }
         .mapValues { ShipContact(it.value) }
-    val shipList
-        get() = contacts.values.map { it.ship }
+    val enemies
+        get() = contacts.values
+            .filter { it.contactType == ContactType.Enemy }
 
     operator fun get(key: ObjectId) = contacts[key]
 
