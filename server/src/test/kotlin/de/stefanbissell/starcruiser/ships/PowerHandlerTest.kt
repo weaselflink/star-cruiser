@@ -25,41 +25,47 @@ class PowerHandlerTest {
     @Test
     fun `holds initial value for each system`() {
         PoweredSystemType.values().forEach {
-            expectThat(getLevel(it)).isEqualTo(100)
+            if (it == Reactor) {
+                expectThat(it.getLevel()).isEqualTo(200)
+                expectThat(it.getCoolant()).isEqualTo(1.0)
+            } else {
+                expectThat(it.getLevel()).isEqualTo(100)
+                expectThat(it.getCoolant()).isEqualTo(0.0)
+            }
         }
     }
 
     @Test
     fun `can set system power`() {
-        setLevel(Maneuver, 50)
-        expectThat(getLevel(Maneuver)).isEqualTo(50)
+        Maneuver.setLevel(50)
+        expectThat(Maneuver.getLevel()).isEqualTo(50)
     }
 
     @Test
     fun `caps power above 0`() {
-        setLevel(Weapons, -10)
-        expectThat(getLevel(Weapons)).isEqualTo(0)
+        Weapons.setLevel(-10)
+        expectThat(Weapons.getLevel()).isEqualTo(0)
     }
 
     @Test
     fun `caps power below 200`() {
-        setLevel(Shields, 210)
-        expectThat(getLevel(Shields)).isEqualTo(200)
+        Shields.setLevel(210)
+        expectThat(Shields.getLevel()).isEqualTo(200)
     }
 
     @Test
     fun `rounds power to nearest multiple of 5`() {
-        setLevel(Jump, 52)
-        expectThat(getLevel(Jump)).isEqualTo(50)
-        setLevel(Impulse, 58)
-        expectThat(getLevel(Impulse)).isEqualTo(60)
+        Jump.setLevel(52)
+        expectThat(Jump.getLevel()).isEqualTo(50)
+        Impulse.setLevel(58)
+        expectThat(Impulse.getLevel()).isEqualTo(60)
     }
 
     @Test
     fun `compares messages correctly`() {
         val initialMessage = powerHandler.toMessage()
 
-        setLevel(Reactor, 52)
+        Reactor.setLevel(52)
 
         expectThat(powerHandler.toMessage())
             .isNotEqualTo(initialMessage)
@@ -67,6 +73,7 @@ class PowerHandlerTest {
 
     @Test
     fun `updates capacitors`() {
+        Reactor.setLevel(100)
         expectThat(powerHandler.toMessage().capacitors)
             .isEqualTo(carrierTemplate.maxCapacitors)
 
@@ -78,6 +85,7 @@ class PowerHandlerTest {
 
     @Test
     fun `updates boost level modifier`() {
+        Reactor.setLevel(100)
         stepTime(198)
 
         expectThat(powerHandler.toMessage().capacitors)
@@ -132,6 +140,7 @@ class PowerHandlerTest {
 
     @Test
     fun `show stable capacitors`() {
+        Reactor.setLevel(100)
         stepTime(1)
 
         expectThat(powerHandler.toMessage().capacitorsPrediction)
@@ -141,6 +150,7 @@ class PowerHandlerTest {
 
     @Test
     fun `predicts time to capacitors full`() {
+        Reactor.setLevel(100)
         stepTime(60)
 
         expectThat(powerHandler.toMessage().capacitors)
@@ -163,9 +173,12 @@ class PowerHandlerTest {
         powerHandler.update(time)
     }
 
-    private fun setLevel(systemType: PoweredSystemType, value: Int) =
-        powerHandler.setLevel(systemType, value)
+    private fun PoweredSystemType.setLevel(value: Int) =
+        powerHandler.setLevel(this, value)
 
-    private fun getLevel(systemType: PoweredSystemType) =
-        powerHandler.toMessage().settings[systemType]?.level
+    private fun PoweredSystemType.getLevel() =
+        powerHandler.toMessage().settings[this]?.level
+
+    private fun PoweredSystemType.getCoolant() =
+        powerHandler.toMessage().settings[this]?.coolant
 }

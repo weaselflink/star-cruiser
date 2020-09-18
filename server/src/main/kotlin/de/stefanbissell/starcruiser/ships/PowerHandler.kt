@@ -28,6 +28,13 @@ class PowerHandler(
     private var powerUsed: Double = 0.0
     private var repairHandler: MiniGameRepairHandler? = null
 
+    init {
+        getPoweredSystem(PoweredSystemType.Reactor).also {
+            it.coolant = 1.0
+            it.level = 200
+        }
+    }
+
     fun update(time: GameTime) {
         generatePower(time)
         drainPower(time)
