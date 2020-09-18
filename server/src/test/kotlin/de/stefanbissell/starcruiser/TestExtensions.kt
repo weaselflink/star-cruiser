@@ -1,5 +1,7 @@
 package de.stefanbissell.starcruiser
 
+import de.stefanbissell.starcruiser.ships.Ship
+import de.stefanbissell.starcruiser.ships.ShipContactList
 import strikt.api.Assertion
 import strikt.assertions.isGreaterThan
 import strikt.assertions.isLessThan
@@ -10,3 +12,5 @@ fun Assertion.Builder<Double>.isNear(expected: Double, tolerance: Double = 0.000
         isLessThan(expected + tolerance)
     }
 }
+
+fun emptyContactList(ship: Ship) = ShipContactList(ship, emptyList())

@@ -14,7 +14,8 @@ class ShipAi(
         ShieldAi(),
         RepairAi(),
         ScanAi(),
-        LockAi()
+        LockAi(),
+        HelmAi()
     )
 
     fun update(
