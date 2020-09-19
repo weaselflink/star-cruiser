@@ -1,7 +1,6 @@
 package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
-import de.stefanbissell.starcruiser.physics.PerformanceAnalysisStore
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 
@@ -9,7 +8,6 @@ class ShipAi(
     val ship: NonPlayerShip
 ) {
 
-    private val performanceAnalysis = PerformanceAnalysisStore[ship.template.className]
     private val componentAis = listOf(
         ShieldAi(),
         RepairAi(),
