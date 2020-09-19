@@ -11,8 +11,11 @@ import kotlin.math.sign
 
 class HelmAi(interval: Double = 0.1) : ComponentAi(interval) {
 
+    private val tolerance = 0.2.toRadians()
+
     var targetRotation: Double? = null
     var rudderNeutralPoint: Double? = null
+    var endTurnCondition: (Double) -> Boolean = { false }
 
     override fun execute(
         ship: NonPlayerShip,
@@ -20,10 +23,10 @@ class HelmAi(interval: Double = 0.1) : ComponentAi(interval) {
         contactList: ShipContactList
     ) {
         targetRotation?.let {
-            val diff = smallestSignedAngleBetween(ship.rotation, it)
-            if (abs(diff) < 0.2.toRadians()) {
+            if (endTurnCondition(ship.rotation)) {
                 endTurn(ship)
             } else {
+                val diff = smallestSignedAngleBetween(ship.rotation, it)
                 turnTowardsTarget(ship, diff)
             }
         }
@@ -34,9 +37,9 @@ class HelmAi(interval: Double = 0.1) : ComponentAi(interval) {
 
         rudderNeutralPoint?.also { point ->
             if (abs(diff) < point) {
-                ship.rudder = (sign(diff) * 10).toInt()
+                ship.rudder = (diff.sign * 10).toInt()
             } else {
-                ship.rudder = (sign(diff) * 100).toInt()
+                ship.rudder = (diff.sign * 100).toInt()
             }
         }
     }
@@ -46,6 +49,11 @@ class HelmAi(interval: Double = 0.1) : ComponentAi(interval) {
             PerformanceAnalysisStore[ship.template.className]?.also { performance ->
                 val turn = performance.calculateTurn(abs(diff))
                 rudderNeutralPoint = abs(diff) - turn
+                endTurnCondition = if (diff.sign > 0) {
+                    { it > targetRotation!! - tolerance }
+                } else {
+                    { it < targetRotation!! + tolerance }
+                }
             }
         }
     }
@@ -53,5 +61,7 @@ class HelmAi(interval: Double = 0.1) : ComponentAi(interval) {
     private fun endTurn(ship: NonPlayerShip) {
         ship.rudder = 0
         targetRotation = null
+        rudderNeutralPoint = null
+        endTurnCondition = { false }
     }
 }

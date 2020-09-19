@@ -36,8 +36,27 @@ class HelmAiTest {
 
     @Test
     fun `ends turn when target rotation reached`() {
-        helmAi.targetRotation = 0.1.toRadians()
+        helmAi.targetRotation = PI * 0.5
         ship.rudder = 100
+
+        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+
+        ship.rotation = PI * 0.5 - 0.1.toRadians()
+
+        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+
+        expectThat(helmAi.targetRotation).isNull()
+        expectThat(ship.rudder).isEqualTo(0)
+    }
+
+    @Test
+    fun `ends turn when overshooting target rotation`() {
+        helmAi.targetRotation = PI * 0.5
+        ship.rudder = 100
+
+        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+
+        ship.rotation = PI * 0.5 + 10.0.toRadians()
 
         helmAi.execute(ship, GameTime(), emptyContactList(ship))
 
@@ -59,5 +78,31 @@ class HelmAiTest {
 
         expectThat(helmAi.targetRotation).isNotNull()
         expectThat(ship.rudder).isEqualTo(10)
+    }
+
+    @Test
+    fun `starts second turn`() {
+        helmAi.targetRotation = PI * 0.5
+
+        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+
+        ship.rotation = PI * 0.5
+
+        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+
+        expectThat(helmAi.targetRotation).isNull()
+
+        helmAi.targetRotation = PI
+
+        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+
+        expectThat(ship.rudder).isEqualTo(100)
+
+        ship.rotation = PI
+
+        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+
+        expectThat(helmAi.targetRotation).isNull()
+        expectThat(ship.rudder).isEqualTo(0)
     }
 }
