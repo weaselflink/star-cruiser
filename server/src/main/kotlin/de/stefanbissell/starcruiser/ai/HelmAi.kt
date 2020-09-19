@@ -11,7 +11,7 @@ import kotlin.math.sign
 
 class HelmAi(interval: Double = 0.1) : ComponentAi(interval) {
 
-    var targetRotation: Double? = 0.0
+    var targetRotation: Double? = null
     var rudderNeutralPoint: Double? = null
 
     override fun execute(
@@ -34,7 +34,7 @@ class HelmAi(interval: Double = 0.1) : ComponentAi(interval) {
 
         rudderNeutralPoint?.also { point ->
             if (abs(diff) < point) {
-                ship.rudder = 0
+                ship.rudder = (sign(diff) * 10).toInt()
             } else {
                 ship.rudder = (sign(diff) * 100).toInt()
             }

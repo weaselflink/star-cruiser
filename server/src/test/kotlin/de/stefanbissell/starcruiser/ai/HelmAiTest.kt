@@ -46,7 +46,7 @@ class HelmAiTest {
     }
 
     @Test
-    fun `centers rudder after calculated point`() {
+    fun `minimal rudder after calculated point`() {
         helmAi.targetRotation = PI * 0.5
 
         helmAi.execute(ship, GameTime(), emptyContactList(ship))
@@ -58,6 +58,6 @@ class HelmAiTest {
         helmAi.execute(ship, GameTime(), emptyContactList(ship))
 
         expectThat(helmAi.targetRotation).isNotNull()
-        expectThat(ship.rudder).isEqualTo(0)
+        expectThat(ship.rudder).isEqualTo(10)
     }
 }

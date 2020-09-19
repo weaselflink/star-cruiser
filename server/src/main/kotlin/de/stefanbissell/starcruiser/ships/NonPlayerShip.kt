@@ -90,6 +90,7 @@ class NonPlayerShip(
         if (lockHandler?.targetId == shipId) {
             abortLock()
         }
+        shipAi.targetDestroyed(shipId)
     }
 
     override fun toContactMessage(relativeTo: Ship) =
