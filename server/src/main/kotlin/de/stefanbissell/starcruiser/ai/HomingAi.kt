@@ -19,12 +19,10 @@ class HomingAi(
         contactList: ShipContactList
     ) {
         selectTarget(contactList)
-        println("${ship.designation} target $target")
         target?.let {
             contactList[it]
         }?.also {
             if (helmAi.targetRotation == null) {
-                println("${ship.designation} helm ${it.relativePosition.angle()}")
                 helmAi.targetRotation = it.relativePosition.angle()
             }
         }
