@@ -23,10 +23,10 @@ class HelmAi(interval: Double = 0.1) : ComponentAi(interval) {
         contactList: ShipContactList
     ) {
         targetRotation?.let {
-            if (endTurnCondition(ship.rotation)) {
+            val diff = smallestSignedAngleBetween(ship.rotation, it)
+            if (endTurnCondition(diff)) {
                 endTurn(ship)
             } else {
-                val diff = smallestSignedAngleBetween(ship.rotation, it)
                 turnTowardsTarget(ship, diff)
             }
         }
@@ -50,9 +50,9 @@ class HelmAi(interval: Double = 0.1) : ComponentAi(interval) {
                 val turn = performance.calculateTurn(abs(diff))
                 rudderNeutralPoint = abs(diff) - turn
                 endTurnCondition = if (diff.sign > 0) {
-                    { it > targetRotation!! - tolerance }
+                    { it < tolerance }
                 } else {
-                    { it < targetRotation!! + tolerance }
+                    { it > -tolerance }
                 }
             }
         }
