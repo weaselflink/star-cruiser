@@ -18,6 +18,12 @@ class MathUtilsKtTest {
         expectAngle(2 * PI - 0.5, 0.0).isNear(0.5)
         expectAngle(PI, 2 * PI - 0.5).isNear(PI - 0.5)
         expectAngle(2 * PI - 0.5, PI).isNear(-(PI - 0.5))
+        expectAngle(-PI * 0.5, PI * 0.4).isNear(PI * 0.9)
+        expectAngle(PI * 0.5, -PI * 0.4).isNear(-PI * 0.9)
+        expectAngle(PI * 0.9, -PI * 0.9).isNear(PI * 0.2)
+        expectAngle(-PI * 0.9, PI * 0.9).isNear(-PI * 0.2)
+        expectAngle(-PI * 0.9, -PI * 0.8).isNear(PI * 0.1)
+        expectAngle(-PI * 0.8, -PI * 0.9).isNear(-PI * 0.1)
     }
 
     private fun expectAngle(x: Double, y: Double) =
