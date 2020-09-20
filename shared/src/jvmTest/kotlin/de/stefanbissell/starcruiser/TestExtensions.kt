@@ -3,9 +3,9 @@ package de.stefanbissell.starcruiser
 import strikt.api.Assertion
 import kotlin.math.abs
 
-fun Assertion.Builder<Double>.isNear(expected: Double, tolerance: Double = 0.0000001) =
+fun Assertion.Builder<Double>.isNear(expected: Number, tolerance: Double = 0.0000001) =
     assert("is nearly equal to %s", expected) {
-        val diff = abs(it - expected)
+        val diff = abs(it - expected.toDouble())
         if (diff < tolerance && diff < tolerance) pass() else fail()
     }
 

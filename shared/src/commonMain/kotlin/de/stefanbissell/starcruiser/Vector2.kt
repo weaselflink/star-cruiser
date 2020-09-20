@@ -69,4 +69,6 @@ data class Vector2(
 
 fun p(x: Number, y: Number) = Vector2(x, y)
 
-operator fun Double.times(other: Vector2) = other * this
+operator fun Double.times(other: Vector2): Vector2 = other * this
+
+operator fun Vector2.times(other: Vector2): Double = (x * other.x) + (y * other.y)
