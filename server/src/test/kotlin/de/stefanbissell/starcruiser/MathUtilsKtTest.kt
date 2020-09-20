@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser
 
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.isEqualTo
 import kotlin.math.PI
 
 class MathUtilsKtTest {
@@ -24,6 +25,24 @@ class MathUtilsKtTest {
         expectAngle(-PI * 0.9, PI * 0.9).isNear(-PI * 0.2)
         expectAngle(-PI * 0.9, -PI * 0.8).isNear(PI * 0.1)
         expectAngle(-PI * 0.8, -PI * 0.9).isNear(-PI * 0.1)
+    }
+
+    @Test
+    fun `does not solve quadratic equation with imaginary solutions`() {
+        expectThat(solveQuadratic(1.0, 1.0, 1.0))
+            .isEqualTo(QuadraticResult.Imaginary)
+    }
+
+    @Test
+    fun `solves quadratic equation with single solution`() {
+        expectThat(solveQuadratic(1.0, 2.0, 1.0))
+            .isEqualTo(QuadraticResult.One(-1.0))
+    }
+
+    @Test
+    fun `solves quadratic equation with two solutions`() {
+        expectThat(solveQuadratic(2.0, 5.0, 2.0))
+            .isEqualTo(QuadraticResult.Two(-2.0 / 4.0, -8.0 / 4.0))
     }
 
     private fun expectAngle(x: Double, y: Double) =
