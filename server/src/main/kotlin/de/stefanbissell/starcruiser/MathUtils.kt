@@ -20,16 +20,14 @@ fun smallestSignedAngleBetween(source: Number, target: Number): Double {
 
 fun solveQuadratic(a: Double, b: Double, c: Double): QuadraticResult {
     val rootBody = b * b - 4 * a * c
-    if (rootBody < 0.0) {
-        return QuadraticResult.Imaginary
+    return when {
+        rootBody < 0.0 -> QuadraticResult.Imaginary
+        rootBody == 0.0 -> QuadraticResult.One(-b / (2 * a))
+        else -> QuadraticResult.Two(
+            (-b + sqrt(rootBody)) / (2 * a),
+            (-b - sqrt(rootBody)) / (2 * a)
+        )
     }
-    if (rootBody == 0.0) {
-        return QuadraticResult.One(-b / (2 * a))
-    }
-    return QuadraticResult.Two(
-        (-b + sqrt(rootBody)) / (2 * a),
-        (-b - sqrt(rootBody)) / (2 * a)
-    )
 }
 
 sealed class QuadraticResult {
