@@ -33,14 +33,19 @@ class HomingAi(
         ship: NonPlayerShip,
         targetShip: ShipContactList.ShipContact
     ): Double =
-        interceptPoint(
-            interceptorPosition = ship.position,
-            interceptorSpeed = ship.speed.length(),
-            targetPosition = targetShip.position,
-            targetSpeed = targetShip.speed
-        )?.let {
-            it - ship.position
-        }?.angle() ?: targetShip.relativePosition.angle()
+        if (targetShip.range > 200.0) {
+            interceptPoint(
+                interceptorPosition = ship.position,
+                interceptorSpeed = ship.speed.length(),
+                targetPosition = targetShip.position,
+                targetSpeed = targetShip.speed
+            )?.let {
+                it - ship.position
+            }?.angle() ?: targetShip.relativePosition.angle()
+        } else {
+            targetShip.relativePosition.angle()
+        }
+
 
     override fun targetDestroyed(shipId: ObjectId) {
         if (target == shipId) {
