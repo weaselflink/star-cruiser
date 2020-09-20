@@ -51,6 +51,7 @@ class PlayerShip(
     val scans = mutableMapOf<ObjectId, ScanLevel>()
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
+    override var speed: Vector2 = Vector2()
     override var hull = template.hull
     private val jumpHandler = JumpHandler(
         jumpDrive = template.jumpDrive
@@ -93,6 +94,7 @@ class PlayerShip(
         physicsEngine.getBodyParameters(id)?.let {
             position = it.position
             rotation = it.rotation
+            speed = it.speed
         }
 
         updateHistory(time)

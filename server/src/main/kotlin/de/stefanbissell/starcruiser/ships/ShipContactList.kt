@@ -40,6 +40,7 @@ class ShipContactList(
         val designation = ship.designation
         val position = ship.position
         val rotation = ship.rotation
+        val speed = ship.speed
         val relativePosition by lazy {
             position - relativeTo.position
         }

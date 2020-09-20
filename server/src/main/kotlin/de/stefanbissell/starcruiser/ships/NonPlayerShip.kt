@@ -33,6 +33,7 @@ class NonPlayerShip(
         get() = max(template.shortRangeScopeRange, template.sensorRange)
     var throttle: Int = 0
     var rudder: Int = 0
+    override var speed: Vector2 = Vector2()
     override var hull = template.hull
     override val systemsDamage
         get() = powerHandler.systemsDamage
@@ -63,6 +64,7 @@ class NonPlayerShip(
         physicsEngine.getBodyParameters(id)?.let {
             position = it.position
             rotation = it.rotation
+            speed = it.speed
         }
     }
 

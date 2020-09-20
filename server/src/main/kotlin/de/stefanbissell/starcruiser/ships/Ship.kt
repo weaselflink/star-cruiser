@@ -20,6 +20,7 @@ interface Ship {
     val designation: String
     var position: Vector2
     var rotation: Double
+    val speed: Vector2
     var hull: Double
     val systemsDamage: Map<PoweredSystemType, Double>
 
