@@ -26,6 +26,7 @@ import kotlinx.css.FontWeight.Companion.bold
 import kotlinx.css.Gap
 import kotlinx.css.JustifyContent
 import kotlinx.css.Outline
+import kotlinx.css.Position.absolute
 import kotlinx.css.Position.fixed
 import kotlinx.css.TextAlign
 import kotlinx.css.alignContent
@@ -186,12 +187,6 @@ private val BODY.joinUi
 
 private val BODY.destroyedUi
     get() = htmlUi("destroyed-ui") {
-        styleCss {
-            display = grid
-            minHeight = 100.vh
-            alignContent = Align.center
-            justifyContent = JustifyContent.center
-        }
         div(classes = "popup") {
             p {
                 +"Your ship was destroyed"
@@ -243,13 +238,29 @@ private fun BODY.htmlUi(divId: String, block: DIV.() -> Unit = {}) {
 
 private val CSSBuilder.buttonCss: Unit
     get() {
+        "#join-ui" {
+            position = absolute
+            zIndex = 10
+        }
+        "#destroyed-ui" {
+            position = absolute
+            zIndex = 10
+            width = 100.pct
+            display = grid
+            minHeight = 100.vh
+            alignContent = Align.center
+            justifyContent = JustifyContent.center
+        }
+        "#common-ship-ui" {
+            position = absolute
+            zIndex = 10
+        }
         ".topLeftButtons, .topRightButtons" {
             position = fixed
             display = grid
             gap = Gap(1.vmin.value)
             marginTop = 1.vmin
             top = 0.vmin
-            zIndex = 10
             padding(4.vmin, 0.vmin)
         }
         ".topLeftButtons" {
@@ -264,7 +275,6 @@ private val CSSBuilder.buttonCss: Unit
             gap = Gap(1.vmin.value)
             top = 1.vmin
             left = 0.vmin
-            zIndex = 10
         }
         "button" {
             display = block
