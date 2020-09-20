@@ -46,7 +46,6 @@ class HomingAi(
             targetShip.relativePosition.angle()
         }
 
-
     override fun targetDestroyed(shipId: ObjectId) {
         if (target == shipId) {
             target = null
