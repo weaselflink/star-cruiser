@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isNull
 import kotlin.math.PI
 
 class MathUtilsKtTest {
@@ -43,6 +44,30 @@ class MathUtilsKtTest {
     fun `solves quadratic equation with two solutions`() {
         expectThat(solveQuadratic(2.0, 5.0, 2.0))
             .isEqualTo(QuadraticResult.Two(-2.0 / 4.0, -8.0 / 4.0))
+    }
+
+    @Test
+    fun `finds smallest positive in quadratic solution`() {
+        expectThat(QuadraticResult.Imaginary.smallestPositive())
+            .isNull()
+        expectThat(QuadraticResult.One(-1.0).smallestPositive())
+            .isNull()
+        expectThat(QuadraticResult.One(0.0).smallestPositive())
+            .isEqualTo(0.0)
+        expectThat(QuadraticResult.One(1.0).smallestPositive())
+            .isEqualTo(1.0)
+        expectThat(QuadraticResult.Two(-1.0, -1.0).smallestPositive())
+            .isNull()
+        expectThat(QuadraticResult.Two(-1.0, 0.0).smallestPositive())
+            .isEqualTo(0.0)
+        expectThat(QuadraticResult.Two(0.0, -1.0).smallestPositive())
+            .isEqualTo(0.0)
+        expectThat(QuadraticResult.Two(1.0, -1.0).smallestPositive())
+            .isEqualTo(1.0)
+        expectThat(QuadraticResult.Two(1.0, 0.0).smallestPositive())
+            .isEqualTo(0.0)
+        expectThat(QuadraticResult.Two(2.0, 1.0).smallestPositive())
+            .isEqualTo(1.0)
     }
 
     private fun expectAngle(x: Double, y: Double) =

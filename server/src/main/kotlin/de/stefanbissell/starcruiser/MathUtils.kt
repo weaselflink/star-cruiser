@@ -37,4 +37,15 @@ sealed class QuadraticResult {
     data class One(val value: Double) : QuadraticResult()
 
     data class Two(val first: Double, val second: Double) : QuadraticResult()
+
+    fun smallestPositive() =
+        when (this) {
+            is Imaginary -> null
+            is One -> if (value >= 0) value else null
+            is Two -> {
+                listOf(first, second)
+                    .filter { it >= 0 }
+                    .minOrNull()
+            }
+        }
 }
