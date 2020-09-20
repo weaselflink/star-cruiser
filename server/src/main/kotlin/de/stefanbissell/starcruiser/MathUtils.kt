@@ -18,7 +18,27 @@ fun smallestSignedAngleBetween(source: Number, target: Number): Double {
     }
 }
 
+fun interceptPoint(
+    interceptorPosition: Vector2,
+    interceptorSpeed: Double,
+    targetPosition: Vector2,
+    targetSpeed: Vector2
+): Vector2? {
+    val relativePosition = targetPosition - interceptorPosition
+    val a = (targetSpeed * targetSpeed) - (interceptorSpeed * interceptorSpeed)
+    val b = 2 * (relativePosition * targetSpeed)
+    val c = relativePosition * relativePosition
+    val interceptTime = solveQuadratic(a, b, c).smallestPositive()
+
+    return interceptTime?.let {
+        targetPosition + (targetSpeed * it)
+    }
+}
+
 fun solveQuadratic(a: Double, b: Double, c: Double): QuadraticResult {
+    if (a == 0.0) {
+        return solveLinear(b, c)
+    }
     val rootBody = b * b - 4 * a * c
     return when {
         rootBody < 0.0 -> QuadraticResult.Imaginary
@@ -27,6 +47,14 @@ fun solveQuadratic(a: Double, b: Double, c: Double): QuadraticResult {
             (-b + sqrt(rootBody)) / (2 * a),
             (-b - sqrt(rootBody)) / (2 * a)
         )
+    }
+}
+
+fun solveLinear(b: Double, c: Double): QuadraticResult {
+    return if (b == 0.0) {
+        QuadraticResult.Imaginary
+    } else {
+        QuadraticResult.One(-c / b)
     }
 }
 

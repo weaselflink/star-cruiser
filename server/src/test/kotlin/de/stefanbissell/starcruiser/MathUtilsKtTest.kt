@@ -3,8 +3,10 @@ package de.stefanbissell.starcruiser
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isNotNull
 import strikt.assertions.isNull
 import kotlin.math.PI
+import kotlin.math.sqrt
 
 class MathUtilsKtTest {
 
@@ -68,6 +70,68 @@ class MathUtilsKtTest {
             .isEqualTo(0.0)
         expectThat(QuadraticResult.Two(2.0, 1.0).smallestPositive())
             .isEqualTo(1.0)
+    }
+
+    @Test
+    fun `calculates intercept point`() {
+        expectThat(
+            interceptPoint(
+                interceptorPosition = p(0, 0),
+                interceptorSpeed = 1.0,
+                targetPosition = p(1, 0),
+                targetSpeed = p(1, 0)
+            )
+        ).isNull()
+
+        expectThat(
+            interceptPoint(
+                interceptorPosition = p(0, 0),
+                interceptorSpeed = 1.0,
+                targetPosition = p(1, -1),
+                targetSpeed = p(0, 1)
+            )
+        ).isNotNull()
+            .isNear(p(1, 0))
+
+        expectThat(
+            interceptPoint(
+                interceptorPosition = p(0, 0),
+                interceptorSpeed = sqrt(2.0),
+                targetPosition = p(1, -2),
+                targetSpeed = p(0, 1)
+            )
+        ).isNotNull()
+            .isNear(p(1, -1))
+
+        expectThat(
+            interceptPoint(
+                interceptorPosition = p(0, 0),
+                interceptorSpeed = 5.0,
+                targetPosition = p(4, 0),
+                targetSpeed = p(0, 3)
+            )
+        ).isNotNull()
+            .isNear(p(4, 3))
+
+        expectThat(
+            interceptPoint(
+                interceptorPosition = p(0, 0),
+                interceptorSpeed = 5.0,
+                targetPosition = p(4, 0),
+                targetSpeed = p(0, 3)
+            )
+        ).isNotNull()
+            .isNear(p(4, 3))
+
+        expectThat(
+            interceptPoint(
+                interceptorPosition = p(5, 5),
+                interceptorSpeed = 10.0,
+                targetPosition = p(10, 10),
+                targetSpeed = p(0, 0)
+            )
+        ).isNotNull()
+            .isNear(p(10, 10))
     }
 
     private fun expectAngle(x: Double, y: Double) =
