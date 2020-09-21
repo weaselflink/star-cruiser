@@ -9,7 +9,7 @@ import de.stefanbissell.starcruiser.ships.ShipContactList
 
 class HomingAi(
     private val helmAi: HelmAi,
-    interval: Double = 10.0
+    interval: Double = 5.0
 ) : ComponentAi(interval) {
 
     var target: ObjectId? = null
