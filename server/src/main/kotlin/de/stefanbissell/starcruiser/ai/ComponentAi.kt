@@ -5,26 +5,20 @@ import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 
-class ShipAi(
-    val ship: NonPlayerShip
+abstract class ComponentAi(
+    private val interval: Double = 1.0
 ) {
 
-    private val helmAi = HelmAi()
-    private val componentAis = listOf(
-        ShieldAi(),
-        RepairAi(),
-        ScanAi(),
-        LockAi(),
-        helmAi,
-        HomingAi(helmAi)
-    )
+    private var lastCheck: Double = -Double.MAX_VALUE
 
     fun update(
+        ship: NonPlayerShip,
         time: GameTime,
         contactList: ShipContactList
     ) {
-        componentAis.forEach {
-            it.update(
+        if (time.current - lastCheck > interval) {
+            lastCheck = time.current
+            execute(
                 ship = ship,
                 time = time,
                 contactList = contactList
@@ -32,9 +26,11 @@ class ShipAi(
         }
     }
 
-    fun targetDestroyed(shipId: ObjectId) {
-        componentAis.forEach {
-            it.targetDestroyed(shipId)
-        }
-    }
+    open fun targetDestroyed(shipId: ObjectId) = Unit
+
+    abstract fun execute(
+        ship: NonPlayerShip,
+        time: GameTime,
+        contactList: ShipContactList
+    )
 }
