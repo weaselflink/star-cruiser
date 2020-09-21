@@ -26,6 +26,26 @@ class HomingAiTest {
     private val shipList = mutableListOf<Ship>()
 
     @Test
+    fun `stops when to close to target`() {
+        ship.throttle = 50
+        addShip(p(90, 0))
+
+        executeAi()
+
+        expectThat(ship.throttle).isEqualTo(0)
+    }
+
+    @Test
+    fun `throttles up when distant from target`() {
+        ship.throttle = 0
+        addShip(p(110, 0))
+
+        executeAi()
+
+        expectThat(ship.throttle).isEqualTo(50)
+    }
+
+    @Test
     fun `does not home on friendly ship`() {
         addShip(hostile = false)
 

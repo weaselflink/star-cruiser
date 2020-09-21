@@ -23,6 +23,11 @@ class HomingAi(
         target?.let {
             contactList[it]
         }?.also {
+            if (it.range < 100.0) {
+                ship.throttle = 0
+            } else {
+                ship.throttle = 50
+            }
             if (helmAi.targetRotation == null) {
                 helmAi.targetRotation = angleToTarget(ship, it)
             }
