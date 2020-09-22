@@ -21,25 +21,28 @@ class Asteroid(
         AsteroidMessage(
             id = id,
             model = "asteroid01",
-            radius = radius,
-            position = position,
-            relativePosition = position - relativeTo.position,
-            rotation = rotation
+            radius = radius.twoDigits(),
+            position = position.twoDigits(),
+            relativePosition = relativePosition(relativeTo),
+            rotation = rotation.fiveDigits()
         )
 
     fun toScopeMessage(relativeTo: Ship) =
         ScopeAsteroidMessage(
             id = id,
-            radius = radius,
-            relativePosition = position - relativeTo.position,
-            rotation = rotation
+            radius = radius.twoDigits(),
+            relativePosition = relativePosition(relativeTo),
+            rotation = rotation.fiveDigits()
         )
 
     fun toMapMessage() =
         MapAsteroidMessage(
             id = id,
-            radius = radius,
-            position = position,
-            rotation = rotation
+            radius = radius.twoDigits(),
+            position = position.twoDigits(),
+            rotation = rotation.fiveDigits()
         )
+
+    private fun relativePosition(relativeTo: Ship) =
+        (position - relativeTo.position).twoDigits()
 }
