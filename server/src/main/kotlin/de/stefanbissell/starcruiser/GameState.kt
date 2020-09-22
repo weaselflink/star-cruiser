@@ -340,28 +340,28 @@ class GameState {
             .map { it.toMapContactMessage() }
     }
 
-    private fun getMapAsteroids(clientShip: PlayerShip): List<MapAsteroidMessage> {
-        return asteroids
-            .filter { clientShip.inSensorRange(it) }
-            .map { it.toMapMessage() }
-    }
-
     private fun ShipContactList.getScopeContacts(): List<ScopeContactMessage> {
         return allNearScopeRange()
             .map { it.toScopeContactMessage() }
     }
 
-    private fun getScopeAsteroids(clientShip: Ship): List<AsteroidMessage> {
+    private fun getAsteroids(clientShip: PlayerShip): List<AsteroidMessage> {
         return asteroids
             .map { it.toMessage(clientShip) }
+    }
+
+    private fun getScopeAsteroids(clientShip: Ship): List<ScopeAsteroidMessage> {
+        return asteroids
+            .map { it.toScopeMessage(clientShip) }
             .filter {
                 it.relativePosition.length() < clientShip.template.shortRangeScopeRange * 1.1
             }
     }
 
-    private fun getAsteroids(clientShip: PlayerShip): List<AsteroidMessage> {
+    private fun getMapAsteroids(clientShip: PlayerShip): List<MapAsteroidMessage> {
         return asteroids
-            .map { it.toMessage(clientShip) }
+            .filter { clientShip.inSensorRange(it) }
+            .map { it.toMapMessage() }
     }
 
     private fun destroyShip(shipId: ObjectId) {

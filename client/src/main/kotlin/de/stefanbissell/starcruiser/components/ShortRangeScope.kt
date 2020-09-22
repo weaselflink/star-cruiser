@@ -1,11 +1,11 @@
 package de.stefanbissell.starcruiser.components
 
-import de.stefanbissell.starcruiser.AsteroidMessage
 import de.stefanbissell.starcruiser.BeamStatus
 import de.stefanbissell.starcruiser.ClientState
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.ScopeAsteroidMessage
 import de.stefanbissell.starcruiser.ScopeContactMessage
 import de.stefanbissell.starcruiser.SnapshotMessage.ShortRangeScopeStation
 import de.stefanbissell.starcruiser.Vector2
@@ -245,7 +245,7 @@ class ShortRangeScope(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawAsteroid(asteroid: AsteroidMessage) {
+    private fun CanvasRenderingContext2D.drawAsteroid(asteroid: ScopeAsteroidMessage) {
         val posOnScope = asteroid.relativePosition.adjustForScope()
         save()
         translate(posOnScope)

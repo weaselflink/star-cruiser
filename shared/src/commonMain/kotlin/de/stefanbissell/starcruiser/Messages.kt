@@ -69,7 +69,7 @@ sealed class SnapshotMessage {
     interface ShortRangeScopeStation {
         val shortRangeScope: ShortRangeScopeMessage
         val contacts: List<ScopeContactMessage>
-        val asteroids: List<AsteroidMessage>
+        val asteroids: List<ScopeAsteroidMessage>
     }
 
     @Serializable
@@ -84,7 +84,7 @@ sealed class SnapshotMessage {
     data class Helm(
         override val shortRangeScope: ShortRangeScopeMessage,
         override val contacts: List<ScopeContactMessage>,
-        override val asteroids: List<AsteroidMessage>,
+        override val asteroids: List<ScopeAsteroidMessage>,
         val throttle: Int,
         val rudder: Int,
         val jumpDrive: JumpDriveMessage
@@ -94,7 +94,7 @@ sealed class SnapshotMessage {
     data class Weapons(
         override val shortRangeScope: ShortRangeScopeMessage,
         override val contacts: List<ScopeContactMessage>,
-        override val asteroids: List<AsteroidMessage>,
+        override val asteroids: List<ScopeAsteroidMessage>,
         val hull: Double,
         val hullMax: Double,
         val shield: ShieldMessage
@@ -126,7 +126,7 @@ sealed class SnapshotMessage {
     data class MainScreenShortRangeScope(
         override val shortRangeScope: ShortRangeScopeMessage,
         override val contacts: List<ScopeContactMessage>,
-        override val asteroids: List<AsteroidMessage>
+        override val asteroids: List<ScopeAsteroidMessage>
     ) : SnapshotMessage(), ShortRangeScopeStation, MainScreen
 }
 
@@ -215,6 +215,14 @@ data class AsteroidMessage(
     val relativePosition: Vector2,
     val rotation: Double
 ) : IdentifiableWithModel, Positional
+
+@Serializable
+data class ScopeAsteroidMessage(
+    override val id: ObjectId,
+    val radius: Double,
+    val relativePosition: Vector2,
+    val rotation: Double
+) : Identifiable
 
 @Serializable
 data class MapAsteroidMessage(
