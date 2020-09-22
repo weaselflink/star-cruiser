@@ -340,10 +340,10 @@ class GameState {
             .map { it.toMapContactMessage() }
     }
 
-    private fun getMapAsteroids(clientShip: PlayerShip): List<AsteroidMessage> {
+    private fun getMapAsteroids(clientShip: PlayerShip): List<MapAsteroidMessage> {
         return asteroids
             .filter { clientShip.inSensorRange(it) }
-            .map { it.toMessage(clientShip) }
+            .map { it.toMapMessage() }
     }
 
     private fun ShipContactList.getScopeContacts(): List<ScopeContactMessage> {

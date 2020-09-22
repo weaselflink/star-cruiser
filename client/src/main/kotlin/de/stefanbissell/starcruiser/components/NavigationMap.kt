@@ -1,8 +1,8 @@
 package de.stefanbissell.starcruiser.components
 
-import de.stefanbissell.starcruiser.AsteroidMessage
 import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.ContactType
+import de.stefanbissell.starcruiser.MapAsteroidMessage
 import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.MapSelectionMessage
 import de.stefanbissell.starcruiser.NavigationShipMessage
@@ -54,7 +54,7 @@ class NavigationMap(
 
     private var ownPosition = Vector2()
     private var contacts: List<MapContactMessage> = emptyList()
-    private var asteroids: List<AsteroidMessage> = emptyList()
+    private var asteroids: List<MapAsteroidMessage> = emptyList()
     private var waypoints: List<WaypointMessage> = emptyList()
 
     init {
@@ -124,7 +124,7 @@ class NavigationMap(
         }
     }
 
-    private fun CanvasRenderingContext2D.drawAsteroid(asteroid: AsteroidMessage) {
+    private fun CanvasRenderingContext2D.drawAsteroid(asteroid: MapAsteroidMessage) {
         save()
         translateToCenter()
         environmentContactStyle(dim)

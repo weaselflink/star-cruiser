@@ -105,7 +105,7 @@ sealed class SnapshotMessage {
         val ship: NavigationShipMessage,
         val mapSelection: MapSelectionMessage?,
         val contacts: List<MapContactMessage>,
-        val asteroids: List<AsteroidMessage>
+        val asteroids: List<MapAsteroidMessage>
     ) : SnapshotMessage(), CrewSnapshot
 
     @Serializable
@@ -215,6 +215,14 @@ data class AsteroidMessage(
     val relativePosition: Vector2,
     val rotation: Double
 ) : IdentifiableWithModel, Positional
+
+@Serializable
+data class MapAsteroidMessage(
+    override val id: ObjectId,
+    val radius: Double,
+    override val position: Vector2,
+    val rotation: Double
+) : Identifiable, Positional
 
 @Serializable
 data class CameraMessage(

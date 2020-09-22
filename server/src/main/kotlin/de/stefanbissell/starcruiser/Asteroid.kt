@@ -26,4 +26,12 @@ class Asteroid(
             relativePosition = position - relativeTo.position,
             rotation = rotation
         )
+
+    fun toMapMessage() =
+        MapAsteroidMessage(
+            id = id,
+            radius = radius,
+            position = position,
+            rotation = rotation
+        )
 }
