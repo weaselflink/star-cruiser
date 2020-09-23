@@ -21,6 +21,7 @@ class PointerEventDispatcher(
     canvas: HTMLCanvasElement
 ) {
 
+    private var usingTouch = false
     private val handlers = mutableListOf<PointerEventHandler>()
     private var currentMouseHandler: PointerEventHandler? = null
     private var currentTouchHandlers: MutableMap<Int, PointerEventHandler> = mutableMapOf()
@@ -57,15 +58,17 @@ class PointerEventDispatcher(
     }
 
     private fun handleMouseDown(mouseEvent: MouseEvent) {
-        val event = mouseEvent.toPointerEvent()
-        handlers
-            .firstOrNull { it.isInterestedIn(event) }
-            ?.apply {
-                handlePointerDown(event)
-            }
-            ?.also {
-                currentMouseHandler = it
-            }
+        if (!usingTouch) {
+            val event = mouseEvent.toPointerEvent()
+            handlers
+                .firstOrNull { it.isInterestedIn(event) }
+                ?.apply {
+                    handlePointerDown(event)
+                }
+                ?.also {
+                    currentMouseHandler = it
+                }
+        }
     }
 
     private fun handleMouseMove(mouseEvent: MouseEvent) {
@@ -78,6 +81,7 @@ class PointerEventDispatcher(
     }
 
     private fun handleTouchDown(touchEvent: TouchEvent) {
+        usingTouch = true
         touchEvent.changedTouches.asList().forEach { touch ->
             val event = touch.toPointerEvent()
             handlers
