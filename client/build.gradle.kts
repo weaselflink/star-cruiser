@@ -8,10 +8,7 @@ plugins {
 }
 
 dependencies {
-
     implementation(project(":shared"))
-
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_serialization_version")
 }
 
 kotlin {

@@ -19,7 +19,6 @@ application {
 }
 
 dependencies {
-
     implementation(project(":shared"))
 
     implementation(kotlin("stdlib-jdk8"))
