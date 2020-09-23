@@ -11,7 +11,7 @@ dependencies {
 
     implementation(project(":shared"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlin_serialization_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_serialization_version")
 }
 
 kotlin {
