@@ -87,16 +87,7 @@ class PlayerShip(
         updateScan(time, contactList)
         updateLock(time, contactList)
         throttleHandler.update(time)
-        val effectiveThrust = throttleHandler.effectiveThrust(Impulse.boostLevel)
-        val effectiveRudder = rudder * template.rudderFactor * Maneuver.boostLevel
-        physicsEngine.updateShip(id, effectiveThrust, effectiveRudder)
-
-        physicsEngine.getBodyParameters(id)?.let {
-            position = it.position
-            rotation = it.rotation
-            speed = it.speed
-        }
-
+        updatePhysics(physicsEngine)
         updateHistory(time)
         updateMapSelection(contactList)
     }
@@ -386,6 +377,18 @@ class PlayerShip(
             }
         }
         lockHandler?.update(time)
+    }
+
+    private fun updatePhysics(physicsEngine: PhysicsEngine) {
+        val effectiveThrust = throttleHandler.effectiveThrust(Impulse.boostLevel)
+        val effectiveRudder = rudder * template.rudderFactor * Maneuver.boostLevel
+        physicsEngine.updateShip(id, effectiveThrust, effectiveRudder)
+
+        physicsEngine.getBodyParameters(id)?.let {
+            position = it.position
+            rotation = it.rotation
+            speed = it.speed
+        }
     }
 
     private fun updateHistory(time: GameTime) {

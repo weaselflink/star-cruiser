@@ -89,7 +89,6 @@ class BeamHandler(
             .rotate(-ship.rotation)
             .let { beamWeapon.isInRange(it) }
 
-    @Suppress("ReplaceSizeZeroCheckWithIsEmpty")
     private fun unobstructed(contact: ShipContactList.ShipContact, physicsEngine: PhysicsEngine): Boolean {
         val ignore = listOf(ship.id, contact.id)
         val obstructions = physicsEngine.findObstructions(beamPosition, contact.position, ignore)

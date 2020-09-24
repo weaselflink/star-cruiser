@@ -48,24 +48,8 @@ class NonPlayerShip(
         shieldHandler.update(time)
         updateScan(time, contactList)
         updateLock(time, contactList)
-        shipAi.update(
-            time = time,
-            contactList = contactList
-        )
-
-        val effectiveThrust = if (throttle < 0) {
-            throttle * template.reverseThrustFactor
-        } else {
-            throttle * template.aheadThrustFactor
-        }
-        val effectiveRudder = rudder * template.rudderFactor
-        physicsEngine.updateShip(id, effectiveThrust, effectiveRudder)
-
-        physicsEngine.getBodyParameters(id)?.let {
-            position = it.position
-            rotation = it.rotation
-            speed = it.speed
-        }
+        shipAi.update(time, contactList)
+        updatePhysics(physicsEngine)
     }
 
     override fun endUpdate(physicsEngine: PhysicsEngine): ShipUpdateResult {
@@ -190,5 +174,21 @@ class NonPlayerShip(
             }
         }
         lockHandler?.update(time)
+    }
+
+    private fun updatePhysics(physicsEngine: PhysicsEngine) {
+        val effectiveThrust = if (throttle < 0) {
+            throttle * template.reverseThrustFactor
+        } else {
+            throttle * template.aheadThrustFactor
+        }
+        val effectiveRudder = rudder * template.rudderFactor
+        physicsEngine.updateShip(id, effectiveThrust, effectiveRudder)
+
+        physicsEngine.getBodyParameters(id)?.let {
+            position = it.position
+            rotation = it.rotation
+            speed = it.speed
+        }
     }
 }
