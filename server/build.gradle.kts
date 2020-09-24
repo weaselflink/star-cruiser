@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":shared"))
 
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains:kotlin-css:1.0.0-pre.118-kotlin-$kotlin_version")
+    implementation("org.jetbrains:kotlin-css:1.0.0-pre.119-kotlin-$kotlin_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-core:$ktor_version")
