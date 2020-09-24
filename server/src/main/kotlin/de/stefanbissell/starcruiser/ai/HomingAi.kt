@@ -60,8 +60,8 @@ class HomingAi(
     private fun selectTarget(contactList: ShipContactList) {
         target?.let {
             contactList[it]
-        }?.apply {
-            if (!inSensorRange) {
+        }.also {
+            if (it == null || !it.inSensorRange) {
                 target = null
             }
         }

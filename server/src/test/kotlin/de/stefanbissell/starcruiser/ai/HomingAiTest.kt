@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
+import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.isNear
@@ -98,6 +99,15 @@ class HomingAiTest {
         expectThat(homingAi.target).isEqualTo(target.id)
         expectThat(helmAi.targetRotation)
             .isNotNull().isNear(0.0)
+    }
+
+    @Test
+    fun `looses target when no longer in contact list`() {
+        homingAi.target = ObjectId.random()
+
+        executeAi()
+
+        expectThat(homingAi.target).isNull()
     }
 
     @Test
