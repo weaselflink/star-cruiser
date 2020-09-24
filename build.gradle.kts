@@ -18,7 +18,6 @@ allprojects {
     group = "de.stefanbissell.starcruiser"
     version = "0.26.0"
 
-    apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
     apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "com.adarshr.test-logger")
