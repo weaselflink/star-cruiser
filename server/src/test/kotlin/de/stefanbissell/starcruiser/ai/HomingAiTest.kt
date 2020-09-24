@@ -100,6 +100,27 @@ class HomingAiTest {
             .isNotNull().isNear(0.0)
     }
 
+    @Test
+    fun `looses target when out of sensor range`() {
+        val target = addShip(p(ship.sensorRange * 2, 0))
+        homingAi.target = target.id
+
+        executeAi()
+
+        expectThat(homingAi.target).isNull()
+    }
+
+    @Test
+    fun `chooses new target when current is out of sensor range`() {
+        val outOfRangeTarget = addShip(p(ship.sensorRange * 2, 0))
+        val inRangeTarget = addShip(p(ship.sensorRange * 0.5, 0))
+        homingAi.target = outOfRangeTarget.id
+
+        executeAi()
+
+        expectThat(homingAi.target).isEqualTo(inRangeTarget.id)
+    }
+
     private fun executeAi() {
         homingAi.execute(ship, time, ShipContactList(ship, shipList))
     }

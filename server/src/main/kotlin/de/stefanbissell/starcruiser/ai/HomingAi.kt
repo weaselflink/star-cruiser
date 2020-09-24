@@ -23,10 +23,10 @@ class HomingAi(
         target?.let {
             contactList[it]
         }?.also {
-            if (it.range < 100.0) {
-                ship.throttle = 0
-            } else {
+            if (it.range >= 100.0) {
                 ship.throttle = 50
+            } else {
+                ship.throttle = 0
             }
             if (helmAi.targetRotation == null) {
                 helmAi.targetRotation = angleToTarget(ship, it)
@@ -58,6 +58,13 @@ class HomingAi(
     }
 
     private fun selectTarget(contactList: ShipContactList) {
+        target?.let {
+            contactList[it]
+        }?.apply {
+            if (!inSensorRange) {
+                target = null
+            }
+        }
         if (target == null) {
             target = contactList.allInSensorRange()
                 .filter {
