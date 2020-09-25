@@ -26,6 +26,7 @@ allprojects {
         mavenCentral()
         jcenter()
         maven(url = "https://kotlin.bintray.com/ktor")
+        maven(url = "https://kotlin.bintray.com/kotlinx")
         maven(url = "https://jitpack.io")
     }
 

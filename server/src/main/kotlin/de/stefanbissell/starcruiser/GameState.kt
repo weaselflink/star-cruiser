@@ -18,12 +18,14 @@ import de.stefanbissell.starcruiser.ships.ShipContactList
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
-import java.time.Instant
-import java.time.Instant.now
-import java.time.temporal.ChronoUnit
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.until
 import kotlin.math.PI
-import kotlin.math.roundToLong
 import kotlin.random.Random
+import kotlin.time.seconds
 
 sealed class GameStateChange
 
@@ -205,7 +207,7 @@ class GameState {
     fun update() {
         if (time.paused) return
 
-        time.update(now())
+        time.update(Clock.System.now())
 
         physicsEngine.step(time.delta)
         updateShips()
@@ -439,20 +441,20 @@ class GameTime(
 
     fun update(now: Instant) {
         delta = lastUpdate?.let {
-            (it.until(now, ChronoUnit.MILLIS)) / 1_000.0
+            (it.until(now, DateTimeUnit.MILLISECOND, TimeZone.UTC)) / 1_000.0
         } ?: 0.001
         current += delta
         lastUpdate = now
     }
 
-    fun update(seconds: Number) {
-        delta = seconds.toDouble()
+    fun update(secondsToAdd: Number) {
+        delta = secondsToAdd.toDouble()
         current += delta
-        lastUpdate = lastUpdate?.plusMillis((delta * 1_000).roundToLong())
+        lastUpdate = lastUpdate?.plus(secondsToAdd.toDouble().seconds)
     }
 
     companion object {
-        fun atEpoch() = GameTime(Instant.EPOCH)
+        fun atEpoch() = GameTime(Instant.fromEpochMilliseconds(0))
     }
 }
 

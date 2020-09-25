@@ -17,7 +17,8 @@ import io.ktor.websocket.webSocket
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.time.Duration
+import kotlin.time.seconds
+import kotlin.time.toJavaDuration
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
@@ -42,8 +43,8 @@ fun Application.module() {
     }
 
     install(WebSockets) {
-        pingPeriod = Duration.ofSeconds(15)
-        timeout = Duration.ofSeconds(15)
+        pingPeriod = 15.seconds.toJavaDuration()
+        timeout = 15.seconds.toJavaDuration()
         maxFrameSize = Long.MAX_VALUE
         masking = false
     }
