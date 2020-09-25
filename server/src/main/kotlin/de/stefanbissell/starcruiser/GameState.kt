@@ -19,13 +19,8 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
 import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.until
 import kotlin.math.PI
 import kotlin.random.Random
-import kotlin.time.seconds
 
 sealed class GameStateChange
 
@@ -416,45 +411,6 @@ class GameState {
                 }
             }
         }
-    }
-}
-
-class GameTime(
-    initialTime: Instant? = null
-) {
-
-    private var lastUpdate: Instant? = initialTime
-
-    var current: Double = 0.0
-        private set
-
-    var delta: Double = 0.001
-        private set
-
-    var paused: Boolean = false
-        set(value) {
-            if (value != field) {
-                field = value
-                lastUpdate = null
-            }
-        }
-
-    fun update(now: Instant) {
-        delta = lastUpdate?.let {
-            (it.until(now, DateTimeUnit.MILLISECOND, TimeZone.UTC)) / 1_000.0
-        } ?: 0.001
-        current += delta
-        lastUpdate = now
-    }
-
-    fun update(secondsToAdd: Number) {
-        delta = secondsToAdd.toDouble()
-        current += delta
-        lastUpdate = lastUpdate?.plus(secondsToAdd.toDouble().seconds)
-    }
-
-    companion object {
-        fun atEpoch() = GameTime(Instant.fromEpochMilliseconds(0))
     }
 }
 
