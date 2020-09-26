@@ -18,6 +18,11 @@ class CommonShipUi {
     private val exitButton: HTMLButtonElement = root.byQuery(".exit")
     private val fullScreenButton: HTMLButtonElement = root.byQuery(".fullscreen")
     private val pauseButton: HTMLButtonElement = root.byQuery(".pause")
+    private val settingsMenuButtons = listOf(
+        exitButton,
+        fullScreenButton,
+        pauseButton
+    )
     private val stationButtons = mapOf<Station, HTMLButtonElement>(
         Helm to root.byQuery(".switchToHelm"),
         Weapons to root.byQuery(".switchToWeapons"),
@@ -81,14 +86,14 @@ class CommonShipUi {
         showSettings = value
         if (showSettings) {
             settingsButton.innerHTML = "\u00d7"
-            exitButton.display = Display.block
-            fullScreenButton.display = Display.block
-            pauseButton.display = Display.block
+            settingsMenuButtons.forEach {
+                it.display = Display.block
+            }
         } else {
             settingsButton.innerHTML = "\u2699"
-            exitButton.display = Display.none
-            fullScreenButton.display = Display.none
-            pauseButton.display = Display.none
+            settingsMenuButtons.forEach {
+                it.display = Display.none
+            }
         }
     }
 }
