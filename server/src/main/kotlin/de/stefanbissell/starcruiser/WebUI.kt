@@ -209,6 +209,9 @@ private val BODY.commonShipUi
             button(classes = "fullscreen leftEdge") {
                 +"Fullscreen"
             }
+            button(classes = "pause leftEdge") {
+                +"Pause"
+            }
         }
         div(classes = "topRightButtons") {
             button(classes = "current switchToHelm rightEdge") {

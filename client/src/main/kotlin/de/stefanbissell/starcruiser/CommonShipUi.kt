@@ -17,6 +17,7 @@ class CommonShipUi {
     private val settingsButton: HTMLButtonElement = root.byQuery(".settings")
     private val exitButton: HTMLButtonElement = root.byQuery(".exit")
     private val fullScreenButton: HTMLButtonElement = root.byQuery(".fullscreen")
+    private val pauseButton: HTMLButtonElement = root.byQuery(".pause")
     private val stationButtons = mapOf<Station, HTMLButtonElement>(
         Helm to root.byQuery(".switchToHelm"),
         Weapons to root.byQuery(".switchToWeapons"),
@@ -39,6 +40,9 @@ class CommonShipUi {
                 document.exitFullscreen()
                 fullScreenButton.innerText = "Fullscreen"
             }
+        }
+        pauseButton.onclick = {
+            clientSocket.send(Command.CommandTogglePause)
         }
 
         stationButtons.forEach {
@@ -79,10 +83,12 @@ class CommonShipUi {
             settingsButton.innerHTML = "\u00d7"
             exitButton.display = Display.block
             fullScreenButton.display = Display.block
+            pauseButton.display = Display.block
         } else {
             settingsButton.innerHTML = "\u2699"
             exitButton.display = Display.none
             fullScreenButton.display = Display.none
+            pauseButton.display = Display.none
         }
     }
 }
