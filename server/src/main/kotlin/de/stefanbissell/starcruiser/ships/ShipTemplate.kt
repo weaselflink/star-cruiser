@@ -4,7 +4,7 @@ import de.stefanbissell.starcruiser.CameraMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.Vector3
 import de.stefanbissell.starcruiser.p
-import de.stefanbissell.starcruiser.scenario.Polygon
+import de.stefanbissell.starcruiser.shapes.Polygon
 import de.stefanbissell.starcruiser.toRadians
 import kotlin.math.PI
 import kotlin.math.roundToInt

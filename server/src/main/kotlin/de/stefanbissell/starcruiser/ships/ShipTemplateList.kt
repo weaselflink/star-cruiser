@@ -2,7 +2,7 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.Vector3
 import de.stefanbissell.starcruiser.p
-import de.stefanbissell.starcruiser.scenario.Polygon
+import de.stefanbissell.starcruiser.shapes.Polygon
 import kotlin.math.PI
 
 val carrierTemplate = ShipTemplate()

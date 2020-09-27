@@ -2,6 +2,8 @@ package de.stefanbissell.starcruiser.scenario
 
 import de.stefanbissell.starcruiser.Asteroid
 import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.shapes.Polygon
+import de.stefanbissell.starcruiser.shapes.Shape
 import kotlin.math.PI
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -12,7 +14,12 @@ abstract class Scenario {
 
     fun create(): ScenarioInstance {
         return ScenarioInstance(
-            asteroids = definition.asteroidFields.flatMap { it.createAsteroids() }
+            asteroids = definition.asteroidFields.flatMap {
+                it.createAsteroids()
+            },
+            mapAreas = definition.asteroidFields.map {
+                it.toMapArea()
+            }
         )
     }
 }
@@ -54,6 +61,12 @@ class AsteroidFieldDefinition {
             )
         }
 
+    fun toMapArea() =
+        MapArea(
+            type = MapAreaType.AsteroidField,
+            shape = shape
+        )
+
     private fun randomPointInside(): Vector2 {
         val box = shape.boundingBox
         var position = box.randomPointInside()
@@ -65,5 +78,15 @@ class AsteroidFieldDefinition {
 }
 
 data class ScenarioInstance(
-    val asteroids: List<Asteroid>
+    val asteroids: List<Asteroid>,
+    val mapAreas: List<MapArea>
 )
+
+data class MapArea(
+    val type: MapAreaType,
+    val shape: Shape
+)
+
+enum class MapAreaType {
+    AsteroidField
+}

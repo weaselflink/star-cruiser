@@ -1,4 +1,4 @@
-package de.stefanbissell.starcruiser.scenario
+package de.stefanbissell.starcruiser.shapes
 
 import de.stefanbissell.starcruiser.p
 import org.junit.jupiter.api.Test

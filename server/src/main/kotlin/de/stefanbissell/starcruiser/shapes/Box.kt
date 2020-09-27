@@ -1,4 +1,4 @@
-package de.stefanbissell.starcruiser.scenario
+package de.stefanbissell.starcruiser.shapes
 
 import de.stefanbissell.starcruiser.Vector2
 import kotlin.math.abs
