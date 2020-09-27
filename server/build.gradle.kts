@@ -35,7 +35,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("io.strikt:strikt-core:$strikt_version")
-    testImplementation("io.mockk:mockk:1.10.0")
+    testImplementation("io.mockk:mockk:1.10.2")
 }
 
 tasks {
