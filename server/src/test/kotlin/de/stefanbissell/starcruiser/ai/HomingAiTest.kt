@@ -121,6 +121,15 @@ class HomingAiTest {
     }
 
     @Test
+    fun `reverts to cruising speed when no target`() {
+        ship.throttle = 0
+
+        executeAi()
+
+        expectThat(ship.throttle).isEqualTo(50)
+    }
+
+    @Test
     fun `chooses new target when current is out of sensor range`() {
         val outOfRangeTarget = addShip(p(ship.sensorRange * 2, 0))
         val inRangeTarget = addShip(p(ship.sensorRange * 0.5, 0))

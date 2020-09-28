@@ -31,6 +31,8 @@ class HomingAi(
             if (helmAi.targetRotation == null) {
                 helmAi.targetRotation = angleToTarget(ship, it)
             }
+        } ?: run {
+            ship.throttle = 50
         }
     }
 
