@@ -23,16 +23,29 @@ class HomingAi(
         target?.let {
             contactList[it]
         }?.also {
-            if (it.range >= 100.0) {
-                ship.throttle = 50
-            } else {
-                ship.throttle = 0
-            }
-            if (helmAi.targetRotation == null) {
-                helmAi.targetRotation = angleToTarget(ship, it)
-            }
+            steerTowardsTarget(it, ship)
         } ?: run {
             ship.throttle = 50
+        }
+    }
+
+    override fun targetDestroyed(shipId: ObjectId) {
+        if (target == shipId) {
+            target = null
+        }
+    }
+
+    private fun steerTowardsTarget(
+        it: ShipContactList.ShipContact,
+        ship: NonPlayerShip
+    ) {
+        if (it.range >= 100.0) {
+            ship.throttle = 50
+        } else {
+            ship.throttle = 0
+        }
+        if (helmAi.targetRotation == null) {
+            helmAi.targetRotation = angleToTarget(ship, it)
         }
     }
 
@@ -53,28 +66,25 @@ class HomingAi(
             targetShip.relativePosition.angle()
         }
 
-    override fun targetDestroyed(shipId: ObjectId) {
-        if (target == shipId) {
-            target = null
-        }
-    }
-
     private fun selectTarget(contactList: ShipContactList) {
-        target?.let {
-            contactList[it]
-        }.also {
-            if (it == null || !it.inSensorRange) {
-                target = null
-            }
-        }
+        clearInvalidTarget(contactList)
         if (target == null) {
             target = contactList.allInSensorRange()
                 .filter {
                     it.contactType == ContactType.Enemy
                 }.minByOrNull {
                     it.range
-                }
-                ?.id
+                }?.id
+        }
+    }
+
+    private fun clearInvalidTarget(contactList: ShipContactList) {
+        target?.let {
+            contactList[it]
+        }.also {
+            if (it == null || !it.inSensorRange) {
+                target = null
+            }
         }
     }
 }
