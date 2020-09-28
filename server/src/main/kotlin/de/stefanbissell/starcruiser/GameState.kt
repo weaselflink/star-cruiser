@@ -15,44 +15,11 @@ import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
 import de.stefanbissell.starcruiser.ships.ShipContactList
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
 import kotlinx.datetime.Clock
 import kotlin.math.PI
 import kotlin.random.Random
-
-sealed class GameStateChange
-
-object Update : GameStateChange()
-data class GetGameStateSnapshot(val clientId: ClientId, val response: CompletableDeferred<SnapshotMessage>) : GameStateChange()
-object TogglePause : GameStateChange()
-object SpawnShip : GameStateChange()
-data class JoinShip(val clientId: ClientId, val objectId: ObjectId, val station: Station) : GameStateChange()
-data class ChangeStation(val clientId: ClientId, val station: Station) : GameStateChange()
-data class ExitShip(val clientId: ClientId) : GameStateChange()
-data class NewGameClient(val clientId: ClientId) : GameStateChange()
-data class GameClientDisconnected(val clientId: ClientId) : GameStateChange()
-data class SetThrottle(val clientId: ClientId, val value: Int) : GameStateChange()
-data class ChangeJumpDistance(val clientId: ClientId, val value: Double) : GameStateChange()
-data class StartJump(val clientId: ClientId) : GameStateChange()
-data class SetRudder(val clientId: ClientId, val value: Int) : GameStateChange()
-data class MapClearSelection(val clientId: ClientId) : GameStateChange()
-data class MapSelectWaypoint(val clientId: ClientId, val index: Int) : GameStateChange()
-data class MapSelectShip(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
-data class AddWaypoint(val clientId: ClientId, val position: Vector2) : GameStateChange()
-data class DeleteSelectedWaypoint(val clientId: ClientId) : GameStateChange()
-data class ScanSelectedShip(val clientId: ClientId) : GameStateChange()
-data class AbortScan(val clientId: ClientId) : GameStateChange()
-data class SolveScanGame(val clientId: ClientId, val dimension: Int, val value: Double) : GameStateChange()
-data class LockTarget(val clientId: ClientId, val targetId: ObjectId) : GameStateChange()
-data class ToggleShieldsUp(val clientId: ClientId) : GameStateChange()
-data class StartRepair(val clientId: ClientId, val systemType: PoweredSystemType) : GameStateChange()
-data class AbortRepair(val clientId: ClientId) : GameStateChange()
-data class SolveRepairGame(val clientId: ClientId, val column: Int, val row: Int) : GameStateChange()
-data class SetPower(val clientId: ClientId, val systemType: PoweredSystemType, val power: Int) : GameStateChange()
-data class SetCoolant(val clientId: ClientId, val systemType: PoweredSystemType, val coolant: Double) : GameStateChange()
-data class SetMainScreenView(val clientId: ClientId, val mainScreenView: MainScreenView) : GameStateChange()
 
 class GameState {
 
@@ -89,35 +56,60 @@ class GameState {
                 val ship = state.ship
                 val contactList = ShipContactList(ship, ships)
                 when (state.station) {
-                    Helm -> SnapshotMessage.Helm(
-                        shortRangeScope = ship.toShortRangeScopeMessage(),
-                        contacts = contactList.getScopeContacts(),
-                        asteroids = getScopeAsteroids(ship),
-                        throttle = ship.throttle,
-                        rudder = ship.rudder,
-                        jumpDrive = ship.toJumpDriveMessage()
-                    )
-                    Weapons -> SnapshotMessage.Weapons(
-                        shortRangeScope = ship.toShortRangeScopeMessage(),
-                        contacts = contactList.getScopeContacts(),
-                        asteroids = getScopeAsteroids(ship),
-                        hull = ship.hull,
-                        hullMax = ship.template.hull,
-                        shield = ship.toShieldMessage()
-                    )
-                    Navigation -> SnapshotMessage.Navigation(
-                        ship = ship.toNavigationMessage(contactList),
-                        mapSelection = ship.toMapSelectionMessage(contactList),
-                        contacts = contactList.getMapContacts(),
-                        asteroids = getMapAsteroids(ship)
-                    )
-                    Engineering -> SnapshotMessage.Engineering(
-                        powerSettings = ship.toPowerMessage()
-                    )
+                    Helm -> toHelmMessage(ship, contactList)
+                    Weapons -> toWeaponsMessage(ship, contactList)
+                    Navigation -> toNavigationMessage(ship, contactList)
+                    Engineering -> toEngineeringMessage(ship)
                     MainScreen -> toMainScreenMessage(ship, contactList)
                 }
             }
         }
+    }
+
+    private fun toHelmMessage(
+        ship: PlayerShip,
+        contactList: ShipContactList
+    ): SnapshotMessage.Helm {
+        return SnapshotMessage.Helm(
+            shortRangeScope = ship.toShortRangeScopeMessage(),
+            contacts = contactList.getScopeContacts(),
+            asteroids = getScopeAsteroids(ship),
+            throttle = ship.throttle,
+            rudder = ship.rudder,
+            jumpDrive = ship.toJumpDriveMessage()
+        )
+    }
+
+    private fun toWeaponsMessage(
+        ship: PlayerShip,
+        contactList: ShipContactList
+    ): SnapshotMessage.Weapons {
+        return SnapshotMessage.Weapons(
+            shortRangeScope = ship.toShortRangeScopeMessage(),
+            contacts = contactList.getScopeContacts(),
+            asteroids = getScopeAsteroids(ship),
+            hull = ship.hull,
+            hullMax = ship.template.hull,
+            shield = ship.toShieldMessage()
+        )
+    }
+
+    private fun toNavigationMessage(
+        ship: PlayerShip,
+        contactList: ShipContactList
+    ): SnapshotMessage.Navigation {
+        return SnapshotMessage.Navigation(
+            ship = ship.toNavigationMessage(contactList),
+            mapSelection = ship.toMapSelectionMessage(contactList),
+            contacts = contactList.getMapContacts(),
+            asteroids = getMapAsteroids(ship)
+        )
+    }
+
+    private fun toEngineeringMessage(ship: PlayerShip): SnapshotMessage.Engineering {
+        return SnapshotMessage.Engineering(
+            powerSettings = ship.toPowerMessage()
+        )
     }
 
     private fun toMainScreenMessage(ship: PlayerShip, contactList: ShipContactList): SnapshotMessage =
