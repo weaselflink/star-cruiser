@@ -17,7 +17,8 @@ class MainUi {
             stationUiSwitcher.resize()
         }
 
-        document.onkeydown = { keyHandler(it) }
+        document.onkeydown = { handleKeyDown(it) }
+        document.onkeyup = { handleKeyUp(it) }
     }
 
     private fun step() {
@@ -55,10 +56,25 @@ class MainUi {
         stationUiSwitcher.draw(snapshot)
     }
 
-    private fun keyHandler(event: KeyboardEvent) {
+    private fun handleKeyDown(event: KeyboardEvent) {
         when (event.code) {
             "KeyP" -> clientSocket.send(Command.CommandTogglePause)
+            "KeyA" -> clientSocket.send(Command.CommandChangeRudder(100))
+            "KeyD" -> clientSocket.send(Command.CommandChangeRudder(-100))
+            "KeyW" -> clientSocket.send(Command.CommandChangeThrottle(100))
+            "KeyS" -> clientSocket.send(Command.CommandChangeThrottle(-100))
+            "KeyJ" -> clientSocket.send(Command.CommandStartJump)
+            "KeyR" -> ClientState.toggleRotateScope()
             else -> println("not bound: ${event.code}")
+        }
+    }
+
+    private fun handleKeyUp(event: KeyboardEvent) {
+        when (event.code) {
+            "KeyA" -> clientSocket.send(Command.CommandChangeRudder(0))
+            "KeyD" -> clientSocket.send(Command.CommandChangeRudder(0))
+            "KeyW" -> clientSocket.send(Command.CommandChangeThrottle(0))
+            "KeyS" -> clientSocket.send(Command.CommandChangeThrottle(0))
         }
     }
 }
