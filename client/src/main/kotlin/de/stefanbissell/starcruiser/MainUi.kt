@@ -65,6 +65,12 @@ class MainUi {
             "KeyS" -> clientSocket.send(Command.CommandChangeThrottle(-100))
             "KeyJ" -> clientSocket.send(Command.CommandStartJump)
             "KeyR" -> ClientState.toggleRotateScope()
+            "Digit1" -> clientSocket.send(Command.CommandChangeStation(Station.Helm))
+            "Digit2" -> clientSocket.send(Command.CommandChangeStation(Station.Weapons))
+            "Digit3" -> clientSocket.send(Command.CommandChangeStation(Station.Navigation))
+            "Digit4" -> clientSocket.send(Command.CommandChangeStation(Station.Engineering))
+            "Digit5" -> clientSocket.send(Command.CommandChangeStation(Station.MainScreen))
+            "KeyX" -> clientSocket.send(Command.CommandExitShip)
             else -> println("not bound: ${event.code}")
         }
     }
