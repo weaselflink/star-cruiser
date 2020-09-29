@@ -105,7 +105,8 @@ sealed class SnapshotMessage {
         val ship: NavigationShipMessage,
         val mapSelection: MapSelectionMessage?,
         val contacts: List<MapContactMessage>,
-        val asteroids: List<MapAsteroidMessage>
+        val asteroids: List<MapAsteroidMessage>,
+        val mapAreas: List<MapAreaMessage>
     ) : SnapshotMessage(), CrewSnapshot
 
     @Serializable
@@ -452,4 +453,9 @@ data class ScanProgressMessage(
     val designation: String,
     val noise: Double,
     val input: List<Double>
+)
+
+@Serializable
+data class MapAreaMessage(
+    val points: List<Vector2>
 )

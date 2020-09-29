@@ -24,6 +24,7 @@ import kotlin.random.Random
 class GameState {
 
     private var time = GameTime()
+    private val scenario = TestScenario.create()
     private val ships = mutableMapOf<ObjectId, Ship>()
     private val playerShips
         get() = ships.values
@@ -35,7 +36,6 @@ class GameState {
     private val physicsEngine = PhysicsEngine()
 
     init {
-        val scenario = TestScenario.create()
         scenario.asteroids.forEach {
             spawnAsteroid(it)
         }
@@ -102,7 +102,8 @@ class GameState {
             ship = ship.toNavigationMessage(contactList),
             mapSelection = ship.toMapSelectionMessage(contactList),
             contacts = contactList.getMapContacts(),
-            asteroids = getMapAsteroids(ship)
+            asteroids = getMapAsteroids(ship),
+            mapAreas = scenario.mapAreas.map { it.shape.toMessage() }
         )
     }
 

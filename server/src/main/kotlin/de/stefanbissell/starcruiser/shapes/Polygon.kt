@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.shapes
 
+import de.stefanbissell.starcruiser.MapAreaMessage
 import de.stefanbissell.starcruiser.Vector2
 
 data class Polygon(
@@ -30,6 +31,9 @@ data class Polygon(
             intersects(point, it)
         } % 2 == 1
     }
+
+    override fun toMessage(): MapAreaMessage =
+        MapAreaMessage(border)
 
     private fun intersects(point: Vector2, edge: Pair<Vector2, Vector2>) =
         intersectsOnYAxis(edge, point) && intersectsLeftOfPoint(point, edge)
