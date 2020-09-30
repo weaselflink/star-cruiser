@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.ContactType
+import de.stefanbissell.starcruiser.MapAreaMessage
 import de.stefanbissell.starcruiser.MapAsteroidMessage
 import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.MapSelectionMessage
@@ -24,6 +25,8 @@ import de.stefanbissell.starcruiser.friendlyContactStyle
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandler
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
+import de.stefanbissell.starcruiser.lineTo
+import de.stefanbissell.starcruiser.moveTo
 import de.stefanbissell.starcruiser.scanProgressStyle
 import de.stefanbissell.starcruiser.selectionMarkerStyle
 import de.stefanbissell.starcruiser.sensorRangeStyle
@@ -56,6 +59,7 @@ class NavigationMap(
     private var contacts: List<MapContactMessage> = emptyList()
     private var asteroids: List<MapAsteroidMessage> = emptyList()
     private var waypoints: List<WaypointMessage> = emptyList()
+    private var mapAreas: List<MapAreaMessage> = emptyList()
 
     init {
         addChildren(MapPointerEventHandler())
@@ -83,6 +87,7 @@ class NavigationMap(
         contacts = snapshot.contacts
         asteroids = snapshot.asteroids
         waypoints = ship.waypoints
+        mapAreas = snapshot.mapAreas
         dim = canvas.dimensions()
 
         with(ctx) {
@@ -119,18 +124,52 @@ class NavigationMap(
     }
 
     private fun CanvasRenderingContext2D.drawAsteroids() {
-        asteroids.forEach {
-            drawAsteroid(it)
-        }
-    }
-
-    private fun CanvasRenderingContext2D.drawAsteroid(asteroid: MapAsteroidMessage) {
         save()
         translateToCenter()
         environmentContactStyle(dim)
 
+        if (scaleSetting < 4) {
+            asteroids.forEach {
+                drawAsteroid(it)
+            }
+        } else {
+            mapAreas.forEach {
+                drawMapArea(it)
+            }
+        }
+
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawAsteroid(asteroid: MapAsteroidMessage) {
+        save()
         translate(asteroid.position.adjustForMap())
         drawAsteroidSymbol(asteroid.rotation, dim.vmin * 0.8 * asteroid.radius * 0.1 * scale)
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawMapArea(mapArea: MapAreaMessage) {
+        save()
+        beginPath()
+        mapArea.points.forEachIndexed { index, point ->
+            if (index == 0) {
+                moveTo(point.adjustForMap())
+            } else {
+                lineTo(point.adjustForMap())
+            }
+        }
+        closePath()
+        fill()
+        beginPath()
+        mapArea.points.forEachIndexed { index, point ->
+            if (index == 0) {
+                moveTo(point.adjustForMap())
+            } else {
+                lineTo(point.adjustForMap())
+            }
+        }
+        closePath()
+        stroke()
         restore()
     }
 

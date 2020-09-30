@@ -38,6 +38,12 @@ fun CanvasRenderingContext2D.translateToCenter() {
 fun CanvasRenderingContext2D.translate(vector: Vector2) =
     translate(vector.x, vector.y)
 
+fun CanvasRenderingContext2D.moveTo(vector: Vector2) =
+    moveTo(vector.x, vector.y)
+
+fun CanvasRenderingContext2D.lineTo(vector: Vector2) =
+    lineTo(vector.x, vector.y)
+
 fun CanvasRenderingContext2D.circle(
     x: Double,
     y: Double,
@@ -168,7 +174,7 @@ fun CanvasRenderingContext2D.unknownContactStyle(dim: CanvasDimensions) {
 
 fun CanvasRenderingContext2D.environmentContactStyle(dim: CanvasDimensions) {
     strokeStyle = "#997300"
-    fillStyle = "#997300"
+    fillStyle = "#99730020"
     contactStyle(dim)
 }
 
