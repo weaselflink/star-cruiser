@@ -2,14 +2,15 @@ package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.PowerMessage
+import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.format
 import org.w3c.dom.HTMLCanvasElement
 
 class CapacitorsDisplay(
     canvas: HTMLCanvasElement,
-    xExpr: (CanvasDimensions) -> Double = { it.width * 0.5 - it.vmin * 35 },
-    yExpr: (CanvasDimensions) -> Double = { it.vmin * 12 },
-    widthExpr: (CanvasDimensions) -> Double = { it.vmin * 70 },
+    xExpr: (CanvasDimensions) -> Double = { it.width * 0.5 - it.vmin * 40 },
+    yExpr: (CanvasDimensions) -> Double = { it.height - it.vmin * 6 - it.vmin * 10 * PoweredSystemType.values().size },
+    widthExpr: (CanvasDimensions) -> Double = { it.vmin * 80 },
     heightExpr: (CanvasDimensions) -> Double = { it.vmin * 6 }
 ) {
 
