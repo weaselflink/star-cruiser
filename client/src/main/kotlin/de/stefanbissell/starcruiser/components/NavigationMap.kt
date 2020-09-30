@@ -334,16 +334,20 @@ class NavigationMap(
         }
 
         private fun handleClick() {
-            firstEvent?.let {
-                mapClickListener(
-                    MapClick(
-                        screen = it,
-                        world = it.toWorld(),
-                        waypoints = getNearestWaypoints(it),
-                        contacts = getNearestContacts(it)
-                    )
-                )
-            }
+            firstEvent
+                ?.createClick()
+                ?.also {
+                    mapClickListener(it)
+                }
+        }
+
+        private fun Vector2.createClick(): MapClick {
+            return MapClick(
+                screen = this,
+                world = toWorld(),
+                waypoints = getNearestWaypoints(this),
+                contacts = getNearestContacts(this)
+            )
         }
     }
 }
