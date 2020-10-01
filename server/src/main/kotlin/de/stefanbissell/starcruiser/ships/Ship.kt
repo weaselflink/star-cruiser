@@ -23,6 +23,7 @@ interface Ship {
     val speed: Vector2
     var hull: Double
     val systemsDamage: Map<PoweredSystemType, Double>
+    val scans: MutableMap<ObjectId, ScanLevel>
 
     fun update(
         time: GameTime,
@@ -50,7 +51,8 @@ interface Ship {
 
     fun takeDamage(targetSystemType: PoweredSystemType, amount: Double)
 
-    fun getScanLevel(targetId: ObjectId): ScanLevel
+    fun getScanLevel(targetId: ObjectId) =
+        scans[targetId] ?: ScanLevel.None
 
     fun getContactType(other: Ship) =
         if (getScanLevel(other.id) >= ScanLevel.Basic) {

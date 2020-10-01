@@ -25,7 +25,6 @@ class NonPlayerShip(
     val powerHandler = SimplePowerHandler(template)
     private val beamHandlers = template.beams.map { BeamHandler(it, this) }
     val shieldHandler = ShieldHandler(template.shield)
-    val scans = mutableMapOf<ObjectId, ScanLevel>()
     var scanHandler: TimedScanHandler? = null
     var lockHandler: LockHandler? = null
     val sensorRange: Double
@@ -34,6 +33,7 @@ class NonPlayerShip(
     var rudder: Int = 0
     override var speed: Vector2 = Vector2()
     override var hull = template.hull
+    override val scans = mutableMapOf<ObjectId, ScanLevel>()
     override val systemsDamage
         get() = powerHandler.systemsDamage
 
@@ -96,9 +96,6 @@ class NonPlayerShip(
 
     override fun inSensorRange(other: Vector2?): Boolean =
         other != null && rangeTo(other) <= sensorRange
-
-    override fun getScanLevel(targetId: ObjectId) =
-        scans[targetId] ?: ScanLevel.None
 
     override fun isLocking(targetId: ObjectId) =
         if (lockHandler != null) {

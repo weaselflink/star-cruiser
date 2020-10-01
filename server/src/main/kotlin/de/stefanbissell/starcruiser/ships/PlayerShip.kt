@@ -47,11 +47,13 @@ class PlayerShip(
     private val beamHandlers = template.beams.map { BeamHandler(it, this) }
     private val shieldHandler = ShieldHandler(template.shield)
     private var mapSelection: MapSelection = MapSelection.None
-    val scans = mutableMapOf<ObjectId, ScanLevel>()
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null
     override var speed: Vector2 = Vector2()
     override var hull = template.hull
+    override val scans = mutableMapOf<ObjectId, ScanLevel>()
+    override val systemsDamage
+        get() = powerHandler.systemsDamage
     private val jumpHandler = JumpHandler(
         jumpDrive = template.jumpDrive
     )
@@ -71,8 +73,6 @@ class PlayerShip(
                 field = value.clamp(-100, 100)
             }
         }
-    override val systemsDamage
-        get() = powerHandler.systemsDamage
 
     override fun update(
         time: GameTime,
@@ -236,9 +236,6 @@ class PlayerShip(
 
     override fun inSensorRange(other: Vector2?) =
         other != null && (other - position).length() <= sensorRange
-
-    override fun getScanLevel(targetId: ObjectId) =
-        scans[targetId] ?: ScanLevel.None
 
     fun toPlayerShipMessage() =
         PlayerShipMessage(
