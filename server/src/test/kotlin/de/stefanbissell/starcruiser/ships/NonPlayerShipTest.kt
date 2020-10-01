@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.ships
 
+import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.ScanLevel
@@ -162,6 +163,32 @@ class NonPlayerShipTest {
             .isNull()
     }
 
+    @Test
+    fun `unscanned ship is unknown`() {
+        val target = addShip()
+
+        expectThat(ship.getContactType(target))
+            .isEqualTo(ContactType.Unknown)
+    }
+
+    @Test
+    fun `scanned ship of same faction is friendly`() {
+        val target = addShip(faction = Faction.Enemy)
+        ship.scans[target.id] = ScanLevel.Basic
+
+        expectThat(ship.getContactType(target))
+            .isEqualTo(ContactType.Friendly)
+    }
+
+    @Test
+    fun `scanned ship of other faction is enemy`() {
+        val target = addShip(faction = Faction.Player)
+        ship.scans[target.id] = ScanLevel.Basic
+
+        expectThat(ship.getContactType(target))
+            .isEqualTo(ContactType.Enemy)
+    }
+
     private fun stepTime(
         seconds: Number
     ): ShipUpdateResult {
@@ -174,8 +201,14 @@ class NonPlayerShipTest {
         return ship.endUpdate(physicsEngine)
     }
 
-    private fun addShip(position: Vector2 = p(100, 100)): Ship {
-        val target = PlayerShip(position = position)
+    private fun addShip(
+        position: Vector2 = p(100, 100),
+        faction: Faction = Faction.Player
+    ): Ship {
+        val target = PlayerShip(
+            position = position,
+            faction = faction
+        )
         contactList = listOf(target)
         return target
     }
