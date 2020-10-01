@@ -262,7 +262,8 @@ enum class MainScreenView {
 enum class ContactType {
     Unknown,
     Friendly,
-    Enemy
+    Enemy,
+    Neutral
 }
 
 enum class ScanLevel {

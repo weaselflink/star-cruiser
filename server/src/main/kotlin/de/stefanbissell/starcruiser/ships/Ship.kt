@@ -59,7 +59,11 @@ interface Ship {
             if (other.faction == faction) {
                 ContactType.Friendly
             } else {
-                ContactType.Enemy
+                if (faction isHostileTo other.faction) {
+                    ContactType.Enemy
+                } else {
+                    ContactType.Neutral
+                }
             }
         } else {
             ContactType.Unknown
