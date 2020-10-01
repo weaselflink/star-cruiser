@@ -1,7 +1,6 @@
 package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.ContactMessage
-import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.MainScreenView
@@ -240,17 +239,6 @@ class PlayerShip(
 
     override fun getScanLevel(targetId: ObjectId) =
         scans[targetId] ?: ScanLevel.None
-
-    override fun getContactType(other: Ship) =
-        if (getScanLevel(other.id) >= ScanLevel.Basic) {
-            if (other.faction == faction) {
-                ContactType.Friendly
-            } else {
-                ContactType.Enemy
-            }
-        } else {
-            ContactType.Unknown
-        }
 
     fun toPlayerShipMessage() =
         PlayerShipMessage(
