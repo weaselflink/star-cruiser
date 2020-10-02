@@ -11,6 +11,7 @@ import de.stefanbissell.starcruiser.Station.Weapons
 import de.stefanbissell.starcruiser.client.ClientId
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.scenario.TestScenario
+import de.stefanbissell.starcruiser.ships.Faction
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
@@ -41,6 +42,9 @@ class GameState {
         }
         repeat(4) {
             spawnNonPlayerShip()
+        }
+        repeat(2) {
+            spawnNonPlayerShip(faction = Faction.Neutral)
         }
     }
 
@@ -170,10 +174,11 @@ class GameState {
         }
     }
 
-    fun spawnNonPlayerShip() {
+    fun spawnNonPlayerShip(faction: Faction = Faction.Enemy) {
         NonPlayerShip(
             position = Vector2.random(1050, 850),
-            rotation = Random.nextDouble(PI * 2.0)
+            rotation = Random.nextDouble(PI * 2.0),
+            faction = faction
         ).also {
             it.throttle = 50
             ships[it.id] = it

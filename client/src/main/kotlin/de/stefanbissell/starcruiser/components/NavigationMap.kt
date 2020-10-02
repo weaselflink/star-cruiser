@@ -27,6 +27,7 @@ import de.stefanbissell.starcruiser.input.PointerEventHandler
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.lineTo
 import de.stefanbissell.starcruiser.moveTo
+import de.stefanbissell.starcruiser.neutralContactStyle
 import de.stefanbissell.starcruiser.scanProgressStyle
 import de.stefanbissell.starcruiser.selectionMarkerStyle
 import de.stefanbissell.starcruiser.sensorRangeStyle
@@ -185,6 +186,7 @@ class NavigationMap(
         when (contact.type) {
             ContactType.Friendly -> friendlyContactStyle(dim)
             ContactType.Enemy -> enemyContactStyle(dim)
+            ContactType.Neutral -> neutralContactStyle(dim)
             else -> unknownContactStyle(dim)
         }
 
