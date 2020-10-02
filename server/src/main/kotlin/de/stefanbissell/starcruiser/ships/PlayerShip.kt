@@ -117,7 +117,7 @@ class PlayerShip(
             mapSelection = MapSelection.None
         }
         if (scanHandler?.targetId == shipId) {
-            scanHandler = null
+            abortScan()
         }
         if (lockHandler?.targetId == shipId) {
             lockHandler = null
@@ -341,7 +341,7 @@ class PlayerShip(
     private fun updateScan(time: GameTime, contactList: ShipContactList) {
         scanHandler?.apply {
             if (contactList.outOfSensorRange(targetId)) {
-                scanHandler = null
+                abortScan()
             }
         }
         scanHandler?.apply {
@@ -350,7 +350,7 @@ class PlayerShip(
             if (isComplete) {
                 val scan = target?.scanLevel ?: ScanLevel.None
                 scans[targetId] = scan.next
-                scanHandler = null
+                abortScan()
             }
         }
     }
