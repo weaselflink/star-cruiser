@@ -35,7 +35,7 @@ class PatrolAi(
         }
 
         if (path.isNotEmpty()) {
-            with (ship) {
+            with(ship) {
                 checkPointReached()
                 steerTowardsNextPoint()
             }
