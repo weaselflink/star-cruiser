@@ -40,11 +40,11 @@ class GameState {
         scenario.asteroids.forEach {
             spawnAsteroid(it)
         }
-        repeat(4) {
-            spawnNonPlayerShip()
+        repeat(3) {
+            spawnNonPlayerShip(Faction.Enemy)
         }
-        repeat(2) {
-            spawnNonPlayerShip(faction = Faction.Neutral)
+        repeat(3) {
+            spawnNonPlayerShip(Faction.Neutral)
         }
     }
 
@@ -174,7 +174,7 @@ class GameState {
         }
     }
 
-    fun spawnNonPlayerShip(faction: Faction = Faction.Enemy) {
+    fun spawnNonPlayerShip(faction: Faction) {
         NonPlayerShip(
             position = Vector2.random(1050, 850),
             rotation = Random.nextDouble(PI * 2.0),

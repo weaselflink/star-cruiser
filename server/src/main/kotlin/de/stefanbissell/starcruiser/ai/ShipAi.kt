@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.ships.Faction
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 
@@ -16,8 +17,13 @@ class ShipAi(
         ScanAi(),
         LockAi(),
         helmAi,
-        HomingAi(helmAi)
-    )
+    ).let {
+        when (ship.faction) {
+            Faction.Enemy -> it + HomingAi(helmAi)
+            Faction.Neutral -> it + PatrolAi(helmAi)
+            else -> it
+        }
+    }
 
     fun update(
         time: GameTime,
