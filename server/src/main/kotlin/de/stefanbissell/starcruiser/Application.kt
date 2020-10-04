@@ -5,11 +5,13 @@ import de.stefanbissell.starcruiser.GameState.Companion.gameStateActor
 import de.stefanbissell.starcruiser.client.GameClient.Companion.startGameClient
 import de.stefanbissell.starcruiser.client.createStatisticsActor
 import io.ktor.application.Application
+import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.application.log
 import io.ktor.features.ContentNegotiation
 import io.ktor.http.cio.websocket.pingPeriod
 import io.ktor.http.cio.websocket.timeout
+import io.ktor.response.respondRedirect
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.netty.EngineMain
@@ -59,6 +61,7 @@ fun Application.module() {
 
         get("/restart") {
             gameStateActor.send(Restart)
+            call.respondRedirect("/")
         }
 
         webSocket("/ws/client") {
