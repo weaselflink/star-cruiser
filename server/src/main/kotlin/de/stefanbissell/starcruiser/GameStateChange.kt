@@ -5,6 +5,7 @@ import kotlinx.coroutines.CompletableDeferred
 
 sealed class GameStateChange
 
+object Restart : GameStateChange()
 object Update : GameStateChange()
 data class GetGameStateSnapshot(val clientId: ClientId, val response: CompletableDeferred<SnapshotMessage>) : GameStateChange()
 object TogglePause : GameStateChange()

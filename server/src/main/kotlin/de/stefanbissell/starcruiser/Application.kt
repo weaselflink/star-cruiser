@@ -10,6 +10,7 @@ import io.ktor.application.log
 import io.ktor.features.ContentNegotiation
 import io.ktor.http.cio.websocket.pingPeriod
 import io.ktor.http.cio.websocket.timeout
+import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.netty.EngineMain
 import io.ktor.websocket.WebSockets
@@ -55,6 +56,10 @@ fun Application.module() {
 
     routing {
         webUi()
+
+        get("/restart") {
+            gameStateActor.send(Restart)
+        }
 
         webSocket("/ws/client") {
             startGameClient(

@@ -374,9 +374,10 @@ class GameState {
 
     companion object {
         fun CoroutineScope.gameStateActor() = actor<GameStateChange> {
-            val gameState = GameState()
+            var gameState = GameState()
             for (change in channel) {
                 when (change) {
+                    is Restart -> gameState = GameState()
                     is Update -> gameState.update()
                     is TogglePause -> gameState.togglePaused()
                     is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
