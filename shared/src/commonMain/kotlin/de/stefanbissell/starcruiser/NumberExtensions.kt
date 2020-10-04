@@ -41,6 +41,8 @@ fun Double.toIntHeading() =
 fun Double.round(digits: Int) =
     (this * 10.0.pow(digits.absoluteValue)).roundToInt() / 10.0.pow(digits.absoluteValue)
 
+fun Number.format() = toDouble().format(0)
+
 fun Double.format(digits: Int) =
     if (digits < 1) {
         this.toInt().toString()

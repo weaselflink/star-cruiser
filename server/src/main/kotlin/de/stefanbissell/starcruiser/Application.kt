@@ -3,7 +3,9 @@ package de.stefanbissell.starcruiser
 import de.stefanbissell.starcruiser.ApplicationConfig.gameStateUpdateIntervalMillis
 import de.stefanbissell.starcruiser.GameState.Companion.gameStateActor
 import de.stefanbissell.starcruiser.client.GameClient.Companion.startGameClient
-import de.stefanbissell.starcruiser.client.createStatisticsActor
+import de.stefanbissell.starcruiser.client.StatisticsMessage
+import de.stefanbissell.starcruiser.client.StatisticsSnapshot
+import de.stefanbissell.starcruiser.client.statisticsActor
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -12,11 +14,13 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.http.cio.websocket.pingPeriod
 import io.ktor.http.cio.websocket.timeout
 import io.ktor.response.respondRedirect
+import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.netty.EngineMain
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -36,7 +40,7 @@ object ApplicationConfig {
 fun Application.module() {
 
     val gameStateActor = gameStateActor()
-    val statisticsActor = createStatisticsActor()
+    val statisticsActor = statisticsActor()
 
     launch {
         while (isActive) {
@@ -62,6 +66,16 @@ fun Application.module() {
         get("/restart") {
             gameStateActor.send(Restart)
             call.respondRedirect("/")
+        }
+
+        get("/status") {
+            call.respondText("alive")
+        }
+
+        get("/statistics") {
+            val response = CompletableDeferred<StatisticsSnapshot>()
+            statisticsActor.send(StatisticsMessage.GetSnapshot(response))
+            call.respondText(response.await().toJson())
         }
 
         webSocket("/ws/client") {

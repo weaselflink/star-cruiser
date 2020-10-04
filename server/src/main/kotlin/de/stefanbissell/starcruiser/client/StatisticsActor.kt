@@ -3,11 +3,13 @@ package de.stefanbissell.starcruiser.client
 import de.stefanbissell.starcruiser.client.StatisticsMessage.GetSnapshot
 import de.stefanbissell.starcruiser.client.StatisticsMessage.MessageReceived
 import de.stefanbissell.starcruiser.client.StatisticsMessage.MessageSent
+import de.stefanbissell.starcruiser.configuredJson
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
 sealed class StatisticsMessage {
 
@@ -16,7 +18,7 @@ sealed class StatisticsMessage {
     class GetSnapshot(val response: CompletableDeferred<StatisticsSnapshot>) : StatisticsMessage()
 }
 
-fun CoroutineScope.createStatisticsActor() = actor<StatisticsMessage> {
+fun CoroutineScope.statisticsActor() = actor<StatisticsMessage> {
     var countSent = 0L
     var totalSent = 0L
     var countReceived = 0L
@@ -48,9 +50,13 @@ fun CoroutineScope.createStatisticsActor() = actor<StatisticsMessage> {
     }
 }
 
+@Serializable
 data class StatisticsSnapshot(
     val countSent: Long,
     val totalSent: Long,
     val countReceived: Long,
     val totalReceived: Long
-)
+) {
+
+    fun toJson() = configuredJson.encodeToString(serializer(), this)
+}

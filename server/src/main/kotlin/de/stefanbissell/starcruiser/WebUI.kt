@@ -96,10 +96,6 @@ fun Routing.webUi() {
         resources("assets")
     }
 
-    get("/status") {
-        call.respondText("alive")
-    }
-
     get("/css/client.css") {
         call.respondCss {
             body {

@@ -5,12 +5,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val logback_version: String by project
 val ktor_version: String by project
 val kotlin_version: String by project
+val kotlin_serialization_version: String by project
 val junit_version: String by project
 val strikt_version: String by project
 
 plugins {
     application
     kotlin("jvm")
+    kotlin("plugin.serialization")
     id("com.github.johnrengelman.shadow")
 }
 
@@ -23,6 +25,7 @@ dependencies {
     implementation(project(":shared"))
 
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.0")
     implementation("org.jetbrains:kotlin-css:1.0.0-pre.123-kotlin-$kotlin_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
