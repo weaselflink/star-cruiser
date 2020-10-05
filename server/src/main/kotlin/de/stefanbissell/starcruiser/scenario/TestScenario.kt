@@ -1,11 +1,22 @@
 package de.stefanbissell.starcruiser.scenario
 
 import de.stefanbissell.starcruiser.p
+import de.stefanbissell.starcruiser.ships.Faction
 
 object TestScenario : Scenario() {
 
     override val definition =
         scenario {
+            repeat(3) {
+                nonPlayerShip {
+                    faction = Faction.Enemy
+                }
+            }
+            repeat(3) {
+                nonPlayerShip {
+                    faction = Faction.Neutral
+                }
+            }
             asteroidField {
                 density = 0.5
                 area(

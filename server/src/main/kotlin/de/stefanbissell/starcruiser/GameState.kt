@@ -11,7 +11,6 @@ import de.stefanbissell.starcruiser.Station.Weapons
 import de.stefanbissell.starcruiser.client.ClientId
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.scenario.TestScenario
-import de.stefanbissell.starcruiser.ships.Faction
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
@@ -40,11 +39,8 @@ class GameState {
         scenario.asteroids.forEach {
             spawnAsteroid(it)
         }
-        repeat(3) {
-            spawnNonPlayerShip(Faction.Enemy)
-        }
-        repeat(3) {
-            spawnNonPlayerShip(Faction.Neutral)
+        scenario.nonPlayerShips.forEach {
+            spawnNonPlayerShip(it)
         }
     }
 
@@ -174,13 +170,8 @@ class GameState {
         }
     }
 
-    fun spawnNonPlayerShip(faction: Faction) {
-        NonPlayerShip(
-            position = Vector2.random(1050, 850),
-            rotation = Random.nextDouble(PI * 2.0),
-            faction = faction
-        ).also {
-            it.throttle = 50
+    fun spawnNonPlayerShip(ship: NonPlayerShip) {
+        ship.also {
             ships[it.id] = it
             physicsEngine.addShip(it)
         }

@@ -4,6 +4,8 @@ import de.stefanbissell.starcruiser.Asteroid
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.shapes.Polygon
 import de.stefanbissell.starcruiser.shapes.Shape
+import de.stefanbissell.starcruiser.ships.Faction
+import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import kotlin.math.PI
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -15,7 +17,10 @@ abstract class Scenario {
     fun create(): ScenarioInstance {
         return ScenarioInstance(
             asteroids = definition.asteroidFields.flatMap {
-                it.createAsteroids()
+                it.create()
+            },
+            nonPlayerShips = definition.nonPlayerShips.map {
+                it.create()
             },
             mapAreas = definition.asteroidFields.map {
                 it.toMapArea()
@@ -31,9 +36,14 @@ fun scenario(block: ScenarioDefinition.() -> Unit): ScenarioDefinition {
 class ScenarioDefinition {
 
     val asteroidFields = mutableListOf<AsteroidFieldDefinition>()
+    val nonPlayerShips = mutableListOf<NonPlayerShipDefinition>()
 
     fun asteroidField(block: AsteroidFieldDefinition.() -> Unit) {
         asteroidFields += AsteroidFieldDefinition().apply(block)
+    }
+
+    fun nonPlayerShip(block: NonPlayerShipDefinition.() -> Unit) {
+        nonPlayerShips += NonPlayerShipDefinition().apply(block)
     }
 }
 
@@ -52,7 +62,7 @@ class AsteroidFieldDefinition {
         shape = Polygon.of(*boundary)
     }
 
-    fun createAsteroids(): List<Asteroid> =
+    fun create(): List<Asteroid> =
         (1..asteroidCount).map {
             Asteroid(
                 position = randomPointInside(),
@@ -77,8 +87,21 @@ class AsteroidFieldDefinition {
     }
 }
 
+class NonPlayerShipDefinition {
+
+    var faction: Faction = Faction.Enemy
+
+    fun create(): NonPlayerShip =
+        NonPlayerShip(
+            position = Vector2.random(1050, 850),
+            rotation = Random.nextDouble(PI * 2.0),
+            faction = faction
+        )
+}
+
 data class ScenarioInstance(
     val asteroids: List<Asteroid>,
+    val nonPlayerShips: List<NonPlayerShip>,
     val mapAreas: List<MapArea>
 )
 
