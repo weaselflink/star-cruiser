@@ -80,4 +80,14 @@ class PolygonTest {
         expectThat(horseshoe.isInside(p(6, 0))).isFalse()
         expectThat(horseshoe.isInside(p(2, 0))).isFalse()
     }
+
+    @Test
+    fun `yields random point inside`() {
+        repeat(10) {
+            expectThat(triangle.isInside(triangle.randomPointInside())).isTrue()
+        }
+        repeat(10) {
+            expectThat(horseshoe.isInside(horseshoe.randomPointInside())).isTrue()
+        }
+    }
 }

@@ -7,5 +7,6 @@ interface Shape {
 
     val boundingBox: Box
     fun isInside(point: Vector2): Boolean
+    fun randomPointInside(): Vector2
     fun toMessage(): MapAreaMessage
 }

@@ -32,6 +32,15 @@ data class Polygon(
         } % 2 == 1
     }
 
+    override fun randomPointInside(): Vector2 {
+        val box = boundingBox
+        var position = box.randomPointInside()
+        while (!isInside(position)) {
+            position = box.randomPointInside()
+        }
+        return position
+    }
+
     override fun toMessage(): MapAreaMessage =
         MapAreaMessage(border)
 

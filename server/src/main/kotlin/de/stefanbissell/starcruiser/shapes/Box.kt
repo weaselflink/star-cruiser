@@ -30,6 +30,6 @@ data class Box(
             )
         )
 
-    fun randomPointInside() =
+    override fun randomPointInside() =
         bottomLeft + Vector2(Random.nextDouble(width), Random.nextDouble(height))
 }
