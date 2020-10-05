@@ -90,10 +90,11 @@ class AsteroidFieldDefinition {
 class NonPlayerShipDefinition {
 
     var faction: Faction = Faction.Enemy
+    lateinit var spawnArea: Shape
 
     fun create(): NonPlayerShip =
         NonPlayerShip(
-            position = Vector2.random(1050, 850),
+            position = spawnArea.randomPointInside(),
             rotation = Random.nextDouble(PI * 2.0),
             faction = faction
         )

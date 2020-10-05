@@ -1,20 +1,29 @@
 package de.stefanbissell.starcruiser.scenario
 
 import de.stefanbissell.starcruiser.p
+import de.stefanbissell.starcruiser.shapes.Ring
 import de.stefanbissell.starcruiser.ships.Faction
 
 object TestScenario : Scenario() {
+
+    private val defaultSpawnArea = Ring(
+        center = p(0, 0),
+        outer = 1400.0,
+        inner = 800.0
+    )
 
     override val definition =
         scenario {
             repeat(3) {
                 nonPlayerShip {
                     faction = Faction.Enemy
+                    spawnArea = defaultSpawnArea
                 }
             }
             repeat(3) {
                 nonPlayerShip {
                     faction = Faction.Neutral
+                    spawnArea = defaultSpawnArea
                 }
             }
             asteroidField {
