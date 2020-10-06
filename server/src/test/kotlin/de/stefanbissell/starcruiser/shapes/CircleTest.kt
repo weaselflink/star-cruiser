@@ -13,7 +13,7 @@ class CircleTest {
 
     private val circle = Circle(
         center = p(50, 10),
-        radius = 100.0
+        radius = 100
     )
 
     @Test

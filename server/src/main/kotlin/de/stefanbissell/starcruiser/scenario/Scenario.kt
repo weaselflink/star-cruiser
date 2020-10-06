@@ -2,7 +2,6 @@ package de.stefanbissell.starcruiser.scenario
 
 import de.stefanbissell.starcruiser.Asteroid
 import de.stefanbissell.starcruiser.Vector2
-import de.stefanbissell.starcruiser.shapes.Polygon
 import de.stefanbissell.starcruiser.shapes.Shape
 import de.stefanbissell.starcruiser.ships.Faction
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
@@ -57,10 +56,6 @@ class AsteroidFieldDefinition {
             val box = shape.boundingBox
             return (box.area / 10_000 * density.toDouble()).roundToInt()
         }
-
-    fun area(vararg boundary: Vector2) {
-        shape = Polygon.of(*boundary)
-    }
 
     fun create(): List<Asteroid> =
         (1..asteroidCount).map {

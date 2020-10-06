@@ -7,6 +7,10 @@ data class Polygon(
     val border: List<Vector2>
 ) : Shape {
 
+    constructor(
+        vararg points: Vector2
+    ) : this(points.toList())
+
     private val edges: List<Pair<Vector2, Vector2>> =
         border.mapIndexed { index, point ->
             if (index < border.size - 1) {

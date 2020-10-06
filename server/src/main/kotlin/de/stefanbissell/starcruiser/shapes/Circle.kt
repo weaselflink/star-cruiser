@@ -11,6 +11,11 @@ class Circle(
     private val radius: Double
 ) : Shape {
 
+    constructor(
+        center: Vector2,
+        radius: Number
+    ) : this(center, radius.toDouble())
+
     override val boundingBox: Box =
         Box(
             bottomLeft = center - Vector2(radius, radius),
@@ -24,7 +29,9 @@ class Circle(
         Vector2(radius * sqrt(Random.nextDouble()))
             .rotate(Random.nextDouble(2 * PI)) + center
 
-    override fun toMessage(): MapAreaMessage {
-        throw UnsupportedOperationException()
-    }
+    override fun toMessage(): MapAreaMessage =
+        MapAreaMessage.Circle(
+            center = center,
+            radius = radius
+        )
 }

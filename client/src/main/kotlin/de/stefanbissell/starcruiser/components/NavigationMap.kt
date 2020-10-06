@@ -118,7 +118,7 @@ class NavigationMap(
 
         sensorRangeStyle(dim)
         beginPath()
-        circle(0.0, 0.0, ship.sensorRange * scale)
+        circle(0.0, 0.0, ship.sensorRange.adjustForMap())
         stroke()
 
         restore()
@@ -137,6 +137,7 @@ class NavigationMap(
             mapAreas.forEach {
                 when (it) {
                     is MapAreaMessage.Polygon -> drawMapAreaPolygon(it)
+                    is MapAreaMessage.Circle -> drawMapAreaCircle(it)
                 }
             }
         }
@@ -147,7 +148,7 @@ class NavigationMap(
     private fun CanvasRenderingContext2D.drawAsteroid(asteroid: MapAsteroidMessage) {
         save()
         translate(asteroid.position.adjustForMap())
-        drawAsteroidSymbol(asteroid.rotation, dim.vmin * 0.8 * asteroid.radius * 0.1 * scale)
+        drawAsteroidSymbol(asteroid.rotation, (dim.vmin * 0.8 * asteroid.radius * 0.1).adjustForMap())
         restore()
     }
 
@@ -171,6 +172,20 @@ class NavigationMap(
                 lineTo(point.adjustForMap())
             }
         }
+        closePath()
+        stroke()
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawMapAreaCircle(mapArea: MapAreaMessage.Circle) {
+        val center = mapArea.center.adjustForMap()
+        val radius = mapArea.radius.adjustForMap()
+        save()
+        beginPath()
+        circle(center.x, center.y, radius)
+        fill()
+        beginPath()
+        circle(center.x, center.y, radius)
         closePath()
         stroke()
         restore()
@@ -298,6 +313,8 @@ class NavigationMap(
     private fun Vector2.toWorld() = ((this - canvasCenter()) / scale).let { Vector2(it.x, -it.y) } + center
 
     private fun convert(vector: Vector2) = (vector / scale).let { Vector2(-it.x, it.y) }
+
+    private fun Double.adjustForMap() = this * scale
 
     private fun Vector2.adjustForMap() = ((this - center) * scale).let { Vector2(it.x, -it.y) }
 

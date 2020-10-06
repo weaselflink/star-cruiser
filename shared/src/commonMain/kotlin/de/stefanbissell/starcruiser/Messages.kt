@@ -463,4 +463,10 @@ sealed class MapAreaMessage {
     data class Polygon(
         val points: List<Vector2>
     ) : MapAreaMessage()
+
+    @Serializable
+    data class Circle(
+        val center: Vector2,
+        val radius: Double
+    ) : MapAreaMessage()
 }
