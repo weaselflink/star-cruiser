@@ -21,7 +21,7 @@ data class Box(
             point.x <= topRight.x && point.y <= topRight.y
 
     override fun toMessage(): MapAreaMessage =
-        MapAreaMessage(
+        MapAreaMessage.Polygon(
             listOf(
                 bottomLeft,
                 bottomLeft + Vector2(0, height),

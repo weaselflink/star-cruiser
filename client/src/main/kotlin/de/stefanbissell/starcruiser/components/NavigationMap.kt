@@ -135,7 +135,9 @@ class NavigationMap(
             }
         } else {
             mapAreas.forEach {
-                drawMapArea(it)
+                when (it) {
+                    is MapAreaMessage.Polygon -> drawMapAreaPolygon(it)
+                }
             }
         }
 
@@ -149,7 +151,7 @@ class NavigationMap(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawMapArea(mapArea: MapAreaMessage) {
+    private fun CanvasRenderingContext2D.drawMapAreaPolygon(mapArea: MapAreaMessage.Polygon) {
         save()
         beginPath()
         mapArea.points.forEachIndexed { index, point ->

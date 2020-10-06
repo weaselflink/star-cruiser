@@ -457,6 +457,10 @@ data class ScanProgressMessage(
 )
 
 @Serializable
-data class MapAreaMessage(
-    val points: List<Vector2>
-)
+sealed class MapAreaMessage {
+
+    @Serializable
+    data class Polygon(
+        val points: List<Vector2>
+    ) : MapAreaMessage()
+}

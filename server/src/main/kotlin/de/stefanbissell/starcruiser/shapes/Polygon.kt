@@ -42,7 +42,7 @@ data class Polygon(
     }
 
     override fun toMessage(): MapAreaMessage =
-        MapAreaMessage(border)
+        MapAreaMessage.Polygon(border)
 
     private fun intersects(point: Vector2, edge: Pair<Vector2, Vector2>) =
         intersectsOnYAxis(edge, point) && intersectsLeftOfPoint(point, edge)
