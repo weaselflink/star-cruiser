@@ -12,8 +12,6 @@ import kotlinx.serialization.json.Json
 import kotlin.random.Random
 
 val configuredJson = Json {
-    encodeDefaults = true
-    isLenient = true
     prettyPrint = true
 }
 
