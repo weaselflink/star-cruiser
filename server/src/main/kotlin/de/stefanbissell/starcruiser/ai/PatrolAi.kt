@@ -2,15 +2,17 @@ package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.randomAngle
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
+import kotlin.math.PI
 
 class PatrolAi(
     private val helmAi: HelmAi,
     interval: Double = 5.0
 ) : ComponentAi(interval) {
 
-    private var path: List<Vector2> = emptyList()
+    var path: List<Vector2> = emptyList()
         set(value) {
             field = value
             pointInPath = 0
@@ -26,12 +28,7 @@ class PatrolAi(
         contactList: ShipContactList
     ) {
         if (path.isEmpty()) {
-            path = listOf(
-                ship.position + Vector2(1000, 0),
-                ship.position + Vector2(1000, 1000),
-                ship.position + Vector2(0, 1000),
-                ship.position + Vector2(0, 0),
-            )
+            path = createInitialPath(ship)
         }
 
         if (path.isNotEmpty()) {
@@ -40,6 +37,15 @@ class PatrolAi(
                 steerTowardsNextPoint()
             }
         }
+    }
+
+    private fun createInitialPath(ship: NonPlayerShip): List<Vector2> {
+        val angle = randomAngle()
+        return listOf(
+            ship.position + Vector2(1000, 0).rotate(angle),
+            ship.position + Vector2(1000, 0).rotate(angle + 2 * PI / 3),
+            ship.position
+        )
     }
 
     private fun NonPlayerShip.checkPointReached() {

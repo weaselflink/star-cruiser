@@ -2,14 +2,12 @@ package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.isNear
-import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotNull
-import kotlin.math.PI
 
 class PatrolAiTest {
 
@@ -33,34 +31,34 @@ class PatrolAiTest {
         expectThat(patrolAi.pointInPath)
             .isEqualTo(0)
         expectThat(helmAi.targetRotation)
-            .isNotNull().isNear(0.0)
+            .isNotNull().isNear(patrolAi.path.first().angle())
     }
 
     @Test
     fun `skips to next patrol point when point reached`() {
         executeAi()
-        ship.position = p(1000, 0)
+        ship.position = patrolAi.path.first()
         helmAi.targetRotation = null
         executeAi()
 
         expectThat(patrolAi.pointInPath)
             .isEqualTo(1)
         expectThat(helmAi.targetRotation)
-            .isNotNull().isNear(PI * 0.5)
+            .isNotNull().isNear((patrolAi.path[1] - patrolAi.path.first()).angle())
     }
 
     @Test
     fun `skips to first patrol point when last point reached`() {
         executeAi()
-        ship.position = p(0, 0)
+        ship.position = patrolAi.path.last()
         helmAi.targetRotation = null
-        patrolAi.pointInPath = 3
+        patrolAi.pointInPath = patrolAi.path.size - 1
         executeAi()
 
         expectThat(patrolAi.pointInPath)
             .isEqualTo(0)
         expectThat(helmAi.targetRotation)
-            .isNotNull().isNear(0.0)
+            .isNotNull().isNear((patrolAi.path.first() - patrolAi.path.last()).angle())
     }
 
     private fun executeAi() {

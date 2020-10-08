@@ -2,7 +2,7 @@ package de.stefanbissell.starcruiser.shapes
 
 import de.stefanbissell.starcruiser.MapAreaMessage
 import de.stefanbissell.starcruiser.Vector2
-import kotlin.math.PI
+import de.stefanbissell.starcruiser.randomAngle
 import kotlin.random.Random
 
 data class Ring(
@@ -22,7 +22,7 @@ data class Ring(
 
     override fun randomPointInside(): Vector2 =
         Vector2(Random.nextDouble(inner, outer), 0)
-            .rotate(Random.nextDouble(2 * PI)) + center
+            .rotate(randomAngle()) + center
 
     override fun toMessage(): MapAreaMessage {
         throw UnsupportedOperationException()

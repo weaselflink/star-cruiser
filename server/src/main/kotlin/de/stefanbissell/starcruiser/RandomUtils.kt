@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser
 
+import kotlin.math.PI
 import kotlin.random.Random
 
 fun randomShipName(): String {
@@ -12,3 +13,5 @@ private fun randomPaddedNumber(n: Int = 3) = (0 until n)
 fun randomLetter(): Char {
     return ('A'.toInt() + Random.nextInt(26)).toChar()
 }
+
+fun randomAngle() = Random.nextDouble(2 * PI)

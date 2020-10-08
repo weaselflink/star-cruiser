@@ -2,7 +2,7 @@ package de.stefanbissell.starcruiser.shapes
 
 import de.stefanbissell.starcruiser.MapAreaMessage
 import de.stefanbissell.starcruiser.Vector2
-import kotlin.math.PI
+import de.stefanbissell.starcruiser.randomAngle
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -27,7 +27,7 @@ class Circle(
 
     override fun randomPointInside(): Vector2 =
         Vector2(radius * sqrt(Random.nextDouble()))
-            .rotate(Random.nextDouble(2 * PI)) + center
+            .rotate(randomAngle()) + center
 
     override fun toMessage(): MapAreaMessage =
         MapAreaMessage.Circle(
