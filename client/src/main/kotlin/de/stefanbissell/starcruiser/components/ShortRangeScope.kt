@@ -26,6 +26,7 @@ import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandler
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.lockMarkerStyle
+import de.stefanbissell.starcruiser.neutralContactStyle
 import de.stefanbissell.starcruiser.pad
 import de.stefanbissell.starcruiser.shipStyle
 import de.stefanbissell.starcruiser.toIntHeading
@@ -372,6 +373,7 @@ class ShortRangeScope(
         when (contact.type) {
             ContactType.Friendly -> friendlyContactStyle(dim)
             ContactType.Enemy -> enemyContactStyle(dim)
+            ContactType.Neutral -> neutralContactStyle(dim)
             else -> unknownContactStyle(dim)
         }
         drawShipSymbol(contact.rotation, dim.vmin * 0.8)
