@@ -21,8 +21,9 @@ class HomingAiTest {
 
     private val ship = NonPlayerShip()
     private val time = GameTime.atEpoch()
+    private val behaviourAi = BehaviourAi(Behaviour.Attack)
     private val helmAi = HelmAi()
-    private val homingAi = HomingAi(helmAi)
+    private val homingAi = HomingAi(behaviourAi, helmAi)
 
     private val shipList = mutableListOf<Ship>()
 
@@ -59,6 +60,17 @@ class HomingAiTest {
     @Test
     fun `does not home on ship outside sensor range`() {
         addShip(p(ship.sensorRange * 2, 0))
+
+        executeAi()
+
+        expectThat(homingAi.target).isNull()
+        expectThat(helmAi.targetRotation).isNull()
+    }
+
+    @Test
+    fun `does not home on ship when behaviour not attack`() {
+        addShip(p(1_000, 1_000))
+        behaviourAi.behaviour = Behaviour.CombatPatrol
 
         executeAi()
 

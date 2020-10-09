@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 
 class HomingAi(
+    private val behaviourAi: BehaviourAi,
     private val helmAi: HelmAi
 ) : ComponentAi(2.0) {
 
@@ -18,6 +19,21 @@ class HomingAi(
         time: GameTime,
         contactList: ShipContactList
     ) {
+        if (behaviourAi.behaviour == Behaviour.Attack) {
+            performAttack(ship, contactList)
+        }
+    }
+
+    override fun targetDestroyed(shipId: ObjectId) {
+        if (target == shipId) {
+            target = null
+        }
+    }
+
+    private fun performAttack(
+        ship: NonPlayerShip,
+        contactList: ShipContactList
+    ) {
         selectTarget(contactList)
         target?.let {
             contactList[it]
@@ -25,12 +41,6 @@ class HomingAi(
             steerTowardsTarget(it, ship)
         } ?: run {
             ship.throttle = 50
-        }
-    }
-
-    override fun targetDestroyed(shipId: ObjectId) {
-        if (target == shipId) {
-            target = null
         }
     }
 

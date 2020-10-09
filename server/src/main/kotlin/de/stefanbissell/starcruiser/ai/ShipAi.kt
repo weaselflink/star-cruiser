@@ -11,7 +11,13 @@ class ShipAi(
 ) {
 
     private val helmAi = HelmAi()
+    private val behaviourAi = if (ship.faction == Faction.Enemy) {
+        BehaviourAi(Behaviour.CombatPatrol)
+    } else {
+        BehaviourAi(Behaviour.IdlePatrol)
+    }
     private val componentAis = listOf(
+        behaviourAi,
         ShieldAi(),
         RepairAi(),
         ScanAi(),
@@ -19,7 +25,7 @@ class ShipAi(
         helmAi,
     ).let {
         when (ship.faction) {
-            Faction.Enemy -> it + HomingAi(helmAi)
+            Faction.Enemy -> it + HomingAi(behaviourAi, helmAi)
             Faction.Neutral -> it + PatrolAi(helmAi)
             else -> it
         }
