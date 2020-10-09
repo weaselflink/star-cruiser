@@ -16,7 +16,7 @@ plugins {
 
 allprojects {
     group = "de.stefanbissell.starcruiser"
-    version = "0.28.0"
+    version = "0.29.0"
 
     apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
