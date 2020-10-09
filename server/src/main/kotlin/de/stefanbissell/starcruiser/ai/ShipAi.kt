@@ -10,12 +10,12 @@ class ShipAi(
     val ship: NonPlayerShip
 ) {
 
-    private val helmAi = HelmAi()
     private val behaviourAi = if (ship.faction == Faction.Enemy) {
         BehaviourAi(Behaviour.CombatPatrol)
     } else {
         BehaviourAi(Behaviour.IdlePatrol)
     }
+    private val helmAi = HelmAi()
     private val componentAis = listOf(
         behaviourAi,
         ShieldAi(),
@@ -23,13 +23,9 @@ class ShipAi(
         ScanAi(),
         LockAi(),
         helmAi,
-    ).let {
-        when (ship.faction) {
-            Faction.Enemy -> it + HomingAi(behaviourAi, helmAi)
-            Faction.Neutral -> it + PatrolAi(helmAi)
-            else -> it
-        }
-    }
+        HomingAi(behaviourAi, helmAi),
+        PatrolAi(behaviourAi, helmAi)
+    )
 
     fun update(
         time: GameTime,

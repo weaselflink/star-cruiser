@@ -13,8 +13,9 @@ class PatrolAiTest {
 
     private val ship = NonPlayerShip()
     private val time = GameTime.atEpoch()
+    private val behaviourAi = BehaviourAi(Behaviour.CombatPatrol)
     private val helmAi = HelmAi()
-    private val patrolAi = PatrolAi(helmAi)
+    private val patrolAi = PatrolAi(behaviourAi, helmAi)
 
     @Test
     fun `sets throttle to 50 initially`() {
@@ -22,6 +23,16 @@ class PatrolAiTest {
 
         expectThat(ship.throttle)
             .isEqualTo(50)
+    }
+
+    @Test
+    fun `does nothing if behaviour not patrol`() {
+        behaviourAi.behaviour = Behaviour.Attack
+
+        executeAi()
+
+        expectThat(ship.throttle)
+            .isEqualTo(0)
     }
 
     @Test

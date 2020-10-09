@@ -68,7 +68,7 @@ class HomingAiTest {
     }
 
     @Test
-    fun `does not home on ship when behaviour not attack`() {
+    fun `does nothing if behaviour not attack`() {
         addShip(p(1_000, 1_000))
         behaviourAi.behaviour = Behaviour.CombatPatrol
 

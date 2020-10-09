@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.ships.ShipContactList
 import kotlin.math.PI
 
 class PatrolAi(
+    private val behaviourAi: BehaviourAi,
     private val helmAi: HelmAi
 ) : ComponentAi(2.0) {
 
@@ -30,6 +31,12 @@ class PatrolAi(
             path = createInitialPath(ship)
         }
 
+        if (behaviourAi.behaviour is Behaviour.Patrol) {
+            performPatrol(ship)
+        }
+    }
+
+    private fun performPatrol(ship: NonPlayerShip) {
         if (path.isNotEmpty()) {
             with(ship) {
                 checkPointReached()

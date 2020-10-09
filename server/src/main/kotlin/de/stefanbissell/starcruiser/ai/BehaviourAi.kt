@@ -23,33 +23,7 @@ sealed class Behaviour {
         contactList: ShipContactList
     ): Behaviour = this
 
-    object IdlePatrol : Behaviour(), Patrol {
-
-        override fun transition(
-            ship: NonPlayerShip,
-            time: GameTime,
-            contactList: ShipContactList
-        ): Behaviour =
-            if (ship.shieldHandler.timeSinceActivation < 10) {
-                IdleEvade
-            } else {
-                IdlePatrol
-            }
-    }
-
-    object IdleEvade : Behaviour() {
-
-        override fun transition(
-            ship: NonPlayerShip,
-            time: GameTime,
-            contactList: ShipContactList
-        ): Behaviour =
-            if (ship.shieldHandler.timeSinceActivation > 30) {
-                IdlePatrol
-            } else {
-                IdleEvade
-            }
-    }
+    object IdlePatrol : Behaviour(), Patrol
 
     object CombatPatrol : Behaviour(), Patrol {
 
