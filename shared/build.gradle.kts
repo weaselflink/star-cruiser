@@ -1,4 +1,4 @@
-@file:Suppress("PropertyName", "SuspiciousCollectionReassignment", "UNUSED_VARIABLE")
+@file:Suppress("PropertyName", "SuspiciousCollectionReassignment")
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
