@@ -20,6 +20,7 @@ class ShieldHandler(
                 field = false
             }
         }
+    var timeSinceActivation: Double = 1_000_000.0
     private var damageSinceLastUpdate: Double = 0.0
     private var activated: Boolean = false
 
@@ -32,12 +33,11 @@ class ShieldHandler(
         currentStrength += rechargeAmount(time, boostLevel)
     }
 
-    fun endUpdate() {
+    fun endUpdate(time: GameTime) {
         if (shieldFailing()) {
             up = false
         }
-        activated = up && damageSinceLastUpdate > 0.0
-        damageSinceLastUpdate = 0.0
+        updateActivation(time)
     }
 
     fun takeDamageAndReportHullDamage(amount: Double): Double {
@@ -63,6 +63,14 @@ class ShieldHandler(
             max = shieldTemplate.strength
         )
 
+    private fun updateActivation(time: GameTime) {
+        activated = up && damageSinceLastUpdate > 0.0
+        if (!activated) {
+            timeSinceActivation += time.delta
+        }
+        damageSinceLastUpdate = 0.0
+    }
+
     private fun shieldFailing() = currentStrength <= shieldTemplate.failureStrength
 
     private fun rechargeAmount(time: GameTime, boostLevel: Double) =
@@ -74,6 +82,7 @@ class ShieldHandler(
 
     private fun takeDamageToShieldAndThenHull(amount: Double): Double {
         val hullDamage = max(0.0, amount - currentStrength)
+        timeSinceActivation = 0.0
         damageSinceLastUpdate += amount
         currentStrength -= amount
         return hullDamage

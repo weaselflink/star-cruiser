@@ -91,8 +91,11 @@ class PlayerShip(
         updateMapSelection(contactList)
     }
 
-    override fun endUpdate(physicsEngine: PhysicsEngine): ShipUpdateResult {
-        shieldHandler.endUpdate()
+    override fun endUpdate(
+        time: GameTime,
+        physicsEngine: PhysicsEngine
+    ): ShipUpdateResult {
+        shieldHandler.endUpdate(time)
         val destroyed = hull <= 0.0
         if (!destroyed && jumpHandler.jumpComplete) {
             physicsEngine.jumpShip(id, jumpHandler.jumpDistance)

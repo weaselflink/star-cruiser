@@ -206,7 +206,7 @@ class GameState {
             }
         }
         ships.map {
-            it.value.endUpdate(physicsEngine)
+            it.value.endUpdate(time, physicsEngine)
         }.filter {
             it.destroyed
         }.forEach {

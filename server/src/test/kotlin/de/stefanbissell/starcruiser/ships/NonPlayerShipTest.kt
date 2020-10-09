@@ -198,7 +198,7 @@ class NonPlayerShipTest {
             physicsEngine = physicsEngine,
             contactList = ShipContactList(ship, contactList)
         )
-        return ship.endUpdate(physicsEngine)
+        return ship.endUpdate(time, physicsEngine)
     }
 
     private fun addShip(

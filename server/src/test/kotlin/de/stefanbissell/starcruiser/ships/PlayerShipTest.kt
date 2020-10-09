@@ -573,7 +573,7 @@ class PlayerShipTest {
     private fun stepTime(seconds: Number): ShipUpdateResult {
         time.update(seconds.toDouble())
         ship.update(time, physicsEngine, contactList)
-        return ship.endUpdate(physicsEngine)
+        return ship.endUpdate(time, physicsEngine)
     }
 
     private fun addShip(position: Vector2 = p(100, 100)): PlayerShip {

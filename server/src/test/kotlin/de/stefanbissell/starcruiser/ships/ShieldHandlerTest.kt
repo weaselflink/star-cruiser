@@ -48,6 +48,26 @@ class ShieldHandlerTest {
     }
 
     @Test
+    fun `tracks time since last shield activation`() {
+        shieldHandler.takeDamageAndReportHullDamage(3.0)
+
+        stepTime(1.0)
+
+        expectThat(shieldHandler.timeSinceActivation)
+            .isEqualTo(0.0)
+
+        stepTime(2.5)
+
+        expectThat(shieldHandler.timeSinceActivation)
+            .isEqualTo(2.5)
+
+        stepTime(2.5)
+
+        expectThat(shieldHandler.timeSinceActivation)
+            .isEqualTo(5.0)
+    }
+
+    @Test
     fun `recharges shields`() {
         shieldHandler.takeDamageAndReportHullDamage(3.0)
 
@@ -151,6 +171,6 @@ class ShieldHandlerTest {
     private fun stepTime(seconds: Number) {
         time.update(seconds.toDouble())
         shieldHandler.update(time, power)
-        shieldHandler.endUpdate()
+        shieldHandler.endUpdate(time)
     }
 }

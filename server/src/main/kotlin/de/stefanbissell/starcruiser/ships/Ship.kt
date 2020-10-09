@@ -31,7 +31,10 @@ interface Ship {
         contactList: ShipContactList = ShipContactList(this, emptyMap())
     )
 
-    fun endUpdate(physicsEngine: PhysicsEngine): ShipUpdateResult
+    fun endUpdate(
+        time: GameTime,
+        physicsEngine: PhysicsEngine
+    ): ShipUpdateResult
 
     fun toContactMessage(relativeTo: Ship): ContactMessage
 

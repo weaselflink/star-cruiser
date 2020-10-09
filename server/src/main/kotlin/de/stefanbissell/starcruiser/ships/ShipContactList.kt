@@ -54,6 +54,7 @@ class ShipContactList(
             range <= relativeTo.template.shortRangeScopeRange * 1.1
         }
         val contactType = relativeTo.getContactType(ship)
+        val isEnemy = contactType == ContactType.Enemy
         val scanLevel = relativeTo.getScanLevel(ship.id)
 
         fun toContactMessage() =
