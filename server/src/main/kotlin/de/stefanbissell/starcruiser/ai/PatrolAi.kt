@@ -8,9 +8,8 @@ import de.stefanbissell.starcruiser.ships.ShipContactList
 import kotlin.math.PI
 
 class PatrolAi(
-    private val helmAi: HelmAi,
-    interval: Double = 5.0
-) : ComponentAi(interval) {
+    private val helmAi: HelmAi
+) : ComponentAi(2.0) {
 
     var path: List<Vector2> = emptyList()
         set(value) {

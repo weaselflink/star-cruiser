@@ -4,7 +4,7 @@ import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 
-class ScanAi(interval: Double = 5.0) : ComponentAi(interval) {
+class ScanAi : ComponentAi(5.0) {
 
     override fun execute(
         ship: NonPlayerShip,

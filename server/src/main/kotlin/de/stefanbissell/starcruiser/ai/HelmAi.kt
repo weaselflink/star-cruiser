@@ -9,7 +9,7 @@ import de.stefanbissell.starcruiser.toRadians
 import kotlin.math.abs
 import kotlin.math.sign
 
-class HelmAi(interval: Double = 0.1) : ComponentAi(interval) {
+class HelmAi : ComponentAi(0.1) {
 
     private val tolerance = 0.2.toRadians()
 
