@@ -17,13 +17,41 @@ sealed class Behaviour {
 
     interface Patrol
 
+    interface Evade
+
     open fun transition(
         ship: NonPlayerShip,
         time: GameTime,
         contactList: ShipContactList
     ): Behaviour = this
 
-    object IdlePatrol : Behaviour(), Patrol
+    object IdlePatrol : Behaviour(), Patrol {
+
+        override fun transition(
+            ship: NonPlayerShip,
+            time: GameTime,
+            contactList: ShipContactList
+        ): Behaviour =
+            if (ship.shieldHandler.timeSinceLastDamage < 10) {
+                IdleEvade
+            } else {
+                IdlePatrol
+            }
+    }
+
+    object IdleEvade : Behaviour(), Evade {
+
+        override fun transition(
+            ship: NonPlayerShip,
+            time: GameTime,
+            contactList: ShipContactList
+        ): Behaviour =
+            if (ship.shieldHandler.timeSinceLastDamage > 30) {
+                IdlePatrol
+            } else {
+                IdleEvade
+            }
+    }
 
     object CombatPatrol : Behaviour(), Patrol {
 

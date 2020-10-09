@@ -48,22 +48,22 @@ class ShieldHandlerTest {
     }
 
     @Test
-    fun `tracks time since last shield activation`() {
+    fun `tracks time since last damage`() {
         shieldHandler.takeDamageAndReportHullDamage(3.0)
 
         stepTime(1.0)
 
-        expectThat(shieldHandler.timeSinceActivation)
+        expectThat(shieldHandler.timeSinceLastDamage)
             .isEqualTo(0.0)
 
         stepTime(2.5)
 
-        expectThat(shieldHandler.timeSinceActivation)
+        expectThat(shieldHandler.timeSinceLastDamage)
             .isEqualTo(2.5)
 
         stepTime(2.5)
 
-        expectThat(shieldHandler.timeSinceActivation)
+        expectThat(shieldHandler.timeSinceLastDamage)
             .isEqualTo(5.0)
     }
 

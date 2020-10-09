@@ -20,7 +20,7 @@ class ShieldHandler(
                 field = false
             }
         }
-    var timeSinceActivation: Double = 1_000_000.0
+    var timeSinceLastDamage: Double = 1_000_000.0
     private var damageSinceLastUpdate: Double = 0.0
     private var activated: Boolean = false
 
@@ -41,6 +41,7 @@ class ShieldHandler(
     }
 
     fun takeDamageAndReportHullDamage(amount: Double): Double {
+        timeSinceLastDamage = 0.0
         return if (up) {
             takeDamageToShieldAndThenHull(amount)
         } else {
@@ -65,8 +66,8 @@ class ShieldHandler(
 
     private fun updateActivation(time: GameTime) {
         activated = up && damageSinceLastUpdate > 0.0
-        if (!activated) {
-            timeSinceActivation += time.delta
+        if (damageSinceLastUpdate == 0.0) {
+            timeSinceLastDamage += time.delta
         }
         damageSinceLastUpdate = 0.0
     }
@@ -82,7 +83,6 @@ class ShieldHandler(
 
     private fun takeDamageToShieldAndThenHull(amount: Double): Double {
         val hullDamage = max(0.0, amount - currentStrength)
-        timeSinceActivation = 0.0
         damageSinceLastUpdate += amount
         currentStrength -= amount
         return hullDamage

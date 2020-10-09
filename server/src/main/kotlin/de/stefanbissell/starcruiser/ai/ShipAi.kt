@@ -23,8 +23,9 @@ class ShipAi(
         ScanAi(),
         LockAi(),
         helmAi,
+        PatrolAi(behaviourAi, helmAi),
         HomingAi(behaviourAi, helmAi),
-        PatrolAi(behaviourAi, helmAi)
+        EvadeAi(behaviourAi, helmAi)
     )
 
     fun update(
