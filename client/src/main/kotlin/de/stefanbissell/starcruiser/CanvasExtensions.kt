@@ -39,6 +39,14 @@ fun CanvasRenderingContext2D.lineTo(vector: Vector2) =
     lineTo(vector.x, vector.y)
 
 fun CanvasRenderingContext2D.circle(
+    center: Vector2,
+    radius: Double,
+    startAngle: Double = 0.0,
+    endAngle: Double = PI * 2,
+    anticlockwise: Boolean = false
+) = ellipse(center.x, center.y, radius, radius, 0.0, startAngle, endAngle, anticlockwise)
+
+fun CanvasRenderingContext2D.circle(
     x: Double,
     y: Double,
     radius: Double,

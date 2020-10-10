@@ -6,10 +6,14 @@ import de.stefanbissell.starcruiser.components.StationUi
 import de.stefanbissell.starcruiser.scene.MainScene
 import kotlinx.browser.document
 import kotlinx.browser.window
+import org.w3c.dom.CanvasLineJoin
+import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.ROUND
 import three.cameras.Camera
 import three.renderers.WebGLRenderer
 import three.renderers.WebGLRendererParams
+import kotlin.math.PI
 
 class MainScreenUi : StationUi(Station.MainScreen) {
 
@@ -87,6 +91,9 @@ class MainScreenUi : StationUi(Station.MainScreen) {
             val camera = mainScene.update(snapshot)
             render(camera)
 
+            if (snapshot.ship.mainScreenView != MainScreenView.Top) {
+                drawViewIndicator(snapshot)
+            }
             drawButtons()
         }
     }
@@ -99,6 +106,43 @@ class MainScreenUi : StationUi(Station.MainScreen) {
             shortRangeScope.draw(snapshot)
             drawButtons()
         }
+    }
+
+    private fun CanvasRenderingContext2D.drawViewIndicator(snapshot: SnapshotMessage.MainScreen3d) {
+        val dim = canvas.dimensions()
+        val width = dim.width
+        val vmin = dim.vmin
+        val center = Vector2(width * 0.5, vmin * 7)
+
+        save()
+
+        translate(center)
+
+        when (snapshot.ship.mainScreenView) {
+            MainScreenView.Right -> rotate(PI * 0.5)
+            MainScreenView.Rear -> rotate(PI)
+            MainScreenView.Left -> rotate(PI * 1.5)
+            else -> Unit
+        }
+
+        lineWidth = vmin * 0.3
+        lineJoin = CanvasLineJoin.ROUND
+        strokeStyle = "#555"
+
+        beginPath()
+        circle(Vector2(), vmin * 6)
+        stroke()
+
+        strokeStyle = "#fff"
+
+        beginPath()
+        moveTo(Vector2())
+        lineTo(Vector2(0, vmin * 6).rotate(PI + PI * 0.25))
+        arc(0.0, 0.0, vmin * 6, -PI * 0.25, -PI * 0.75, true)
+        closePath()
+        stroke()
+
+        restore()
     }
 
     private fun drawButtons() {
