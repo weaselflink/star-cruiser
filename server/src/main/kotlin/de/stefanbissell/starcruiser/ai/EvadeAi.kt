@@ -40,7 +40,7 @@ class EvadeAi(
         ship: NonPlayerShip,
         it: ShipContactList.ShipContact
     ) {
-        ship.throttle = 50
+        ship.throttle = 70
         if (helmAi.targetRotation == null) {
             helmAi.targetRotation = angleAwayFromTarget(it)
         }

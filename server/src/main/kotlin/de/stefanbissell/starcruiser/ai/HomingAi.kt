@@ -49,7 +49,7 @@ class HomingAi(
         ship: NonPlayerShip
     ) {
         if (it.range >= 100.0) {
-            ship.throttle = 50
+            ship.throttle = 70
         } else {
             ship.throttle = 0
         }
@@ -78,13 +78,17 @@ class HomingAi(
     private fun selectTarget(contactList: ShipContactList) {
         clearInvalidTarget(contactList)
         if (target == null) {
-            target = contactList.allInSensorRange()
-                .filter {
-                    it.contactType == ContactType.Enemy
-                }.minByOrNull {
-                    it.range
-                }?.id
+            selectNewTarget(contactList)
         }
+    }
+
+    private fun selectNewTarget(contactList: ShipContactList) {
+        target = contactList.allInSensorRange()
+            .filter {
+                it.contactType == ContactType.Enemy
+            }.minByOrNull {
+                it.range
+            }?.id
     }
 
     private fun clearInvalidTarget(contactList: ShipContactList) {

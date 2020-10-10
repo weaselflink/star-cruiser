@@ -33,7 +33,7 @@ class EvadeAiTest {
 
         executeAi()
 
-        expectThat(ship.throttle).isEqualTo(50)
+        expectThat(ship.throttle).isEqualTo(70)
     }
 
     @Test
