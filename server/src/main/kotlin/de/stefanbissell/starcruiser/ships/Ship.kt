@@ -58,18 +58,18 @@ interface Ship {
         scans[targetId] ?: ScanLevel.None
 
     fun getContactType(other: Ship) =
-        if (getScanLevel(other.id) >= ScanLevel.Basic) {
+        getScanLevel(other.id).let { scanLevel ->
             if (other.faction == faction) {
                 ContactType.Friendly
-            } else {
+            } else if (scanLevel >= ScanLevel.Basic) {
                 if (faction isHostileTo other.faction) {
                     ContactType.Enemy
                 } else {
                     ContactType.Neutral
                 }
+            } else {
+                ContactType.Unknown
             }
-        } else {
-            ContactType.Unknown
         }
 
     fun rangeTo(other: Vector2) =

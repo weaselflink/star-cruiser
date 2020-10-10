@@ -164,15 +164,7 @@ class NonPlayerShipTest {
     }
 
     @Test
-    fun `unscanned ship is unknown`() {
-        val target = addShip()
-
-        expectThat(ship.getContactType(target))
-            .isEqualTo(ContactType.Unknown)
-    }
-
-    @Test
-    fun `scanned ship of same faction is friendly`() {
+    fun `unscanned friendly ship is friendly`() {
         val target = addShip(faction = Faction.Enemy)
         ship.scans[target.id] = ScanLevel.Basic
 
@@ -181,12 +173,46 @@ class NonPlayerShipTest {
     }
 
     @Test
-    fun `scanned ship of other faction is enemy`() {
+    fun `unscanned hostile ship is unknown`() {
+        val target = addShip()
+
+        expectThat(ship.getContactType(target))
+            .isEqualTo(ContactType.Unknown)
+    }
+
+    @Test
+    fun `unscanned neutral ship is unknown`() {
+        val target = addShip(faction = Faction.Neutral)
+
+        expectThat(ship.getContactType(target))
+            .isEqualTo(ContactType.Unknown)
+    }
+
+    @Test
+    fun `scanned friendly ship is friendly`() {
+        val target = addShip(faction = Faction.Enemy)
+        ship.scans[target.id] = ScanLevel.Basic
+
+        expectThat(ship.getContactType(target))
+            .isEqualTo(ContactType.Friendly)
+    }
+
+    @Test
+    fun `scanned hostile ship is enemy`() {
         val target = addShip(faction = Faction.Player)
         ship.scans[target.id] = ScanLevel.Basic
 
         expectThat(ship.getContactType(target))
             .isEqualTo(ContactType.Enemy)
+    }
+
+    @Test
+    fun `scanned neutral ship is neutral`() {
+        val target = addShip(faction = Faction.Neutral)
+        ship.scans[target.id] = ScanLevel.Basic
+
+        expectThat(ship.getContactType(target))
+            .isEqualTo(ContactType.Neutral)
     }
 
     private fun stepTime(

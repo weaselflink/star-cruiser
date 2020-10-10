@@ -545,16 +545,8 @@ class PlayerShipTest {
     }
 
     @Test
-    fun `unscanned ship is unknown`() {
-        val target = addShip()
-
-        expectThat(ship.getContactType(target))
-            .isEqualTo(ContactType.Unknown)
-    }
-
-    @Test
-    fun `scanned ship of same faction is friendly`() {
-        val target = addShip()
+    fun `unscanned friendly ship is friendly`() {
+        val target = addShip(faction = Faction.Player)
         ship.scans[target.id] = ScanLevel.Basic
 
         expectThat(ship.getContactType(target))
@@ -562,12 +554,46 @@ class PlayerShipTest {
     }
 
     @Test
-    fun `scanned ship of other faction is enemy`() {
-        val target = PlayerShip(faction = Faction.Enemy)
+    fun `unscanned hostile ship is unknown`() {
+        val target = addShip()
+
+        expectThat(ship.getContactType(target))
+            .isEqualTo(ContactType.Unknown)
+    }
+
+    @Test
+    fun `unscanned neutral ship is unknown`() {
+        val target = addShip(faction = Faction.Neutral)
+
+        expectThat(ship.getContactType(target))
+            .isEqualTo(ContactType.Unknown)
+    }
+
+    @Test
+    fun `scanned friendly ship is friendly`() {
+        val target = addShip(faction = Faction.Player)
+        ship.scans[target.id] = ScanLevel.Basic
+
+        expectThat(ship.getContactType(target))
+            .isEqualTo(ContactType.Friendly)
+    }
+
+    @Test
+    fun `scanned hostile ship is enemy`() {
+        val target = addShip()
         ship.scans[target.id] = ScanLevel.Basic
 
         expectThat(ship.getContactType(target))
             .isEqualTo(ContactType.Enemy)
+    }
+
+    @Test
+    fun `scanned neutral ship is neutral`() {
+        val target = addShip(faction = Faction.Neutral)
+        ship.scans[target.id] = ScanLevel.Basic
+
+        expectThat(ship.getContactType(target))
+            .isEqualTo(ContactType.Neutral)
     }
 
     private fun stepTime(seconds: Number): ShipUpdateResult {
@@ -576,8 +602,14 @@ class PlayerShipTest {
         return ship.endUpdate(time, physicsEngine)
     }
 
-    private fun addShip(position: Vector2 = p(100, 100)): PlayerShip {
-        val target = PlayerShip(position = position)
+    private fun addShip(
+        position: Vector2 = p(100, 100),
+        faction: Faction = Faction.Enemy
+    ): PlayerShip {
+        val target = PlayerShip(
+            position = position,
+            faction = faction
+        )
         contactList = ShipContactList(ship, listOf(target))
         return target
     }
