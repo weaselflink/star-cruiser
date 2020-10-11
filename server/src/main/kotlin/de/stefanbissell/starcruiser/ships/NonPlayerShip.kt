@@ -9,13 +9,14 @@ import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.ai.ShipAi
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.randomShipName
+import de.stefanbissell.starcruiser.scenario.Faction
 import de.stefanbissell.starcruiser.toRadians
 import kotlin.math.max
 
 class NonPlayerShip(
     override val id: ObjectId = ObjectId.random(),
     override val template: ShipTemplate = carrierTemplate,
-    override val faction: Faction = Faction.Enemy,
+    override val faction: Faction,
     override val designation: String = randomShipName(),
     override var position: Vector2 = Vector2(),
     override var rotation: Double = 90.0.toRadians(),

@@ -2,7 +2,6 @@ package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
-import de.stefanbissell.starcruiser.ships.Faction
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 
@@ -10,7 +9,7 @@ class ShipAi(
     val ship: NonPlayerShip
 ) {
 
-    private val behaviourAi = if (ship.faction == Faction.Enemy) {
+    private val behaviourAi = if (ship.faction.enemies.isNotEmpty()) {
         BehaviourAi(Behaviour.CombatPatrol)
     } else {
         BehaviourAi(Behaviour.IdlePatrol)

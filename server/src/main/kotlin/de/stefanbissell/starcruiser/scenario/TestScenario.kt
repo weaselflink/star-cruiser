@@ -4,7 +4,6 @@ import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.shapes.Circle
 import de.stefanbissell.starcruiser.shapes.Polygon
 import de.stefanbissell.starcruiser.shapes.Ring
-import de.stefanbissell.starcruiser.ships.Faction
 
 object TestScenario : Scenario() {
 
@@ -16,15 +15,29 @@ object TestScenario : Scenario() {
 
     override val definition =
         scenario {
+            factions {
+                faction {
+                    name = "Enarian"
+                    enemies = listOf("Reynor")
+                    forPlayers = true
+                }
+                faction {
+                    name = "Janis"
+                }
+                faction {
+                    name = "Reynor"
+                    enemies = listOf("Enarian")
+                }
+            }
             repeat(3) {
                 nonPlayerShip {
-                    faction = Faction.Enemy
+                    faction = "Reynor"
                     spawnArea = defaultSpawnArea
                 }
             }
             repeat(3) {
                 nonPlayerShip {
-                    faction = Faction.Neutral
+                    faction = "Janis"
                     spawnArea = defaultSpawnArea
                 }
             }

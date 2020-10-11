@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
+import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.isNear
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
@@ -11,7 +12,7 @@ import strikt.assertions.isNotNull
 
 class PatrolAiTest {
 
-    private val ship = NonPlayerShip()
+    private val ship = NonPlayerShip(faction = TestFactions.neutral)
     private val time = GameTime.atEpoch()
     private val behaviourAi = BehaviourAi(Behaviour.CombatPatrol)
     private val helmAi = HelmAi()

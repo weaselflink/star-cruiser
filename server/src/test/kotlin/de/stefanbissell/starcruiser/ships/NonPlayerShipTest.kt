@@ -4,6 +4,7 @@ import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.ScanLevel
+import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.isNear
 import de.stefanbissell.starcruiser.p
@@ -22,7 +23,7 @@ class NonPlayerShipTest {
     private val time = GameTime.atEpoch()
     private val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
     private val shieldTemplate = carrierTemplate.shield
-    private val ship = NonPlayerShip()
+    private val ship = NonPlayerShip(faction = TestFactions.enemy)
 
     private var contactList = emptyList<Ship>()
 
@@ -165,7 +166,7 @@ class NonPlayerShipTest {
 
     @Test
     fun `unscanned friendly ship is friendly`() {
-        val target = addShip(faction = Faction.Enemy)
+        val target = addShip(faction = TestFactions.enemy)
         ship.scans[target.id] = ScanLevel.Basic
 
         expectThat(ship.getContactType(target))
@@ -182,7 +183,7 @@ class NonPlayerShipTest {
 
     @Test
     fun `unscanned neutral ship is unknown`() {
-        val target = addShip(faction = Faction.Neutral)
+        val target = addShip(faction = TestFactions.neutral)
 
         expectThat(ship.getContactType(target))
             .isEqualTo(ContactType.Unknown)
@@ -190,7 +191,7 @@ class NonPlayerShipTest {
 
     @Test
     fun `scanned friendly ship is friendly`() {
-        val target = addShip(faction = Faction.Enemy)
+        val target = addShip(faction = TestFactions.enemy)
         ship.scans[target.id] = ScanLevel.Basic
 
         expectThat(ship.getContactType(target))
@@ -199,7 +200,7 @@ class NonPlayerShipTest {
 
     @Test
     fun `scanned hostile ship is enemy`() {
-        val target = addShip(faction = Faction.Player)
+        val target = addShip(faction = TestFactions.player)
         ship.scans[target.id] = ScanLevel.Basic
 
         expectThat(ship.getContactType(target))
@@ -208,7 +209,7 @@ class NonPlayerShipTest {
 
     @Test
     fun `scanned neutral ship is neutral`() {
-        val target = addShip(faction = Faction.Neutral)
+        val target = addShip(faction = TestFactions.neutral)
         ship.scans[target.id] = ScanLevel.Basic
 
         expectThat(ship.getContactType(target))
@@ -229,7 +230,7 @@ class NonPlayerShipTest {
 
     private fun addShip(
         position: Vector2 = p(100, 100),
-        faction: Faction = Faction.Player
+        faction: de.stefanbissell.starcruiser.scenario.Faction = TestFactions.player
     ): Ship {
         val target = PlayerShip(
             position = position,

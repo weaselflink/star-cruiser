@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.ai
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ScanLevel
+import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
@@ -16,7 +17,7 @@ import strikt.assertions.isNull
 
 class ScanAiTest {
 
-    private val ship = NonPlayerShip()
+    private val ship = NonPlayerShip(faction = TestFactions.neutral)
     private val time = GameTime.atEpoch()
     private val scanAi = ScanAi()
 
@@ -68,7 +69,7 @@ class ScanAiTest {
     @Test
     fun `scans nearest possible target`() {
         addShip(p(200, 200))
-        val invalidTarget = NonPlayerShip().apply { position = p(50, 50) }
+        val invalidTarget = NonPlayerShip(faction = TestFactions.neutral).apply { position = p(50, 50) }
         ship.scans[invalidTarget.id] = ScanLevel.Detailed
         val nearTarget = addShip(p(100, 100))
         executeAi()
@@ -109,7 +110,7 @@ class ScanAiTest {
     }
 
     private fun addShip(position: Vector2 = p(100, 100)): Ship {
-        val target = NonPlayerShip(position = position)
+        val target = NonPlayerShip(faction = TestFactions.neutral, position = position)
         shipList.add(target)
         return target
     }

@@ -157,6 +157,7 @@ class GameState {
 
     fun spawnShip() {
         PlayerShip(
+            faction = scenario.factions.first { it.forPlayers },
             position = Vector2.random(300),
             rotation = Random.nextDouble(PI * 2.0)
         ).also {

@@ -3,7 +3,6 @@ package de.stefanbissell.starcruiser.scenario
 import de.stefanbissell.starcruiser.Asteroid
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.shapes.Shape
-import de.stefanbissell.starcruiser.ships.Faction
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import kotlin.math.PI
 import kotlin.math.roundToInt
@@ -14,12 +13,14 @@ abstract class Scenario {
     abstract val definition: ScenarioDefinition
 
     fun create(): ScenarioInstance {
+        val factions = definition.factions.create()
         return ScenarioInstance(
+            factions = factions,
             asteroids = definition.asteroidFields.flatMap {
                 it.create()
             },
             nonPlayerShips = definition.nonPlayerShips.map {
-                it.create()
+                it.create(factions)
             },
             mapAreas = definition.asteroidFields.map {
                 it.toMapArea()
@@ -34,15 +35,20 @@ fun scenario(block: ScenarioDefinition.() -> Unit): ScenarioDefinition {
 
 class ScenarioDefinition {
 
+    lateinit var factions: FactionsDefinition
     val asteroidFields = mutableListOf<AsteroidFieldDefinition>()
     val nonPlayerShips = mutableListOf<NonPlayerShipDefinition>()
 
-    fun asteroidField(block: AsteroidFieldDefinition.() -> Unit) {
-        asteroidFields += AsteroidFieldDefinition().apply(block)
+    fun factions(block: FactionsDefinition.() -> Unit) {
+        factions = FactionsDefinition().apply(block)
     }
 
     fun nonPlayerShip(block: NonPlayerShipDefinition.() -> Unit) {
         nonPlayerShips += NonPlayerShipDefinition().apply(block)
+    }
+
+    fun asteroidField(block: AsteroidFieldDefinition.() -> Unit) {
+        asteroidFields += AsteroidFieldDefinition().apply(block)
     }
 }
 
@@ -84,22 +90,58 @@ class AsteroidFieldDefinition {
 
 class NonPlayerShipDefinition {
 
-    var faction: Faction = Faction.Enemy
+    lateinit var faction: String
     lateinit var spawnArea: Shape
 
-    fun create(): NonPlayerShip =
+    fun create(factions: List<Faction>): NonPlayerShip =
         NonPlayerShip(
             position = spawnArea.randomPointInside(),
             rotation = Random.nextDouble(PI * 2.0),
-            faction = faction
+            faction = factions.first { it.name == faction }
         )
 }
 
+class FactionsDefinition {
+
+    val factions = mutableListOf<FactionDefinition>()
+
+    fun faction(block: FactionDefinition.() -> Unit) {
+        factions += FactionDefinition().apply(block)
+    }
+
+    fun create() =
+        factions.map {
+            Faction(
+                name = it.name,
+                enemies = it.enemies,
+                forPlayers = it.forPlayers
+            )
+        }
+}
+
+class FactionDefinition {
+
+    lateinit var name: String
+    var enemies = emptyList<String>()
+    var forPlayers = false
+}
+
 data class ScenarioInstance(
+    val factions: List<Faction>,
     val asteroids: List<Asteroid>,
     val nonPlayerShips: List<NonPlayerShip>,
     val mapAreas: List<MapArea>
 )
+
+data class Faction(
+    val name: String,
+    val enemies: List<String> = emptyList(),
+    val forPlayers: Boolean = false
+) {
+
+    infix fun isHostileTo(other: Faction) =
+        enemies.contains(other.name)
+}
 
 data class MapArea(
     val type: MapAreaType,

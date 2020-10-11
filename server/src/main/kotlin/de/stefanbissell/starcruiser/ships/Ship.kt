@@ -11,6 +11,7 @@ import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.ShieldMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
+import de.stefanbissell.starcruiser.scenario.Faction
 
 interface Ship {
 

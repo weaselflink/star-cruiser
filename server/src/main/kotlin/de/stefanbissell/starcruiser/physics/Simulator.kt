@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.physics
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.fiveDigits
+import de.stefanbissell.starcruiser.scenario.Faction
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.ShipTemplate
 import de.stefanbissell.starcruiser.ships.cruiserTemplate
@@ -42,7 +43,7 @@ class Simulator(
     private inner class SimulationRun {
         val gameTime = GameTime.atEpoch()
         val physicsEngine = PhysicsEngine()
-        val ship = PlayerShip(template = shipTemplate, rotation = 0.0)
+        val ship = PlayerShip(template = shipTemplate, faction = Faction("dummy"), rotation = 0.0)
 
         init {
             physicsEngine.addShip(ship, false)

@@ -9,6 +9,7 @@ import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.PoweredSystemType.Reactor
 import de.stefanbissell.starcruiser.PoweredSystemType.Sensors
 import de.stefanbissell.starcruiser.ScanLevel
+import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
 import de.stefanbissell.starcruiser.isNear
@@ -39,7 +40,8 @@ class PlayerShipTest {
         position = p(3, -4),
         template = carrierTemplate.let {
             it.copy(beams = it.beams.subList(0, 1))
-        }
+        },
+        faction = TestFactions.player
     )
 
     private var contactList = ShipContactList(ship, emptyList())
@@ -546,7 +548,7 @@ class PlayerShipTest {
 
     @Test
     fun `unscanned friendly ship is friendly`() {
-        val target = addShip(faction = Faction.Player)
+        val target = addShip(faction = TestFactions.player)
         ship.scans[target.id] = ScanLevel.Basic
 
         expectThat(ship.getContactType(target))
@@ -563,7 +565,7 @@ class PlayerShipTest {
 
     @Test
     fun `unscanned neutral ship is unknown`() {
-        val target = addShip(faction = Faction.Neutral)
+        val target = addShip(faction = TestFactions.neutral)
 
         expectThat(ship.getContactType(target))
             .isEqualTo(ContactType.Unknown)
@@ -571,7 +573,7 @@ class PlayerShipTest {
 
     @Test
     fun `scanned friendly ship is friendly`() {
-        val target = addShip(faction = Faction.Player)
+        val target = addShip(faction = TestFactions.player)
         ship.scans[target.id] = ScanLevel.Basic
 
         expectThat(ship.getContactType(target))
@@ -589,7 +591,7 @@ class PlayerShipTest {
 
     @Test
     fun `scanned neutral ship is neutral`() {
-        val target = addShip(faction = Faction.Neutral)
+        val target = addShip(faction = TestFactions.neutral)
         ship.scans[target.id] = ScanLevel.Basic
 
         expectThat(ship.getContactType(target))
@@ -604,7 +606,7 @@ class PlayerShipTest {
 
     private fun addShip(
         position: Vector2 = p(100, 100),
-        faction: Faction = Faction.Enemy
+        faction: de.stefanbissell.starcruiser.scenario.Faction = TestFactions.enemy
     ): PlayerShip {
         val target = PlayerShip(
             position = position,

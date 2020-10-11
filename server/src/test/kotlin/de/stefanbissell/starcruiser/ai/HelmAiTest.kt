@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
+import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.emptyContactList
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.toRadians
@@ -13,7 +14,10 @@ import kotlin.math.PI
 
 class HelmAiTest {
 
-    private val ship = NonPlayerShip(rotation = 0.0)
+    private val ship = NonPlayerShip(
+        faction = TestFactions.neutral,
+        rotation = 0.0
+    )
     private val helmAi = HelmAi()
 
     @Test

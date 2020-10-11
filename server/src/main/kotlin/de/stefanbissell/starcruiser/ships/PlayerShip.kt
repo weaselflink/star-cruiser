@@ -24,6 +24,7 @@ import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.randomShipName
+import de.stefanbissell.starcruiser.scenario.Faction
 import de.stefanbissell.starcruiser.toIntHeading
 import de.stefanbissell.starcruiser.toRadians
 import de.stefanbissell.starcruiser.twoDigits
@@ -34,7 +35,7 @@ import kotlin.math.roundToInt
 class PlayerShip(
     override val id: ObjectId = ObjectId.random(),
     override val template: ShipTemplate = cruiserTemplate,
-    override val faction: Faction = Faction.Player,
+    override val faction: Faction,
     override val designation: String = randomShipName(),
     override var position: Vector2 = Vector2(),
     override var rotation: Double = 90.0.toRadians()

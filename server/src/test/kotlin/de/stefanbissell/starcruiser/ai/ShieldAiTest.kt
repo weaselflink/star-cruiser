@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ScanLevel
+import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
@@ -15,7 +16,7 @@ import strikt.assertions.isTrue
 
 class ShieldAiTest {
 
-    private val ship = NonPlayerShip()
+    private val ship = NonPlayerShip(faction = TestFactions.enemy)
     private val time = GameTime.atEpoch()
     private val shieldAi = ShieldAi()
 
@@ -70,7 +71,7 @@ class ShieldAiTest {
     }
 
     private fun addHostileShip(position: Vector2) {
-        val target = PlayerShip(position = position)
+        val target = PlayerShip(faction = TestFactions.player, position = position)
         contactList = listOf(target)
         ship.scans[target.id] = ScanLevel.Detailed
     }

@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.BeamStatus
 import de.stefanbissell.starcruiser.GameTime
+import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.Vector3
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
@@ -17,9 +18,9 @@ class BeamHandlerTest {
     private val time = GameTime.atEpoch()
     private val beamWeapon = BeamWeapon(Vector3())
     private var power = 1.0
-    private val ship = PlayerShip()
+    private val ship = PlayerShip(faction = TestFactions.player)
     private var contactList: ShipContactList = ShipContactList(ship, emptyList())
-    private val target = PlayerShip().apply {
+    private val target = PlayerShip(faction = TestFactions.enemy).apply {
         position = p(0, 1000)
         setShieldsUp(false)
     }

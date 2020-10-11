@@ -3,9 +3,9 @@ package de.stefanbissell.starcruiser.ai
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ScanLevel
+import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.p
-import de.stefanbissell.starcruiser.ships.Faction
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
 import de.stefanbissell.starcruiser.ships.ShipContactList
@@ -17,7 +17,7 @@ import strikt.assertions.isNull
 
 class LockAiTest {
 
-    private val ship = NonPlayerShip()
+    private val ship = NonPlayerShip(faction = TestFactions.enemy)
     private val time = GameTime.atEpoch()
     private val lockAi = LockAi()
 
@@ -123,7 +123,7 @@ class LockAiTest {
     ): Ship {
         val target = NonPlayerShip(
             position = position,
-            faction = if (hostile) Faction.Player else Faction.Enemy
+            faction = if (hostile) TestFactions.player else TestFactions.enemy
         )
         ship.scans[target.id] = ScanLevel.Detailed
         shipList.add(target)

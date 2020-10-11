@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.TestFactions
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -91,8 +92,8 @@ class ScanHandlerTest {
     private fun ScanHandler.toMessage() =
         toMessage(
             ShipContactList(
-                PlayerShip(),
-                listOf(PlayerShip(id = targetId, designation = "dummy"))
+                PlayerShip(faction = TestFactions.player),
+                listOf(PlayerShip(id = targetId, designation = "dummy", faction = TestFactions.player))
             )
         )
 
