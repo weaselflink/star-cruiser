@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.ai
 
+import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
@@ -18,12 +19,18 @@ class ScanAi : ComponentAi(5.0) {
         }
     }
 
-    private fun ShipContactList.selectScanTarget() =
-        allInSensorRange()
+    private fun ShipContactList.selectScanTarget(): ShipContactList.ShipContact? {
+        val (friendlies, rest) = allInSensorRange()
             .filter {
                 it.scanLevel.canBeIncreased
             }
-            .minByOrNull {
-                it.range
+            .partition {
+                it.contactType == ContactType.Friendly
             }
+        return rest.minByOrNull {
+            it.range
+        } ?: friendlies.minByOrNull {
+            it.range
+        }
+    }
 }

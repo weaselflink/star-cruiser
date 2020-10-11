@@ -6,6 +6,7 @@ import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.p
+import de.stefanbissell.starcruiser.scenario.Faction
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
 import de.stefanbissell.starcruiser.ships.ShipContactList
@@ -17,7 +18,7 @@ import strikt.assertions.isNull
 
 class ScanAiTest {
 
-    private val ship = NonPlayerShip(faction = TestFactions.neutral)
+    private val ship = NonPlayerShip(faction = TestFactions.enemy)
     private val time = GameTime.atEpoch()
     private val scanAi = ScanAi()
 
@@ -69,12 +70,31 @@ class ScanAiTest {
     @Test
     fun `scans nearest possible target`() {
         addShip(p(200, 200))
-        val invalidTarget = NonPlayerShip(faction = TestFactions.neutral).apply { position = p(50, 50) }
+        val invalidTarget = addShip(p(50, 50))
         ship.scans[invalidTarget.id] = ScanLevel.Detailed
         val nearTarget = addShip(p(100, 100))
         executeAi()
 
         expectScanStarted(nearTarget.id)
+    }
+
+    @Test
+    fun `scans friendly targets last until detailed scan`() {
+        val nonFriendlyTarget = addShip(p(200, 200))
+        addShip(p(100, 100), faction = TestFactions.enemy)
+        executeAi()
+
+        expectScanStarted(nonFriendlyTarget.id)
+    }
+
+    @Test
+    fun `scans friendlies after all other are detailed`() {
+        val nonFriendlyTarget = addShip(p(200, 200))
+        val friendly = addShip(p(100, 100), faction = TestFactions.enemy)
+        ship.scans[nonFriendlyTarget.id] = ScanLevel.Detailed
+        executeAi()
+
+        expectScanStarted(friendly.id)
     }
 
     @Test
@@ -109,9 +129,11 @@ class ScanAiTest {
         scanAi.execute(ship, time, ShipContactList(ship, shipList))
     }
 
-    private fun addShip(position: Vector2 = p(100, 100)): Ship {
-        val target = NonPlayerShip(faction = TestFactions.neutral, position = position)
-        shipList.add(target)
-        return target
-    }
+    private fun addShip(
+        position: Vector2 = p(100, 100),
+        faction: Faction = TestFactions.player
+    ): Ship =
+        NonPlayerShip(faction = faction, position = position).also {
+            shipList.add(it)
+        }
 }
