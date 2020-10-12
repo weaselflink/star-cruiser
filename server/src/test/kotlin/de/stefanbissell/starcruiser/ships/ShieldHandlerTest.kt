@@ -182,9 +182,9 @@ class ShieldHandlerTest {
         expectThat(shieldHandler.strengthRatio)
             .isNear(0.1)
 
-        shieldHandler.currentStrength = shieldTemplate.strength * 0.5
+        shieldHandler.currentStrength = shieldTemplate.strength * 0.01
         expectThat(shieldHandler.strengthRatio)
-            .isNear(0.5)
+            .isNear(0.01)
     }
 
     private fun stepTime(seconds: Number) {
