@@ -19,6 +19,12 @@ sealed class Behaviour {
 
     interface Evade
 
+    fun NonPlayerShip.shieldsLow() =
+        shieldHandler.currentStrength < template.shield.failureStrength * 2
+
+    fun NonPlayerShip.shieldsHigh() =
+        shieldHandler.currentStrength > template.shield.strength * 0.6
+
     open fun transition(
         ship: NonPlayerShip,
         time: GameTime,
@@ -60,11 +66,14 @@ sealed class Behaviour {
             time: GameTime,
             contactList: ShipContactList
         ): Behaviour =
-            if (contactList.allInSensorRange().any { it.isEnemy }) {
-                Attack
-            } else {
-                CombatPatrol
+            when {
+                ship.shieldsLow() -> CombatEvade
+                contactList.enemyInRange() -> Attack
+                else -> CombatPatrol
             }
+
+        private fun ShipContactList.enemyInRange() =
+            allInSensorRange().any { it.isEnemy }
     }
 
     object Attack : Behaviour() {
@@ -74,10 +83,27 @@ sealed class Behaviour {
             time: GameTime,
             contactList: ShipContactList
         ): Behaviour =
-            if (contactList.allInSensorRange().none { it.isEnemy }) {
+            when {
+                ship.shieldsLow() -> CombatEvade
+                contactList.noEnemyInRange() -> CombatPatrol
+                else -> Attack
+            }
+
+        private fun ShipContactList.noEnemyInRange() =
+            allInSensorRange().none { it.isEnemy }
+    }
+
+    object CombatEvade : Behaviour(), Evade {
+
+        override fun transition(
+            ship: NonPlayerShip,
+            time: GameTime,
+            contactList: ShipContactList
+        ): Behaviour =
+            if (ship.shieldsHigh()) {
                 CombatPatrol
             } else {
-                Attack
+                CombatEvade
             }
     }
 }
