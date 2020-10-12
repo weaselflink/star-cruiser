@@ -24,10 +24,12 @@ class ShieldHandler(
     private var damageSinceLastUpdate: Double = 0.0
     private var activated: Boolean = false
 
-    private var currentStrength: Double = shieldTemplate.strength
+    var currentStrength: Double = shieldTemplate.strength
         set(value) {
             field = value.clamp(0.0, shieldTemplate.strength)
         }
+    val strengthRatio: Double
+        get() = currentStrength / shieldTemplate.strength
 
     fun update(time: GameTime, boostLevel: Double = 1.0) {
         currentStrength += rechargeAmount(time, boostLevel)

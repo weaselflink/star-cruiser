@@ -168,6 +168,25 @@ class ShieldHandlerTest {
             .isNear(shieldTemplate.strength - 4.0)
     }
 
+    @Test
+    fun `calculates strength ratio`() {
+        shieldHandler.currentStrength = shieldTemplate.strength * 1.0
+        expectThat(shieldHandler.strengthRatio)
+            .isEqualTo(1.0)
+
+        shieldHandler.currentStrength = shieldTemplate.strength * 0.0
+        expectThat(shieldHandler.strengthRatio)
+            .isEqualTo(0.0)
+
+        shieldHandler.currentStrength = shieldTemplate.strength * 0.1
+        expectThat(shieldHandler.strengthRatio)
+            .isNear(0.1)
+
+        shieldHandler.currentStrength = shieldTemplate.strength * 0.5
+        expectThat(shieldHandler.strengthRatio)
+            .isNear(0.5)
+    }
+
     private fun stepTime(seconds: Number) {
         time.update(seconds.toDouble())
         shieldHandler.update(time, power)
