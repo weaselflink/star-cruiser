@@ -3,6 +3,8 @@ package de.stefanbissell.starcruiser
 import kotlin.math.PI
 import kotlin.math.sqrt
 
+const val fullCircle = 2 * PI
+
 fun smallestSignedAngleBetween(source: Number, target: Number): Double {
     val x = source.toDouble()
     val y = target.toDouble()
@@ -11,9 +13,9 @@ fun smallestSignedAngleBetween(source: Number, target: Number): Double {
         a
     } else {
         if (a > PI) {
-            -(2 * PI - a)
+            -(fullCircle - a)
         } else {
-            a + 2 * PI
+            a + fullCircle
         }
     }
 }

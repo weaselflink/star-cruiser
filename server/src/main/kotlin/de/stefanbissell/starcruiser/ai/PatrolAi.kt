@@ -2,10 +2,10 @@ package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.fullCircle
 import de.stefanbissell.starcruiser.randomAngle
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
-import kotlin.math.PI
 
 class PatrolAi(
     private val behaviourAi: BehaviourAi,
@@ -49,7 +49,7 @@ class PatrolAi(
         val angle = randomAngle()
         return listOf(
             ship.position + Vector2(1000, 0).rotate(angle),
-            ship.position + Vector2(1000, 0).rotate(angle + 2 * PI / 3),
+            ship.position + Vector2(1000, 0).rotate(angle + fullCircle / 3),
             ship.position
         )
     }

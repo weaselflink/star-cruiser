@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.ai
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.fullCircle
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 import kotlin.math.PI
@@ -49,7 +50,7 @@ class EvadeAi(
     private fun angleAwayFromTarget(
         targetShip: ShipContactList.ShipContact
     ): Double =
-        (targetShip.relativePosition.angle() + PI) % (2 * PI)
+        (targetShip.relativePosition.angle() + PI) % fullCircle
 
     private fun selectThreat(contactList: ShipContactList) {
         threat = contactList.allInSensorRange()

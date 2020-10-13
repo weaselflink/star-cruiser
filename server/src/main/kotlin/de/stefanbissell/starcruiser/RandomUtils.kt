@@ -1,6 +1,5 @@
 package de.stefanbissell.starcruiser
 
-import kotlin.math.PI
 import kotlin.random.Random
 
 fun randomShipName(): String {
@@ -14,4 +13,4 @@ fun randomLetter(): Char {
     return ('A'.toInt() + Random.nextInt(26)).toChar()
 }
 
-fun randomAngle() = Random.nextDouble(2 * PI)
+fun randomAngle() = Random.nextDouble(fullCircle)
