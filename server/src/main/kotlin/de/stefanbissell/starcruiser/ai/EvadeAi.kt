@@ -38,11 +38,11 @@ class EvadeAi(
 
     private fun steerClearOfThreat(
         ship: NonPlayerShip,
-        it: ShipContactList.ShipContact
+        contact: ShipContactList.ShipContact
     ) {
         ship.throttle = 70
         if (helmAi.targetRotation == null) {
-            helmAi.targetRotation = angleAwayFromTarget(it)
+            helmAi.targetRotation = angleAwayFromTarget(contact)
         }
     }
 
