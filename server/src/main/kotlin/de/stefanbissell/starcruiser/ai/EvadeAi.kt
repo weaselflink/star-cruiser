@@ -29,7 +29,7 @@ class EvadeAi(
         ship: NonPlayerShip,
         contactList: ShipContactList
     ) {
-        selectThreat(contactList)
+        contactList.selectThreat()
         threat?.let {
             contactList[it]
         }?.also {
@@ -52,12 +52,19 @@ class EvadeAi(
     ): Double =
         (targetShip.relativePosition.angle() + PI) % fullCircle
 
-    private fun selectThreat(contactList: ShipContactList) {
-        threat = contactList.allInSensorRange()
+    private fun ShipContactList.selectThreat() {
+        val (enemies, rest) = allInSensorRange()
             .filter {
                 it.contactType != ContactType.Friendly
-            }.minByOrNull {
-                it.range
-            }?.id
+            }
+            .partition {
+                it.contactType == ContactType.Enemy
+            }
+        val contact = enemies.minByOrNull {
+            it.range
+        } ?: rest.minByOrNull {
+            it.range
+        }
+        threat = contact?.id
     }
 }

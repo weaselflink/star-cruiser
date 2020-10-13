@@ -7,6 +7,7 @@ import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.isNear
 import de.stefanbissell.starcruiser.p
+import de.stefanbissell.starcruiser.scenario.Faction
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
 import de.stefanbissell.starcruiser.ships.ShipContactList
@@ -54,7 +55,7 @@ class EvadeAiTest {
 
     @Test
     fun `does nothing if only friendlies in sensor range`() {
-        addShip(hostile = false)
+        addShip(faction = TestFactions.enemy)
 
         executeAi()
 
@@ -63,7 +64,7 @@ class EvadeAiTest {
 
     @Test
     fun `steers away from non-friendly ship`() {
-        val target = addShip()
+        val target = addShip(faction = TestFactions.neutral)
 
         executeAi()
 
@@ -82,6 +83,18 @@ class EvadeAiTest {
         expectThat(evadeAi.threat).isEqualTo(nearTarget.id)
         expectThat(helmAi.targetRotation)
             .isNotNull().isNear(PI - PI * 0.25)
+    }
+
+    @Test
+    fun `steers away from closest enemy ship`() {
+        val enemyTarget = addShip(p(1_000, 1_000), TestFactions.player)
+        addShip(p(500, -500))
+
+        executeAi()
+
+        expectThat(evadeAi.threat).isEqualTo(enemyTarget.id)
+        expectThat(helmAi.targetRotation)
+            .isNotNull().isNear(PI + PI * 0.25)
     }
 
     @Test
@@ -121,11 +134,11 @@ class EvadeAiTest {
 
     private fun addShip(
         position: Vector2 = p(1_000, 1_000),
-        hostile: Boolean = true
+        faction: Faction = TestFactions.neutral
     ): Ship {
         val target = NonPlayerShip(
             position = position,
-            faction = if (hostile) TestFactions.player else TestFactions.enemy
+            faction = faction
         )
         ship.scans[target.id] = ScanLevel.Detailed
         shipList.add(target)
