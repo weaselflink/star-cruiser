@@ -52,22 +52,11 @@ class EvadeAi(
         (targetShip.relativePosition.angle() + PI) % (2 * PI)
 
     private fun selectThreat(contactList: ShipContactList) {
-        clearInvalidThreat(contactList)
         threat = contactList.allInSensorRange()
             .filter {
                 it.contactType != ContactType.Friendly
             }.minByOrNull {
                 it.range
             }?.id
-    }
-
-    private fun clearInvalidThreat(contactList: ShipContactList) {
-        threat?.let {
-            contactList[it]
-        }.also {
-            if (it == null || !it.inSensorRange) {
-                threat = null
-            }
-        }
     }
 }
