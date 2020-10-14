@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.ai
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.isNear
+import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 import org.junit.jupiter.api.Test
@@ -16,7 +17,8 @@ class PatrolAiTest {
     private val time = GameTime.atEpoch()
     private val behaviourAi = BehaviourAi(Behaviour.CombatPatrol)
     private val helmAi = HelmAi()
-    private val patrolAi = PatrolAi(behaviourAi, helmAi)
+    private val patrolPath = listOf(p(100, 0), p(100, 100), p(0, 0))
+    private val patrolAi = PatrolAi(behaviourAi, helmAi, patrolPath)
 
     @Test
     fun `sets throttle to 50 initially`() {
@@ -43,34 +45,34 @@ class PatrolAiTest {
         expectThat(patrolAi.pointInPath)
             .isEqualTo(0)
         expectThat(helmAi.targetRotation)
-            .isNotNull().isNear(patrolAi.path.first().angle())
+            .isNotNull().isNear(patrolPath.first().angle())
     }
 
     @Test
     fun `skips to next patrol point when point reached`() {
         executeAi()
-        ship.position = patrolAi.path.first()
+        ship.position = patrolPath.first()
         helmAi.targetRotation = null
         executeAi()
 
         expectThat(patrolAi.pointInPath)
             .isEqualTo(1)
         expectThat(helmAi.targetRotation)
-            .isNotNull().isNear((patrolAi.path[1] - patrolAi.path.first()).angle())
+            .isNotNull().isNear((patrolPath[1] - patrolPath.first()).angle())
     }
 
     @Test
     fun `skips to first patrol point when last point reached`() {
         executeAi()
-        ship.position = patrolAi.path.last()
+        ship.position = patrolPath.last()
         helmAi.targetRotation = null
-        patrolAi.pointInPath = patrolAi.path.size - 1
+        patrolAi.pointInPath = patrolPath.size - 1
         executeAi()
 
         expectThat(patrolAi.pointInPath)
             .isEqualTo(0)
         expectThat(helmAi.targetRotation)
-            .isNotNull().isNear((patrolAi.path.first() - patrolAi.path.last()).angle())
+            .isNotNull().isNear((patrolPath.first() - patrolPath.last()).angle())
     }
 
     private fun executeAi() {
