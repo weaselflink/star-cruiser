@@ -9,11 +9,13 @@ class SimplePowerHandler(
 ) {
 
     val poweredSystems = PoweredSystemType.values()
-        .associate { it to PoweredSystem() }
+        .associate { it to PoweredSystem(it) }
         .toMutableMap()
     private var repairHandler: TimedRepairHandler? = null
     val repairing
         get() = repairHandler != null
+    val repairingType
+        get() = repairHandler?.type
     val systemsDamage
         get() = poweredSystems.entries
             .associate { it.key to 1.0 - it.value.damage }
@@ -41,9 +43,11 @@ class SimplePowerHandler(
     }
 
     private fun getPoweredSystem(type: PoweredSystemType) =
-        poweredSystems[type] ?: PoweredSystem()
+        poweredSystems[type] ?: PoweredSystem(type)
 
-    inner class PoweredSystem {
+    inner class PoweredSystem(
+        val type: PoweredSystemType
+    ) {
 
         var damage: Double = 0.0
             set(value) {

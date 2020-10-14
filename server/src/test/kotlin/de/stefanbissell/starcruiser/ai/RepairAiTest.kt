@@ -7,6 +7,7 @@ import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
 
@@ -27,6 +28,22 @@ class RepairAiTest {
 
         expectThat(ship.powerHandler.repairing)
             .isTrue()
+    }
+
+    @Test
+    fun `repairs with specific priority`() {
+        ship.shieldHandler.toggleUp()
+        ship.takeDamage(PoweredSystemType.Sensors, 1.0)
+        ship.takeDamage(PoweredSystemType.Shields, 1.0)
+        expectThat(ship.powerHandler.repairing)
+            .isFalse()
+
+        executeAi()
+
+        expectThat(ship.powerHandler.repairing)
+            .isTrue()
+        expectThat(ship.powerHandler.repairingType)
+            .isEqualTo(PoweredSystemType.Shields)
     }
 
     private fun executeAi() {
