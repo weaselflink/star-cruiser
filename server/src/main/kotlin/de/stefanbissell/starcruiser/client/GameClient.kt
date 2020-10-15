@@ -29,7 +29,7 @@ import de.stefanbissell.starcruiser.SetThrottle
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.SolveRepairGame
 import de.stefanbissell.starcruiser.SolveScanGame
-import de.stefanbissell.starcruiser.SpawnShip
+import de.stefanbissell.starcruiser.SpawnPlayerShip
 import de.stefanbissell.starcruiser.StartJump
 import de.stefanbissell.starcruiser.StartRepair
 import de.stefanbissell.starcruiser.TogglePause
@@ -80,7 +80,7 @@ class GameClient(
                     TogglePause
                 )
                 is Command.CommandSpawnShip -> gameStateActor.send(
-                    SpawnShip
+                    SpawnPlayerShip
                 )
                 is Command.CommandJoinShip -> gameStateActor.send(
                     JoinShip(id, command.objectId, command.station)

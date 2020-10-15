@@ -155,7 +155,7 @@ class GameState {
         getClient(clientId).exitShip()
     }
 
-    fun spawnShip() {
+    fun spawnPlayerShip() {
         PlayerShip(
             faction = scenario.factions.first { it.forPlayers },
             position = Vector2.random(300),
@@ -378,7 +378,7 @@ class GameState {
                     is JoinShip -> gameState.joinShip(change.clientId, change.objectId, change.station)
                     is ChangeStation -> gameState.changeStation(change.clientId, change.station)
                     is ExitShip -> gameState.exitShip(change.clientId)
-                    is SpawnShip -> gameState.spawnShip()
+                    is SpawnPlayerShip -> gameState.spawnPlayerShip()
                     is SetThrottle -> gameState.setThrottle(change.clientId, change.value)
                     is ChangeJumpDistance -> gameState.changeJumpDistance(change.clientId, change.value)
                     is StartJump -> gameState.startJump(change.clientId)
