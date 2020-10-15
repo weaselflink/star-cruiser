@@ -429,7 +429,7 @@ class PlayerShip(
                 when (contact.scanLevel) {
                     ScanLevel.Detailed -> {
                         message.copy(
-                            hullRatio = (ship.hull / ship.template.hull).fiveDigits(),
+                            hullRatio = (max(0.0, ship.hull) / ship.template.hull).fiveDigits(),
                             shield = ship.toShieldMessage(),
                             systemsDamage = ship.systemsDamage,
                             canScan = false
