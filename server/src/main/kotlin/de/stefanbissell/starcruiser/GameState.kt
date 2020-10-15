@@ -156,18 +156,8 @@ class GameState {
     }
 
     fun spawnPlayerShip() {
-        PlayerShip(
-            faction = scenario.factions.first { it.forPlayers },
-            position = Vector2.random(300),
-            rotation = Random.nextDouble(PI * 2.0)
-        ).also {
-            it.addWaypoint(Vector2.random(1000, 500))
-            it.addWaypoint(Vector2.random(1000, 500))
-            ships[it.id] = it
-            physicsEngine.addShip(it)
-            it.toggleShieldsUp()
-            it.takeDamage(PoweredSystemType.Jump, 2.5)
-            it.toggleShieldsUp()
+        scenario.playerSpawnArea.randomPointInside().let {
+            spawnPlayerShip(it)
         }
     }
 
@@ -175,13 +165,6 @@ class GameState {
         ship.also {
             ships[it.id] = it
             physicsEngine.addShip(it)
-        }
-    }
-
-    private fun spawnAsteroid(asteroid: Asteroid) {
-        asteroid.also {
-            asteroids += it
-            physicsEngine.addAsteroid(it)
         }
     }
 
@@ -197,6 +180,29 @@ class GameState {
         physicsEngine.step(time.delta)
         updateShips()
         updateAsteroids()
+    }
+
+    private fun spawnPlayerShip(position: Vector2) {
+        PlayerShip(
+            faction = scenario.factions.first { it.forPlayers },
+            position = position,
+            rotation = Random.nextDouble(PI * 2.0)
+        ).also {
+            it.addWaypoint(Vector2.random(1000, 500))
+            it.addWaypoint(Vector2.random(1000, 500))
+            ships[it.id] = it
+            physicsEngine.addShip(it)
+            it.toggleShieldsUp()
+            it.takeDamage(PoweredSystemType.Jump, 2.5)
+            it.toggleShieldsUp()
+        }
+    }
+
+    private fun spawnAsteroid(asteroid: Asteroid) {
+        asteroid.also {
+            asteroids += it
+            physicsEngine.addAsteroid(it)
+        }
     }
 
     private fun updateShips() {
