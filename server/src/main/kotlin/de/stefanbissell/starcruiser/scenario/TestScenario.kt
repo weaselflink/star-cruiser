@@ -15,6 +15,7 @@ object TestScenario : Scenario() {
 
     override val definition =
         scenario {
+            playerSpawnArea = Circle(p(0, 0), 300)
             factions {
                 faction {
                     name = "Enarian"

@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser.scenario
 
 import de.stefanbissell.starcruiser.Asteroid
 import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.shapes.Circle
 import de.stefanbissell.starcruiser.shapes.Shape
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import kotlin.math.PI
@@ -15,6 +16,7 @@ abstract class Scenario {
     fun create(): ScenarioInstance {
         val factions = definition.factions.create()
         return ScenarioInstance(
+            playerSpawnArea = definition.playerSpawnArea,
             factions = factions,
             asteroids = definition.asteroidFields.flatMap {
                 it.create()
@@ -35,6 +37,7 @@ fun scenario(block: ScenarioDefinition.() -> Unit): ScenarioDefinition {
 
 class ScenarioDefinition {
 
+    var playerSpawnArea: Shape = Circle(Vector2(), 100)
     lateinit var factions: FactionsDefinition
     val asteroidFields = mutableListOf<AsteroidFieldDefinition>()
     val nonPlayerShips = mutableListOf<NonPlayerShipDefinition>()
@@ -127,6 +130,7 @@ class FactionDefinition {
 }
 
 data class ScenarioInstance(
+    val playerSpawnArea: Shape,
     val factions: List<Faction>,
     val asteroids: List<Asteroid>,
     val nonPlayerShips: List<NonPlayerShip>,
