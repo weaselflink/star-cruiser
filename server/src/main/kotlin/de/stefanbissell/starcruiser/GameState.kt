@@ -66,73 +66,6 @@ class GameState {
         }
     }
 
-    private fun toHelmMessage(
-        ship: PlayerShip,
-        contactList: ShipContactList
-    ): SnapshotMessage.Helm {
-        return SnapshotMessage.Helm(
-            shortRangeScope = ship.toShortRangeScopeMessage(),
-            contacts = contactList.getScopeContacts(),
-            asteroids = getScopeAsteroids(ship),
-            throttle = ship.throttle,
-            rudder = ship.rudder,
-            jumpDrive = ship.toJumpDriveMessage()
-        )
-    }
-
-    private fun toWeaponsMessage(
-        ship: PlayerShip,
-        contactList: ShipContactList
-    ): SnapshotMessage.Weapons {
-        return SnapshotMessage.Weapons(
-            shortRangeScope = ship.toShortRangeScopeMessage(),
-            contacts = contactList.getScopeContacts(),
-            asteroids = getScopeAsteroids(ship),
-            hull = ship.hull,
-            hullMax = ship.template.hull,
-            shield = ship.toShieldMessage()
-        )
-    }
-
-    private fun toNavigationMessage(
-        ship: PlayerShip,
-        contactList: ShipContactList
-    ): SnapshotMessage.Navigation {
-        return SnapshotMessage.Navigation(
-            ship = ship.toNavigationMessage(contactList),
-            mapSelection = ship.toMapSelectionMessage(contactList),
-            contacts = contactList.getMapContacts(),
-            asteroids = getMapAsteroids(ship),
-            mapAreas = scenario.mapAreas.map { it.shape.toMessage() }
-        )
-    }
-
-    private fun toEngineeringMessage(ship: PlayerShip): SnapshotMessage.Engineering {
-        return SnapshotMessage.Engineering(
-            powerSettings = ship.toPowerMessage()
-        )
-    }
-
-    private fun toMainScreenMessage(ship: PlayerShip, contactList: ShipContactList): SnapshotMessage =
-        when (ship.mainScreenView) {
-            MainScreenView.Scope -> toMainScreenShortRangeScope(ship, contactList)
-            else -> toMainScreen3d(ship, contactList)
-        }
-
-    private fun toMainScreenShortRangeScope(ship: PlayerShip, contactList: ShipContactList) =
-        SnapshotMessage.MainScreenShortRangeScope(
-            shortRangeScope = ship.toShortRangeScopeMessage(),
-            contacts = contactList.getScopeContacts(),
-            asteroids = getScopeAsteroids(ship)
-        )
-
-    private fun toMainScreen3d(ship: PlayerShip, contactList: ShipContactList) =
-        SnapshotMessage.MainScreen3d(
-            ship = ship.toMessage(),
-            contacts = contactList.getContacts(),
-            asteroids = getAsteroids(ship)
-        )
-
     fun clientConnected(clientId: ClientId) {
         getClient(clientId)
     }
@@ -180,51 +113,6 @@ class GameState {
         physicsEngine.step(time.delta)
         updateShips()
         updateAsteroids()
-    }
-
-    private fun spawnPlayerShip(position: Vector2) {
-        PlayerShip(
-            faction = scenario.factions.first { it.forPlayers },
-            position = position,
-            rotation = Random.nextDouble(PI * 2.0)
-        ).also {
-            it.addWaypoint(Vector2.random(1000, 500))
-            it.addWaypoint(Vector2.random(1000, 500))
-            ships[it.id] = it
-            physicsEngine.addShip(it)
-            it.toggleShieldsUp()
-            it.takeDamage(PoweredSystemType.Jump, 2.5)
-            it.toggleShieldsUp()
-        }
-    }
-
-    private fun spawnAsteroid(asteroid: Asteroid) {
-        asteroid.also {
-            asteroids += it
-            physicsEngine.addAsteroid(it)
-        }
-    }
-
-    private fun updateShips() {
-        ships.forEach { shipEntry ->
-            shipEntry.value.apply {
-                val contactList = ShipContactList(this, ships)
-                update(time, physicsEngine, contactList)
-            }
-        }
-        ships.map {
-            it.value.endUpdate(time, physicsEngine)
-        }.filter {
-            it.destroyed
-        }.forEach {
-            destroyShip(it.id)
-        }
-    }
-
-    private fun updateAsteroids() {
-        asteroids.forEach {
-            it.update(physicsEngine)
-        }
     }
 
     fun setThrottle(clientId: ClientId, value: Int) {
@@ -312,6 +200,118 @@ class GameState {
     fun setMainScreenView(clientId: ClientId, mainScreenView: MainScreenView) {
         getClientShip(clientId)?.also {
             it.mainScreenView = mainScreenView
+        }
+    }
+
+    private fun toHelmMessage(
+        ship: PlayerShip,
+        contactList: ShipContactList
+    ): SnapshotMessage.Helm {
+        return SnapshotMessage.Helm(
+            shortRangeScope = ship.toShortRangeScopeMessage(),
+            contacts = contactList.getScopeContacts(),
+            asteroids = getScopeAsteroids(ship),
+            throttle = ship.throttle,
+            rudder = ship.rudder,
+            jumpDrive = ship.toJumpDriveMessage()
+        )
+    }
+
+    private fun toWeaponsMessage(
+        ship: PlayerShip,
+        contactList: ShipContactList
+    ): SnapshotMessage.Weapons {
+        return SnapshotMessage.Weapons(
+            shortRangeScope = ship.toShortRangeScopeMessage(),
+            contacts = contactList.getScopeContacts(),
+            asteroids = getScopeAsteroids(ship),
+            hull = ship.hull,
+            hullMax = ship.template.hull,
+            shield = ship.toShieldMessage()
+        )
+    }
+
+    private fun toNavigationMessage(
+        ship: PlayerShip,
+        contactList: ShipContactList
+    ): SnapshotMessage.Navigation {
+        return SnapshotMessage.Navigation(
+            ship = ship.toNavigationMessage(contactList),
+            mapSelection = ship.toMapSelectionMessage(contactList),
+            contacts = contactList.getMapContacts(),
+            asteroids = getMapAsteroids(ship),
+            mapAreas = scenario.mapAreas.map { it.shape.toMessage() }
+        )
+    }
+
+    private fun toEngineeringMessage(ship: PlayerShip): SnapshotMessage.Engineering {
+        return SnapshotMessage.Engineering(
+            powerSettings = ship.toPowerMessage()
+        )
+    }
+
+    private fun toMainScreenMessage(ship: PlayerShip, contactList: ShipContactList): SnapshotMessage =
+        when (ship.mainScreenView) {
+            MainScreenView.Scope -> toMainScreenShortRangeScope(ship, contactList)
+            else -> toMainScreen3d(ship, contactList)
+        }
+
+    private fun toMainScreenShortRangeScope(ship: PlayerShip, contactList: ShipContactList) =
+        SnapshotMessage.MainScreenShortRangeScope(
+            shortRangeScope = ship.toShortRangeScopeMessage(),
+            contacts = contactList.getScopeContacts(),
+            asteroids = getScopeAsteroids(ship)
+        )
+
+    private fun toMainScreen3d(ship: PlayerShip, contactList: ShipContactList) =
+        SnapshotMessage.MainScreen3d(
+            ship = ship.toMessage(),
+            contacts = contactList.getContacts(),
+            asteroids = getAsteroids(ship)
+        )
+
+    private fun spawnPlayerShip(position: Vector2) {
+        PlayerShip(
+            faction = scenario.factions.first { it.forPlayers },
+            position = position,
+            rotation = Random.nextDouble(PI * 2.0)
+        ).also {
+            it.addWaypoint(Vector2.random(1000, 500))
+            it.addWaypoint(Vector2.random(1000, 500))
+            ships[it.id] = it
+            physicsEngine.addShip(it)
+            it.toggleShieldsUp()
+            it.takeDamage(PoweredSystemType.Jump, 2.5)
+            it.toggleShieldsUp()
+        }
+    }
+
+    private fun spawnAsteroid(asteroid: Asteroid) {
+        asteroid.also {
+            asteroids += it
+            physicsEngine.addAsteroid(it)
+        }
+    }
+
+    private fun updateShips() {
+        ships.forEach { shipEntry ->
+            shipEntry.value.apply {
+                val contactList = ShipContactList(this, ships)
+                update(time, physicsEngine, contactList)
+            }
+        }
+        ships.map {
+            it.value.endUpdate(time, physicsEngine)
+        }.filter {
+            it.destroyed
+        }.forEach {
+            destroyShip(it.id)
+        }
+    }
+
+    private fun updateAsteroids() {
+        asteroids.forEach {
+            it.update(physicsEngine)
         }
     }
 
