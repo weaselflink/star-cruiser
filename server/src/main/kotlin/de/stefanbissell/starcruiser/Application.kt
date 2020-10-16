@@ -17,6 +17,7 @@ import io.ktor.response.respondRedirect
 import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
+import io.ktor.serialization.json
 import io.ktor.server.netty.EngineMain
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
@@ -57,7 +58,7 @@ fun Application.module() {
     }
 
     install(ContentNegotiation) {
-        configuredJson
+        json(configuredJson)
     }
 
     routing {
@@ -68,9 +69,7 @@ fun Application.module() {
             call.respondRedirect("/")
         }
 
-        get("/status") {
-            call.respondText("alive")
-        }
+        statusRoute()
 
         get("/statistics") {
             val response = CompletableDeferred<StatisticsSnapshot>()
