@@ -100,7 +100,10 @@ class StationUiSwitcher {
             }
         }
         if (stations.none { it.visible }) {
+            stationOverlay.visible = false
             canvas.context2D.clear()
+        } else {
+            stationOverlay.visible = true
         }
     }
 }

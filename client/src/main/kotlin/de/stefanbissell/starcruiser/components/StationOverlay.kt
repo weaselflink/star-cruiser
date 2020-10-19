@@ -5,6 +5,7 @@ import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Station
 import de.stefanbissell.starcruiser.clientSocket
+import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import kotlinx.browser.document
 import org.w3c.dom.HTMLCanvasElement
@@ -14,8 +15,8 @@ class StationOverlay : PointerEventHandlerParent() {
     private val canvas = document.querySelector(".canvas2d") as HTMLCanvasElement
     private val currentStationButton = CanvasButton(
         canvas = canvas,
-        xExpr = { it.width - it.vmin * 40 },
-        yExpr = { it.vmin * 15 },
+        xExpr = { it.width - it.vmin * 37 },
+        yExpr = { it.vmin * 12 },
         widthExpr = { it.vmin * 35 },
         heightExpr = { it.vmin * 10 },
         onClick = { ClientState.toggleStationOverlay() },
@@ -24,8 +25,8 @@ class StationOverlay : PointerEventHandlerParent() {
     private val otherStationButtons = Station.values().mapIndexed { index, station ->
         CanvasButton(
             canvas = canvas,
-            xExpr = { it.width - it.vmin * 40 },
-            yExpr = { it.vmin * 30 + index * it.vmin * 12 },
+            xExpr = { it.width - it.vmin * 37 },
+            yExpr = { it.vmin * 27 + index * it.vmin * 12 },
             widthExpr = { it.vmin * 35 },
             heightExpr = { it.vmin * 10 },
             onClick = { switchStation(station) },
@@ -36,6 +37,7 @@ class StationOverlay : PointerEventHandlerParent() {
     }
 
     private var currentStation = Station.Helm
+    var visible = false
 
     init {
         addChildren(currentStationButton)
@@ -59,6 +61,9 @@ class StationOverlay : PointerEventHandlerParent() {
         }
         currentStationButton.draw()
     }
+
+    override fun isInterestedIn(pointerEvent: PointerEvent) =
+        visible && super.isInterestedIn(pointerEvent)
 
     private fun getNewStation(snapshot: SnapshotMessage.CrewSnapshot) =
         when (snapshot) {
