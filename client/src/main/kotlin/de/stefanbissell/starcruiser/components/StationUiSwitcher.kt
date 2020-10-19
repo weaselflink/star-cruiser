@@ -22,6 +22,7 @@ class StationUiSwitcher {
     private val commonShipUi = CommonShipUi().apply {
         hide()
     }
+    private val stationOverlay = StationOverlay()
     private val helmUi = HelmUi()
     private val weaponsUi = WeaponsUi()
     private val navigationUi = NavigationUi()
@@ -38,6 +39,7 @@ class StationUiSwitcher {
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
 
     init {
+        pointerEventDispatcher.addHandlers(stationOverlay)
         stations.forEach {
             it.visible = false
             it.hide()
@@ -61,7 +63,6 @@ class StationUiSwitcher {
     fun draw(snapshot: SnapshotMessage.CrewSnapshot) {
         commonShipUi.apply {
             show()
-            draw(snapshot)
         }
         when (snapshot) {
             is SnapshotMessage.Helm -> {
@@ -85,6 +86,7 @@ class StationUiSwitcher {
                 mainScreenUi.draw(snapshot)
             }
         }
+        stationOverlay.draw(snapshot)
     }
 
     private fun switchTo(station: Station?) {

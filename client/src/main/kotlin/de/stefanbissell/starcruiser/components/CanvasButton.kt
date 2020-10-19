@@ -20,6 +20,7 @@ class CanvasButton(
     private val heightExpr: (CanvasDimensions) -> Double,
     private val onClick: () -> Unit = {},
     private val activated: () -> Boolean = { false },
+    private val enabled: () -> Boolean = { true },
     initialText: String? = null
 ) : PointerEventHandler {
 
@@ -46,7 +47,7 @@ class CanvasButton(
     }
 
     override fun isInterestedIn(pointerEvent: PointerEvent) =
-        currentDimensions(canvas).isInside(pointerEvent)
+        enabled() && currentDimensions(canvas).isInside(pointerEvent)
 
     override fun handlePointerDown(pointerEvent: PointerEvent) {
         pressed = true

@@ -64,7 +64,6 @@ import kotlinx.css.paddingRight
 import kotlinx.css.paddingTop
 import kotlinx.css.pct
 import kotlinx.css.position
-import kotlinx.css.right
 import kotlinx.css.textAlign
 import kotlinx.css.top
 import kotlinx.css.vh
@@ -209,23 +208,6 @@ private val BODY.commonShipUi
                 +"Pause"
             }
         }
-        div(classes = "topRightButtons") {
-            button(classes = "current switchToHelm rightEdge") {
-                +"Helm"
-            }
-            button(classes = "switchToWeapons rightEdge") {
-                +"Weapons"
-            }
-            button(classes = "switchToNavigation rightEdge") {
-                +"Navigation"
-            }
-            button(classes = "switchToEngineering rightEdge") {
-                +"Engineering"
-            }
-            button(classes = "switchToMainScreen rightEdge") {
-                +"Main screen"
-            }
-        }
     }
 
 private fun BODY.htmlUi(divId: String, block: DIV.() -> Unit = {}) {
@@ -254,19 +236,14 @@ private val CSSBuilder.buttonCss: Unit
             position = absolute
             zIndex = 10
         }
-        ".topLeftButtons, .topRightButtons" {
+        ".topLeftButtons" {
             position = fixed
             display = grid
             gap = Gap(1.vmin.value)
             marginTop = 1.vmin
             top = 0.vmin
-            padding(4.vmin, 0.vmin)
-        }
-        ".topLeftButtons" {
             left = 0.vmin
-        }
-        ".topRightButtons" {
-            right = 0.vmin
+            padding(4.vmin, 0.vmin)
         }
         ".topLeftCornerButtons" {
             position = fixed
@@ -290,17 +267,9 @@ private val CSSBuilder.buttonCss: Unit
             paddingBottom = 1.5.vmin
             outline = Outline.none
         }
-        "button.current" {
-            color = black
-            backgroundColor = darkGrey
-        }
         "button:hover" {
             color = black
             backgroundColor = dimGrey
-        }
-        "button.current:hover" {
-            color = black
-            backgroundColor = Color("#c3c3c3")
         }
         "button.leftEdge" {
             paddingRight = 3.vmin
@@ -319,16 +288,6 @@ private val CSSBuilder.buttonCss: Unit
             borderBottomRightRadius = 4.vmin
             borderBottomLeftRadius = 0.vmin
             height = 12.vmin
-        }
-        "button.rightEdge" {
-            paddingTop = 1.vmin
-            paddingRight = 2.vmin
-            paddingBottom = 1.5.vmin
-            paddingLeft = 3.vmin
-            borderTopLeftRadius = 4.vmin
-            borderTopRightRadius = 0.vmin
-            borderBottomRightRadius = 0.vmin
-            borderBottomLeftRadius = 4.vmin
         }
         "button:active" {
             color = black
