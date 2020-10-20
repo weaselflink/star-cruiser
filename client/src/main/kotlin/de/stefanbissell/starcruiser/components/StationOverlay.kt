@@ -47,9 +47,6 @@ class StationOverlay : PointerEventHandlerParent() {
     fun draw(snapshot: SnapshotMessage.CrewSnapshot) {
         currentStation = getNewStation(snapshot)
 
-        currentStationButton.text = currentStation.name
-        currentStationButton.draw()
-
         if (ClientState.showStationOverlay) {
             currentStationButton.text = "Stations"
 
