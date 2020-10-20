@@ -66,7 +66,13 @@ class RepairDisplay(
     }
 
     private fun CanvasRenderingContext2D.draw(repairProgress: RepairProgressMessage) {
-        val dim = ComponentDimensions.calculateRect(canvas, xExpr, yExpr, widthExpr, heightExpr)
+        val dim = ComponentDimensions.calculateRect(
+            canvas = canvas,
+            xExpr = xExpr,
+            yExpr = yExpr,
+            widthExpr = widthExpr,
+            heightExpr = heightExpr
+        )
 
         val title = "Repairing ${repairProgress.type.label}"
         canvasPopup.draw(dim, title)

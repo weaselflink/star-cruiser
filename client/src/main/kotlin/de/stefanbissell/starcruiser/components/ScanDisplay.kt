@@ -83,7 +83,13 @@ class ScanDisplay(
     }
 
     private fun CanvasRenderingContext2D.draw(scanProgress: ScanProgressMessage) {
-        val dim = ComponentDimensions.calculateRect(canvas, xExpr, yExpr, widthExpr, heightExpr)
+        val dim = ComponentDimensions.calculateRect(
+            canvas = canvas,
+            xExpr = xExpr,
+            yExpr = yExpr,
+            widthExpr = widthExpr,
+            heightExpr = heightExpr
+        )
 
         val title = "Scanning ${scanProgress.designation}"
         canvasPopup.draw(dim, title)

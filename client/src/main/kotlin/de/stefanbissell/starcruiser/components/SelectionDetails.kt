@@ -220,5 +220,11 @@ class SelectionDetails(
     }
 
     private fun calculateComponentDimensions() =
-        ComponentDimensions.calculateRect(canvas, xExpr, yExpr, widthExpr, heightExpr)
+        ComponentDimensions.calculateRect(
+            canvas = canvas,
+            xExpr = xExpr,
+            yExpr = yExpr,
+            widthExpr = widthExpr,
+            heightExpr = heightExpr
+        )
 }
