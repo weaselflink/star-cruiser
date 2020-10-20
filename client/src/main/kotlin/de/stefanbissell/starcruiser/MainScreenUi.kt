@@ -8,7 +8,6 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.CanvasLineJoin
 import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.ROUND
 import three.cameras.Camera
 import three.renderers.WebGLRenderer
@@ -17,7 +16,7 @@ import kotlin.math.PI
 
 class MainScreenUi : StationUi(Station.MainScreen) {
 
-    private val canvas3d = document.querySelector(".canvas3d") as HTMLCanvasElement
+    private val canvas3d = document.canvas3d
     private val renderer = WebGLRenderer(
         WebGLRendererParams(
             canvas = canvas3d,

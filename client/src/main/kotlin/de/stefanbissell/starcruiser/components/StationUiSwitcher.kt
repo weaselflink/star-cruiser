@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.NavigationUi
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Station
 import de.stefanbissell.starcruiser.WeaponsUi
+import de.stefanbissell.starcruiser.canvas2d
 import de.stefanbissell.starcruiser.clear
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.input.PointerEvent
@@ -15,7 +16,6 @@ import de.stefanbissell.starcruiser.input.PointerEventDispatcher
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.updateSize
 import kotlinx.browser.document
-import org.w3c.dom.HTMLCanvasElement
 
 class StationUiSwitcher {
 
@@ -33,9 +33,9 @@ class StationUiSwitcher {
         weaponsUi,
         navigationUi,
         engineeringUi,
-        mainScreenUi,
+        mainScreenUi
     )
-    private val canvas = document.querySelector(".canvas2d") as HTMLCanvasElement
+    private val canvas = document.canvas2d
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
 
     init {
@@ -114,7 +114,7 @@ abstract class StationUi(
 
     var visible = false
 
-    val canvas = document.querySelector(".canvas2d") as HTMLCanvasElement
+    val canvas = document.canvas2d
     val ctx = canvas.context2D
 
     override fun isInterestedIn(pointerEvent: PointerEvent): Boolean {

@@ -4,10 +4,17 @@ import de.stefanbissell.starcruiser.components.ComponentDimensions
 import de.stefanbissell.starcruiser.components.UiStyle
 import kotlinx.browser.window
 import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.Document
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.PI
 import kotlin.math.max
 import kotlin.math.min
+
+val Document.canvas2d
+    get() = querySelector(".canvas2d") as HTMLCanvasElement
+
+val Document.canvas3d
+    get() = querySelector(".canvas3d") as HTMLCanvasElement
 
 val HTMLCanvasElement.context2D
     get() = getContext(contextId = "2d")!! as CanvasRenderingContext2D

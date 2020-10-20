@@ -4,17 +4,16 @@ import de.stefanbissell.starcruiser.ClientState
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Station
+import de.stefanbissell.starcruiser.canvas2d
 import de.stefanbissell.starcruiser.clientSocket
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import kotlinx.browser.document
-import org.w3c.dom.HTMLCanvasElement
 
 class StationOverlay : PointerEventHandlerParent() {
 
-    private val canvas = document.querySelector(".canvas2d") as HTMLCanvasElement
     private val currentStationButton = CanvasButton(
-        canvas = canvas,
+        canvas = document.canvas2d,
         xExpr = { width - vmin * 37 },
         yExpr = { vmin * 12 },
         widthExpr = { vmin * 35 },
@@ -24,7 +23,7 @@ class StationOverlay : PointerEventHandlerParent() {
     )
     private val otherStationButtons = Station.values().mapIndexed { index, station ->
         CanvasButton(
-            canvas = canvas,
+            canvas = document.canvas2d,
             xExpr = { width - vmin * 37 },
             yExpr = { vmin * 27 + index * vmin * 12 },
             widthExpr = { vmin * 35 },
