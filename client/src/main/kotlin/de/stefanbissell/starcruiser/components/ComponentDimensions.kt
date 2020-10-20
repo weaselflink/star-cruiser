@@ -27,18 +27,18 @@ data class ComponentDimensions(
     companion object {
         fun calculatePill(
             canvas: HTMLCanvasElement,
-            xExpr: (CanvasDimensions) -> Double,
-            yExpr: (CanvasDimensions) -> Double,
-            widthExpr: (CanvasDimensions) -> Double,
-            heightExpr: (CanvasDimensions) -> Double
+            xExpr: CanvasDimensions.() -> Double,
+            yExpr: CanvasDimensions.() -> Double,
+            widthExpr: CanvasDimensions.() -> Double,
+            heightExpr: CanvasDimensions.() -> Double
         ) =
             canvas.dimensions().let { dim ->
-                val width = widthExpr(dim)
-                val height = heightExpr(dim)
+                val width = dim.widthExpr()
+                val height = dim.heightExpr()
                 ComponentDimensions(
                     canvas = dim,
-                    bottomX = xExpr(dim),
-                    bottomY = yExpr(dim),
+                    bottomX = dim.xExpr(),
+                    bottomY = dim.yExpr(),
                     width = width,
                     height = height,
                     radius = if (width > height) height * 0.5 else width * 0.5,
@@ -49,20 +49,20 @@ data class ComponentDimensions(
 
         fun calculateRect(
             canvas: HTMLCanvasElement,
-            xExpr: (CanvasDimensions) -> Double,
-            yExpr: (CanvasDimensions) -> Double,
-            widthExpr: (CanvasDimensions) -> Double,
-            heightExpr: (CanvasDimensions) -> Double
+            xExpr: CanvasDimensions.() -> Double,
+            yExpr: CanvasDimensions.() -> Double,
+            widthExpr: CanvasDimensions.() -> Double,
+            heightExpr: CanvasDimensions.() -> Double
         ) =
             canvas.dimensions().let { dim ->
                 ComponentDimensions(
                     canvas = dim,
-                    bottomX = xExpr(dim),
-                    bottomY = yExpr(dim),
-                    width = widthExpr(dim),
-                    height = heightExpr(dim),
+                    bottomX = dim.xExpr(),
+                    bottomY = dim.yExpr(),
+                    width = dim.widthExpr(),
+                    height = dim.heightExpr(),
                     radius = dim.vmin * 5,
-                    length = widthExpr(dim),
+                    length = dim.widthExpr(),
                     lineWidth = dim.vmin * UiStyle.buttonLineWidth
                 )
             }

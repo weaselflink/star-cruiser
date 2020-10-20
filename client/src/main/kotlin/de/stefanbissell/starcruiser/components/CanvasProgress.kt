@@ -14,10 +14,10 @@ import org.w3c.dom.RIGHT
 
 class CanvasProgress(
     private val canvas: HTMLCanvasElement,
-    private val xExpr: (CanvasDimensions) -> Double,
-    private val yExpr: (CanvasDimensions) -> Double,
-    private val widthExpr: (CanvasDimensions) -> Double = { it.vmin * 34 },
-    private val heightExpr: (CanvasDimensions) -> Double = { it.vmin * 6 },
+    private val xExpr: CanvasDimensions.() -> Double,
+    private val yExpr: CanvasDimensions.() -> Double,
+    private val widthExpr: CanvasDimensions.() -> Double = { vmin * 34 },
+    private val heightExpr: CanvasDimensions.() -> Double = { vmin * 6 },
     private val backgroundColorExpr: (Double) -> String = { UiStyle.buttonBackgroundColor },
     private val foregroundColorExpr: (Double) -> String = { UiStyle.buttonForegroundColor }
 ) {

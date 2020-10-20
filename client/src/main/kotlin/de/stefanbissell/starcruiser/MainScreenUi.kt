@@ -35,21 +35,21 @@ class MainScreenUi : StationUi(Station.MainScreen) {
             createViewButton(
                 mainScreenView = view,
                 xExpr = {
-                    if (it.width >= it.vmin * 152) {
-                        it.width * 0.5 - it.vmin * 74 + index * it.vmin * 25
+                    if (width >= vmin * 152) {
+                        width * 0.5 - vmin * 74 + index * vmin * 25
                     } else {
                         if (index < 4) {
-                            it.width * 0.5 - it.vmin * 48 + index * it.vmin * 25
+                            width * 0.5 - vmin * 48 + index * vmin * 25
                         } else {
-                            it.width * 0.5 - it.vmin * 24 + (index - 4) * it.vmin * 25
+                            width * 0.5 - vmin * 24 + (index - 4) * vmin * 25
                         }
                     }
                 },
                 yExpr = {
-                    if (it.width >= it.vmin * 152 || index >= 4) {
-                        it.height - it.vmin * 3
+                    if (width >= vmin * 152 || index >= 4) {
+                        height - vmin * 3
                     } else {
-                        it.height - it.vmin * 15
+                        height - vmin * 15
                     }
                 }
             )
@@ -153,14 +153,14 @@ class MainScreenUi : StationUi(Station.MainScreen) {
 
     private fun createViewButton(
         mainScreenView: MainScreenView,
-        xExpr: (CanvasDimensions) -> Double,
-        yExpr: (CanvasDimensions) -> Double = { it.height - it.vmin * 3 }
+        xExpr: CanvasDimensions.() -> Double,
+        yExpr: CanvasDimensions.() -> Double = { height - vmin * 3 }
     ) = CanvasButton(
         canvas = canvas,
         xExpr = xExpr,
         yExpr = yExpr,
-        widthExpr = { it.vmin * 23 },
-        heightExpr = { it.vmin * 10 },
+        widthExpr = { vmin * 23 },
+        heightExpr = { vmin * 10 },
         onClick = { clientSocket.send(Command.CommandMainScreenView(mainScreenView)) },
         activated = { view == mainScreenView },
         initialText = mainScreenView.name

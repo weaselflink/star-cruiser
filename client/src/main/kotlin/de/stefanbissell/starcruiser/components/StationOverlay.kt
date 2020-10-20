@@ -15,20 +15,20 @@ class StationOverlay : PointerEventHandlerParent() {
     private val canvas = document.querySelector(".canvas2d") as HTMLCanvasElement
     private val currentStationButton = CanvasButton(
         canvas = canvas,
-        xExpr = { it.width - it.vmin * 37 },
-        yExpr = { it.vmin * 12 },
-        widthExpr = { it.vmin * 35 },
-        heightExpr = { it.vmin * 10 },
+        xExpr = { width - vmin * 37 },
+        yExpr = { vmin * 12 },
+        widthExpr = { vmin * 35 },
+        heightExpr = { vmin * 10 },
         onClick = { ClientState.toggleStationOverlay() },
         activated = { ClientState.showStationOverlay }
     )
     private val otherStationButtons = Station.values().mapIndexed { index, station ->
         CanvasButton(
             canvas = canvas,
-            xExpr = { it.width - it.vmin * 37 },
-            yExpr = { it.vmin * 27 + index * it.vmin * 12 },
-            widthExpr = { it.vmin * 35 },
-            heightExpr = { it.vmin * 10 },
+            xExpr = { width - vmin * 37 },
+            yExpr = { vmin * 27 + index * vmin * 12 },
+            widthExpr = { vmin * 35 },
+            heightExpr = { vmin * 10 },
             onClick = { switchStation(station) },
             activated = { station == currentStation },
             enabled = { ClientState.showStationOverlay },

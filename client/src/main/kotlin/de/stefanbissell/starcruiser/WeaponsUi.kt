@@ -13,30 +13,30 @@ class WeaponsUi : StationUi(Station.Weapons) {
     private val shortRangeScope = ShortRangeScope(canvas, true) { contactSelected(it) }
     private val lockTargetButton = CanvasButton(
         canvas = canvas,
-        xExpr = { it.width * 0.5 - it.vmin * 45 },
-        yExpr = { it.height * 0.5 - it.vmin * 38 },
-        widthExpr = { it.vmin * 25 },
-        heightExpr = { it.vmin * 10 },
+        xExpr = { width * 0.5 - vmin * 45 },
+        yExpr = { height * 0.5 - vmin * 38 },
+        widthExpr = { vmin * 25 },
+        heightExpr = { vmin * 10 },
         onClick = { toggleLockTarget() },
         activated = { selectingTarget },
         initialText = "Lock on"
     )
     private val hullDisplay = HullDisplay(
         canvas = canvas,
-        xExpr = { it.vmin * 3 },
-        yExpr = { it.height - it.vmin * 23 }
+        xExpr = { vmin * 3 },
+        yExpr = { height - vmin * 23 }
     )
     private val shieldsDisplay = ShieldsDisplay(
         canvas = canvas,
-        xExpr = { it.vmin * 3 },
-        yExpr = { it.height - it.vmin * 15 }
+        xExpr = { vmin * 3 },
+        yExpr = { height - vmin * 15 }
     )
     private val shieldsButton = CanvasButton(
         canvas = canvas,
-        xExpr = { it.vmin * 13 },
-        yExpr = { it.height - it.vmin * 3 },
-        widthExpr = { it.vmin * 20 },
-        heightExpr = { it.vmin * 10 },
+        xExpr = { vmin * 13 },
+        yExpr = { height - vmin * 3 },
+        widthExpr = { vmin * 20 },
+        heightExpr = { vmin * 10 },
         onClick = { toggleShields() }
     )
 

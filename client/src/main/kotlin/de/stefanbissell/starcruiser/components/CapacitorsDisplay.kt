@@ -8,10 +8,10 @@ import org.w3c.dom.HTMLCanvasElement
 
 class CapacitorsDisplay(
     canvas: HTMLCanvasElement,
-    xExpr: (CanvasDimensions) -> Double = { it.width * 0.5 - it.vmin * 40 },
-    yExpr: (CanvasDimensions) -> Double = { it.height - it.vmin * 6 - it.vmin * 10 * PoweredSystemType.values().size },
-    widthExpr: (CanvasDimensions) -> Double = { it.vmin * 80 },
-    heightExpr: (CanvasDimensions) -> Double = { it.vmin * 6 }
+    xExpr: CanvasDimensions.() -> Double = { width * 0.5 - vmin * 40 },
+    yExpr: CanvasDimensions.() -> Double = { height - vmin * 6 - vmin * 10 * PoweredSystemType.values().size },
+    widthExpr: CanvasDimensions.() -> Double = { vmin * 80 },
+    heightExpr: CanvasDimensions.() -> Double = { vmin * 6 }
 ) {
 
     private val canvasProgress = CanvasProgress(

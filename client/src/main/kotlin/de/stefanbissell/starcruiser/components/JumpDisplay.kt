@@ -6,10 +6,10 @@ import org.w3c.dom.HTMLCanvasElement
 
 class JumpDisplay(
     canvas: HTMLCanvasElement,
-    xExpr: (CanvasDimensions) -> Double,
-    yExpr: (CanvasDimensions) -> Double,
-    widthExpr: (CanvasDimensions) -> Double = { it.vmin * 34 },
-    heightExpr: (CanvasDimensions) -> Double = { it.vmin * 6 }
+    xExpr: CanvasDimensions.() -> Double,
+    yExpr: CanvasDimensions.() -> Double,
+    widthExpr: CanvasDimensions.() -> Double = { vmin * 34 },
+    heightExpr: CanvasDimensions.() -> Double = { vmin * 6 }
 ) {
 
     private val canvasProgress = CanvasProgress(

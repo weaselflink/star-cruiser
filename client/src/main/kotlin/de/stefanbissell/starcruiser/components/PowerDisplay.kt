@@ -14,25 +14,25 @@ import kotlin.math.roundToInt
 class PowerDisplay(
     private val systemType: PoweredSystemType,
     canvas: HTMLCanvasElement,
-    yExpr: (CanvasDimensions) -> Double
+    yExpr: CanvasDimensions.() -> Double
 ) : PointerEventHandlerParent() {
 
     private val repairButton = CanvasButton(
         canvas = canvas,
-        xExpr = { it.xOffset() + it.vmin * 3 },
+        xExpr = { xOffset() + vmin * 3 },
         yExpr = yExpr,
-        widthExpr = { it.vmin * 8 },
-        heightExpr = { it.vmin * 8 },
+        widthExpr = { vmin * 8 },
+        heightExpr = { vmin * 8 },
         onClick = { clientSocket.send(Command.CommandStartRepair(systemType)) },
         activated = { repairing },
         initialText = "\ud83d\udee0"
     )
     private val levelSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { it.xOffset() + it.vmin * 13 },
+        xExpr = { xOffset() + vmin * 13 },
         yExpr = yExpr,
-        widthExpr = { it.vmin * 41 },
-        heightExpr = { it.vmin * 8 },
+        widthExpr = { vmin * 41 },
+        heightExpr = { vmin * 8 },
         onChange = {
             val power = (it * 200).roundToInt()
             clientSocket.send(Command.CommandSetPower(systemType, power))
@@ -42,10 +42,10 @@ class PowerDisplay(
     )
     private val heat = CanvasProgress(
         canvas = canvas,
-        xExpr = { it.xOffset() + it.vmin * 56 },
-        yExpr = { yExpr(it) - it.vmin * 4.5 },
-        widthExpr = { it.vmin * 14 },
-        heightExpr = { it.vmin * 3.5 },
+        xExpr = { xOffset() + vmin * 56 },
+        yExpr = { yExpr() - vmin * 4.5 },
+        widthExpr = { vmin * 14 },
+        heightExpr = { vmin * 3.5 },
         foregroundColorExpr = {
             when {
                 it < 0.5 -> UiStyle.buttonForegroundColor
@@ -56,10 +56,10 @@ class PowerDisplay(
     )
     private val damage = CanvasProgress(
         canvas = canvas,
-        xExpr = { it.xOffset() + it.vmin * 56 },
+        xExpr = { xOffset() + vmin * 56 },
         yExpr = yExpr,
-        widthExpr = { it.vmin * 14 },
-        heightExpr = { it.vmin * 3.5 },
+        widthExpr = { vmin * 14 },
+        heightExpr = { vmin * 3.5 },
         foregroundColorExpr = {
             when {
                 it > 0.9 -> UiStyle.buttonForegroundColor
@@ -70,10 +70,10 @@ class PowerDisplay(
     )
     private val coolantSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { it.xOffset() + it.vmin * 72 },
+        xExpr = { xOffset() + vmin * 72 },
         yExpr = yExpr,
-        widthExpr = { it.vmin * 25 },
-        heightExpr = { it.vmin * 8 },
+        widthExpr = { vmin * 25 },
+        heightExpr = { vmin * 8 },
         onChange = {
             clientSocket.send(Command.CommandSetCoolant(systemType, it))
         }

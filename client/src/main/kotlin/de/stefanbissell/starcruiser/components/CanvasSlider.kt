@@ -18,10 +18,10 @@ import kotlin.math.PI
 
 class CanvasSlider(
     private val canvas: HTMLCanvasElement,
-    private val xExpr: (CanvasDimensions) -> Double,
-    private val yExpr: (CanvasDimensions) -> Double,
-    private val widthExpr: (CanvasDimensions) -> Double,
-    private val heightExpr: (CanvasDimensions) -> Double,
+    private val xExpr: CanvasDimensions.() -> Double,
+    private val yExpr: CanvasDimensions.() -> Double,
+    private val widthExpr: CanvasDimensions.() -> Double,
+    private val heightExpr: CanvasDimensions.() -> Double,
     private val onChange: (Double) -> Unit = {},
     private val lines: List<Double> = emptyList(),
     private val leftText: String? = null,

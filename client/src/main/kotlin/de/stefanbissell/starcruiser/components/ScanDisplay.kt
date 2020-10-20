@@ -17,10 +17,10 @@ import kotlin.random.Random
 
 class ScanDisplay(
     val canvas: HTMLCanvasElement,
-    val xExpr: (CanvasDimensions) -> Double = { it.width * 0.5 - it.vmin * 42 },
-    var yExpr: (CanvasDimensions) -> Double = { it.height * 0.5 + it.vmin * 30 },
-    val widthExpr: (CanvasDimensions) -> Double = { it.vmin * 84 },
-    var heightExpr: (CanvasDimensions) -> Double = { it.vmin * 60 }
+    val xExpr: CanvasDimensions.() -> Double = { width * 0.5 - vmin * 42 },
+    var yExpr: CanvasDimensions.() -> Double = { height * 0.5 + vmin * 30 },
+    val widthExpr: CanvasDimensions.() -> Double = { vmin * 84 },
+    var heightExpr: CanvasDimensions.() -> Double = { vmin * 60 }
 ) : PointerEventHandlerParent() {
 
     private val ctx = canvas.context2D
@@ -30,10 +30,10 @@ class ScanDisplay(
     private val inputs = mutableListOf<CanvasSlider>()
     private val abortButton = CanvasButton(
         canvas = canvas,
-        xExpr = { xExpr(it) + widthExpr(it) - it.vmin * 25 },
-        yExpr = { yExpr(it) - it.vmin * 5 },
-        widthExpr = { it.vmin * 20 },
-        heightExpr = { it.vmin * 10 },
+        xExpr = { xExpr() + widthExpr() - vmin * 25 },
+        yExpr = { yExpr() - vmin * 5 },
+        widthExpr = { vmin * 20 },
+        heightExpr = { vmin * 10 },
         onClick = { clientSocket.send(Command.CommandAbortScan) },
         initialText = "Abort"
     )
@@ -55,8 +55,8 @@ class ScanDisplay(
     }
 
     private fun updateInputs(scanProgress: ScanProgressMessage) {
-        yExpr = { it.height * 0.5 + it.vmin * (scanProgress.input.size * 12 + 50) * 0.5 }
-        heightExpr = { it.vmin * (scanProgress.input.size * 12 + 50) }
+        yExpr = { height * 0.5 + vmin * (scanProgress.input.size * 12 + 50) * 0.5 }
+        heightExpr = { vmin * (scanProgress.input.size * 12 + 50) }
 
         if (inputs.size > scanProgress.input.size) {
             repeat(inputs.size - scanProgress.input.size) {
@@ -68,10 +68,10 @@ class ScanDisplay(
             (inputs.size until scanProgress.input.size).forEach { index ->
                 val slider = CanvasSlider(
                     canvas = canvas,
-                    xExpr = { xExpr(it) + 5.vmin },
-                    yExpr = { yExpr(it) - heightExpr(it) + it.vmin * 45 + it.vmin * 12 * index },
-                    widthExpr = { widthExpr(it) - it.vmin * 10 },
-                    heightExpr = { it.vmin * 10 },
+                    xExpr = { xExpr() + 5.vmin },
+                    yExpr = { yExpr() - heightExpr() + vmin * 45 + vmin * 12 * index },
+                    widthExpr = { widthExpr() - vmin * 10 },
+                    heightExpr = { vmin * 10 },
                     onChange = {
                         clientSocket.send(Command.CommandSolveScanGame(index, it))
                     }

@@ -23,19 +23,19 @@ class NavigationUi : StationUi(Station.Navigation) {
     )
     private val zoomSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { it.vmin * 3 },
-        yExpr = { it.height - it.vmin * 3 },
-        widthExpr = { it.vmin * 50 },
-        heightExpr = { it.vmin * 10 },
+        xExpr = { vmin * 3 },
+        yExpr = { height - vmin * 3 },
+        widthExpr = { vmin * 50 },
+        heightExpr = { vmin * 10 },
         onChange = { navigationMap.changeZoom(it) },
         leftText = "Zoom"
     )
     private val addWaypointButton = CanvasButton(
         canvas = canvas,
-        xExpr = { if (it.width > it.vmin * 136) it.vmin * 55 else it.vmin * 3 },
-        yExpr = { if (it.width > it.vmin * 136) it.height - it.vmin * 3 else it.height - it.vmin * 15 },
-        widthExpr = { it.vmin * 37 },
-        heightExpr = { it.vmin * 10 },
+        xExpr = { if (width > vmin * 136) vmin * 55 else vmin * 3 },
+        yExpr = { if (width > vmin * 136) height - vmin * 3 else height - vmin * 15 },
+        widthExpr = { vmin * 37 },
+        heightExpr = { vmin * 10 },
         onClick = { toggleAddWaypoint() },
         activated = { buttonState == ButtonState.AddWaypoint },
         initialText = "Add waypoint"
@@ -43,27 +43,27 @@ class NavigationUi : StationUi(Station.Navigation) {
     private val centerButton = CanvasButton(
         canvas = canvas,
         xExpr = {
-            if (it.width > it.vmin * 161) {
-                it.vmin * 94
+            if (width > vmin * 161) {
+                vmin * 94
             } else {
-                it.vmin * 3
+                vmin * 3
             }
         },
         yExpr = {
             when {
-                it.width > it.vmin * 161 -> {
-                    it.height - it.vmin * 3
+                width > vmin * 161 -> {
+                    height - vmin * 3
                 }
-                it.width > it.vmin * 136 -> {
-                    it.height - it.vmin * 15
+                width > vmin * 136 -> {
+                    height - vmin * 15
                 }
                 else -> {
-                    it.height - it.vmin * 27
+                    height - vmin * 27
                 }
             }
         },
-        widthExpr = { it.vmin * 23 },
-        heightExpr = { it.vmin * 10 },
+        widthExpr = { vmin * 23 },
+        heightExpr = { vmin * 10 },
         onClick = { navigationMap.centerOnShip() },
         initialText = "Center"
     )

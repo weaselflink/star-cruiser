@@ -62,10 +62,10 @@ class ShortRangeScope(
 
     private val rotateButton = CanvasButton(
         canvas = canvas,
-        xExpr = { it.width * 0.5 + it.vmin * 20 },
-        yExpr = { it.height * 0.5 - it.vmin * 38 },
-        widthExpr = { it.vmin * 22 },
-        heightExpr = { it.vmin * 10 },
+        xExpr = { width * 0.5 + vmin * 20 },
+        yExpr = { height * 0.5 - vmin * 38 },
+        widthExpr = { vmin * 22 },
+        heightExpr = { vmin * 10 },
         onClick = {
             if (showRotateButton) {
                 ClientState.toggleRotateScope()

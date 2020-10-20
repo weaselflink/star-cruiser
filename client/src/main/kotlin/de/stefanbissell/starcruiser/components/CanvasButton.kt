@@ -14,10 +14,10 @@ import org.w3c.dom.HTMLCanvasElement
 
 class CanvasButton(
     private val canvas: HTMLCanvasElement,
-    private val xExpr: (CanvasDimensions) -> Double,
-    private val yExpr: (CanvasDimensions) -> Double,
-    private val widthExpr: (CanvasDimensions) -> Double,
-    private val heightExpr: (CanvasDimensions) -> Double,
+    private val xExpr: CanvasDimensions.() -> Double,
+    private val yExpr: CanvasDimensions.() -> Double,
+    private val widthExpr: CanvasDimensions.() -> Double,
+    private val heightExpr: CanvasDimensions.() -> Double,
     private val onClick: () -> Unit = {},
     private val activated: () -> Boolean = { false },
     private val enabled: () -> Boolean = { true },
