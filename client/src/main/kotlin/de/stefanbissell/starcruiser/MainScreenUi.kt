@@ -3,6 +3,8 @@ package de.stefanbissell.starcruiser
 import de.stefanbissell.starcruiser.components.CanvasButton
 import de.stefanbissell.starcruiser.components.ShortRangeScope
 import de.stefanbissell.starcruiser.components.StationUi
+import de.stefanbissell.starcruiser.input.PointerEvent
+import de.stefanbissell.starcruiser.input.PointerEventHandler
 import de.stefanbissell.starcruiser.scene.MainScene
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -57,6 +59,7 @@ class MainScreenUi : StationUi(Station.MainScreen) {
     init {
         resize()
         addChildren(viewButtons)
+        addChildren(ScreenPointerHandler())
     }
 
     override fun resize() {
@@ -166,4 +169,11 @@ class MainScreenUi : StationUi(Station.MainScreen) {
     )
 
     private fun render(camera: Camera) = renderer.render(mainScene.scene, camera)
+}
+
+private class ScreenPointerHandler : PointerEventHandler {
+
+    override fun handlePointerDown(pointerEvent: PointerEvent) {
+        ClientState.showStationOverlay = true
+    }
 }

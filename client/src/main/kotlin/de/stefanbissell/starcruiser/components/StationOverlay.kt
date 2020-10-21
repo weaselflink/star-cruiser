@@ -46,16 +46,18 @@ class StationOverlay : PointerEventHandlerParent() {
     fun draw(snapshot: SnapshotMessage.CrewSnapshot) {
         currentStation = getNewStation(snapshot)
 
-        if (ClientState.showStationOverlay) {
-            currentStationButton.text = "Stations"
+        if (currentStation != Station.MainScreen || ClientState.showStationOverlay) {
+            if (ClientState.showStationOverlay) {
+                currentStationButton.text = "Stations"
 
-            otherStationButtons.forEach {
-                it.draw()
+                otherStationButtons.forEach {
+                    it.draw()
+                }
+            } else {
+                currentStationButton.text = currentStation.name
             }
-        } else {
-            currentStationButton.text = currentStation.name
+            currentStationButton.draw()
         }
-        currentStationButton.draw()
     }
 
     override fun isInterestedIn(pointerEvent: PointerEvent) =
