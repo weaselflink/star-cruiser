@@ -8,7 +8,7 @@ class HullDisplay(
     canvas: HTMLCanvasElement,
     xExpr: CanvasDimensions.() -> Double,
     yExpr: CanvasDimensions.() -> Double,
-    widthExpr: CanvasDimensions.() -> Double = { vmin * 40 },
+    widthExpr: CanvasDimensions.() -> Double = { vmin * 46 },
     heightExpr: CanvasDimensions.() -> Double = { vmin * 6 }
 ) {
 

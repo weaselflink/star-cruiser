@@ -68,7 +68,8 @@ class ShieldHandler(
             up = up,
             activated = activated,
             strength = currentStrength.twoDigits(),
-            max = shieldTemplate.strength
+            max = shieldTemplate.strength,
+            modulation = modulation
         )
 
     private fun updateActivation(time: GameTime) {

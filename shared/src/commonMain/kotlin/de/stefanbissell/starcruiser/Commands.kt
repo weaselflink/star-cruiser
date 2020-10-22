@@ -83,6 +83,12 @@ sealed class Command {
     @Serializable
     data class CommandMainScreenView(val mainScreenView: MainScreenView) : Command()
 
+    @Serializable
+    object CommandDecreaseShieldModulation : Command()
+
+    @Serializable
+    object CommandIncreaseShieldModulation : Command()
+
     fun toJson() = configuredJson.encodeToString(serializer(), this)
 
     companion object {

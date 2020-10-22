@@ -35,3 +35,5 @@ data class SolveRepairGame(val clientId: ClientId, val column: Int, val row: Int
 data class SetPower(val clientId: ClientId, val systemType: PoweredSystemType, val power: Int) : GameStateChange()
 data class SetCoolant(val clientId: ClientId, val systemType: PoweredSystemType, val coolant: Double) : GameStateChange()
 data class SetMainScreenView(val clientId: ClientId, val mainScreenView: MainScreenView) : GameStateChange()
+data class DecreaseShieldModulation(val clientId: ClientId) : GameStateChange()
+data class IncreaseShieldModulation(val clientId: ClientId) : GameStateChange()

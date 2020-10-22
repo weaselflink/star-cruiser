@@ -238,6 +238,14 @@ class PlayerShip(
         powerHandler.setCoolant(systemType, coolant)
     }
 
+    fun decreaseShieldModulation() {
+        shieldHandler.modulation -= 1
+    }
+
+    fun increaseShieldModulation() {
+        shieldHandler.modulation += 1
+    }
+
     override fun inSensorRange(other: Vector2?) =
         other != null && (other - position).length() <= sensorRange
 

@@ -364,7 +364,8 @@ data class ShieldMessage(
     val up: Boolean,
     val activated: Boolean,
     val strength: Double,
-    val max: Double
+    val max: Double,
+    val modulation: Int
 )
 
 @Serializable
