@@ -23,18 +23,34 @@ class WeaponsUi : StationUi(Station.Weapons) {
     )
     private val hullDisplay = HullDisplay(
         canvas = canvas,
-        xExpr = { vmin * 3 },
-        yExpr = { height - vmin * 23 }
+        xExpr = { vmin * 2 },
+        yExpr = { height - vmin * 34 }
     )
     private val shieldsDisplay = ShieldsDisplay(
         canvas = canvas,
-        xExpr = { vmin * 3 },
-        yExpr = { height - vmin * 15 }
+        xExpr = { vmin * 2 },
+        yExpr = { height - vmin * 26 }
+    )
+    private val modulationDownButton = CanvasButton(
+        canvas = canvas,
+        xExpr = { vmin * 2 },
+        yExpr = { height - vmin * 14 },
+        widthExpr = { vmin * 12 },
+        heightExpr = { vmin * 10 },
+        initialText = "◄"
+    )
+    private val modulationUpButton = CanvasButton(
+        canvas = canvas,
+        xExpr = { vmin * 30 },
+        yExpr = { height - vmin * 14 },
+        widthExpr = { vmin * 12 },
+        heightExpr = { vmin * 10 },
+        initialText = "►"
     )
     private val shieldsButton = CanvasButton(
         canvas = canvas,
-        xExpr = { vmin * 13 },
-        yExpr = { height - vmin * 3 },
+        xExpr = { vmin * 12 },
+        yExpr = { height - vmin * 2 },
         widthExpr = { vmin * 20 },
         heightExpr = { vmin * 10 },
         onClick = { toggleShields() }
@@ -46,6 +62,8 @@ class WeaponsUi : StationUi(Station.Weapons) {
         addChildren(
             lockTargetButton,
             shieldsButton,
+            modulationDownButton,
+            modulationUpButton,
             shortRangeScope
         )
     }
@@ -64,6 +82,8 @@ class WeaponsUi : StationUi(Station.Weapons) {
         shieldsDisplay.draw(snapshot.shield)
         shieldsButton.text = if (snapshot.shield.up) "Down" else "Up"
         shieldsButton.draw()
+        modulationDownButton.draw()
+        modulationUpButton.draw()
     }
 
     private fun contactSelected(targetId: ObjectId) {
