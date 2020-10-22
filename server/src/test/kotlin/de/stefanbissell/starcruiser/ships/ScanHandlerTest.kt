@@ -21,11 +21,10 @@ class ScanHandlerTest {
     @Test
     fun `starts with unsolved game`() {
         expectThat(scanHandler.isComplete).isFalse()
-        expectThat(scanHandler.toMessage())
-            .and {
-                get { targetId }.isEqualTo(targetId)
-                get { designation }.isEqualTo("dummy")
-            }
+        expectThat(scanHandler.toMessage()) {
+            get { targetId }.isEqualTo(targetId)
+            get { designation }.isEqualTo("dummy")
+        }
     }
 
     @Test

@@ -5,11 +5,16 @@ import de.stefanbissell.starcruiser.ShieldMessage
 import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.twoDigits
 import kotlin.math.max
+import kotlin.random.Random
 
 class ShieldHandler(
     private val shieldTemplate: ShieldTemplate
 ) {
 
+    var modulation: Int = Random.nextInt(7)
+        set(value) {
+            field = value.clamp(0, 7)
+        }
     var up: Boolean = true
         set(value) {
             if (value) {
@@ -67,7 +72,7 @@ class ShieldHandler(
         )
 
     private fun updateActivation(time: GameTime) {
-        activated = up && damageSinceLastUpdate > 0.0
+        activated = (up && damageSinceLastUpdate > 0.0)
         if (damageSinceLastUpdate == 0.0) {
             timeSinceLastDamage += time.delta
         }

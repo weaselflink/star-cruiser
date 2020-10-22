@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
+import strikt.assertions.isGreaterThanOrEqualTo
+import strikt.assertions.isLessThanOrEqualTo
 import strikt.assertions.isTrue
 
 class ShieldHandlerTest {
@@ -16,12 +18,18 @@ class ShieldHandlerTest {
     private val shieldHandler = ShieldHandler(shieldTemplate)
 
     @Test
+    fun `starts with random modulation`() {
+        expectThat(shieldHandler.modulation)
+            .isGreaterThanOrEqualTo(0)
+            .isLessThanOrEqualTo(7)
+    }
+
+    @Test
     fun `starts with full shields in up state`() {
-        expectThat(shieldHandler.toMessage())
-            .and {
-                get { up }.isTrue()
-                get { strength }.isNear(shieldTemplate.strength)
-            }
+        expectThat(shieldHandler) {
+            get { up }.isTrue()
+            get { currentStrength }.isNear(shieldTemplate.strength)
+        }
     }
 
     @Test
