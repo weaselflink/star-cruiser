@@ -3,15 +3,11 @@ package de.stefanbissell.starcruiser
 import de.stefanbissell.starcruiser.Command.CommandLockTarget
 import de.stefanbissell.starcruiser.components.CanvasButton
 import de.stefanbissell.starcruiser.components.HullDisplay
+import de.stefanbissell.starcruiser.components.ModulationUi
 import de.stefanbissell.starcruiser.components.ShieldsDisplay
 import de.stefanbissell.starcruiser.components.ShortRangeScope
 import de.stefanbissell.starcruiser.components.StationUi
-import de.stefanbissell.starcruiser.components.UiStyle
-import org.w3c.dom.ALPHABETIC
-import org.w3c.dom.CENTER
 import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.CanvasTextAlign
-import org.w3c.dom.CanvasTextBaseline
 
 class WeaponsUi : StationUi(Station.Weapons) {
 
@@ -36,23 +32,12 @@ class WeaponsUi : StationUi(Station.Weapons) {
         xExpr = { vmin * 2 },
         yExpr = { height - vmin * 26 }
     )
-    private val modulationDownButton = CanvasButton(
+    private val shieldModulationUi = ModulationUi(
         canvas = canvas,
         xExpr = { vmin * 2 },
         yExpr = { height - vmin * 14 },
-        widthExpr = { vmin * 12 },
-        heightExpr = { vmin * 10 },
-        onClick = { clientSocket.send(Command.CommandDecreaseShieldModulation) },
-        initialText = "◄"
-    )
-    private val modulationUpButton = CanvasButton(
-        canvas = canvas,
-        xExpr = { vmin * 36 },
-        yExpr = { height - vmin * 14 },
-        widthExpr = { vmin * 12 },
-        heightExpr = { vmin * 10 },
-        onClick = { clientSocket.send(Command.CommandIncreaseShieldModulation) },
-        initialText = "►"
+        decreaseCommand = Command.CommandDecreaseShieldModulation,
+        increaseCommand = Command.CommandIncreaseShieldModulation
     )
     private val shieldsButton = CanvasButton(
         canvas = canvas,
@@ -69,8 +54,7 @@ class WeaponsUi : StationUi(Station.Weapons) {
         addChildren(
             lockTargetButton,
             shieldsButton,
-            modulationDownButton,
-            modulationUpButton,
+            shieldModulationUi,
             shortRangeScope
         )
     }
@@ -89,37 +73,7 @@ class WeaponsUi : StationUi(Station.Weapons) {
         shieldsDisplay.draw(snapshot.shield)
         shieldsButton.text = if (snapshot.shield.up) "Down" else "Up"
         shieldsButton.draw()
-
-        drawModulation(snapshot)
-        modulationDownButton.draw()
-        modulationUpButton.draw()
-    }
-
-    private fun CanvasRenderingContext2D.drawModulation(snapshot: SnapshotMessage.Weapons) {
-        val dim = canvas.dimensions()
-
-        save()
-
-        fillStyle = UiStyle.buttonBackgroundColor
-        beginPath()
-        drawPill(
-            x = dim.vmin * 2,
-            y = dim.height - dim.vmin * 14,
-            width = dim.vmin * 46,
-            height = dim.vmin * 10
-        )
-        fill()
-
-        fillStyle = UiStyle.buttonForegroundColor
-        textAlign = CanvasTextAlign.CENTER
-        textBaseline = CanvasTextBaseline.ALPHABETIC
-        val textSize = dim.height * 0.05
-        font = UiStyle.font(textSize)
-        translate(dim.vmin * 25, dim.height - dim.vmin * 17.5)
-        val text = "${(snapshot.shield.modulation * 2 + 78)} PHz"
-        fillText(text, 0.0, 0.0)
-
-        restore()
+        shieldModulationUi.draw(snapshot.shield.modulation)
     }
 
     private fun contactSelected(targetId: ObjectId) {
