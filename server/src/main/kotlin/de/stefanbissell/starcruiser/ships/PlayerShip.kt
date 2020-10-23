@@ -263,7 +263,7 @@ class PlayerShip(
             designation = designation,
             position = position.twoDigits(),
             rotation = rotation.fiveDigits(),
-            beams = beamHandlerContainer.beamHandlers.map { it.toMessage(lockHandler) },
+            beams = toBeamsMessage(),
             shield = shieldHandler.toMessage(),
             jumpDrive = jumpHandler.toMessage(),
             mainScreenView = mainScreenView,
@@ -291,7 +291,7 @@ class PlayerShip(
             history = history.map { (it.second - position).twoDigits() },
             waypoints = waypoints.map { it.toWaypointMessage() },
             lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
-            beams = beamHandlerContainer.beamHandlers.map { it.toMessage(lockHandler) }
+            beams = toBeamsMessage()
         )
 
     override fun toContactMessage(relativeTo: Ship) =
@@ -301,14 +301,14 @@ class PlayerShip(
             position = position,
             relativePosition = (position - relativeTo.position),
             rotation = rotation,
-            beams = toBeamMessages(),
+            beams = toBeamsMessage(),
             shield = toShieldMessage(),
             jumpAnimation = jumpHandler.toMessage().animation
         )
 
     override fun toShieldMessage() = shieldHandler.toMessage()
 
-    override fun toBeamMessages() = beamHandlerContainer.beamHandlers.map { it.toMessage(lockHandler) }
+    override fun toBeamsMessage() = beamHandlerContainer.toMessage(lockHandler)
 
     fun toMapSelectionMessage(contactList: ShipContactList) =
         mapSelection.let { selection ->

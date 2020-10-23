@@ -143,7 +143,7 @@ data class ShipMessage(
     val designation: String,
     val position: Vector2,
     val rotation: Double,
-    val beams: List<BeamMessage>,
+    val beams: BeamsMessage,
     val shield: ShieldMessage,
     val jumpDrive: JumpDriveMessage,
     val mainScreenView: MainScreenView,
@@ -171,7 +171,7 @@ data class ShortRangeScopeMessage(
     val history: List<Vector2>,
     val waypoints: List<WaypointMessage>,
     val lockProgress: LockStatus,
-    val beams: List<BeamMessage>
+    val beams: BeamsMessage
 )
 
 @Serializable
@@ -181,7 +181,7 @@ data class ContactMessage(
     override val position: Vector2,
     val relativePosition: Vector2,
     val rotation: Double,
-    val beams: List<BeamMessage>,
+    val beams: BeamsMessage,
     val shield: ShieldMessage,
     val jumpAnimation: Double?
 ) : IdentifiableWithModel, Positional
@@ -326,6 +326,12 @@ data class MapSelectionMessage(
     val systemsDamage: Map<PoweredSystemType, Double>? = null,
     val canScan: Boolean = false,
     val canDelete: Boolean = false
+)
+
+@Serializable
+data class BeamsMessage(
+    val modulation: Int,
+    val beams: List<BeamMessage>
 )
 
 @Serializable

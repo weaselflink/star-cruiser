@@ -1,7 +1,7 @@
 package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.Asteroid
-import de.stefanbissell.starcruiser.BeamMessage
+import de.stefanbissell.starcruiser.BeamsMessage
 import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
@@ -41,7 +41,7 @@ interface Ship {
 
     fun toShieldMessage(): ShieldMessage
 
-    fun toBeamMessages(): List<BeamMessage>
+    fun toBeamsMessage(): BeamsMessage
 
     fun isLocking(targetId: ObjectId): Boolean
 

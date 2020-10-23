@@ -1,10 +1,11 @@
 package de.stefanbissell.starcruiser.ships
 
+import de.stefanbissell.starcruiser.BeamsMessage
 import de.stefanbissell.starcruiser.clamp
 import kotlin.random.Random
 
 class BeamHandlerContainer(
-    private val beamWeapons: List<BeamWeapon>,
+    beamWeapons: List<BeamWeapon>,
     private val ship: Ship
 ) {
 
@@ -15,4 +16,10 @@ class BeamHandlerContainer(
     val beamHandlers = beamWeapons.map {
         BeamHandler(it, ship)
     }
+
+    fun toMessage(lockHandler: LockHandler?) =
+        BeamsMessage(
+            modulation = modulation,
+            beams = beamHandlers.map { it.toMessage(lockHandler) }
+        )
 }

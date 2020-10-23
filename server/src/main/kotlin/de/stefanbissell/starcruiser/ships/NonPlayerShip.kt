@@ -89,14 +89,14 @@ class NonPlayerShip(
             position = position,
             relativePosition = (position - relativeTo.position),
             rotation = rotation,
-            beams = toBeamMessages(),
+            beams = toBeamsMessage(),
             shield = toShieldMessage(),
             jumpAnimation = null
         )
 
     override fun toShieldMessage() = shieldHandler.toMessage()
 
-    override fun toBeamMessages() = beamHandlerContainer.beamHandlers.map { it.toMessage(lockHandler) }
+    override fun toBeamsMessage() = beamHandlerContainer.toMessage(lockHandler)
 
     override fun inSensorRange(other: Vector2?): Boolean =
         other != null && rangeTo(other) <= sensorRange

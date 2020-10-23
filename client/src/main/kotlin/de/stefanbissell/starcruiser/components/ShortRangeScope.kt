@@ -209,7 +209,7 @@ class ShortRangeScope(
         beamStyle(dim)
         rotate(-snapshot.shortRangeScope.rotation)
 
-        for (beam in snapshot.shortRangeScope.beams) {
+        for (beam in snapshot.shortRangeScope.beams.beams) {
             val x = -beam.position.z.adjustForScope()
             val y = beam.position.x.adjustForScope()
             val left = -beam.leftArc.toRadians()
