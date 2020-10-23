@@ -89,6 +89,12 @@ sealed class Command {
     @Serializable
     object CommandIncreaseShieldModulation : Command()
 
+    @Serializable
+    object CommandDecreaseBeamModulation : Command()
+
+    @Serializable
+    object CommandIncreaseBeamModulation : Command()
+
     fun toJson() = configuredJson.encodeToString(serializer(), this)
 
     companion object {

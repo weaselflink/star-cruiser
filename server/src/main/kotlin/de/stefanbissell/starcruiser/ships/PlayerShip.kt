@@ -246,6 +246,14 @@ class PlayerShip(
         shieldHandler.modulation += 1
     }
 
+    fun decreaseBeamModulation() {
+        beamHandlerContainer.modulation -= 1
+    }
+
+    fun increaseBeamModulation() {
+        beamHandlerContainer.modulation += 1
+    }
+
     override fun inSensorRange(other: Vector2?) =
         other != null && (other - position).length() <= sensorRange
 

@@ -32,6 +32,13 @@ class WeaponsUi : StationUi(Station.Weapons) {
         xExpr = { vmin * 2 },
         yExpr = { height - vmin * 26 }
     )
+    private val beamModulationUi = ModulationUi(
+        canvas = canvas,
+        xExpr = { vmin * 2 },
+        yExpr = { height - vmin * 45 },
+        decreaseCommand = Command.CommandDecreaseBeamModulation,
+        increaseCommand = Command.CommandIncreaseBeamModulation
+    )
     private val shieldModulationUi = ModulationUi(
         canvas = canvas,
         xExpr = { vmin * 2 },
@@ -54,6 +61,7 @@ class WeaponsUi : StationUi(Station.Weapons) {
         addChildren(
             lockTargetButton,
             shieldsButton,
+            beamModulationUi,
             shieldModulationUi,
             shortRangeScope
         )
@@ -73,6 +81,7 @@ class WeaponsUi : StationUi(Station.Weapons) {
         shieldsDisplay.draw(snapshot.shield)
         shieldsButton.text = if (snapshot.shield.up) "Down" else "Up"
         shieldsButton.draw()
+        beamModulationUi.draw(snapshot.shortRangeScope.beams.modulation)
         shieldModulationUi.draw(snapshot.shield.modulation)
     }
 

@@ -211,6 +211,14 @@ class GameState {
         getClientShip(clientId)?.increaseShieldModulation()
     }
 
+    fun decreaseBeamModulation(clientId: ClientId) {
+        getClientShip(clientId)?.decreaseBeamModulation()
+    }
+
+    fun increaseBeamModulation(clientId: ClientId) {
+        getClientShip(clientId)?.increaseBeamModulation()
+    }
+
     private fun toHelmMessage(
         ship: PlayerShip,
         contactList: ShipContactList
@@ -415,6 +423,8 @@ class GameState {
                     is SetMainScreenView -> gameState.setMainScreenView(change.clientId, change.mainScreenView)
                     is DecreaseShieldModulation -> gameState.decreaseShieldModulation(change.clientId)
                     is IncreaseShieldModulation -> gameState.increaseShieldModulation(change.clientId)
+                    is DecreaseBeamModulation -> gameState.decreaseBeamModulation(change.clientId)
+                    is IncreaseBeamModulation -> gameState.increaseBeamModulation(change.clientId)
                 }
             }
         }

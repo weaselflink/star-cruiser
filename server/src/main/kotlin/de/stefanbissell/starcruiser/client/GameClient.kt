@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.ApplicationConfig.gameClientUpdateIntervalMi
 import de.stefanbissell.starcruiser.ChangeJumpDistance
 import de.stefanbissell.starcruiser.ChangeStation
 import de.stefanbissell.starcruiser.Command
+import de.stefanbissell.starcruiser.DecreaseBeamModulation
 import de.stefanbissell.starcruiser.DecreaseShieldModulation
 import de.stefanbissell.starcruiser.DeleteSelectedWaypoint
 import de.stefanbissell.starcruiser.ExitShip
@@ -15,6 +16,7 @@ import de.stefanbissell.starcruiser.GameClientDisconnected
 import de.stefanbissell.starcruiser.GameStateChange
 import de.stefanbissell.starcruiser.GameStateMessage
 import de.stefanbissell.starcruiser.GetGameStateSnapshot
+import de.stefanbissell.starcruiser.IncreaseBeamModulation
 import de.stefanbissell.starcruiser.IncreaseShieldModulation
 import de.stefanbissell.starcruiser.JoinShip
 import de.stefanbissell.starcruiser.LockTarget
@@ -158,6 +160,12 @@ class GameClient(
                 )
                 is Command.CommandIncreaseShieldModulation -> gameStateActor.send(
                     IncreaseShieldModulation(id)
+                )
+                is Command.CommandDecreaseBeamModulation -> gameStateActor.send(
+                    DecreaseBeamModulation(id)
+                )
+                is Command.CommandIncreaseBeamModulation -> gameStateActor.send(
+                    IncreaseBeamModulation(id)
                 )
             }
         }

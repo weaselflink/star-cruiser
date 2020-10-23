@@ -37,3 +37,5 @@ data class SetCoolant(val clientId: ClientId, val systemType: PoweredSystemType,
 data class SetMainScreenView(val clientId: ClientId, val mainScreenView: MainScreenView) : GameStateChange()
 data class DecreaseShieldModulation(val clientId: ClientId) : GameStateChange()
 data class IncreaseShieldModulation(val clientId: ClientId) : GameStateChange()
+data class DecreaseBeamModulation(val clientId: ClientId) : GameStateChange()
+data class IncreaseBeamModulation(val clientId: ClientId) : GameStateChange()
