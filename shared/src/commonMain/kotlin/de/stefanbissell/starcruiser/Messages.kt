@@ -332,7 +332,14 @@ data class MapSelectionMessage(
 data class BeamsMessage(
     val modulation: Int,
     val beams: List<BeamMessage>
-)
+) : AbstractList<BeamMessage>() {
+
+    override val size: Int
+        get() = beams.size
+
+    override fun get(index: Int): BeamMessage =
+        beams[index]
+}
 
 @Serializable
 data class BeamMessage(

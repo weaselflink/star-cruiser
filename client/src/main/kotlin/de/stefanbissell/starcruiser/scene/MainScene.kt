@@ -129,11 +129,11 @@ class MainScene {
         cameras[this] ?: cameras.values.first()
 
     private fun updateBeams(snapshot: SnapshotMessage.MainScreen3d) {
-        ownShip.updateBeams(snapshot, snapshot.ship.beams.beams)
+        ownShip.updateBeams(snapshot, snapshot.ship.beams)
 
         contactHandler.nodes.forEach { node ->
             snapshot.contacts.firstOrNull { it.id == node.key }?.let { contact ->
-                node.value.updateBeams(snapshot, contact.beams.beams)
+                node.value.updateBeams(snapshot, contact.beams)
             }
         }
     }

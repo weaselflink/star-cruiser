@@ -289,17 +289,17 @@ class PlayerShipTest {
         ship.lockTarget(target.id)
         stepTime(10)
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
-        expectThat(ship.toMessage().beams.beams.first().status).isA<BeamStatus.Idle>()
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
         stepTime(0.5)
-        expectThat(ship.toMessage().beams.beams.first().status).isA<BeamStatus.Firing>()
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Firing>()
         expectThat(target.toMessage().shield.strength).isEqualTo(target.template.shield.strength - 0.5)
 
         stepTime(1.5)
-        expectThat(ship.toMessage().beams.beams.first().status).isA<BeamStatus.Recharging>()
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Recharging>()
 
         stepTime(2)
-        expectThat(ship.toMessage().beams.beams.first().status)
+        expectThat(ship.toMessage().beams.first().status)
             .isA<BeamStatus.Recharging>()
             .get { progress }.isNear(ship.template.beams.first().rechargeSpeed * 2.0)
     }
@@ -313,13 +313,13 @@ class PlayerShipTest {
         ship.lockTarget(target.id)
         stepTime(10)
         stepTime(0.5)
-        expectThat(ship.toMessage().beams.beams.first().status).isA<BeamStatus.Firing>()
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Firing>()
         stepTime(1.5)
-        expectThat(ship.toMessage().beams.beams.first().status)
+        expectThat(ship.toMessage().beams.first().status)
             .isA<BeamStatus.Recharging>()
             .get { progress }.isNear(0.0)
         stepTime(2)
-        expectThat(ship.toMessage().beams.beams.first().status)
+        expectThat(ship.toMessage().beams.first().status)
             .isA<BeamStatus.Recharging>()
             .get { progress }.isNear(ship.template.beams.first().rechargeSpeed * 4.0)
     }
@@ -331,10 +331,10 @@ class PlayerShipTest {
         ship.lockTarget(target.id)
         stepTime(10)
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
-        expectThat(ship.toMessage().beams.beams.first().status).isA<BeamStatus.Idle>()
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
         stepTime(0.5)
-        expectThat(ship.toMessage().beams.beams.first().status).isA<BeamStatus.Idle>()
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
     }
 
     @Test
@@ -344,10 +344,10 @@ class PlayerShipTest {
         ship.lockTarget(target.id)
         stepTime(10)
         expectThat(ship.toShortRangeScopeMessage().lockProgress).isA<LockStatus.Locked>()
-        expectThat(ship.toMessage().beams.beams.first().status).isA<BeamStatus.Idle>()
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
 
         stepTime(0.5)
-        expectThat(ship.toMessage().beams.beams.first().status).isA<BeamStatus.Idle>()
+        expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Idle>()
     }
 
     @Test
