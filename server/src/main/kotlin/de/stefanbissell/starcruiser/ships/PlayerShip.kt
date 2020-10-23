@@ -45,7 +45,7 @@ class PlayerShip(
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val throttleHandler = ThrottleHandler(template)
     private val powerHandler = PowerHandler(template)
-    private val beamHandlers = template.beams.map { BeamHandler(it, this) }
+    private val beamHandlerContainer = BeamHandlerContainer(template.beams, this)
     private val shieldHandler = ShieldHandler(template.shield)
     private var mapSelection: MapSelection = MapSelection.None
     private var scanHandler: ScanHandler? = null
@@ -263,7 +263,7 @@ class PlayerShip(
             designation = designation,
             position = position.twoDigits(),
             rotation = rotation.fiveDigits(),
-            beams = beamHandlers.map { it.toMessage(lockHandler) },
+            beams = beamHandlerContainer.beamHandlers.map { it.toMessage(lockHandler) },
             shield = shieldHandler.toMessage(),
             jumpDrive = jumpHandler.toMessage(),
             mainScreenView = mainScreenView,
@@ -291,7 +291,7 @@ class PlayerShip(
             history = history.map { (it.second - position).twoDigits() },
             waypoints = waypoints.map { it.toWaypointMessage() },
             lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
-            beams = beamHandlers.map { it.toMessage(lockHandler) }
+            beams = beamHandlerContainer.beamHandlers.map { it.toMessage(lockHandler) }
         )
 
     override fun toContactMessage(relativeTo: Ship) =
@@ -308,7 +308,7 @@ class PlayerShip(
 
     override fun toShieldMessage() = shieldHandler.toMessage()
 
-    override fun toBeamMessages() = beamHandlers.map { it.toMessage(lockHandler) }
+    override fun toBeamMessages() = beamHandlerContainer.beamHandlers.map { it.toMessage(lockHandler) }
 
     fun toMapSelectionMessage(contactList: ShipContactList) =
         mapSelection.let { selection ->
@@ -339,7 +339,7 @@ class PlayerShip(
         physicsEngine: PhysicsEngine,
         contactList: ShipContactList
     ) {
-        beamHandlers.forEach {
+        beamHandlerContainer.beamHandlers.forEach {
             it.update(
                 time = time,
                 boostLevel = Weapons.boostLevel,

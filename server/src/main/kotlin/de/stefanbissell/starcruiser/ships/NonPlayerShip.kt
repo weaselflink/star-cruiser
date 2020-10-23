@@ -24,7 +24,7 @@ class NonPlayerShip(
 
     private val shipAi = ShipAi(this)
     val powerHandler = SimplePowerHandler(template)
-    private val beamHandlers = template.beams.map { BeamHandler(it, this) }
+    val beamHandlerContainer = BeamHandlerContainer(template.beams, this)
     val shieldHandler = ShieldHandler(template.shield)
     var scanHandler: TimedScanHandler? = null
     var lockHandler: LockHandler? = null
@@ -96,7 +96,7 @@ class NonPlayerShip(
 
     override fun toShieldMessage() = shieldHandler.toMessage()
 
-    override fun toBeamMessages() = beamHandlers.map { it.toMessage(lockHandler) }
+    override fun toBeamMessages() = beamHandlerContainer.beamHandlers.map { it.toMessage(lockHandler) }
 
     override fun inSensorRange(other: Vector2?): Boolean =
         other != null && rangeTo(other) <= sensorRange
@@ -129,7 +129,7 @@ class NonPlayerShip(
         physicsEngine: PhysicsEngine,
         contactList: ShipContactList
     ) {
-        beamHandlers.forEach {
+        beamHandlerContainer.beamHandlers.forEach {
             it.update(
                 time = time,
                 contactList = contactList,
