@@ -185,79 +185,43 @@ class SelectionDetails(
     }
 
     private fun CanvasRenderingContext2D.drawBearing(bearing: Int) {
-        save()
-
-        val y = dim.topY + dim.canvas.vmin * 12
-        font = UiStyle.font(dim.canvas.vmin * 3)
-        fillStyle = UiStyle.buttonForegroundColor
-        fillText("Bearing", innerX, y)
-
-        textAlign = CanvasTextAlign.RIGHT
         val text = bearing.pad(3)
-        fillText(
-            text,
-            dim.rightX - dim.canvas.vmin * 4,
-            y
-        )
-
-        restore()
+        drawAttribute(dim.canvas.vmin * 12, "Bearing", text)
     }
 
     private fun CanvasRenderingContext2D.drawRange(range: Int) {
-        save()
-
-        val y = dim.topY + dim.canvas.vmin * 16
-        font = UiStyle.font(dim.canvas.vmin * 3)
-        fillStyle = UiStyle.buttonForegroundColor
-        fillText("Range", innerX, y)
-
-        textAlign = CanvasTextAlign.RIGHT
         val text = range.formatThousands()
-        fillText(
-            text,
-            dim.rightX - dim.canvas.vmin * 4,
-            y
-        )
-
-        restore()
+        drawAttribute(dim.canvas.vmin * 16, "Range", text)
     }
 
     private fun CanvasRenderingContext2D.drawShieldModulation(modulation: Int) {
-        save()
-
-        val y = dim.topY + dim.canvas.vmin * 32
-        font = UiStyle.font(dim.canvas.vmin * 3)
-        fillStyle = UiStyle.buttonForegroundColor
-        fillText("∿ Shields", innerX, y)
-
-        textAlign = CanvasTextAlign.RIGHT
         val value = modulation * 2 + 78
         val text = "$value PHz"
-        fillText(
-            text,
-            dim.rightX - dim.canvas.vmin * 4,
-            y
-        )
-
-        restore()
+        drawAttribute(dim.canvas.vmin * 32, "∿ Shields", text)
     }
 
     private fun CanvasRenderingContext2D.drawBeamModulation(modulation: Int) {
-        save()
-
-        val y = dim.topY + dim.canvas.vmin * 36
-        font = UiStyle.font(dim.canvas.vmin * 3)
-        fillStyle = UiStyle.buttonForegroundColor
-        fillText("∿ Beams", innerX, y)
-
-        textAlign = CanvasTextAlign.RIGHT
         val value = modulation * 2 + 78
         val text = "$value PHz"
-        fillText(
-            text,
-            dim.rightX - dim.canvas.vmin * 4,
-            dim.topY + dim.canvas.vmin * 36
-        )
+        drawAttribute(dim.canvas.vmin * 36, "∿ Beams", text)
+    }
+
+    private fun CanvasRenderingContext2D.drawAttribute(
+        yOffset: Double,
+        name: String,
+        value: String
+    ) {
+        val rightX = dim.rightX - dim.canvas.vmin * 4
+        val y = dim.topY + yOffset
+
+        save()
+
+        font = UiStyle.font(dim.canvas.vmin * 3)
+        fillStyle = UiStyle.buttonForegroundColor
+        fillText(name, innerX, y)
+
+        textAlign = CanvasTextAlign.RIGHT
+        fillText(value, rightX, y)
 
         restore()
     }
