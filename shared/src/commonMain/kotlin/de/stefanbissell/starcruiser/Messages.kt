@@ -322,10 +322,18 @@ data class MapSelectionMessage(
     val bearing: Int,
     val range: Int,
     val hullRatio: Double? = null,
-    val shield: ShieldMessage? = null,
+    val shield: SimpleShieldMessage? = null,
+    val shieldModulation: Int? = null,
+    val beamModulation: Int? = null,
     val systemsDamage: Map<PoweredSystemType, Double>? = null,
     val canScan: Boolean = false,
     val canDelete: Boolean = false
+)
+
+@Serializable
+data class SimpleShieldMessage(
+    val up: Boolean,
+    val ratio: Double
 )
 
 @Serializable

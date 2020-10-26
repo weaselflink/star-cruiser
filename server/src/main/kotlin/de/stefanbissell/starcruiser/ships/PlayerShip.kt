@@ -446,7 +446,9 @@ class PlayerShip(
                     ScanLevel.Detailed -> {
                         message.copy(
                             hullRatio = (max(0.0, ship.hull) / ship.template.hull).fiveDigits(),
-                            shield = ship.toShieldMessage(),
+                            shield = ship.toSimpleShieldMessage(),
+                            shieldModulation = ship.toShieldMessage().modulation,
+                            beamModulation = ship.toBeamsMessage().modulation,
                             systemsDamage = ship.systemsDamage,
                             canScan = false
                         )
@@ -454,7 +456,7 @@ class PlayerShip(
                     ScanLevel.Basic -> {
                         message.copy(
                             hullRatio = (ship.hull / ship.template.hull).fiveDigits(),
-                            shield = ship.toShieldMessage()
+                            shield = ship.toSimpleShieldMessage()
                         )
                     }
                     else -> {

@@ -9,9 +9,12 @@ import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.ShieldMessage
+import de.stefanbissell.starcruiser.SimpleShieldMessage
 import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.scenario.Faction
+import kotlin.math.max
 
 interface Ship {
 
@@ -40,6 +43,14 @@ interface Ship {
     fun toContactMessage(relativeTo: Ship): ContactMessage
 
     fun toShieldMessage(): ShieldMessage
+
+    fun toSimpleShieldMessage() =
+        toShieldMessage().let {
+            SimpleShieldMessage(
+                up = it.up,
+                ratio = (max(0.0, it.strength) / it.max).fiveDigits()
+            )
+        }
 
     fun toBeamsMessage(): BeamsMessage
 

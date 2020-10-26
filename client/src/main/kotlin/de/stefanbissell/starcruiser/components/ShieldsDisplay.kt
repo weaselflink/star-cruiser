@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.ShieldMessage
+import de.stefanbissell.starcruiser.SimpleShieldMessage
 import de.stefanbissell.starcruiser.toPercent
 import org.w3c.dom.HTMLCanvasElement
 
@@ -48,6 +49,21 @@ class ShieldsDisplay(
             val progress = strength / max
             canvasProgress.progress = progress
             canvasProgress.rightText = "${progress.toPercent()}%"
+        }
+
+        canvasProgress.draw()
+    }
+
+    fun draw(shieldMessage: SimpleShieldMessage) {
+        with(shieldMessage) {
+            isUp = up
+            canvasProgress.leftText = if (isUp) {
+                "Shields up"
+            } else {
+                "Shields down"
+            }
+            canvasProgress.progress = ratio
+            canvasProgress.rightText = "${ratio.toPercent()}%"
         }
 
         canvasProgress.draw()
