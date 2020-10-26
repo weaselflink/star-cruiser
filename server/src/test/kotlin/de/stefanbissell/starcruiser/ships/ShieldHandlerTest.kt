@@ -34,7 +34,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `applies damage to shields and reports no hull damage if shields up`() {
-        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0))
+        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 0))
             .isEqualTo(0.0)
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0)
@@ -42,7 +42,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `shields are activated after taking damage since last update`() {
-        shieldHandler.takeDamageAndReportHullDamage(3.0)
+        shieldHandler.takeDamageAndReportHullDamage(3.0, 0)
 
         stepTime(0.1)
 
@@ -57,7 +57,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `tracks time since last damage`() {
-        shieldHandler.takeDamageAndReportHullDamage(3.0)
+        shieldHandler.takeDamageAndReportHullDamage(3.0, 0)
 
         stepTime(1.0)
 
@@ -77,7 +77,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `recharges shields`() {
-        shieldHandler.takeDamageAndReportHullDamage(3.0)
+        shieldHandler.takeDamageAndReportHullDamage(3.0, 0)
 
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0)
@@ -91,7 +91,7 @@ class ShieldHandlerTest {
     @Test
     fun `recharges shields adjusted for low boost level`() {
         power = 0.5
-        shieldHandler.takeDamageAndReportHullDamage(3.0)
+        shieldHandler.takeDamageAndReportHullDamage(3.0, 0)
 
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0)
@@ -105,7 +105,7 @@ class ShieldHandlerTest {
     @Test
     fun `recharges shields adjusted for high boost level`() {
         power = 2.0
-        shieldHandler.takeDamageAndReportHullDamage(3.0)
+        shieldHandler.takeDamageAndReportHullDamage(3.0, 0)
 
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0)
@@ -120,7 +120,7 @@ class ShieldHandlerTest {
     fun `reports damage to hull if shields down`() {
         shieldHandler.up = false
 
-        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0))
+        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 0))
             .isEqualTo(3.0)
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength)
@@ -128,7 +128,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `reports damage to hull if damage exceeds shields`() {
-        expectThat(shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength + 3.0))
+        expectThat(shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength + 3.0, 0))
             .isEqualTo(3.0)
         expectThat(shieldHandler.toMessage().strength)
             .isNear(0.0)
@@ -136,7 +136,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `shields go down if below failure strength`() {
-        shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength - shieldTemplate.failureStrength + 3.0)
+        shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength - shieldTemplate.failureStrength + 3.0, 0)
 
         stepTime(0.1)
 
@@ -146,7 +146,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `shield cannot go up if below activation strength`() {
-        shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength - shieldTemplate.activationStrength + 3.0)
+        shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength - shieldTemplate.activationStrength + 3.0, 0)
         shieldHandler.up = false
         shieldHandler.up = true
 
@@ -156,7 +156,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `shield can go up after reaching activation strength`() {
-        shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength - shieldTemplate.activationStrength + 3.0)
+        shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength - shieldTemplate.activationStrength + 3.0, 0)
         shieldHandler.up = false
 
         stepTime(4.0 / shieldTemplate.rechargeSpeed)

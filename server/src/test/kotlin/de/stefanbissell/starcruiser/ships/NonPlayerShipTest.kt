@@ -29,7 +29,7 @@ class NonPlayerShipTest {
 
     @Test
     fun `takes damage to shields`() {
-        ship.takeDamage(PoweredSystemType.Reactor, 10.0)
+        ship.takeDamage(PoweredSystemType.Reactor, 10.0, 0)
 
         expectThat(ship.shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 10.0)
@@ -37,7 +37,7 @@ class NonPlayerShipTest {
 
     @Test
     fun `shields recharge`() {
-        ship.takeDamage(PoweredSystemType.Reactor, 10.0)
+        ship.takeDamage(PoweredSystemType.Reactor, 10.0, 0)
         stepTime(5)
 
         expectThat(ship.shieldHandler.toMessage().strength)
@@ -47,7 +47,7 @@ class NonPlayerShipTest {
     @Test
     fun `reactivates shields when possible and near threat`() {
         addHostileShip(p(100, 100))
-        ship.takeDamage(PoweredSystemType.Reactor, shieldTemplate.strength)
+        ship.takeDamage(PoweredSystemType.Reactor, shieldTemplate.strength, 0)
         stepTime(0.01)
         expectThat(ship.shieldHandler.toMessage().up)
             .isFalse()
@@ -62,7 +62,7 @@ class NonPlayerShipTest {
     @Test
     fun `repairs damaged system`() {
         ship.shieldHandler.toggleUp()
-        ship.takeDamage(PoweredSystemType.Sensors, carrierTemplate.poweredSystemDamageCapacity * 0.2)
+        ship.takeDamage(PoweredSystemType.Sensors, carrierTemplate.poweredSystemDamageCapacity * 0.2, 0)
         expectThat(ship.powerHandler.poweredSystems[PoweredSystemType.Sensors])
             .isNotNull()
             .get { damage }.isNear(0.2)

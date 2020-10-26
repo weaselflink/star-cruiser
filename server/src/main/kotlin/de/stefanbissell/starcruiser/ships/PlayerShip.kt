@@ -108,8 +108,8 @@ class PlayerShip(
         )
     }
 
-    override fun takeDamage(targetSystemType: PoweredSystemType, amount: Double) {
-        val hullDamage = shieldHandler.takeDamageAndReportHullDamage(amount)
+    override fun takeDamage(targetSystemType: PoweredSystemType, amount: Double, modulation: Int) {
+        val hullDamage = shieldHandler.takeDamageAndReportHullDamage(amount, modulation)
         if (hullDamage > 0.0) {
             hull -= hullDamage
             powerHandler.takeDamage(targetSystemType, amount)

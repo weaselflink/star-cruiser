@@ -64,7 +64,7 @@ interface Ship {
 
     fun targetDestroyed(shipId: ObjectId)
 
-    fun takeDamage(targetSystemType: PoweredSystemType, amount: Double)
+    fun takeDamage(targetSystemType: PoweredSystemType, amount: Double, modulation: Int)
 
     fun getScanLevel(targetId: ObjectId) =
         scans[targetId] ?: ScanLevel.None

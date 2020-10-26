@@ -20,7 +20,7 @@ class RepairAiTest {
     @Test
     fun `starts repairing damaged system`() {
         ship.shieldHandler.toggleUp()
-        ship.takeDamage(PoweredSystemType.Jump, 1.0)
+        ship.takeDamage(PoweredSystemType.Jump, 1.0, 0)
         expectThat(ship.powerHandler.repairing)
             .isFalse()
 
@@ -33,8 +33,8 @@ class RepairAiTest {
     @Test
     fun `repairs with specific priority`() {
         ship.shieldHandler.toggleUp()
-        ship.takeDamage(PoweredSystemType.Sensors, 1.0)
-        ship.takeDamage(PoweredSystemType.Shields, 1.0)
+        ship.takeDamage(PoweredSystemType.Sensors, 1.0, 0)
+        ship.takeDamage(PoweredSystemType.Shields, 1.0, 0)
         expectThat(ship.powerHandler.repairing)
             .isFalse()
 

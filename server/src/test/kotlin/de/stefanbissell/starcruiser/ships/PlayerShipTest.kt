@@ -353,7 +353,7 @@ class PlayerShipTest {
     @Test
     fun `updates shields`() {
         val damage = 5.0
-        ship.takeDamage(Reactor, damage)
+        ship.takeDamage(Reactor, damage, 0)
         expectThat(ship.toMessage().shield.strength)
             .isNear(shieldTemplate.strength - damage)
 
@@ -365,7 +365,7 @@ class PlayerShipTest {
     @Test
     fun `takes hull damage when shields depleted`() {
         val damage = shieldTemplate.strength + 5.0
-        ship.takeDamage(Reactor, damage)
+        ship.takeDamage(Reactor, damage, 0)
         expectThat(ship.toMessage().shield.strength)
             .isNear(0.0)
         expectThat(ship.hull)
@@ -377,7 +377,7 @@ class PlayerShipTest {
     @Test
     fun `takes powered system damage when shields depleted`() {
         val damage = shieldTemplate.strength + 5.0
-        ship.takeDamage(Reactor, damage)
+        ship.takeDamage(Reactor, damage, 0)
         expectThat(ship.toMessage().shield.strength)
             .isNear(0.0)
         expectThat(ship.toPowerMessage().settings[Reactor]?.damage)
@@ -388,7 +388,7 @@ class PlayerShipTest {
     @Test
     fun `ship can be destroyed`() {
         val damage = shieldTemplate.strength + ship.template.hull + 5.0
-        ship.takeDamage(Reactor, damage)
+        ship.takeDamage(Reactor, damage, 0)
         expectThat(ship.toMessage().shield.strength)
             .isNear(0.0)
         expectThat(ship.hull)
@@ -400,7 +400,7 @@ class PlayerShipTest {
     @Test
     fun `shield can be activated when above activation strength`() {
         val damage = shieldTemplate.strength - shieldTemplate.activationStrength * 2.0
-        ship.takeDamage(Reactor, damage)
+        ship.takeDamage(Reactor, damage, 0)
         ship.setShieldsUp(false)
 
         expectThat(ship.toMessage().shield.up)
@@ -414,7 +414,7 @@ class PlayerShipTest {
     @Test
     fun `shield fails when below failure strength and cannot be activated again`() {
         val damage = shieldTemplate.strength - shieldTemplate.failureStrength * 0.5
-        ship.takeDamage(Reactor, damage)
+        ship.takeDamage(Reactor, damage, 0)
         stepTime(0.1)
 
         expectThat(ship.toMessage().shield.up)

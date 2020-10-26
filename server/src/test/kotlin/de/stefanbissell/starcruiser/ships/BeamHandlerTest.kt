@@ -25,7 +25,7 @@ class BeamHandlerTest {
         setShieldsUp(false)
     }
     private var lockHandler: LockHandler? = null
-    private val beamHandler = BeamHandler(beamWeapon, ship)
+    private val beamHandler = BeamHandler(beamWeapon, ship, BeamHandlerContainer(listOf(beamWeapon), ship))
     private val physicsEngine = mockk<PhysicsEngine>()
 
     @BeforeEach

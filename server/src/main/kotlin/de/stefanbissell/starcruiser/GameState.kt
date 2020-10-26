@@ -297,7 +297,7 @@ class GameState {
             ships[it.id] = it
             physicsEngine.addShip(it)
             it.toggleShieldsUp()
-            it.takeDamage(PoweredSystemType.Jump, 2.5)
+            it.takeDamage(PoweredSystemType.Jump, 2.5, 0)
             it.toggleShieldsUp()
         }
     }

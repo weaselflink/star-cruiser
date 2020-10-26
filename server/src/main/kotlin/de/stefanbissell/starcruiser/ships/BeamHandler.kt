@@ -9,7 +9,8 @@ import de.stefanbissell.starcruiser.physics.PhysicsEngine
 
 class BeamHandler(
     private val beamWeapon: BeamWeapon,
-    private val ship: Ship
+    private val ship: Ship,
+    private val parent: BeamHandlerContainer
 ) {
 
     private var status: BeamStatus = BeamStatus.Idle
@@ -55,7 +56,8 @@ class BeamHandler(
             }
         }
         if (status is BeamStatus.Firing) {
-            getLockedTarget(contactList, lockHandler)?.ship?.takeDamage(targetSystemType, time.delta)
+            getLockedTarget(contactList, lockHandler)?.ship
+                ?.takeDamage(targetSystemType, time.delta, parent.modulation)
         }
     }
 

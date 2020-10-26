@@ -47,7 +47,7 @@ class ShieldHandler(
         updateActivation(time)
     }
 
-    fun takeDamageAndReportHullDamage(amount: Double): Double {
+    fun takeDamageAndReportHullDamage(amount: Double, modulation: Int): Double {
         timeSinceLastDamage = 0.0
         return if (up) {
             takeDamageToShieldAndThenHull(amount)

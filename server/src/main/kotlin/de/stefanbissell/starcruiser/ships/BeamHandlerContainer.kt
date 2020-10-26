@@ -14,7 +14,7 @@ class BeamHandlerContainer(
             field = value.clamp(0, 7)
         }
     val beamHandlers = beamWeapons.map {
-        BeamHandler(it, ship)
+        BeamHandler(it, ship, this)
     }
 
     fun toMessage(lockHandler: LockHandler?) =
