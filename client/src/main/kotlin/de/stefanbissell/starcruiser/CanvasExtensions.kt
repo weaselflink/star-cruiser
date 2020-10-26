@@ -109,7 +109,7 @@ fun CanvasRenderingContext2D.drawLockMarker(baseUnit: Double) {
 }
 
 fun CanvasRenderingContext2D.drawPill(dim: ComponentDimensions) {
-    drawPill(dim.bottomX, dim.bottomY, dim.width, dim.height)
+    drawPill(dim.leftX, dim.bottomY, dim.width, dim.height)
 }
 
 fun CanvasRenderingContext2D.drawPill(
@@ -137,7 +137,7 @@ fun CanvasRenderingContext2D.drawPill(
 }
 
 fun CanvasRenderingContext2D.drawRect(dim: ComponentDimensions) {
-    drawRect(dim.bottomX, dim.bottomY, dim.width, dim.height, dim.radius)
+    drawRect(dim.leftX, dim.bottomY, dim.width, dim.height, dim.radius)
 }
 
 fun CanvasRenderingContext2D.drawRect(

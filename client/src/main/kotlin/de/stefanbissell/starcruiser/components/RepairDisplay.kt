@@ -92,8 +92,8 @@ class RepairDisplay(
         dim: ComponentDimensions,
         repairProgress: RepairProgressMessage
     ) {
-        val x = dim.bottomX + 5.vmin
-        val y = dim.bottomY - dim.height + 15.vmin + 4.vmin + repairProgress.start * 8.vmin
+        val x = dim.leftX + 5.vmin
+        val y = dim.topY + 15.vmin + 4.vmin + repairProgress.start * 8.vmin
 
         save()
 
@@ -128,8 +128,8 @@ class RepairDisplay(
         dim: ComponentDimensions,
         repairProgress: RepairProgressMessage
     ) {
-        val x = dim.bottomX + dim.width - 5.vmin
-        val y = dim.bottomY - dim.height + 15.vmin + 4.vmin + repairProgress.end * 8.vmin
+        val x = dim.rightX - 5.vmin
+        val y = dim.topY + 15.vmin + 4.vmin + repairProgress.end * 8.vmin
 
         save()
 
@@ -221,8 +221,8 @@ class RepairDisplay(
         ) {
             width = 8.vmin
             height = 8.vmin
-            x = dim.bottomX + 10.vmin + column * width
-            y = dim.bottomY - dim.height + 15.vmin + row * height
+            x = dim.leftX + 10.vmin + column * width
+            y = dim.topY + 15.vmin + row * height
 
             with(ctx) {
                 drawTileBackground()

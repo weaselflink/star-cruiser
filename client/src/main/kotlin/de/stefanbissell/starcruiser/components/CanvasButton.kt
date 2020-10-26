@@ -88,7 +88,7 @@ class CanvasButton(
             }
             textAlign = CanvasTextAlign.CENTER
             textBaseline = CanvasTextBaseline.ALPHABETIC
-            translate(dim.bottomX, dim.bottomY)
+            translate(dim.leftX, dim.bottomY)
             val textSize = dim.height * 0.5
             font = UiStyle.font(textSize)
             translate(dim.width * 0.5, -dim.height * 0.35)

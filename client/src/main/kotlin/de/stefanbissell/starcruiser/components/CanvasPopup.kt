@@ -42,8 +42,8 @@ class CanvasPopup(
         dim: ComponentDimensions,
         title: String
     ) {
-        val x = dim.bottomX + 5.vmin
-        val y = dim.bottomY - dim.height + 8.vmin
+        val x = dim.leftX + 5.vmin
+        val y = dim.topY + 8.vmin
 
         save()
 

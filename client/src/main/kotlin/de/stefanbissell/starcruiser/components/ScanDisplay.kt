@@ -111,9 +111,9 @@ class ScanDisplay(
         dim: ComponentDimensions,
         noise: Double
     ) {
-        val x = dim.bottomX + 5.vmin
-        val y = dim.bottomY - dim.height + 11.vmin
-        val middle = dim.bottomY - dim.height + 20.vmin
+        val x = dim.leftX + 5.vmin
+        val y = dim.topY + 11.vmin
+        val middle = dim.topY + 20.vmin
         val width = dim.width - 10.vmin
         val height = 18.vmin
 

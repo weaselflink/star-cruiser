@@ -68,24 +68,24 @@ class CanvasProgress(
 
     private fun CanvasRenderingContext2D.drawBackground(dim: ComponentDimensions) {
         fillStyle = backgroundColor
-        fillRect(dim.bottomX, dim.bottomY, dim.width, -dim.height)
+        fillRect(dim.leftX, dim.bottomY, dim.width, -dim.height)
     }
 
     private fun CanvasRenderingContext2D.drawBorder(dim: ComponentDimensions) {
         strokeStyle = foregroundColor
-        strokeRect(dim.bottomX, dim.bottomY, dim.width, -dim.height)
+        strokeRect(dim.leftX, dim.bottomY, dim.width, -dim.height)
     }
 
     private fun CanvasRenderingContext2D.drawLeftText(dim: ComponentDimensions) {
-        drawText(dim, leftText, dim.bottomX + marginExpr(dim), CanvasTextAlign.LEFT)
+        drawText(dim, leftText, dim.leftX + marginExpr(dim), CanvasTextAlign.LEFT)
     }
 
     private fun CanvasRenderingContext2D.drawCenterText(dim: ComponentDimensions) {
-        drawText(dim, centerText, dim.bottomX + dim.width * 0.5, CanvasTextAlign.CENTER)
+        drawText(dim, centerText, dim.leftX + dim.width * 0.5, CanvasTextAlign.CENTER)
     }
 
     private fun CanvasRenderingContext2D.drawRightText(dim: ComponentDimensions) {
-        drawText(dim, rightText, dim.bottomX + dim.width - marginExpr(dim), CanvasTextAlign.RIGHT)
+        drawText(dim, rightText, dim.rightX - marginExpr(dim), CanvasTextAlign.RIGHT)
     }
 
     private fun CanvasRenderingContext2D.drawBar(dim: ComponentDimensions, barWidth: Double) {
@@ -101,7 +101,7 @@ class CanvasProgress(
 
     private fun CanvasRenderingContext2D.drawBarRect(dim: ComponentDimensions, barWidth: Double) {
         beginPath()
-        rect(dim.bottomX, dim.bottomY, dim.width * barWidth, -dim.height)
+        rect(dim.leftX, dim.bottomY, dim.width * barWidth, -dim.height)
     }
 
     private fun CanvasRenderingContext2D.drawText(

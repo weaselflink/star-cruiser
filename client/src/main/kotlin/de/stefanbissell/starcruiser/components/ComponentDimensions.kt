@@ -7,10 +7,12 @@ import org.w3c.dom.HTMLCanvasElement
 
 data class ComponentDimensions(
     val canvas: CanvasDimensions,
-    val bottomX: Double,
+    val leftX: Double,
     val bottomY: Double,
     val width: Double,
     val height: Double,
+    val rightX: Double = leftX + width,
+    val topY: Double = bottomY - height,
     val radius: Double,
     val length: Double,
     val lineWidth: Double,
@@ -20,8 +22,8 @@ data class ComponentDimensions(
     fun isInside(pointerEvent: PointerEvent): Boolean {
         val point = pointerEvent.point
 
-        return point.x > bottomX && point.x < bottomX + width &&
-            point.y > bottomY - height && point.y < bottomY
+        return point.x > leftX && point.x < rightX &&
+            point.y > topY && point.y < bottomY
     }
 
     companion object {
@@ -37,7 +39,7 @@ data class ComponentDimensions(
                 val height = dim.heightExpr()
                 ComponentDimensions(
                     canvas = dim,
-                    bottomX = dim.xExpr(),
+                    leftX = dim.xExpr(),
                     bottomY = dim.yExpr(),
                     width = width,
                     height = height,
@@ -57,7 +59,7 @@ data class ComponentDimensions(
             canvas.dimensions().let { dim ->
                 ComponentDimensions(
                     canvas = dim,
-                    bottomX = dim.xExpr(),
+                    leftX = dim.xExpr(),
                     bottomY = dim.yExpr(),
                     width = dim.widthExpr(),
                     height = dim.heightExpr(),

@@ -66,7 +66,7 @@ class CanvasSlider(
         val dim = currentDimensions(canvas)
 
         return if (dim.isHorizontal) {
-            (point.x - (dim.bottomX + dim.radius)) / (dim.width - dim.radius * 2.0)
+            (point.x - (dim.leftX + dim.radius)) / (dim.width - dim.radius * 2.0)
         } else {
             -(point.y - (dim.bottomY - dim.radius)) / (dim.height - dim.radius * 2.0)
         }.clamp(0.0, 1.0).let {
@@ -124,7 +124,7 @@ class CanvasSlider(
     ) {
         textAlign = CanvasTextAlign.LEFT
         textBaseline = CanvasTextBaseline.ALPHABETIC
-        translate(dim.bottomX, dim.bottomY)
+        translate(dim.leftX, dim.bottomY)
         if (dim.isHorizontal) {
             val textSize = dim.height * 0.5
             font = UiStyle.font(textSize)
@@ -146,13 +146,13 @@ class CanvasSlider(
         beginPath()
         if (dim.isHorizontal) {
             circle(
-                dim.bottomX + dim.radius + value.clamp(0.0, 1.0) * (dim.length - dim.radius * 2.0),
+                dim.leftX + dim.radius + value.clamp(0.0, 1.0) * (dim.length - dim.radius * 2.0),
                 dim.bottomY - dim.radius,
                 dim.radius * 0.8
             )
         } else {
             circle(
-                dim.bottomX + dim.radius,
+                dim.leftX + dim.radius,
                 dim.bottomY - dim.radius - value.clamp(0.0, 1.0) * (dim.length - dim.radius * 2.0),
                 dim.radius * 0.8
             )
@@ -164,11 +164,11 @@ class CanvasSlider(
         lines.forEach {
             beginPath()
             if (dim.isHorizontal) {
-                moveTo(dim.bottomX + dim.radius + it * (dim.length - dim.radius * 2.0), dim.bottomY - dim.radius * 0.4)
-                lineTo(dim.bottomX + dim.radius + it * (dim.length - dim.radius * 2.0), dim.bottomY - dim.radius * 1.6)
+                moveTo(dim.leftX + dim.radius + it * (dim.length - dim.radius * 2.0), dim.bottomY - dim.radius * 0.4)
+                lineTo(dim.leftX + dim.radius + it * (dim.length - dim.radius * 2.0), dim.bottomY - dim.radius * 1.6)
             } else {
-                moveTo(dim.bottomX + dim.radius * 0.4, dim.bottomY - dim.radius - it * (dim.length - dim.radius * 2.0))
-                lineTo(dim.bottomX + dim.radius * 1.6, dim.bottomY - dim.radius - it * (dim.length - dim.radius * 2.0))
+                moveTo(dim.leftX + dim.radius * 0.4, dim.bottomY - dim.radius - it * (dim.length - dim.radius * 2.0))
+                lineTo(dim.leftX + dim.radius * 1.6, dim.bottomY - dim.radius - it * (dim.length - dim.radius * 2.0))
             }
             stroke()
         }

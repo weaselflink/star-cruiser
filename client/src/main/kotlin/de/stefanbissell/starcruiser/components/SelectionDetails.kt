@@ -28,21 +28,21 @@ class SelectionDetails(
     private val hullDisplay = HullDisplay(
         canvas = canvas,
         xExpr = { innerX },
-        yExpr = { dim.bottomY - dim.height + vmin * 22 },
+        yExpr = { dim.topY + vmin * 22 },
         widthExpr = { dim.width - vmin * 8 },
         heightExpr = { vmin * 4 }
     )
     private val shieldsDisplay = ShieldsDisplay(
         canvas = canvas,
         xExpr = { innerX },
-        yExpr = { dim.bottomY - dim.height + vmin * 28 },
+        yExpr = { dim.topY + vmin * 28 },
         widthExpr = { dim.width - vmin * 8 },
         heightExpr = { vmin * 4 }
     )
     private val detailsButton = CanvasButton(
         canvas = canvas,
-        xExpr = { dim.bottomX + dim.width - vmin * 14 },
-        yExpr = { dim.bottomY - dim.height + vmin * 7 },
+        xExpr = { dim.rightX - vmin * 14 },
+        yExpr = { dim.topY + vmin * 7 },
         widthExpr = { vmin * 12 },
         heightExpr = { vmin * 5 },
         onClick = { detailsButtonClicked() },
@@ -51,7 +51,7 @@ class SelectionDetails(
     )
     private val actionButton = CanvasButton(
         canvas = canvas,
-        xExpr = { dim.bottomX + dim.width * 0.5 - vmin * 12 },
+        xExpr = { dim.leftX + dim.width * 0.5 - vmin * 12 },
         yExpr = { dim.bottomY - vmin * 5 },
         widthExpr = { vmin * 24 },
         heightExpr = { vmin * 10 },
@@ -63,7 +63,7 @@ class SelectionDetails(
     private val visible
         get() = mapSelection != null
     private val innerX
-        get() = dim.bottomX + dim.canvas.vmin * 4
+        get() = dim.leftX + dim.canvas.vmin * 4
     private var showDetails = false
 
     init {
@@ -72,8 +72,8 @@ class SelectionDetails(
 
     override fun isInterestedIn(pointerEvent: PointerEvent): Boolean {
         return with(pointerEvent.point) {
-            visible && x > dim.bottomX && y > dim.bottomY - dim.height &&
-                x < dim.bottomX + dim.width && y < dim.bottomY
+            visible && x > dim.leftX && y > dim.topY &&
+                x < dim.rightX && y < dim.bottomY
         }
     }
 
@@ -128,7 +128,7 @@ class SelectionDetails(
             CanvasProgress(
                 canvas = canvas,
                 xExpr = { innerX },
-                yExpr = { dim.bottomY - dim.height + vmin * 14 + vmin * 5 * index },
+                yExpr = { dim.topY + vmin * 14 + vmin * 5 * index },
                 widthExpr = { dim.width - vmin * 8 },
                 heightExpr = { vmin * 4 },
             ).apply {
@@ -173,7 +173,7 @@ class SelectionDetails(
 
         font = UiStyle.boldFont(dim.canvas.vmin * 3)
         fillStyle = UiStyle.buttonForegroundColor
-        fillText(designation, innerX, dim.bottomY - dim.height + dim.canvas.vmin * 6)
+        fillText(designation, innerX, dim.topY + dim.canvas.vmin * 6)
 
         restore()
     }
@@ -186,14 +186,14 @@ class SelectionDetails(
         fillText(
             "Bearing",
             innerX,
-            dim.bottomY - dim.height + dim.canvas.vmin * 12
+            dim.topY + dim.canvas.vmin * 12
         )
         textAlign = CanvasTextAlign.RIGHT
         val text = bearing.pad(3)
         fillText(
             text,
-            dim.bottomX + dim.width - dim.canvas.vmin * 4,
-            dim.bottomY - dim.height + dim.canvas.vmin * 12
+            dim.rightX - dim.canvas.vmin * 4,
+            dim.topY + dim.canvas.vmin * 12
         )
 
         restore()
@@ -207,14 +207,14 @@ class SelectionDetails(
         fillText(
             "Range",
             innerX,
-            dim.bottomY - dim.height + dim.canvas.vmin * 16
+            dim.topY + dim.canvas.vmin * 16
         )
         textAlign = CanvasTextAlign.RIGHT
         val text = range.formatThousands()
         fillText(
             text,
-            dim.bottomX + dim.width - dim.canvas.vmin * 4,
-            dim.bottomY - dim.height + dim.canvas.vmin * 16
+            dim.rightX - dim.canvas.vmin * 4,
+            dim.topY + dim.canvas.vmin * 16
         )
 
         restore()
