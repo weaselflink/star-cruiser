@@ -159,6 +159,7 @@ class SelectionDetails(
         drawRect(dim)
         fill()
 
+        lineWidth = dim.lineWidth
         strokeStyle = UiStyle.buttonForegroundColor
         beginPath()
         drawRect(dim)
