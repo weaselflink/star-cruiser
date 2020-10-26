@@ -42,7 +42,10 @@ class PlayerShipTest {
             it.copy(beams = it.beams.subList(0, 1))
         },
         faction = TestFactions.player
-    )
+    ).apply {
+        shieldHandler.modulation = 2
+        beamHandlerContainer.modulation = 0
+    }
 
     private var contactList = ShipContactList(ship, emptyList())
 
@@ -611,7 +614,9 @@ class PlayerShipTest {
         val target = PlayerShip(
             position = position,
             faction = faction
-        )
+        ).apply {
+            shieldHandler.modulation = 2
+        }
         contactList = ShipContactList(ship, listOf(target))
         return target
     }

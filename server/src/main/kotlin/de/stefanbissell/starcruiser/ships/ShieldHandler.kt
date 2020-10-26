@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.ships
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ShieldMessage
 import de.stefanbissell.starcruiser.clamp
+import de.stefanbissell.starcruiser.moduloDistance
 import de.stefanbissell.starcruiser.twoDigits
 import kotlin.math.max
 import kotlin.random.Random
@@ -50,7 +51,8 @@ class ShieldHandler(
     fun takeDamageAndReportHullDamage(amount: Double, modulation: Int): Double {
         timeSinceLastDamage = 0.0
         return if (up) {
-            takeDamageToShieldAndThenHull(amount)
+            val effectiveDamage = amount * modulationMultiplier(modulation)
+            takeDamageToShieldAndThenHull(effectiveDamage)
         } else {
             amount
         }
@@ -71,6 +73,15 @@ class ShieldHandler(
             max = shieldTemplate.strength,
             modulation = modulation
         )
+
+    private fun modulationMultiplier(beamModulation: Int) =
+        when (moduloDistance(modulation, beamModulation, 8)) {
+            0 -> 0.5
+            1 -> 0.75
+            2 -> 1.0
+            3 -> 1.5
+            else -> 2.0
+        }
 
     private fun updateActivation(time: GameTime) {
         activated = (up && damageSinceLastUpdate > 0.0)

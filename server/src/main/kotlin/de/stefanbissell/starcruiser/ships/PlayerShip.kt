@@ -45,8 +45,8 @@ class PlayerShip(
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val throttleHandler = ThrottleHandler(template)
     private val powerHandler = PowerHandler(template)
-    private val beamHandlerContainer = BeamHandlerContainer(template.beams, this)
-    private val shieldHandler = ShieldHandler(template.shield)
+    val beamHandlerContainer = BeamHandlerContainer(template.beams, this)
+    val shieldHandler = ShieldHandler(template.shield)
     private var mapSelection: MapSelection = MapSelection.None
     private var scanHandler: ScanHandler? = null
     private var lockHandler: LockHandler? = null

@@ -15,7 +15,7 @@ class ShieldHandlerTest {
     private val time = GameTime.atEpoch()
     private val shieldTemplate = ShieldTemplate()
     private var power = 1.0
-    private val shieldHandler = ShieldHandler(shieldTemplate)
+    private val shieldHandler = ShieldHandler(shieldTemplate).apply { modulation = 2 }
 
     @Test
     fun `starts with random modulation`() {
@@ -193,6 +193,46 @@ class ShieldHandlerTest {
         shieldHandler.currentStrength = shieldTemplate.strength * 0.01
         expectThat(shieldHandler.strengthRatio)
             .isNear(0.01)
+    }
+
+    @Test
+    fun `halves damage when modulation matches beams`() {
+        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 2))
+            .isEqualTo(0.0)
+        expectThat(shieldHandler.toMessage().strength)
+            .isNear(shieldTemplate.strength - 1.5)
+    }
+
+    @Test
+    fun `three quarter damage when modulation near beams`() {
+        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 3))
+            .isEqualTo(0.0)
+        expectThat(shieldHandler.toMessage().strength)
+            .isNear(shieldTemplate.strength - 2.25)
+    }
+
+    @Test
+    fun `normal damage when modulation slightly mismatches beams`() {
+        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 4))
+            .isEqualTo(0.0)
+        expectThat(shieldHandler.toMessage().strength)
+            .isNear(shieldTemplate.strength - 3.0)
+    }
+
+    @Test
+    fun `one and a half damage when modulation strongly mismatches beams`() {
+        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 5))
+            .isEqualTo(0.0)
+        expectThat(shieldHandler.toMessage().strength)
+            .isNear(shieldTemplate.strength - 4.5)
+    }
+
+    @Test
+    fun `doubles damage when modulation completely mismatches beams`() {
+        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 6))
+            .isEqualTo(0.0)
+        expectThat(shieldHandler.toMessage().strength)
+            .isNear(shieldTemplate.strength - 6.0)
     }
 
     private fun stepTime(seconds: Number) {

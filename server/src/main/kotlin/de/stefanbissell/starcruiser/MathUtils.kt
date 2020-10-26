@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser
 
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.sqrt
 
 const val fullCircle = 2 * PI
@@ -78,4 +79,13 @@ sealed class QuadraticResult {
                     .minOrNull()
             }
         }
+}
+
+fun moduloDistance(a: Int, b: Int, modulo: Int): Int {
+    val distance = abs(a - b)
+    return if (distance > modulo / 2) {
+        modulo - distance
+    } else {
+        distance
+    }
 }

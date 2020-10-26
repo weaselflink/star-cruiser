@@ -23,7 +23,10 @@ class NonPlayerShipTest {
     private val time = GameTime.atEpoch()
     private val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
     private val shieldTemplate = carrierTemplate.shield
-    private val ship = NonPlayerShip(faction = TestFactions.enemy)
+    private val ship = NonPlayerShip(faction = TestFactions.enemy).apply {
+        shieldHandler.modulation = 2
+        beamHandlerContainer.modulation = 0
+    }
 
     private var contactList = emptyList<Ship>()
 
@@ -235,7 +238,9 @@ class NonPlayerShipTest {
         val target = PlayerShip(
             position = position,
             faction = faction
-        )
+        ).apply {
+            shieldHandler.modulation = 2
+        }
         contactList = listOf(target)
         return target
     }

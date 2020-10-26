@@ -134,6 +134,36 @@ class MathUtilsKtTest {
             .isNear(p(10, 10))
     }
 
+    @Test
+    fun `calculates modulo distance for even modulo`() {
+        expectThat(moduloDistance(3, 3, 8)).isEqualTo(0)
+        expectThat(moduloDistance(3, 4, 8)).isEqualTo(1)
+        expectThat(moduloDistance(4, 3, 8)).isEqualTo(1)
+        expectThat(moduloDistance(0, 7, 8)).isEqualTo(1)
+        expectThat(moduloDistance(7, 0, 8)).isEqualTo(1)
+        expectThat(moduloDistance(2, 5, 8)).isEqualTo(3)
+        expectThat(moduloDistance(5, 2, 8)).isEqualTo(3)
+        expectThat(moduloDistance(1, 5, 8)).isEqualTo(4)
+        expectThat(moduloDistance(5, 1, 8)).isEqualTo(4)
+        expectThat(moduloDistance(1, 6, 8)).isEqualTo(3)
+        expectThat(moduloDistance(6, 1, 8)).isEqualTo(3)
+    }
+
+    @Test
+    fun `calculates modulo distance for odd modulo`() {
+        expectThat(moduloDistance(3, 3, 7)).isEqualTo(0)
+        expectThat(moduloDistance(3, 4, 7)).isEqualTo(1)
+        expectThat(moduloDistance(4, 3, 7)).isEqualTo(1)
+        expectThat(moduloDistance(0, 6, 7)).isEqualTo(1)
+        expectThat(moduloDistance(6, 0, 7)).isEqualTo(1)
+        expectThat(moduloDistance(2, 5, 7)).isEqualTo(3)
+        expectThat(moduloDistance(5, 2, 7)).isEqualTo(3)
+        expectThat(moduloDistance(1, 5, 7)).isEqualTo(3)
+        expectThat(moduloDistance(5, 1, 7)).isEqualTo(3)
+        expectThat(moduloDistance(1, 6, 7)).isEqualTo(2)
+        expectThat(moduloDistance(6, 1, 7)).isEqualTo(2)
+    }
+
     private fun expectAngle(x: Double, y: Double) =
         expectThat(smallestSignedAngleBetween(x, y))
 }
