@@ -4,6 +4,7 @@ import de.stefanbissell.starcruiser.client.StatisticsMessage.GetSnapshot
 import de.stefanbissell.starcruiser.client.StatisticsMessage.MessageReceived
 import de.stefanbissell.starcruiser.client.StatisticsMessage.MessageSent
 import de.stefanbissell.starcruiser.configuredJson
+import de.stefanbissell.starcruiser.round
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
@@ -66,12 +67,30 @@ data class StatisticsSnapshot(
         println(
             "Messages sent: " +
                 "${countSent.toString().padStart(14)} " +
-                "(${totalSent.toString().padStart(16)} B)"
+                "(${totalSent.formatBytes().padStart(12)})"
         )
         println(
             "Messages received: " +
                 "${countReceived.toString().padStart(10)} " +
-                "(${totalReceived.toString().padStart(16)} B)"
+                "(${totalReceived.formatBytes().padStart(12)})"
+        )
+    }
+
+    private fun Long.formatBytes(): String {
+        scales.forEach {
+            if (this / it.first >= 1) {
+                return "${(this / it.first.toDouble()).round(2)} ${it.second}"
+            }
+        }
+        return "0 B"
+    }
+
+    companion object {
+        private val scales = listOf(
+            1024L * 1024L * 1024L to "GB",
+            1024L * 1024L to "MB",
+            1024L to "kB",
+            1L to "B"
         )
     }
 }
