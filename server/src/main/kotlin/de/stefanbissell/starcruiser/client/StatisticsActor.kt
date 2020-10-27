@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 
 sealed class StatisticsMessage {
@@ -29,7 +30,7 @@ fun CoroutineScope.statisticsActor() = actor<StatisticsMessage> {
             delay(10_000)
             val response = CompletableDeferred<StatisticsSnapshot>()
             channel.send(GetSnapshot(response))
-            println(response.await())
+            response.await().log()
         }
     }
 
@@ -59,4 +60,18 @@ data class StatisticsSnapshot(
 ) {
 
     fun toJson() = configuredJson.encodeToString(serializer(), this)
+
+    fun log() {
+        println("============== ${Clock.System.now()} ==============")
+        println(
+            "Messages sent: " +
+                "${countSent.toString().padStart(14)} " +
+                "(${totalSent.toString().padStart(16)} B)"
+        )
+        println(
+            "Messages received: " +
+                "${countReceived.toString().padStart(10)} " +
+                "(${totalReceived.toString().padStart(16)} B)"
+        )
+    }
 }
