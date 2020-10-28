@@ -10,6 +10,7 @@ import de.stefanbissell.starcruiser.Station.Navigation
 import de.stefanbissell.starcruiser.Station.Weapons
 import de.stefanbissell.starcruiser.client.ClientId
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
+import de.stefanbissell.starcruiser.scenario.GameStateView
 import de.stefanbissell.starcruiser.scenario.TestScenario
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.PlayerShip
@@ -218,6 +219,12 @@ class GameState {
     fun increaseBeamModulation(clientId: ClientId) {
         getClientShip(clientId)?.increaseBeamModulation()
     }
+
+    fun toView() =
+        GameStateView(
+            currentTime = time.current,
+            ships = ships.values.toList()
+        )
 
     private fun toHelmMessage(
         ship: PlayerShip,

@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser.scenario
 
 import de.stefanbissell.starcruiser.Asteroid
+import de.stefanbissell.starcruiser.GameState
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.shapes.Circle
 import de.stefanbissell.starcruiser.shapes.Shape
@@ -8,6 +9,9 @@ import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import kotlin.math.PI
 import kotlin.math.roundToInt
 import kotlin.random.Random
+
+@DslMarker
+annotation class ScenarioDsl
 
 abstract class Scenario {
 
@@ -26,6 +30,9 @@ abstract class Scenario {
             },
             mapAreas = definition.asteroidFields.map {
                 it.toMapArea()
+            },
+            triggers = definition.triggers.map {
+                it.create()
             }
         )
     }
@@ -35,12 +42,14 @@ fun scenario(block: ScenarioDefinition.() -> Unit): ScenarioDefinition {
     return ScenarioDefinition().apply(block)
 }
 
+@ScenarioDsl
 class ScenarioDefinition {
 
     var playerSpawnArea: Shape = Circle(Vector2(), 100)
     lateinit var factions: FactionsDefinition
     val asteroidFields = mutableListOf<AsteroidFieldDefinition>()
     val nonPlayerShips = mutableListOf<NonPlayerShipDefinition>()
+    val triggers = mutableListOf<TriggerDefinition>()
 
     fun factions(block: FactionsDefinition.() -> Unit) {
         factions = FactionsDefinition().apply(block)
@@ -53,8 +62,13 @@ class ScenarioDefinition {
     fun asteroidField(block: AsteroidFieldDefinition.() -> Unit) {
         asteroidFields += AsteroidFieldDefinition().apply(block)
     }
+
+    fun trigger(block: TriggerDefinition.() -> Unit) {
+        triggers += TriggerDefinition().apply(block)
+    }
 }
 
+@ScenarioDsl
 class AsteroidFieldDefinition {
 
     lateinit var shape: Shape
@@ -91,6 +105,7 @@ class AsteroidFieldDefinition {
     }
 }
 
+@ScenarioDsl
 class NonPlayerShipDefinition {
 
     lateinit var faction: String
@@ -104,6 +119,7 @@ class NonPlayerShipDefinition {
         )
 }
 
+@ScenarioDsl
 class FactionsDefinition {
 
     val factions = mutableListOf<FactionDefinition>()
@@ -122,6 +138,7 @@ class FactionsDefinition {
         }
 }
 
+@ScenarioDsl
 class FactionDefinition {
 
     lateinit var name: String
@@ -129,12 +146,28 @@ class FactionDefinition {
     var forPlayers = false
 }
 
+@ScenarioDsl
+class TriggerDefinition {
+
+    var interval: Double = 1.0
+    var condition: GameStateView.() -> Boolean = { false }
+    var action: GameState.(ScenarioInstance) -> Unit = {}
+
+    fun create() =
+        Trigger(
+            interval = interval,
+            condition = condition,
+            action = action
+        )
+}
+
 data class ScenarioInstance(
     val playerSpawnArea: Shape,
     val factions: List<Faction>,
     val asteroids: List<Asteroid>,
     val nonPlayerShips: List<NonPlayerShip>,
-    val mapAreas: List<MapArea>
+    val mapAreas: List<MapArea>,
+    val triggers: List<Trigger>
 )
 
 data class Faction(
@@ -155,3 +188,9 @@ data class MapArea(
 enum class MapAreaType {
     AsteroidField
 }
+
+data class Trigger(
+    val interval: Double,
+    val condition: GameStateView.() -> Boolean,
+    val action: GameState.(ScenarioInstance) -> Unit
+)

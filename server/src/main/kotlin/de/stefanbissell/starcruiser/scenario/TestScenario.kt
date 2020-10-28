@@ -4,6 +4,9 @@ import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.shapes.Circle
 import de.stefanbissell.starcruiser.shapes.Polygon
 import de.stefanbissell.starcruiser.shapes.Ring
+import de.stefanbissell.starcruiser.ships.NonPlayerShip
+import kotlin.math.PI
+import kotlin.random.Random
 
 object TestScenario : Scenario() {
 
@@ -30,11 +33,9 @@ object TestScenario : Scenario() {
                     enemies = listOf("Enarian")
                 }
             }
-            repeat(3) {
-                nonPlayerShip {
-                    faction = "Reynor"
-                    spawnArea = defaultSpawnArea
-                }
+            nonPlayerShip {
+                faction = "Reynor"
+                spawnArea = defaultSpawnArea
             }
             repeat(3) {
                 nonPlayerShip {
@@ -82,6 +83,21 @@ object TestScenario : Scenario() {
                     center = p(0, 2000),
                     radius = 500
                 )
+            }
+            trigger {
+                interval = 5.0
+                condition = {
+                    ships.count { it.faction.name == "Reynor" } < 1
+                }
+                action = { scenario ->
+                    spawnNonPlayerShip(
+                        NonPlayerShip(
+                            position = defaultSpawnArea.randomPointInside(),
+                            rotation = Random.nextDouble(PI * 2.0),
+                            faction = scenario.factions.first { it.name == "Reynor" }
+                        )
+                    )
+                }
             }
         }
 }
