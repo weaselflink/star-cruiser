@@ -12,6 +12,7 @@ import de.stefanbissell.starcruiser.client.ClientId
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.scenario.GameStateView
 import de.stefanbissell.starcruiser.scenario.TestScenario
+import de.stefanbissell.starcruiser.scenario.TriggerHandler
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
@@ -26,6 +27,9 @@ class GameState {
 
     private var time = GameTime()
     private val scenario = TestScenario.create()
+    private val triggerHandlers = scenario.triggers.map {
+        TriggerHandler(it)
+    }
     private val ships = mutableMapOf<ObjectId, Ship>()
     private val playerShips
         get() = ships.values
@@ -114,6 +118,7 @@ class GameState {
         physicsEngine.step(time.delta)
         updateShips()
         updateAsteroids()
+        triggerHandlers.forEach { it.evaluate(this) }
     }
 
     fun setThrottle(clientId: ClientId, value: Int) {
@@ -222,6 +227,7 @@ class GameState {
 
     fun toView() =
         GameStateView(
+            scenario = scenario,
             currentTime = time.current,
             ships = ships.values.toList()
         )

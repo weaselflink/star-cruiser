@@ -150,12 +150,14 @@ class FactionDefinition {
 class TriggerDefinition {
 
     var interval: Double = 1.0
+    var repeat: Boolean = false
     var condition: GameStateView.() -> Boolean = { false }
     var action: GameState.(ScenarioInstance) -> Unit = {}
 
     fun create() =
         Trigger(
             interval = interval,
+            repeat = repeat,
             condition = condition,
             action = action
         )
@@ -191,6 +193,7 @@ enum class MapAreaType {
 
 data class Trigger(
     val interval: Double,
+    val repeat: Boolean,
     val condition: GameStateView.() -> Boolean,
     val action: GameState.(ScenarioInstance) -> Unit
 )

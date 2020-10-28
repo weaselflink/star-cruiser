@@ -86,6 +86,7 @@ object TestScenario : Scenario() {
             }
             trigger {
                 interval = 5.0
+                repeat = true
                 condition = {
                     ships.count { it.faction.name == "Reynor" } < 1
                 }
