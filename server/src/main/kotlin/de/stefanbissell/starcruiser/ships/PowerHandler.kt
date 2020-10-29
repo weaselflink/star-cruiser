@@ -229,7 +229,7 @@ private class MiniGameRepairHandler(
     val type: PoweredSystemType
 ) {
     var solvedTimer = 0.0
-    val game = CircuitPathGame.createUnsolved(8, 3)
+    val game = CircuitPathGame.createUnsolved(7, 4)
 
     val isComplete
         get() = solvedTimer > 1.0

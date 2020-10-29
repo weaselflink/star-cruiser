@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.components
 import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.PowerMessage
+import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.RepairProgressMessage
 import de.stefanbissell.starcruiser.circle
 import de.stefanbissell.starcruiser.clientSocket
@@ -20,11 +21,10 @@ class RepairDisplay(
     val xExpr: CanvasDimensions.() -> Double = { width * 0.5 - vmin * 48 },
     val yExpr: CanvasDimensions.() -> Double = { height * 0.5 + vmin * 36 },
     val widthExpr: CanvasDimensions.() -> Double = { vmin * 96 },
-    val heightExpr: CanvasDimensions.() -> Double = { vmin * 72 }
+    val heightExpr: CanvasDimensions.() -> Double = { vmin * 76 }
 ) : PointerEventHandler {
 
     private val ctx = canvas.context2D
-    private var visible = false
     private val tiles = mutableListOf<Tile>()
 
     private val canvasPopup = CanvasPopup(canvas)
@@ -37,6 +37,18 @@ class RepairDisplay(
         onClick = { clientSocket.send(Command.CommandAbortRepair) },
         initialText = "Abort"
     )
+
+    private var visible = false
+    private var currentRepairProgress =
+        RepairProgressMessage(
+            type = PoweredSystemType.Jump,
+            width = 7,
+            height = 4,
+            start = 0,
+            end = 0,
+            tiles = "",
+            solved = false
+        )
 
     override fun isInterestedIn(pointerEvent: PointerEvent) = visible
 
@@ -60,12 +72,13 @@ class RepairDisplay(
         visible = powerSettings.repairProgress != null
 
         powerSettings.repairProgress?.also {
-            parseTiles(it)
+            parseTiles()
             ctx.draw(it)
         }
     }
 
     private fun CanvasRenderingContext2D.draw(repairProgress: RepairProgressMessage) {
+        currentRepairProgress = repairProgress
         val dim = ComponentDimensions.calculateRect(
             canvas = canvas,
             xExpr = xExpr,
@@ -79,21 +92,18 @@ class RepairDisplay(
 
         save()
 
-        drawStart(dim, repairProgress)
+        drawStart(dim)
         tiles.forEach { it.drawTile(dim) }
-        drawEnd(dim, repairProgress)
+        drawEnd(dim)
 
         restore()
 
         abortButton.draw()
     }
 
-    private fun CanvasRenderingContext2D.drawStart(
-        dim: ComponentDimensions,
-        repairProgress: RepairProgressMessage
-    ) {
+    private fun CanvasRenderingContext2D.drawStart(dim: ComponentDimensions) {
         val x = dim.leftX + (1.vmin + tileSize(dim) * 0.5)
-        val y = dim.topY + 15.vmin + tileSize(dim) * 0.5 + repairProgress.start * tileSize(dim)
+        val y = dim.topY + 15.vmin + tileSize(dim) * 0.5 + currentRepairProgress.start * tileSize(dim)
 
         save()
 
@@ -124,12 +134,9 @@ class RepairDisplay(
         restore()
     }
 
-    private fun CanvasRenderingContext2D.drawEnd(
-        dim: ComponentDimensions,
-        repairProgress: RepairProgressMessage
-    ) {
+    private fun CanvasRenderingContext2D.drawEnd(dim: ComponentDimensions) {
         val x = dim.rightX - (1.vmin + tileSize(dim) * 0.5)
-        val y = dim.topY + 15.vmin + tileSize(dim) * 0.5 + repairProgress.end * tileSize(dim)
+        val y = dim.topY + 15.vmin + tileSize(dim) * 0.5 + currentRepairProgress.end * tileSize(dim)
 
         save()
 
@@ -144,7 +151,7 @@ class RepairDisplay(
         circle(x, y, tileSize(dim) * 0.3)
         fill()
 
-        if (repairProgress.solved) {
+        if (currentRepairProgress.solved) {
             drawSolvedLine {
                 moveTo(x, y)
                 lineTo(x - tileSize(dim) * 0.5, y)
@@ -160,9 +167,9 @@ class RepairDisplay(
         restore()
     }
 
-    private fun parseTiles(repairProgress: RepairProgressMessage) {
+    private fun parseTiles() {
         tiles.clear()
-        repairProgress.tiles.split(";").forEachIndexed { rowIndex, row ->
+        currentRepairProgress.tiles.split(";").forEachIndexed { rowIndex, row ->
             row.split(",").forEachIndexed { columnIndex, tile ->
                 tiles += Tile(columnIndex, rowIndex, tile)
             }
@@ -205,8 +212,9 @@ class RepairDisplay(
     private val Double.vmin
         get() = canvas.dimensions().vmin * this
 
-    private fun tileSize(dim: ComponentDimensions) =
-        (dim.width - 2.vmin) / 10.0
+    private fun tileSize(
+        dim: ComponentDimensions
+    ) = (dim.width - 2.vmin) / (currentRepairProgress.width + 2)
 
     private inner class Tile(
         val column: Int,
