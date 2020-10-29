@@ -10,17 +10,22 @@ import strikt.assertions.isTrue
 
 class TriggerHandlerTest {
 
+    private val scenario = TestScenario.create()
+
     private var currentTime = 0.0
     private var interval = 5.0
     private var repeat = true
     private var condition = true
     private var actionPerformed = false
 
-    private val gameStateView = mockk<GameStateView>(relaxed = true).also {
-        every { it.currentTime } answers { currentTime }
-    }
     private val gameState = mockk<GameState>().also {
-        every { it.toView() } returns gameStateView
+        every { it.toView() } answers {
+            GameStateView(
+                scenario = scenario,
+                currentTime = currentTime,
+                ships = emptyList()
+            )
+        }
     }
 
     private var triggerHandler: TriggerHandler? = null
