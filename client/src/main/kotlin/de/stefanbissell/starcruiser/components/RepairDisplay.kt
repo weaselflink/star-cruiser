@@ -17,10 +17,10 @@ import org.w3c.dom.ROUND
 
 class RepairDisplay(
     val canvas: HTMLCanvasElement,
-    val xExpr: CanvasDimensions.() -> Double = { width * 0.5 - vmin * 42 },
-    val yExpr: CanvasDimensions.() -> Double = { height * 0.5 + vmin * 30 },
-    val widthExpr: CanvasDimensions.() -> Double = { vmin * 84 },
-    val heightExpr: CanvasDimensions.() -> Double = { vmin * 60 }
+    val xExpr: CanvasDimensions.() -> Double = { width * 0.5 - vmin * 48 },
+    val yExpr: CanvasDimensions.() -> Double = { height * 0.5 + vmin * 36 },
+    val widthExpr: CanvasDimensions.() -> Double = { vmin * 96 },
+    val heightExpr: CanvasDimensions.() -> Double = { vmin * 72 }
 ) : PointerEventHandler {
 
     private val ctx = canvas.context2D
@@ -92,33 +92,33 @@ class RepairDisplay(
         dim: ComponentDimensions,
         repairProgress: RepairProgressMessage
     ) {
-        val x = dim.leftX + 5.vmin
-        val y = dim.topY + 15.vmin + 4.vmin + repairProgress.start * 8.vmin
+        val x = dim.leftX + (1.vmin + tileSize(dim) * 0.5)
+        val y = dim.topY + 15.vmin + tileSize(dim) * 0.5 + repairProgress.start * tileSize(dim)
 
         save()
 
         drawUnsolvedLine {
             moveTo(x, y)
-            lineTo(x + 5.vmin, y)
+            lineTo(x + tileSize(dim) * 0.5, y)
         }
 
         fillStyle = UiStyle.buttonForegroundColor
 
         beginPath()
-        circle(x, y, 2.5.vmin)
+        circle(x, y, tileSize(dim) * 0.3)
         fill()
 
         restore()
 
         drawSolvedLine {
             moveTo(x, y)
-            lineTo(x + 5.vmin, y)
+            lineTo(x + tileSize(dim) * 0.5, y)
         }
 
         fillStyle = "#eee"
 
         beginPath()
-        circle(x, y, 2.vmin)
+        circle(x, y, tileSize(dim) * 0.25)
         fill()
 
         restore()
@@ -128,32 +128,32 @@ class RepairDisplay(
         dim: ComponentDimensions,
         repairProgress: RepairProgressMessage
     ) {
-        val x = dim.rightX - 5.vmin
-        val y = dim.topY + 15.vmin + 4.vmin + repairProgress.end * 8.vmin
+        val x = dim.rightX - (1.vmin + tileSize(dim) * 0.5)
+        val y = dim.topY + 15.vmin + tileSize(dim) * 0.5 + repairProgress.end * tileSize(dim)
 
         save()
 
         drawUnsolvedLine {
             moveTo(x, y)
-            lineTo(x - 5.vmin, y)
+            lineTo(x - tileSize(dim) * 0.5, y)
         }
 
         fillStyle = UiStyle.buttonForegroundColor
 
         beginPath()
-        circle(x, y, 2.5.vmin)
+        circle(x, y, tileSize(dim) * 0.3)
         fill()
 
         if (repairProgress.solved) {
             drawSolvedLine {
                 moveTo(x, y)
-                lineTo(x - 5.vmin, y)
+                lineTo(x - tileSize(dim) * 0.5, y)
             }
 
             fillStyle = "#eee"
 
             beginPath()
-            circle(x, y, 2.vmin)
+            circle(x, y, tileSize(dim) * 0.25)
             fill()
         }
 
@@ -205,6 +205,9 @@ class RepairDisplay(
     private val Double.vmin
         get() = canvas.dimensions().vmin * this
 
+    private fun tileSize(dim: ComponentDimensions) =
+        (dim.width - 2.vmin) / 10.0
+
     private inner class Tile(
         val column: Int,
         val row: Int,
@@ -219,9 +222,9 @@ class RepairDisplay(
         fun drawTile(
             dim: ComponentDimensions
         ) {
-            width = 8.vmin
-            height = 8.vmin
-            x = dim.leftX + 10.vmin + column * width
+            width = tileSize(dim)
+            height = tileSize(dim)
+            x = dim.leftX + 1.vmin + (column + 1) * width
             y = dim.topY + 15.vmin + row * height
 
             with(ctx) {
