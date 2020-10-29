@@ -39,16 +39,7 @@ class RepairDisplay(
     )
 
     private var visible = false
-    private var currentRepairProgress =
-        RepairProgressMessage(
-            type = PoweredSystemType.Jump,
-            width = 7,
-            height = 4,
-            start = 0,
-            end = 0,
-            tiles = "",
-            solved = false
-        )
+    private var currentRepairProgress = someDefaultRepairProgress()
 
     override fun isInterestedIn(pointerEvent: PointerEvent) = visible
 
@@ -215,6 +206,17 @@ class RepairDisplay(
     private fun tileSize(
         dim: ComponentDimensions
     ) = (dim.width - 2.vmin) / (currentRepairProgress.width + 2)
+
+    private fun someDefaultRepairProgress() =
+        RepairProgressMessage(
+            type = PoweredSystemType.Jump,
+            width = 7,
+            height = 4,
+            start = 0,
+            end = 0,
+            tiles = "",
+            solved = false
+        )
 
     private inner class Tile(
         val column: Int,
