@@ -10,7 +10,7 @@ import strikt.assertions.isTrue
 
 class TriggerHandlerTest {
 
-    private val scenario = TestScenario.create()
+    private val scenario = EmptyScenario.create()
 
     private var currentTime = 0.0
     private var interval = 5.0

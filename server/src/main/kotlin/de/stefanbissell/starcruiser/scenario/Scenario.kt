@@ -46,7 +46,7 @@ fun scenario(block: ScenarioDefinition.() -> Unit): ScenarioDefinition {
 class ScenarioDefinition {
 
     var playerSpawnArea: Shape = Circle(Vector2(), 100)
-    lateinit var factions: FactionsDefinition
+    var factions: FactionsDefinition = FactionsDefinition()
     val asteroidFields = mutableListOf<AsteroidFieldDefinition>()
     val nonPlayerShips = mutableListOf<NonPlayerShipDefinition>()
     val triggers = mutableListOf<TriggerDefinition>()

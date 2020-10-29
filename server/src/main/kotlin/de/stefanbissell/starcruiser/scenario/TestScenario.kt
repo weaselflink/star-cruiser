@@ -8,6 +8,11 @@ import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import kotlin.math.PI
 import kotlin.random.Random
 
+object EmptyScenario : Scenario() {
+
+    override val definition = scenario {}
+}
+
 object TestScenario : Scenario() {
 
     private val defaultSpawnArea = Ring(
