@@ -6,6 +6,9 @@ import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Station
 import de.stefanbissell.starcruiser.canvas2d
+import de.stefanbissell.starcruiser.components.ComponentDimensions.Companion.calculateRect
+import de.stefanbissell.starcruiser.context2D
+import de.stefanbissell.starcruiser.drawRect
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import kotlinx.browser.document
@@ -49,10 +52,7 @@ class StationOverlay : PointerEventHandlerParent() {
         if (currentStation != Station.MainScreen || ClientState.showStationOverlay) {
             if (ClientState.showStationOverlay) {
                 currentStationButton.text = "Stations"
-
-                otherStationButtons.forEach {
-                    it.draw()
-                }
+                drawStationButtons()
             } else {
                 currentStationButton.text = currentStation.name
             }
@@ -62,6 +62,33 @@ class StationOverlay : PointerEventHandlerParent() {
 
     override fun isInterestedIn(pointerEvent: PointerEvent) =
         visible && super.isInterestedIn(pointerEvent)
+
+    private fun drawStationButtons() {
+        val dim = calculateRect(
+            canvas = document.canvas2d,
+            xExpr = { width - vmin * 38 },
+            yExpr = { vmin * 28 + (otherStationButtons.size - 1) * vmin * 12 },
+            widthExpr = { vmin * 37 },
+            heightExpr = { otherStationButtons.size * vmin * 12 },
+            radiusExpr = { vmin * 6 }
+        )
+
+        with(document.canvas2d.context2D) {
+            save()
+
+            lineWidth = dim.lineWidth
+            fillStyle = UiStyle.buttonBackgroundColor
+            beginPath()
+            drawRect(dim)
+            fill()
+
+            restore()
+        }
+
+        otherStationButtons.forEach {
+            it.draw()
+        }
+    }
 
     private fun getNewStation(snapshot: SnapshotMessage.CrewSnapshot) =
         when (snapshot) {

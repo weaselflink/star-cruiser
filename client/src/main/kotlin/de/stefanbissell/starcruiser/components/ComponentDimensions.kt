@@ -54,7 +54,8 @@ data class ComponentDimensions(
             xExpr: CanvasDimensions.() -> Double,
             yExpr: CanvasDimensions.() -> Double,
             widthExpr: CanvasDimensions.() -> Double,
-            heightExpr: CanvasDimensions.() -> Double
+            heightExpr: CanvasDimensions.() -> Double,
+            radiusExpr: CanvasDimensions.() -> Double = { vmin * 5 }
         ) =
             canvas.dimensions().let { dim ->
                 ComponentDimensions(
@@ -63,7 +64,7 @@ data class ComponentDimensions(
                     bottomY = dim.yExpr(),
                     width = dim.widthExpr(),
                     height = dim.heightExpr(),
-                    radius = dim.vmin * 5,
+                    radius = dim.radiusExpr(),
                     length = dim.widthExpr(),
                     lineWidth = dim.vmin * UiStyle.buttonLineWidth
                 )
