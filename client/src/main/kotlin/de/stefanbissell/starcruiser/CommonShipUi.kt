@@ -20,7 +20,7 @@ class CommonShipUi {
 
     init {
         settingsButton.onclick = { toggleShowSettings() }
-        exitButton.onclick = { clientSocket.send(Command.CommandExitShip) }
+        exitButton.onclick = { ClientSocket.send(Command.CommandExitShip) }
         fullScreenButton.onclick = {
             val body: HTMLElement = document.byQuery("body")
             if (document.fullscreenElement == null) {
@@ -32,7 +32,7 @@ class CommonShipUi {
             }
         }
         pauseButton.onclick = {
-            clientSocket.send(Command.CommandTogglePause)
+            ClientSocket.send(Command.CommandTogglePause)
         }
     }
 

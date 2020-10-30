@@ -25,7 +25,7 @@ class HelmUi : StationUi(Station.Helm) {
         heightExpr = { vmin * 60 },
         onChange = {
             val throttle = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
-            clientSocket.send(CommandChangeThrottle(throttle))
+            ClientSocket.send(CommandChangeThrottle(throttle))
         },
         lines = listOf(0.5),
         leftText = "Impulse"
@@ -37,7 +37,7 @@ class HelmUi : StationUi(Station.Helm) {
         widthExpr = { vmin * 10 },
         heightExpr = { vmin * 60 },
         onChange = {
-            clientSocket.send(CommandChangeJumpDistance(it))
+            ClientSocket.send(CommandChangeJumpDistance(it))
         },
         leftText = "Distance"
     )
@@ -49,7 +49,7 @@ class HelmUi : StationUi(Station.Helm) {
         heightExpr = { vmin * 10 },
         onChange = {
             val rudder = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
-            clientSocket.send(CommandChangeRudder(rudder))
+            ClientSocket.send(CommandChangeRudder(rudder))
         },
         lines = listOf(0.5),
         leftText = "Rudder",
@@ -66,7 +66,7 @@ class HelmUi : StationUi(Station.Helm) {
         yExpr = { height - if (width >= vmin * 125) vmin * 3 else vmin * 15 },
         widthExpr = { vmin * 20 },
         heightExpr = { vmin * 10 },
-        onClick = { clientSocket.send(CommandStartJump) },
+        onClick = { ClientSocket.send(CommandStartJump) },
         initialText = "Jump"
     )
 

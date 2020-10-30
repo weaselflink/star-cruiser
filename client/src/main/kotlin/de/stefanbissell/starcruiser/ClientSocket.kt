@@ -4,7 +4,7 @@ import kotlinx.browser.window
 import org.w3c.dom.MessageEvent
 import org.w3c.dom.WebSocket
 
-class ClientSocket {
+object ClientSocket {
 
     private var webSocket: WebSocket? = null
     var state: GameStateMessage? = null

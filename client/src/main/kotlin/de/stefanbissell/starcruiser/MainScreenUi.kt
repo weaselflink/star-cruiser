@@ -163,7 +163,7 @@ class MainScreenUi : StationUi(Station.MainScreen) {
         yExpr = yExpr,
         widthExpr = { vmin * 23 },
         heightExpr = { vmin * 10 },
-        onClick = { clientSocket.send(Command.CommandMainScreenView(mainScreenView)) },
+        onClick = { ClientSocket.send(Command.CommandMainScreenView(mainScreenView)) },
         activated = { view == mainScreenView },
         initialText = mainScreenView.name
     )

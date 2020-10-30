@@ -1,11 +1,11 @@
 package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
+import de.stefanbissell.starcruiser.ClientSocket
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.PowerMessage
 import de.stefanbissell.starcruiser.PoweredSystemMessage
 import de.stefanbissell.starcruiser.PoweredSystemType
-import de.stefanbissell.starcruiser.clientSocket
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import de.stefanbissell.starcruiser.toPercent
 import org.w3c.dom.HTMLCanvasElement
@@ -23,7 +23,7 @@ class PowerDisplay(
         yExpr = yExpr,
         widthExpr = { vmin * 8 },
         heightExpr = { vmin * 8 },
-        onClick = { clientSocket.send(Command.CommandStartRepair(systemType)) },
+        onClick = { ClientSocket.send(Command.CommandStartRepair(systemType)) },
         activated = { repairing },
         initialText = "\ud83d\udee0"
     )
@@ -35,7 +35,7 @@ class PowerDisplay(
         heightExpr = { vmin * 8 },
         onChange = {
             val power = (it * 200).roundToInt()
-            clientSocket.send(Command.CommandSetPower(systemType, power))
+            ClientSocket.send(Command.CommandSetPower(systemType, power))
         },
         lines = listOf(0.5),
         leftText = systemType.name
@@ -75,7 +75,7 @@ class PowerDisplay(
         widthExpr = { vmin * 25 },
         heightExpr = { vmin * 8 },
         onChange = {
-            clientSocket.send(Command.CommandSetCoolant(systemType, it))
+            ClientSocket.send(Command.CommandSetCoolant(systemType, it))
         }
     )
 

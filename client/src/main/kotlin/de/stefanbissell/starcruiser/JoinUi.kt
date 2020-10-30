@@ -23,7 +23,7 @@ class JoinUi {
 
     init {
         root.byQuery<HTMLButtonElement>(".spawn").also {
-            it.onclick = { clientSocket.send(Command.CommandSpawnShip) }
+            it.onclick = { ClientSocket.send(Command.CommandSpawnShip) }
         }
         prevButton.onclick = { prev() }
         nextButton.onclick = { next() }
@@ -105,7 +105,7 @@ class JoinUi {
     }
 
     private fun selectPlayerShip(event: MouseEvent) {
-        clientSocket.apply {
+        ClientSocket.apply {
             val target = event.target as HTMLElement
             target.objectId?.also {
                 send(Command.CommandJoinShip(objectId = it, station = Helm))

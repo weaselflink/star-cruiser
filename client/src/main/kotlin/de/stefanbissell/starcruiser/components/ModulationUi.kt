@@ -1,8 +1,8 @@
 package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
+import de.stefanbissell.starcruiser.ClientSocket
 import de.stefanbissell.starcruiser.Command
-import de.stefanbissell.starcruiser.clientSocket
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.dimensions
 import de.stefanbissell.starcruiser.drawPill
@@ -33,7 +33,7 @@ class ModulationUi(
         yExpr = { yExpr() },
         widthExpr = { vmin * buttonWidth },
         heightExpr = { vmin * componentHeight },
-        onClick = { clientSocket.send(decreaseCommand) },
+        onClick = { ClientSocket.send(decreaseCommand) },
         initialText = "◄"
     )
     private val increaseButton = CanvasButton(
@@ -42,7 +42,7 @@ class ModulationUi(
         yExpr = { yExpr() },
         widthExpr = { vmin * buttonWidth },
         heightExpr = { vmin * componentHeight },
-        onClick = { clientSocket.send(increaseCommand) },
+        onClick = { ClientSocket.send(increaseCommand) },
         initialText = "►"
     )
 

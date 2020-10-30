@@ -26,6 +26,6 @@ class DestroyedUi {
     }
 
     private fun toSelection() {
-        clientSocket.send(CommandExitShip)
+        ClientSocket.send(CommandExitShip)
     }
 }

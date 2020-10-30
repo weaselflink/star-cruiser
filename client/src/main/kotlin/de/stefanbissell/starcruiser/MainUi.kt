@@ -22,7 +22,7 @@ class MainUi {
     }
 
     private fun step() {
-        clientSocket.state?.also {
+        ClientSocket.state?.also {
             drawUi(it)
         }
 
@@ -58,29 +58,29 @@ class MainUi {
 
     private fun handleKeyDown(event: KeyboardEvent) {
         when (event.code) {
-            "KeyP" -> clientSocket.send(Command.CommandTogglePause)
-            "KeyA" -> clientSocket.send(Command.CommandChangeRudder(100))
-            "KeyD" -> clientSocket.send(Command.CommandChangeRudder(-100))
-            "KeyW" -> clientSocket.send(Command.CommandChangeThrottle(100))
-            "KeyS" -> clientSocket.send(Command.CommandChangeThrottle(-100))
-            "KeyJ" -> clientSocket.send(Command.CommandStartJump)
+            "KeyP" -> ClientSocket.send(Command.CommandTogglePause)
+            "KeyA" -> ClientSocket.send(Command.CommandChangeRudder(100))
+            "KeyD" -> ClientSocket.send(Command.CommandChangeRudder(-100))
+            "KeyW" -> ClientSocket.send(Command.CommandChangeThrottle(100))
+            "KeyS" -> ClientSocket.send(Command.CommandChangeThrottle(-100))
+            "KeyJ" -> ClientSocket.send(Command.CommandStartJump)
             "KeyR" -> ClientState.toggleRotateScope()
-            "Digit1" -> clientSocket.send(Command.CommandChangeStation(Station.Helm))
-            "Digit2" -> clientSocket.send(Command.CommandChangeStation(Station.Weapons))
-            "Digit3" -> clientSocket.send(Command.CommandChangeStation(Station.Navigation))
-            "Digit4" -> clientSocket.send(Command.CommandChangeStation(Station.Engineering))
-            "Digit5" -> clientSocket.send(Command.CommandChangeStation(Station.MainScreen))
-            "KeyX" -> clientSocket.send(Command.CommandExitShip)
+            "Digit1" -> ClientSocket.send(Command.CommandChangeStation(Station.Helm))
+            "Digit2" -> ClientSocket.send(Command.CommandChangeStation(Station.Weapons))
+            "Digit3" -> ClientSocket.send(Command.CommandChangeStation(Station.Navigation))
+            "Digit4" -> ClientSocket.send(Command.CommandChangeStation(Station.Engineering))
+            "Digit5" -> ClientSocket.send(Command.CommandChangeStation(Station.MainScreen))
+            "KeyX" -> ClientSocket.send(Command.CommandExitShip)
             else -> println("not bound: ${event.code}")
         }
     }
 
     private fun handleKeyUp(event: KeyboardEvent) {
         when (event.code) {
-            "KeyA" -> clientSocket.send(Command.CommandChangeRudder(0))
-            "KeyD" -> clientSocket.send(Command.CommandChangeRudder(0))
-            "KeyW" -> clientSocket.send(Command.CommandChangeThrottle(0))
-            "KeyS" -> clientSocket.send(Command.CommandChangeThrottle(0))
+            "KeyA" -> ClientSocket.send(Command.CommandChangeRudder(0))
+            "KeyD" -> ClientSocket.send(Command.CommandChangeRudder(0))
+            "KeyW" -> ClientSocket.send(Command.CommandChangeThrottle(0))
+            "KeyS" -> ClientSocket.send(Command.CommandChangeThrottle(0))
         }
     }
 }

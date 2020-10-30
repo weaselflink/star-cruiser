@@ -88,12 +88,12 @@ class WeaponsUi : StationUi(Station.Weapons) {
     private fun contactSelected(targetId: ObjectId) {
         if (selectingTarget) {
             toggleLockTarget()
-            clientSocket.send(CommandLockTarget(targetId))
+            ClientSocket.send(CommandLockTarget(targetId))
         }
     }
 
     private fun toggleShields() {
-        clientSocket.send(Command.CommandToggleShieldsUp)
+        ClientSocket.send(Command.CommandToggleShieldsUp)
     }
 
     private fun toggleLockTarget() {

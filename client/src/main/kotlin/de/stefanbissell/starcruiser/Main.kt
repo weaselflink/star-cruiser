@@ -2,8 +2,6 @@ package de.stefanbissell.starcruiser
 
 import kotlinx.browser.window
 
-val clientSocket = ClientSocket()
-
 object ClientState {
     var showStationOverlay = false
     var rotateScope = false
@@ -20,6 +18,6 @@ object ClientState {
 fun main() {
     window.onload = {
         MainUi()
-        clientSocket.createSocket()
+        ClientSocket.createSocket()
     }
 }

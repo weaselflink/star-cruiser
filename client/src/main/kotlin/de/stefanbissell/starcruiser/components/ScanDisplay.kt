@@ -1,9 +1,9 @@
 package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
+import de.stefanbissell.starcruiser.ClientSocket
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.ScanProgressMessage
-import de.stefanbissell.starcruiser.clientSocket
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.dimensions
 import de.stefanbissell.starcruiser.input.PointerEvent
@@ -34,7 +34,7 @@ class ScanDisplay(
         yExpr = { yExpr() - vmin * 5 },
         widthExpr = { vmin * 20 },
         heightExpr = { vmin * 10 },
-        onClick = { clientSocket.send(Command.CommandAbortScan) },
+        onClick = { ClientSocket.send(Command.CommandAbortScan) },
         initialText = "Abort"
     )
 
@@ -73,7 +73,7 @@ class ScanDisplay(
                     widthExpr = { widthExpr() - vmin * 10 },
                     heightExpr = { vmin * 10 },
                     onChange = {
-                        clientSocket.send(Command.CommandSolveScanGame(index, it))
+                        ClientSocket.send(Command.CommandSolveScanGame(index, it))
                     }
                 )
                 inputs += slider

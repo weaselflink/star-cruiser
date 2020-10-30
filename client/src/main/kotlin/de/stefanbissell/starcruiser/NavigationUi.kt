@@ -116,11 +116,11 @@ class NavigationUi : StationUi(Station.Navigation) {
     }
 
     private fun deleteWaypointClicked() {
-        clientSocket.send(CommandDeleteSelectedWaypoint)
+        ClientSocket.send(CommandDeleteSelectedWaypoint)
     }
 
     private fun scanShipClicked() {
-        clientSocket.send(CommandScanSelectedShip)
+        ClientSocket.send(CommandScanSelectedShip)
     }
 
     private fun drawZoom() =
@@ -130,7 +130,7 @@ class NavigationUi : StationUi(Station.Navigation) {
         when (buttonState) {
             ButtonState.Initial -> handleSelectionClick(mapClick)
             ButtonState.AddWaypoint -> {
-                clientSocket.send(CommandAddWaypoint(mapClick.world))
+                ClientSocket.send(CommandAddWaypoint(mapClick.world))
                 buttonState = ButtonState.Initial
             }
         }
@@ -138,10 +138,10 @@ class NavigationUi : StationUi(Station.Navigation) {
 
     private fun handleSelectionClick(mapClick: MapClick) {
         mapClick.contacts.firstOrNull()?.also {
-            clientSocket.send(Command.CommandMapSelectShip(it.id))
+            ClientSocket.send(Command.CommandMapSelectShip(it.id))
         } ?: mapClick.waypoints.firstOrNull()?.also {
-            clientSocket.send(Command.CommandMapSelectWaypoint(it.index))
-        } ?: clientSocket.send(Command.CommandMapClearSelection)
+            ClientSocket.send(Command.CommandMapSelectWaypoint(it.index))
+        } ?: ClientSocket.send(Command.CommandMapClearSelection)
     }
 
     private enum class ButtonState {

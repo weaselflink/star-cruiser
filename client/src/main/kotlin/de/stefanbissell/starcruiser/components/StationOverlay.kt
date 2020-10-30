@@ -1,11 +1,11 @@
 package de.stefanbissell.starcruiser.components
 
+import de.stefanbissell.starcruiser.ClientSocket
 import de.stefanbissell.starcruiser.ClientState
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Station
 import de.stefanbissell.starcruiser.canvas2d
-import de.stefanbissell.starcruiser.clientSocket
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import kotlinx.browser.document
@@ -73,6 +73,6 @@ class StationOverlay : PointerEventHandlerParent() {
         }
 
     private fun switchStation(station: Station) {
-        clientSocket.send(Command.CommandChangeStation(station))
+        ClientSocket.send(Command.CommandChangeStation(station))
     }
 }

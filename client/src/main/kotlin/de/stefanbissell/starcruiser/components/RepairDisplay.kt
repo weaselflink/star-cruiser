@@ -1,12 +1,12 @@
 package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
+import de.stefanbissell.starcruiser.ClientSocket
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.PowerMessage
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.RepairProgressMessage
 import de.stefanbissell.starcruiser.circle
-import de.stefanbissell.starcruiser.clientSocket
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.dimensions
 import de.stefanbissell.starcruiser.input.PointerEvent
@@ -34,7 +34,7 @@ class RepairDisplay(
         yExpr = { yExpr() - vmin * 5 },
         widthExpr = { vmin * 20 },
         heightExpr = { vmin * 10 },
-        onClick = { clientSocket.send(Command.CommandAbortRepair) },
+        onClick = { ClientSocket.send(Command.CommandAbortRepair) },
         initialText = "Abort"
     )
 
@@ -289,7 +289,7 @@ class RepairDisplay(
                 pointerEvent.point.y > y && pointerEvent.point.y < y + height
 
         fun click() {
-            clientSocket.send(Command.CommandSolveRepairGame(column, row))
+            ClientSocket.send(Command.CommandSolveRepairGame(column, row))
         }
     }
 }
