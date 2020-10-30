@@ -1,7 +1,6 @@
 package de.stefanbissell.starcruiser.scenario
 
 import de.stefanbissell.starcruiser.Asteroid
-import de.stefanbissell.starcruiser.GameState
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.shapes.Circle
 import de.stefanbissell.starcruiser.shapes.Shape
@@ -152,7 +151,7 @@ class TriggerDefinition {
     var interval: Double = 1.0
     var repeat: Boolean = false
     var condition: GameStateView.() -> Boolean = { false }
-    var action: GameState.(ScenarioInstance) -> Unit = {}
+    var action: GameStateMutator.() -> Unit = {}
 
     fun create() =
         Trigger(
@@ -195,5 +194,5 @@ data class Trigger(
     val interval: Double,
     val repeat: Boolean,
     val condition: GameStateView.() -> Boolean,
-    val action: GameState.(ScenarioInstance) -> Unit
+    val action: GameStateMutator.() -> Unit
 )

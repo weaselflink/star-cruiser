@@ -15,6 +15,9 @@ object EmptyScenario : Scenario() {
 
 object TestScenario : Scenario() {
 
+    private const val playerFaction = "Enarian"
+    private const val enemyFaction = "Reynor"
+    private const val neutralFaction = "Janis"
     private val defaultSpawnArea = Ring(
         center = p(0, 0),
         outer = 1400.0,
@@ -26,25 +29,25 @@ object TestScenario : Scenario() {
             playerSpawnArea = Circle(p(0, 0), 300)
             factions {
                 faction {
-                    name = "Enarian"
-                    enemies = listOf("Reynor")
+                    name = playerFaction
+                    enemies = listOf(enemyFaction)
                     forPlayers = true
                 }
                 faction {
-                    name = "Janis"
+                    name = neutralFaction
                 }
                 faction {
-                    name = "Reynor"
-                    enemies = listOf("Enarian")
+                    name = enemyFaction
+                    enemies = listOf(playerFaction)
                 }
             }
             nonPlayerShip {
-                faction = "Reynor"
+                faction = enemyFaction
                 spawnArea = defaultSpawnArea
             }
             repeat(3) {
                 nonPlayerShip {
-                    faction = "Janis"
+                    faction = neutralFaction
                     spawnArea = defaultSpawnArea
                 }
             }
@@ -93,14 +96,14 @@ object TestScenario : Scenario() {
                 interval = 5.0
                 repeat = true
                 condition = {
-                    ships.count { it.faction.name == "Reynor" } < 1
+                    ships.count { it.faction.name == enemyFaction } < 1
                 }
-                action = { scenario ->
-                    spawnNonPlayerShip(
+                action = {
+                    state.spawnNonPlayerShip(
                         NonPlayerShip(
                             position = defaultSpawnArea.randomPointInside(),
                             rotation = Random.nextDouble(PI * 2.0),
-                            faction = scenario.factions.first { it.name == "Reynor" }
+                            faction = view.factionByName(enemyFaction)
                         )
                     )
                 }

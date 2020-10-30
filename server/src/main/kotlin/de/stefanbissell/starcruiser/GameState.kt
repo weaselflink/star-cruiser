@@ -10,6 +10,7 @@ import de.stefanbissell.starcruiser.Station.Navigation
 import de.stefanbissell.starcruiser.Station.Weapons
 import de.stefanbissell.starcruiser.client.ClientId
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
+import de.stefanbissell.starcruiser.scenario.GameStateMutator
 import de.stefanbissell.starcruiser.scenario.GameStateView
 import de.stefanbissell.starcruiser.scenario.TestScenario
 import de.stefanbissell.starcruiser.scenario.TriggerHandler
@@ -118,7 +119,7 @@ class GameState {
         physicsEngine.step(time.delta)
         updateShips()
         updateAsteroids()
-        triggerHandlers.forEach { it.evaluate(this) }
+        updateTriggers()
     }
 
     fun setThrottle(clientId: ClientId, value: Int) {
@@ -227,8 +228,8 @@ class GameState {
 
     fun toView() =
         GameStateView(
-            scenario = scenario,
             currentTime = time.current,
+            scenario = scenario,
             ships = ships.values.toList()
         )
 
@@ -341,6 +342,16 @@ class GameState {
     private fun updateAsteroids() {
         asteroids.forEach {
             it.update(physicsEngine)
+        }
+    }
+
+    private fun updateTriggers() {
+        val gameStateMutator = GameStateMutator(
+            state = this,
+            scenario = scenario
+        )
+        triggerHandlers.forEach {
+            it.evaluate(gameStateMutator)
         }
     }
 

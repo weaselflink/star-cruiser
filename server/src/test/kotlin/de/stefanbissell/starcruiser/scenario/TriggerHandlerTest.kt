@@ -80,6 +80,11 @@ class TriggerHandlerTest {
         triggerHandler = triggerHandler ?: TriggerHandler(
             Trigger(interval, repeat, { condition }, { actionPerformed = true })
         )
-        triggerHandler?.evaluate(gameState)
+        triggerHandler?.evaluate(
+            GameStateMutator(
+                state = gameState,
+                scenario = scenario
+            )
+        )
     }
 }

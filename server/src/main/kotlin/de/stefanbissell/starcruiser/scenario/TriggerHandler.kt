@@ -1,7 +1,5 @@
 package de.stefanbissell.starcruiser.scenario
 
-import de.stefanbissell.starcruiser.GameState
-
 class TriggerHandler(
     val trigger: Trigger
 ) {
@@ -9,9 +7,9 @@ class TriggerHandler(
     private var fired = false
     private var lastEvaluation = -1_000_000.0
 
-    fun evaluate(gameState: GameState) {
-        if (shouldFire(gameState.toView())) {
-            fire(gameState)
+    fun evaluate(gameStateMutator: GameStateMutator) {
+        if (shouldFire(gameStateMutator.view)) {
+            fire(gameStateMutator)
         }
     }
 
@@ -26,10 +24,9 @@ class TriggerHandler(
         return trigger.condition(gameStateView)
     }
 
-    private fun fire(gameState: GameState) {
+    private fun fire(gameStateMutator: GameStateMutator) {
         fired = true
-        val view = gameState.toView()
-        lastEvaluation = view.currentTime
-        trigger.action(gameState, view.scenario)
+        lastEvaluation = gameStateMutator.view.currentTime
+        trigger.action(gameStateMutator)
     }
 }
