@@ -36,18 +36,25 @@ class MainScreenUi : StationUi(Station.MainScreen) {
             createViewButton(
                 mainScreenView = view,
                 xExpr = {
-                    if (width >= vmin * 152) {
-                        width * 0.5 - vmin * 74 + index * vmin * 25
+                    val buttonWidth = vmin * 22
+                    val gapWidth = vmin * 2
+                    val combinedWidth = buttonWidth + gapWidth
+                    val requiredFull = buttonWidth * 6 + gapWidth * 7
+                    if (width >= requiredFull) {
+                        width * 0.5 - combinedWidth * 3 + gapWidth * 0.5 + index * combinedWidth
                     } else {
                         if (index < 4) {
-                            width * 0.5 - vmin * 48 + index * vmin * 25
+                            width * 0.5 - combinedWidth * 2 + gapWidth * 0.5 + index * combinedWidth
                         } else {
-                            width * 0.5 - vmin * 24 + (index - 4) * vmin * 25
+                            width * 0.5 - combinedWidth + gapWidth * 0.5 + (index - 4) * combinedWidth
                         }
                     }
                 },
                 yExpr = {
-                    if (width >= vmin * 152 || index >= 4) {
+                    val buttonWidth = vmin * 22
+                    val gapWidth = vmin * 2
+                    val requiredFull = buttonWidth * 6 + gapWidth * 7
+                    if (width >= requiredFull || index >= 4) {
                         height - vmin * 3
                     } else {
                         height - vmin * 15
@@ -161,7 +168,7 @@ class MainScreenUi : StationUi(Station.MainScreen) {
         canvas = canvas,
         xExpr = xExpr,
         yExpr = yExpr,
-        widthExpr = { vmin * 23 },
+        widthExpr = { vmin * 22 },
         heightExpr = { vmin * 10 },
         onClick = { ClientSocket.send(Command.CommandMainScreenView(mainScreenView)) },
         activated = { view == mainScreenView },
