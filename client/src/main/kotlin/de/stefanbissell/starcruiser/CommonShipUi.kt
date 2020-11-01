@@ -10,10 +10,12 @@ class CommonShipUi {
     private val settingsButton: HTMLButtonElement = root.byQuery(".settings")
     private val exitButton: HTMLButtonElement = root.byQuery(".exit")
     private val fullScreenButton: HTMLButtonElement = root.byQuery(".fullscreen")
+    private val rotateScopeButton: HTMLButtonElement = root.byQuery(".rotateScope")
     private val pauseButton: HTMLButtonElement = root.byQuery(".pause")
     private val settingsMenuButtons = listOf(
         exitButton,
         fullScreenButton,
+        rotateScopeButton,
         pauseButton
     )
     private var showSettings = false
@@ -29,6 +31,14 @@ class CommonShipUi {
             } else {
                 document.exitFullscreen()
                 fullScreenButton.innerText = "Fullscreen"
+            }
+        }
+        rotateScopeButton.onclick = {
+            ClientState.toggleRotateScope()
+            if (ClientState.rotateScope) {
+                rotateScopeButton.innerText = "Fixed scope"
+            } else {
+                rotateScopeButton.innerText = "Rotate scope"
             }
         }
         pauseButton.onclick = {

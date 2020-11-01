@@ -204,6 +204,9 @@ private val BODY.commonShipUi
             button(classes = "fullscreen leftEdge") {
                 +"Fullscreen"
             }
+            button(classes = "rotateScope leftEdge") {
+                +"Rotate scope"
+            }
             button(classes = "pause leftEdge") {
                 +"Pause"
             }
