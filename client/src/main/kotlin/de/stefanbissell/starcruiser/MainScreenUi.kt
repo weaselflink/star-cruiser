@@ -27,8 +27,7 @@ class MainScreenUi : StationUi(Station.MainScreen) {
     )
     private val mainScene = MainScene()
     private val shortRangeScope = ShortRangeScope(
-        canvas = canvas,
-        showRotateButton = false
+        canvas = canvas
     )
     private var view = MainScreenView.Front
     private val viewButtons = MainScreenView.values()

@@ -50,7 +50,6 @@ import kotlin.math.atan2
 class ShortRangeScope(
     private val canvas: HTMLCanvasElement,
     private val showLocks: Boolean = false,
-    private val showRotateButton: Boolean = true,
     private val scopeClickListener: ((ObjectId) -> Unit)? = null
 ) : PointerEventHandlerParent() {
 
@@ -60,23 +59,8 @@ class ShortRangeScope(
     private var scopeRadius = dim.vmin * 47
     private var lastSnapshot: ShortRangeScopeStation? = null
 
-    private val rotateButton = CanvasButton(
-        canvas = canvas,
-        xExpr = { width * 0.5 + vmin * 20 },
-        yExpr = { height * 0.5 - vmin * 38 },
-        widthExpr = { vmin * 22 },
-        heightExpr = { vmin * 10 },
-        onClick = {
-            if (showRotateButton) {
-                ClientState.toggleRotateScope()
-            }
-        },
-        activated = { ClientState.rotateScope },
-        initialText = "Rotate"
-    )
-
     init {
-        addChildren(rotateButton, ScopePointerEventHandler())
+        addChildren(ScopePointerEventHandler())
     }
 
     fun draw(snapshot: ShortRangeScopeStation) {
@@ -133,9 +117,6 @@ class ShortRangeScope(
         restore()
 
         drawHeading(snapshot)
-        if (showRotateButton) {
-            rotateButton.draw()
-        }
     }
 
     private fun CanvasRenderingContext2D.drawCompass() {
