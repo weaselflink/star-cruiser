@@ -65,6 +65,13 @@ class ScenarioDefinition {
     fun <T> trigger(block: TriggerDefinition<T>.() -> Unit) {
         triggers += TriggerDefinition<T>().apply(block)
     }
+
+    fun statelessTrigger(block: TriggerDefinition<Unit>.() -> Unit) {
+        triggers += TriggerDefinition<Unit>().apply {
+            initialState = { Unit }
+            block()
+        }
+    }
 }
 
 @ScenarioDsl

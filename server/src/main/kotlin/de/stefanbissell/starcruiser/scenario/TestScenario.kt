@@ -92,7 +92,7 @@ object TestScenario : Scenario() {
                     radius = 500
                 )
             }
-            trigger<Unit> {
+            statelessTrigger {
                 interval = 5.0
                 condition = {
                     ships.count { it.faction.name == enemyFaction } < 1
@@ -106,7 +106,6 @@ object TestScenario : Scenario() {
                         )
                     )
                 }
-                initialState = { Unit }
             }
         }
 }
