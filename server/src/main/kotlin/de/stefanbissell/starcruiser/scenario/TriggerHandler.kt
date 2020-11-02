@@ -1,9 +1,10 @@
 package de.stefanbissell.starcruiser.scenario
 
-class TriggerHandler(
-    val trigger: Trigger
+class TriggerHandler<T>(
+    val trigger: Trigger<T>
 ) {
 
+    private var triggerState: T = trigger.initialState()
     private var fired = false
     private var lastEvaluation = -1_000_000.0
 
@@ -14,19 +15,16 @@ class TriggerHandler(
     }
 
     private fun shouldFire(gameStateView: GameStateView): Boolean {
-        if (!trigger.repeat && fired) {
-            return false
-        }
         if (gameStateView.currentTime - lastEvaluation < trigger.interval) {
             return false
         }
 
-        return trigger.condition(gameStateView)
+        return trigger.condition(gameStateView, triggerState)
     }
 
     private fun fire(gameStateMutator: GameStateMutator) {
         fired = true
         lastEvaluation = gameStateMutator.view.currentTime
-        trigger.action(gameStateMutator)
+        triggerState = trigger.action(gameStateMutator, triggerState)
     }
 }

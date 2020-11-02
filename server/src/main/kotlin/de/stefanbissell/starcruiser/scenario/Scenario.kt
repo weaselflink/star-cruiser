@@ -48,7 +48,7 @@ class ScenarioDefinition {
     var factions: FactionsDefinition = FactionsDefinition()
     val asteroidFields = mutableListOf<AsteroidFieldDefinition>()
     val nonPlayerShips = mutableListOf<NonPlayerShipDefinition>()
-    val triggers = mutableListOf<TriggerDefinition>()
+    val triggers = mutableListOf<TriggerDefinition<*>>()
 
     fun factions(block: FactionsDefinition.() -> Unit) {
         factions = FactionsDefinition().apply(block)
@@ -62,8 +62,8 @@ class ScenarioDefinition {
         asteroidFields += AsteroidFieldDefinition().apply(block)
     }
 
-    fun trigger(block: TriggerDefinition.() -> Unit) {
-        triggers += TriggerDefinition().apply(block)
+    fun <T> trigger(block: TriggerDefinition<T>.() -> Unit) {
+        triggers += TriggerDefinition<T>().apply(block)
     }
 }
 
@@ -146,19 +146,19 @@ class FactionDefinition {
 }
 
 @ScenarioDsl
-class TriggerDefinition {
+class TriggerDefinition<T> {
 
     var interval: Double = 1.0
-    var repeat: Boolean = false
-    var condition: GameStateView.() -> Boolean = { false }
-    var action: GameStateMutator.() -> Unit = {}
+    var condition: GameStateView.(T) -> Boolean = { false }
+    lateinit var action: GameStateMutator.(T) -> T
+    lateinit var initialState: () -> T
 
     fun create() =
         Trigger(
             interval = interval,
-            repeat = repeat,
             condition = condition,
-            action = action
+            action = action,
+            initialState = initialState
         )
 }
 
@@ -168,7 +168,7 @@ data class ScenarioInstance(
     val asteroids: List<Asteroid>,
     val nonPlayerShips: List<NonPlayerShip>,
     val mapAreas: List<MapArea>,
-    val triggers: List<Trigger>
+    val triggers: List<Trigger<*>>
 )
 
 data class Faction(
@@ -190,9 +190,9 @@ enum class MapAreaType {
     AsteroidField
 }
 
-data class Trigger(
+data class Trigger<T>(
     val interval: Double,
-    val repeat: Boolean,
-    val condition: GameStateView.() -> Boolean,
-    val action: GameStateMutator.() -> Unit
+    val condition: GameStateView.(T) -> Boolean,
+    val action: GameStateMutator.(T) -> T,
+    val initialState: () -> T
 )

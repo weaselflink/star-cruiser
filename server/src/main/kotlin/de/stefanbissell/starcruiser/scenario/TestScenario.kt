@@ -92,9 +92,8 @@ object TestScenario : Scenario() {
                     radius = 500
                 )
             }
-            trigger {
+            trigger<Unit> {
                 interval = 5.0
-                repeat = true
                 condition = {
                     ships.count { it.faction.name == enemyFaction } < 1
                 }
@@ -107,6 +106,7 @@ object TestScenario : Scenario() {
                         )
                     )
                 }
+                initialState = { Unit }
             }
         }
 }

@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.containsExactly
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
 
@@ -14,9 +15,9 @@ class TriggerHandlerTest {
 
     private var currentTime = 0.0
     private var interval = 5.0
-    private var repeat = true
     private var condition = true
     private var actionPerformed = false
+    private val triggerStates = mutableListOf<String>()
 
     private val gameState = mockk<GameState>().also {
         every { it.toView() } answers {
@@ -28,7 +29,7 @@ class TriggerHandlerTest {
         }
     }
 
-    private var triggerHandler: TriggerHandler? = null
+    private var triggerHandler: TriggerHandler<*>? = null
 
     @Test
     fun `waits for interval to retrigger`() {
@@ -48,7 +49,7 @@ class TriggerHandlerTest {
     }
 
     @Test
-    fun `retriggers if repeat is enabled`() {
+    fun `retriggers action`() {
         evaluate()
         expectThat(actionPerformed).isTrue()
 
@@ -59,16 +60,19 @@ class TriggerHandlerTest {
     }
 
     @Test
-    fun `does not retriggers if repeat is disabled`() {
-        repeat = false
-
+    fun `stores modified state from action`() {
         evaluate()
-        expectThat(actionPerformed).isTrue()
 
         elapseInterval()
 
         evaluate()
-        expectThat(actionPerformed).isFalse()
+
+        elapseInterval()
+
+        evaluate()
+
+        expectThat(triggerStates)
+            .containsExactly("", "X", "XX")
     }
 
     private fun elapseInterval() {
@@ -78,7 +82,16 @@ class TriggerHandlerTest {
     private fun evaluate() {
         actionPerformed = false
         triggerHandler = triggerHandler ?: TriggerHandler(
-            Trigger(interval, repeat, { condition }, { actionPerformed = true })
+            Trigger(
+                interval = interval,
+                condition = { condition },
+                action = { triggerState ->
+                    actionPerformed = true
+                    triggerStates += triggerState
+                    triggerState + "X"
+                },
+                initialState = { "" }
+            )
         )
         triggerHandler?.evaluate(
             GameStateMutator(
