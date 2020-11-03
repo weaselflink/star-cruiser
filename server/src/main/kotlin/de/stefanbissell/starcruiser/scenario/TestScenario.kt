@@ -92,20 +92,29 @@ object TestScenario : Scenario() {
                     radius = 500
                 )
             }
-            statelessTrigger {
+            trigger<EnemyRespawnTriggerState> {
                 interval = 5.0
                 condition = {
                     ships.count { it.faction.name == enemyFaction } < 1
                 }
-                action = {
-                    state.spawnNonPlayerShip(
-                        NonPlayerShip(
-                            position = defaultSpawnArea.randomPointInside(),
-                            rotation = Random.nextDouble(PI * 2.0),
-                            faction = view.factionByName(enemyFaction)
+                action = { triggerState ->
+                    val newCount = triggerState.count + 1
+                    repeat(newCount) {
+                        state.spawnNonPlayerShip(
+                            NonPlayerShip(
+                                position = defaultSpawnArea.randomPointInside(),
+                                rotation = Random.nextDouble(PI * 2.0),
+                                faction = view.factionByName(enemyFaction)
+                            )
                         )
-                    )
+                    }
+                    EnemyRespawnTriggerState(newCount)
                 }
+                initialState = { EnemyRespawnTriggerState() }
             }
         }
 }
+
+data class EnemyRespawnTriggerState(
+    val count: Int = 1
+)
