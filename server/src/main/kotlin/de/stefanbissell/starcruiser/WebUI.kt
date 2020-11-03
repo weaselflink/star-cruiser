@@ -198,9 +198,6 @@ private val BODY.commonShipUi
             button(classes = "settings topLeftCorner") {
                 +"\u2699"
             }
-            button(classes = "exit leftEdge") {
-                +"Exit ship"
-            }
             button(classes = "fullscreen leftEdge") {
                 +"Fullscreen"
             }

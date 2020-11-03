@@ -8,12 +8,10 @@ class CommonShipUi {
 
     private val root = document.getHtmlElementById("common-ship-ui")
     private val settingsButton: HTMLButtonElement = root.byQuery(".settings")
-    private val exitButton: HTMLButtonElement = root.byQuery(".exit")
     private val fullScreenButton: HTMLButtonElement = root.byQuery(".fullscreen")
     private val rotateScopeButton: HTMLButtonElement = root.byQuery(".rotateScope")
     private val pauseButton: HTMLButtonElement = root.byQuery(".pause")
     private val settingsMenuButtons = listOf(
-        exitButton,
         fullScreenButton,
         rotateScopeButton,
         pauseButton
@@ -22,7 +20,6 @@ class CommonShipUi {
 
     init {
         settingsButton.onclick = { toggleShowSettings() }
-        exitButton.onclick = { ClientSocket.send(Command.CommandExitShip) }
         fullScreenButton.onclick = {
             val body: HTMLElement = document.byQuery("body")
             if (document.fullscreenElement == null) {
