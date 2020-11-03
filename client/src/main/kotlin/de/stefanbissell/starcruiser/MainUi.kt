@@ -77,9 +77,9 @@ class MainUi {
 
     private fun handleKeyUp(event: KeyboardEvent) {
         when (event.code) {
-            "KeyA" -> ClientSocket.send(Command.CommandChangeRudder(0))
+            "KeyA",
             "KeyD" -> ClientSocket.send(Command.CommandChangeRudder(0))
-            "KeyW" -> ClientSocket.send(Command.CommandChangeThrottle(0))
+            "KeyW",
             "KeyS" -> ClientSocket.send(Command.CommandChangeThrottle(0))
         }
     }
