@@ -37,12 +37,22 @@ class StationOverlay : PointerEventHandlerParent() {
             initialText = station.name
         )
     }
+    private val exitButton = CanvasButton(
+        canvas = document.canvas2d,
+        xExpr = { width - vmin * 37 },
+        yExpr = { vmin * 30 + Station.values().size * vmin * 12 },
+        widthExpr = { vmin * 35 },
+        heightExpr = { vmin * 10 },
+        onClick = { ClientSocket.send(Command.CommandExitShip) },
+        enabled = { ClientState.showStationOverlay },
+        initialText = "Exit"
+    )
 
     private var currentStation = Station.Helm
     var visible = false
 
     init {
-        addChildren(currentStationButton)
+        addChildren(currentStationButton, exitButton)
         addChildren(otherStationButtons)
     }
 
@@ -67,9 +77,9 @@ class StationOverlay : PointerEventHandlerParent() {
         val dim = calculateRect(
             canvas = document.canvas2d,
             xExpr = { width - vmin * 38 },
-            yExpr = { vmin * 28 + (otherStationButtons.size - 1) * vmin * 12 },
+            yExpr = { vmin * 31 + otherStationButtons.size * vmin * 12 },
             widthExpr = { vmin * 37 },
-            heightExpr = { otherStationButtons.size * vmin * 12 },
+            heightExpr = { (otherStationButtons.size + 1) * vmin * 12 + vmin * 3 },
             radiusExpr = { vmin * 6 }
         )
 
@@ -88,6 +98,7 @@ class StationOverlay : PointerEventHandlerParent() {
         otherStationButtons.forEach {
             it.draw()
         }
+        exitButton.draw()
     }
 
     private fun getNewStation(snapshot: SnapshotMessage.CrewSnapshot) =
