@@ -14,6 +14,9 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import kotlin.time.nanoseconds
+import kotlin.time.seconds
+
+private const val statisticsLogIntervalSeconds = 10
 
 sealed class StatisticsMessage {
 
@@ -24,13 +27,17 @@ sealed class StatisticsMessage {
 
 fun CoroutineScope.statisticsActor() = actor<StatisticsMessage> {
     var countSent = 0L
-    var totalSent = 0L
+    var bytesSent = 0L
+    var totalCountSent = 0L
+    var totalBytesSent = 0L
     var countReceived = 0L
-    var totalReceived = 0L
+    var bytesReceived = 0L
+    var totalCountReceived = 0L
+    var totalBytesReceived = 0L
 
     launch {
         while (true) {
-            delay(10_000)
+            delay(statisticsLogIntervalSeconds.seconds)
             val response = CompletableDeferred<StatisticsSnapshot>()
             channel.send(GetSnapshot(response))
             response.await().log()
@@ -41,25 +48,49 @@ fun CoroutineScope.statisticsActor() = actor<StatisticsMessage> {
         when (message) {
             is MessageSent -> {
                 countSent++
-                totalSent += message.size
+                bytesSent += message.size
             }
             is MessageReceived -> {
                 countReceived++
-                totalReceived += message.size
+                bytesReceived += message.size
             }
-            is GetSnapshot -> message.response.complete(
-                StatisticsSnapshot(countSent, totalSent, countReceived, totalReceived)
-            )
+            is GetSnapshot -> {
+                totalCountSent += countSent
+                totalBytesSent += bytesSent
+                totalCountReceived += countReceived
+                totalBytesReceived += bytesReceived
+                message.response.complete(
+                    StatisticsSnapshot(
+                        countSent = countSent,
+                        bytesSent = bytesSent,
+                        totalCountSent = totalCountSent,
+                        totalBytesSent = totalBytesSent,
+                        countReceived = countReceived,
+                        bytesReceived = bytesReceived,
+                        totalCountReceived = totalCountReceived,
+                        totalBytesReceived = totalBytesReceived
+                    )
+                )
+
+                countSent = 0
+                bytesSent = 0
+                countReceived = 0
+                bytesReceived = 0
+            }
         }
     }
 }
 
 @Serializable
 data class StatisticsSnapshot(
-    val countSent: Long,
-    val totalSent: Long,
-    val countReceived: Long,
-    val totalReceived: Long
+    var countSent: Long,
+    var bytesSent: Long,
+    var totalCountSent: Long,
+    var totalBytesSent: Long,
+    var countReceived: Long,
+    var bytesReceived: Long,
+    var totalCountReceived: Long,
+    var totalBytesReceived: Long
 ) {
 
     private val nowWithoutNanos: Instant
@@ -71,10 +102,26 @@ data class StatisticsSnapshot(
 
     fun log() {
         println("============== $nowWithoutNanos ==============")
-        println("Messages sent:     ${countSent.toString().padStart(12)}")
-        println("Bytes sent:        ${totalSent.formatBytes().padStart(12)}")
-        println("Messages received: ${countReceived.toString().padStart(12)}")
-        println("Bytes received:    ${totalReceived.formatBytes().padStart(12)}")
+        println(
+            "Messages sent:     " +
+                "${totalCountSent.toString().padStart(12)} " +
+                "(${(countSent / statisticsLogIntervalSeconds).toString().padStart(12)}/s)"
+        )
+        println(
+            "Bytes sent:        " +
+                "${totalBytesSent.formatBytes().padStart(12)} " +
+                "(${(bytesSent / statisticsLogIntervalSeconds).formatBytes().padStart(12)}/s)"
+        )
+        println(
+            "Messages received: " +
+                "${totalCountReceived.toString().padStart(12)} " +
+                "(${(countReceived / statisticsLogIntervalSeconds).toString().padStart(12)}/s)"
+        )
+        println(
+            "Bytes received:    " +
+                "${totalBytesReceived.formatBytes().padStart(12)} " +
+                "(${(bytesReceived / statisticsLogIntervalSeconds).formatBytes().padStart(12)}/s)"
+        )
     }
 
     private fun Long.formatBytes(): String {
