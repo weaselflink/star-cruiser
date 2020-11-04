@@ -60,6 +60,13 @@ data class StatisticsSnapshot(
     val totalReceived: Long
 ) {
 
+    private val scales = listOf(
+        1024L * 1024L * 1024L to "GB",
+        1024L * 1024L to "MB",
+        1024L to "kB",
+        1L to "B"
+    )
+
     fun toJson() = configuredJson.encodeToString(serializer(), this)
 
     fun log() {
@@ -83,14 +90,5 @@ data class StatisticsSnapshot(
             }
         }
         return "0 B"
-    }
-
-    companion object {
-        private val scales = listOf(
-            1024L * 1024L * 1024L to "GB",
-            1024L * 1024L to "MB",
-            1024L to "kB",
-            1L to "B"
-        )
     }
 }
