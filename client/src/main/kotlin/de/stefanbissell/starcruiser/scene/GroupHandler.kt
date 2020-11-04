@@ -22,7 +22,14 @@ class GroupHandler<G : ObjectGroup, M : IdentifiableWithModel>(
     private val messageCache = mutableMapOf<ObjectId, M>()
     private val holder = Object3D().also { scene += it }
 
-    fun addNew(messages: List<M>) {
+    fun update(messages: List<M>) {
+        val oldIds = nodes.keys.filter { true }
+        addNew(messages)
+        removeOld(messages, oldIds)
+        updateRemaining(messages)
+    }
+
+    private fun addNew(messages: List<M>) {
         messages.filter { message ->
             !nodes.containsKey(message.id)
         }.forEach { message ->
@@ -34,16 +41,7 @@ class GroupHandler<G : ObjectGroup, M : IdentifiableWithModel>(
         }
     }
 
-    fun update(messages: List<M>) {
-        messages.forEach { message ->
-            nodes[message.id]?.apply {
-                this.update(message)
-            }
-            messageCache[message.id] = message
-        }
-    }
-
-    fun removeOld(
+    private fun removeOld(
         messages: List<M>,
         oldIds: List<ObjectId>
     ) {
@@ -55,6 +53,15 @@ class GroupHandler<G : ObjectGroup, M : IdentifiableWithModel>(
                 holder.remove(it)
             }
             messageCache.remove(id)
+        }
+    }
+
+    private fun updateRemaining(messages: List<M>) {
+        messages.forEach { message ->
+            nodes[message.id]?.apply {
+                this.update(message)
+            }
+            messageCache[message.id] = message
         }
     }
 

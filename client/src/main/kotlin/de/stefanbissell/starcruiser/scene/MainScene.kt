@@ -103,21 +103,8 @@ class MainScene {
             updateCamera(cameras[CameraPosition.Rear], snapshot.ship.rearCamera)
         }
 
-        val contacts = snapshot.contacts
-        val asteroids = snapshot.asteroids
-        val oldContactIds = contactHandler.nodes.keys.filter { true }
-        val oldAsteroidIds = asteroidHandler.nodes.keys.filter { true }
-
-        with(contactHandler) {
-            addNew(contacts)
-            removeOld(contacts, oldContactIds)
-            update(contacts)
-        }
-        with(asteroidHandler) {
-            addNew(asteroids)
-            removeOld(asteroids, oldAsteroidIds)
-            update(asteroids)
-        }
+        contactHandler.update(snapshot.contacts)
+        asteroidHandler.update(snapshot.asteroids)
 
         updateBeams(snapshot)
         updateShields(snapshot)
