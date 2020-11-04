@@ -46,7 +46,6 @@ class HelmUi : StationUi(Station.Helm) {
         xExpr = { width - vmin * 63 },
         yExpr = { height - vmin * 3 },
         widthExpr = { vmin * 60 },
-        heightExpr = { vmin * 10 },
         onChange = {
             val rudder = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
             ClientSocket.send(CommandChangeRudder(rudder))
@@ -65,7 +64,6 @@ class HelmUi : StationUi(Station.Helm) {
         xExpr = { vmin * 34 },
         yExpr = { height - if (width >= vmin * 125) vmin * 3 else vmin * 15 },
         widthExpr = { vmin * 20 },
-        heightExpr = { vmin * 10 },
         onClick = { ClientSocket.send(CommandStartJump) },
         initialText = "Jump"
     )

@@ -54,7 +54,6 @@ class SelectionDetails(
         xExpr = { dim.leftX + dim.width * 0.5 - vmin * 12 },
         yExpr = { dim.bottomY - vmin * 5 },
         widthExpr = { vmin * 24 },
-        heightExpr = { vmin * 10 },
         onClick = { actionButtonClicked() }
     )
 

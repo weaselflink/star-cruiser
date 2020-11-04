@@ -33,7 +33,6 @@ class ScanDisplay(
         xExpr = { xExpr() + widthExpr() - vmin * 25 },
         yExpr = { yExpr() - vmin * 5 },
         widthExpr = { vmin * 20 },
-        heightExpr = { vmin * 10 },
         onClick = { ClientSocket.send(Command.CommandAbortScan) },
         initialText = "Abort"
     )
@@ -71,7 +70,6 @@ class ScanDisplay(
                     xExpr = { xExpr() + 5.vmin },
                     yExpr = { yExpr() - heightExpr() + vmin * 45 + vmin * 12 * index },
                     widthExpr = { widthExpr() - vmin * 10 },
-                    heightExpr = { vmin * 10 },
                     onChange = {
                         ClientSocket.send(Command.CommandSolveScanGame(index, it))
                     }

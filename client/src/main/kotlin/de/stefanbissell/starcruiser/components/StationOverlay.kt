@@ -20,7 +20,6 @@ class StationOverlay : PointerEventHandlerParent() {
         xExpr = { width - vmin * 37 },
         yExpr = { vmin * 12 },
         widthExpr = { vmin * 35 },
-        heightExpr = { vmin * 10 },
         onClick = { ClientState.toggleStationOverlay() },
         activated = { ClientState.showStationOverlay }
     )
@@ -30,7 +29,6 @@ class StationOverlay : PointerEventHandlerParent() {
             xExpr = { width - vmin * 37 },
             yExpr = { vmin * 27 + index * vmin * 12 },
             widthExpr = { vmin * 35 },
-            heightExpr = { vmin * 10 },
             onClick = { switchStation(station) },
             activated = { station == currentStation },
             enabled = { ClientState.showStationOverlay },
@@ -42,7 +40,6 @@ class StationOverlay : PointerEventHandlerParent() {
         xExpr = { width - vmin * 37 },
         yExpr = { vmin * 30 + Station.values().size * vmin * 12 },
         widthExpr = { vmin * 35 },
-        heightExpr = { vmin * 10 },
         onClick = { ClientSocket.send(Command.CommandExitShip) },
         enabled = { ClientState.showStationOverlay },
         initialText = "Exit"

@@ -26,7 +26,6 @@ class NavigationUi : StationUi(Station.Navigation) {
         xExpr = { vmin * 3 },
         yExpr = { height - vmin * 3 },
         widthExpr = { vmin * 50 },
-        heightExpr = { vmin * 10 },
         onChange = { navigationMap.changeZoom(it) },
         leftText = "Zoom"
     )
@@ -35,7 +34,6 @@ class NavigationUi : StationUi(Station.Navigation) {
         xExpr = { if (width > vmin * 136) vmin * 55 else vmin * 3 },
         yExpr = { if (width > vmin * 136) height - vmin * 3 else height - vmin * 15 },
         widthExpr = { vmin * 37 },
-        heightExpr = { vmin * 10 },
         onClick = { toggleAddWaypoint() },
         activated = { buttonState == ButtonState.AddWaypoint },
         initialText = "Add waypoint"
@@ -63,7 +61,6 @@ class NavigationUi : StationUi(Station.Navigation) {
             }
         },
         widthExpr = { vmin * 23 },
-        heightExpr = { vmin * 10 },
         onClick = { navigationMap.centerOnShip() },
         initialText = "Center"
     )

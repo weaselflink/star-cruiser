@@ -17,7 +17,7 @@ class CanvasButton(
     private val xExpr: CanvasDimensions.() -> Double,
     private val yExpr: CanvasDimensions.() -> Double,
     private val widthExpr: CanvasDimensions.() -> Double,
-    private val heightExpr: CanvasDimensions.() -> Double,
+    private val heightExpr: CanvasDimensions.() -> Double = { vmin * 10 },
     private val onClick: () -> Unit = {},
     private val activated: () -> Boolean = { false },
     private val enabled: () -> Boolean = { true },

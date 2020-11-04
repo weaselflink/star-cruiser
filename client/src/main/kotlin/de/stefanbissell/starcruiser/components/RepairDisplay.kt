@@ -33,7 +33,6 @@ class RepairDisplay(
         xExpr = { xExpr() + widthExpr() - vmin * 25 },
         yExpr = { yExpr() - vmin * 5 },
         widthExpr = { vmin * 20 },
-        heightExpr = { vmin * 10 },
         onClick = { ClientSocket.send(Command.CommandAbortRepair) },
         initialText = "Abort"
     )

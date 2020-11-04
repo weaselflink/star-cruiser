@@ -17,7 +17,6 @@ class WeaponsUi : StationUi(Station.Weapons) {
         xExpr = { width * 0.5 - vmin * 45 },
         yExpr = { height * 0.5 - vmin * 38 },
         widthExpr = { vmin * 25 },
-        heightExpr = { vmin * 10 },
         onClick = { toggleLockTarget() },
         activated = { selectingTarget },
         initialText = "Lock on"
@@ -51,7 +50,6 @@ class WeaponsUi : StationUi(Station.Weapons) {
         xExpr = { vmin * 15 },
         yExpr = { height - vmin * 2 },
         widthExpr = { vmin * 20 },
-        heightExpr = { vmin * 10 },
         onClick = { toggleShields() }
     )
 
