@@ -14,42 +14,42 @@ class WeaponsUi : StationUi(Station.Weapons) {
     private val shortRangeScope = ShortRangeScope(canvas, true) { contactSelected(it) }
     private val lockTargetButton = CanvasButton(
         canvas = canvas,
-        xExpr = { width * 0.5 - vmin * 45 },
-        yExpr = { height * 0.5 - vmin * 38 },
-        widthExpr = { vmin * 25 },
+        xExpr = { width * 0.5 - 45.vmin },
+        yExpr = { height * 0.5 - 38.vmin },
+        widthExpr = { 25.vmin },
         onClick = { toggleLockTarget() },
         activated = { selectingTarget },
         initialText = "Lock on"
     )
     private val hullDisplay = HullDisplay(
         canvas = canvas,
-        xExpr = { vmin * 2 },
-        yExpr = { height - vmin * 34 }
+        xExpr = { 2.vmin },
+        yExpr = { height - 34.vmin }
     )
     private val shieldsDisplay = ShieldsDisplay(
         canvas = canvas,
-        xExpr = { vmin * 2 },
-        yExpr = { height - vmin * 26 }
+        xExpr = { 2.vmin },
+        yExpr = { height - 26.vmin }
     )
     private val beamModulationUi = ModulationUi(
         canvas = canvas,
-        xExpr = { vmin * 2 },
-        yExpr = { height - vmin * 45 },
+        xExpr = { 2.vmin },
+        yExpr = { height - 45.vmin },
         decreaseCommand = Command.CommandDecreaseBeamModulation,
         increaseCommand = Command.CommandIncreaseBeamModulation
     )
     private val shieldModulationUi = ModulationUi(
         canvas = canvas,
-        xExpr = { vmin * 2 },
-        yExpr = { height - vmin * 14 },
+        xExpr = { 2.vmin },
+        yExpr = { height - 14.vmin },
         decreaseCommand = Command.CommandDecreaseShieldModulation,
         increaseCommand = Command.CommandIncreaseShieldModulation
     )
     private val shieldsButton = CanvasButton(
         canvas = canvas,
-        xExpr = { vmin * 15 },
-        yExpr = { height - vmin * 2 },
-        widthExpr = { vmin * 20 },
+        xExpr = { 15.vmin },
+        yExpr = { height - 2.vmin },
+        widthExpr = { 20.vmin },
         onClick = { toggleShields() }
     )
 

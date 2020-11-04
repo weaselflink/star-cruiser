@@ -17,10 +17,10 @@ import kotlin.random.Random
 
 class ScanDisplay(
     val canvas: HTMLCanvasElement,
-    val xExpr: CanvasDimensions.() -> Double = { width * 0.5 - vmin * 42 },
-    var yExpr: CanvasDimensions.() -> Double = { height * 0.5 + vmin * 30 },
-    val widthExpr: CanvasDimensions.() -> Double = { vmin * 84 },
-    var heightExpr: CanvasDimensions.() -> Double = { vmin * 60 }
+    val xExpr: CanvasDimensions.() -> Double = { width * 0.5 - 42.vmin },
+    var yExpr: CanvasDimensions.() -> Double = { height * 0.5 + 30.vmin },
+    val widthExpr: CanvasDimensions.() -> Double = { 84.vmin },
+    var heightExpr: CanvasDimensions.() -> Double = { 60.vmin }
 ) : PointerEventHandlerParent() {
 
     private val ctx = canvas.context2D
@@ -30,9 +30,9 @@ class ScanDisplay(
     private val inputs = mutableListOf<CanvasSlider>()
     private val abortButton = CanvasButton(
         canvas = canvas,
-        xExpr = { xExpr() + widthExpr() - vmin * 25 },
-        yExpr = { yExpr() - vmin * 5 },
-        widthExpr = { vmin * 20 },
+        xExpr = { xExpr() + widthExpr() - 25.vmin },
+        yExpr = { yExpr() - 5.vmin },
+        widthExpr = { 20.vmin },
         onClick = { ClientSocket.send(Command.CommandAbortScan) },
         initialText = "Abort"
     )
@@ -68,8 +68,8 @@ class ScanDisplay(
                 val slider = CanvasSlider(
                     canvas = canvas,
                     xExpr = { xExpr() + 5.vmin },
-                    yExpr = { yExpr() - heightExpr() + vmin * 45 + vmin * 12 * index },
-                    widthExpr = { widthExpr() - vmin * 10 },
+                    yExpr = { yExpr() - heightExpr() + 45.vmin + 12.vmin * index },
+                    widthExpr = { widthExpr() - 10.vmin },
                     onChange = {
                         ClientSocket.send(Command.CommandSolveScanGame(index, it))
                     }

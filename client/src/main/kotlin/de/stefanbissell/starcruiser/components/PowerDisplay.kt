@@ -19,20 +19,20 @@ class PowerDisplay(
 
     private val repairButton = CanvasButton(
         canvas = canvas,
-        xExpr = { xOffset() + vmin * 3 },
+        xExpr = { xOffset() + 3.vmin },
         yExpr = yExpr,
-        widthExpr = { vmin * 8 },
-        heightExpr = { vmin * 8 },
+        widthExpr = { 8.vmin },
+        heightExpr = { 8.vmin },
         onClick = { ClientSocket.send(Command.CommandStartRepair(systemType)) },
         activated = { repairing },
         initialText = "\ud83d\udee0"
     )
     private val levelSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { xOffset() + vmin * 13 },
+        xExpr = { xOffset() + 13.vmin },
         yExpr = yExpr,
-        widthExpr = { vmin * 41 },
-        heightExpr = { vmin * 8 },
+        widthExpr = { 41.vmin },
+        heightExpr = { 8.vmin },
         onChange = {
             val power = (it * 200).roundToInt()
             ClientSocket.send(Command.CommandSetPower(systemType, power))
@@ -42,10 +42,10 @@ class PowerDisplay(
     )
     private val heat = CanvasProgress(
         canvas = canvas,
-        xExpr = { xOffset() + vmin * 56 },
-        yExpr = { yExpr() - vmin * 4.5 },
-        widthExpr = { vmin * 14 },
-        heightExpr = { vmin * 3.5 },
+        xExpr = { xOffset() + 56.vmin },
+        yExpr = { yExpr() - 4.5.vmin },
+        widthExpr = { 14.vmin },
+        heightExpr = { 3.5.vmin },
         foregroundColorExpr = {
             when {
                 it < 0.5 -> UiStyle.buttonForegroundColor
@@ -56,10 +56,10 @@ class PowerDisplay(
     )
     private val damage = CanvasProgress(
         canvas = canvas,
-        xExpr = { xOffset() + vmin * 56 },
+        xExpr = { xOffset() + 56.vmin },
         yExpr = yExpr,
-        widthExpr = { vmin * 14 },
-        heightExpr = { vmin * 3.5 },
+        widthExpr = { 14.vmin },
+        heightExpr = { 3.5.vmin },
         foregroundColorExpr = {
             when {
                 it > 0.9 -> UiStyle.buttonForegroundColor
@@ -70,10 +70,10 @@ class PowerDisplay(
     )
     private val coolantSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { xOffset() + vmin * 72 },
+        xExpr = { xOffset() + 72.vmin },
         yExpr = yExpr,
-        widthExpr = { vmin * 25 },
-        heightExpr = { vmin * 8 },
+        widthExpr = { 25.vmin },
+        heightExpr = { 8.vmin },
         onChange = {
             ClientSocket.send(Command.CommandSetCoolant(systemType, it))
         }

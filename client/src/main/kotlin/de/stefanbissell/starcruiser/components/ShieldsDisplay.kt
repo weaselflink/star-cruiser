@@ -10,8 +10,8 @@ class ShieldsDisplay(
     canvas: HTMLCanvasElement,
     xExpr: CanvasDimensions.() -> Double,
     yExpr: CanvasDimensions.() -> Double,
-    widthExpr: CanvasDimensions.() -> Double = { vmin * 46 },
-    heightExpr: CanvasDimensions.() -> Double = { vmin * 6 }
+    widthExpr: CanvasDimensions.() -> Double = { 46.vmin },
+    heightExpr: CanvasDimensions.() -> Double = { 6.vmin }
 ) {
 
     private val canvasProgress = CanvasProgress(

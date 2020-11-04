@@ -8,8 +8,8 @@ class JumpDisplay(
     canvas: HTMLCanvasElement,
     xExpr: CanvasDimensions.() -> Double,
     yExpr: CanvasDimensions.() -> Double,
-    widthExpr: CanvasDimensions.() -> Double = { vmin * 34 },
-    heightExpr: CanvasDimensions.() -> Double = { vmin * 6 }
+    widthExpr: CanvasDimensions.() -> Double = { 34.vmin },
+    heightExpr: CanvasDimensions.() -> Double = { 6.vmin }
 ) {
 
     private val canvasProgress = CanvasProgress(

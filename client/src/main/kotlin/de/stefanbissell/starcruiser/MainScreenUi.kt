@@ -35,8 +35,8 @@ class MainScreenUi : StationUi(Station.MainScreen) {
             createViewButton(
                 mainScreenView = view,
                 xExpr = {
-                    val buttonWidth = vmin * 22
-                    val gapWidth = vmin * 2
+                    val buttonWidth = 22.vmin
+                    val gapWidth = 2.vmin
                     val combinedWidth = buttonWidth + gapWidth
                     val requiredFull = buttonWidth * 6 + gapWidth * 7
                     if (width >= requiredFull) {
@@ -50,13 +50,13 @@ class MainScreenUi : StationUi(Station.MainScreen) {
                     }
                 },
                 yExpr = {
-                    val buttonWidth = vmin * 22
-                    val gapWidth = vmin * 2
+                    val buttonWidth = 22.vmin
+                    val gapWidth = 2.vmin
                     val requiredFull = buttonWidth * 6 + gapWidth * 7
                     if (width >= requiredFull || index >= 4) {
-                        height - vmin * 3
+                        height - 3.vmin
                     } else {
-                        height - vmin * 15
+                        height - 15.vmin
                     }
                 }
             )

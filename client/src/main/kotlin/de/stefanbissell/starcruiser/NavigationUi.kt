@@ -23,17 +23,17 @@ class NavigationUi : StationUi(Station.Navigation) {
     )
     private val zoomSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { vmin * 3 },
-        yExpr = { height - vmin * 3 },
-        widthExpr = { vmin * 50 },
+        xExpr = { 3.vmin },
+        yExpr = { height - 3.vmin },
+        widthExpr = { 50.vmin },
         onChange = { navigationMap.changeZoom(it) },
         leftText = "Zoom"
     )
     private val addWaypointButton = CanvasButton(
         canvas = canvas,
-        xExpr = { if (width > vmin * 136) vmin * 55 else vmin * 3 },
-        yExpr = { if (width > vmin * 136) height - vmin * 3 else height - vmin * 15 },
-        widthExpr = { vmin * 37 },
+        xExpr = { if (width > 136.vmin) 55.vmin else 3.vmin },
+        yExpr = { if (width > 136.vmin) height - 3.vmin else height - 15.vmin },
+        widthExpr = { 37.vmin },
         onClick = { toggleAddWaypoint() },
         activated = { buttonState == ButtonState.AddWaypoint },
         initialText = "Add waypoint"
@@ -41,26 +41,26 @@ class NavigationUi : StationUi(Station.Navigation) {
     private val centerButton = CanvasButton(
         canvas = canvas,
         xExpr = {
-            if (width > vmin * 161) {
-                vmin * 94
+            if (width > 161.vmin) {
+                94.vmin
             } else {
-                vmin * 3
+                3.vmin
             }
         },
         yExpr = {
             when {
-                width > vmin * 161 -> {
-                    height - vmin * 3
+                width > 161.vmin -> {
+                    height - 3.vmin
                 }
-                width > vmin * 136 -> {
-                    height - vmin * 15
+                width > 136.vmin -> {
+                    height - 15.vmin
                 }
                 else -> {
-                    height - vmin * 27
+                    height - 27.vmin
                 }
             }
         },
-        widthExpr = { vmin * 23 },
+        widthExpr = { 23.vmin },
         onClick = { navigationMap.centerOnShip() },
         initialText = "Center"
     )
@@ -77,14 +77,6 @@ class NavigationUi : StationUi(Station.Navigation) {
             selectionDetails,
             navigationMap
         )
-    }
-
-    fun zoomIn() {
-        navigationMap.zoomIn()
-    }
-
-    fun zoomOut() {
-        navigationMap.zoomOut()
     }
 
     fun draw(snapshot: SnapshotMessage.Navigation) {

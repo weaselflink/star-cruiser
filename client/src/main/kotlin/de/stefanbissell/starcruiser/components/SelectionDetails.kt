@@ -16,10 +16,10 @@ import org.w3c.dom.RIGHT
 
 class SelectionDetails(
     private val canvas: HTMLCanvasElement,
-    private val xExpr: CanvasDimensions.() -> Double = { width - vmin * 42 },
-    private val yExpr: CanvasDimensions.() -> Double = { height - vmin * 2 },
-    private val widthExpr: CanvasDimensions.() -> Double = { vmin * 40 },
-    private val heightExpr: CanvasDimensions.() -> Double = { vmin * 62 },
+    private val xExpr: CanvasDimensions.() -> Double = { width - 42.vmin },
+    private val yExpr: CanvasDimensions.() -> Double = { height - 2.vmin },
+    private val widthExpr: CanvasDimensions.() -> Double = { 40.vmin },
+    private val heightExpr: CanvasDimensions.() -> Double = { 62.vmin },
     private val onScan: () -> Unit,
     private val onDelete: () -> Unit
 ) : PointerEventHandlerParent() {
@@ -28,32 +28,32 @@ class SelectionDetails(
     private val hullDisplay = HullDisplay(
         canvas = canvas,
         xExpr = { innerX },
-        yExpr = { dim.topY + vmin * 22 },
-        widthExpr = { dim.width - vmin * 8 },
-        heightExpr = { vmin * 4 }
+        yExpr = { dim.topY + 22.vmin },
+        widthExpr = { dim.width - 8.vmin },
+        heightExpr = { 4.vmin }
     )
     private val shieldsDisplay = ShieldsDisplay(
         canvas = canvas,
         xExpr = { innerX },
-        yExpr = { dim.topY + vmin * 28 },
-        widthExpr = { dim.width - vmin * 8 },
-        heightExpr = { vmin * 4 }
+        yExpr = { dim.topY + 28.vmin },
+        widthExpr = { dim.width - 8.vmin },
+        heightExpr = { 4.vmin }
     )
     private val detailsButton = CanvasButton(
         canvas = canvas,
-        xExpr = { dim.rightX - vmin * 14 },
-        yExpr = { dim.topY + vmin * 7 },
-        widthExpr = { vmin * 12 },
-        heightExpr = { vmin * 5 },
+        xExpr = { dim.rightX - 14.vmin },
+        yExpr = { dim.topY + 7.vmin },
+        widthExpr = { 12.vmin },
+        heightExpr = { 5.vmin },
         onClick = { detailsButtonClicked() },
         activated = { showDetails },
         initialText = "Details"
     )
     private val actionButton = CanvasButton(
         canvas = canvas,
-        xExpr = { dim.leftX + dim.width * 0.5 - vmin * 12 },
-        yExpr = { dim.bottomY - vmin * 5 },
-        widthExpr = { vmin * 24 },
+        xExpr = { dim.leftX + dim.width * 0.5 - 12.vmin },
+        yExpr = { dim.bottomY - 5.vmin },
+        widthExpr = { 24.vmin },
         onClick = { actionButtonClicked() }
     )
 
@@ -127,9 +127,9 @@ class SelectionDetails(
             CanvasProgress(
                 canvas = canvas,
                 xExpr = { innerX },
-                yExpr = { dim.topY + vmin * 14 + vmin * 5 * index },
-                widthExpr = { dim.width - vmin * 8 },
-                heightExpr = { vmin * 4 },
+                yExpr = { dim.topY + 14.vmin + 5.vmin * index },
+                widthExpr = { dim.width - 8.vmin },
+                heightExpr = { 4.vmin },
             ).apply {
                 progress = system.value
                 leftText = system.key.label

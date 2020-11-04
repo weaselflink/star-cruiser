@@ -16,8 +16,8 @@ class CanvasProgress(
     private val canvas: HTMLCanvasElement,
     private val xExpr: CanvasDimensions.() -> Double,
     private val yExpr: CanvasDimensions.() -> Double,
-    private val widthExpr: CanvasDimensions.() -> Double = { vmin * 34 },
-    private val heightExpr: CanvasDimensions.() -> Double = { vmin * 6 },
+    private val widthExpr: CanvasDimensions.() -> Double = { 34.vmin },
+    private val heightExpr: CanvasDimensions.() -> Double = { 6.vmin },
     private val backgroundColorExpr: (Double) -> String = { UiStyle.buttonBackgroundColor },
     private val foregroundColorExpr: (Double) -> String = { UiStyle.buttonForegroundColor }
 ) {

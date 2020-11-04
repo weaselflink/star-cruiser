@@ -14,7 +14,7 @@ class EngineeringUi : StationUi(Station.Engineering) {
         systemType to PowerDisplay(
             systemType = systemType,
             canvas = canvas,
-            yExpr = { height - vmin * 3 - vmin * index * 10 }
+            yExpr = { height - 3.vmin - 10.vmin * index }
         )
     }.associate { it.first to it.second }
 

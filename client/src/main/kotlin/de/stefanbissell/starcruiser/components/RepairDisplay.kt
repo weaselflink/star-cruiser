@@ -18,10 +18,10 @@ import org.w3c.dom.ROUND
 
 class RepairDisplay(
     val canvas: HTMLCanvasElement,
-    val xExpr: CanvasDimensions.() -> Double = { width * 0.5 - vmin * 48 },
-    val yExpr: CanvasDimensions.() -> Double = { height * 0.5 + vmin * 36 },
-    val widthExpr: CanvasDimensions.() -> Double = { vmin * 96 },
-    val heightExpr: CanvasDimensions.() -> Double = { vmin * 76 }
+    val xExpr: CanvasDimensions.() -> Double = { width * 0.5 - 48.vmin },
+    val yExpr: CanvasDimensions.() -> Double = { height * 0.5 + 36.vmin },
+    val widthExpr: CanvasDimensions.() -> Double = { 96.vmin },
+    val heightExpr: CanvasDimensions.() -> Double = { 76.vmin }
 ) : PointerEventHandler {
 
     private val ctx = canvas.context2D
@@ -30,9 +30,9 @@ class RepairDisplay(
     private val canvasPopup = CanvasPopup(canvas)
     private val abortButton = CanvasButton(
         canvas = canvas,
-        xExpr = { xExpr() + widthExpr() - vmin * 25 },
-        yExpr = { yExpr() - vmin * 5 },
-        widthExpr = { vmin * 20 },
+        xExpr = { xExpr() + widthExpr() - 25.vmin },
+        yExpr = { yExpr() - 5.vmin },
+        widthExpr = { 20.vmin },
         onClick = { ClientSocket.send(Command.CommandAbortRepair) },
         initialText = "Abort"
     )

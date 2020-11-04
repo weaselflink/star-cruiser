@@ -19,10 +19,10 @@ class HelmUi : StationUi(Station.Helm) {
     private val shortRangeScope = ShortRangeScope(canvas)
     private val throttleSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { vmin * 3 },
-        yExpr = { height - vmin * 3 },
-        widthExpr = { vmin * 10 },
-        heightExpr = { vmin * 60 },
+        xExpr = { 3.vmin },
+        yExpr = { height - 3.vmin },
+        widthExpr = { 10.vmin },
+        heightExpr = { 60.vmin },
         onChange = {
             val throttle = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
             ClientSocket.send(CommandChangeThrottle(throttle))
@@ -32,10 +32,10 @@ class HelmUi : StationUi(Station.Helm) {
     )
     private val jumpSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { vmin * 15 },
-        yExpr = { height - vmin * 3 },
-        widthExpr = { vmin * 10 },
-        heightExpr = { vmin * 60 },
+        xExpr = { 15.vmin },
+        yExpr = { height - 3.vmin },
+        widthExpr = { 10.vmin },
+        heightExpr = { 60.vmin },
         onChange = {
             ClientSocket.send(CommandChangeJumpDistance(it))
         },
@@ -43,9 +43,9 @@ class HelmUi : StationUi(Station.Helm) {
     )
     private val rudderSlider = CanvasSlider(
         canvas = canvas,
-        xExpr = { width - vmin * 63 },
-        yExpr = { height - vmin * 3 },
-        widthExpr = { vmin * 60 },
+        xExpr = { width - 63.vmin },
+        yExpr = { height - 3.vmin },
+        widthExpr = { 60.vmin },
         onChange = {
             val rudder = min(10.0, max(-10.0, it * 20.0 - 10.0)).roundToInt() * 10
             ClientSocket.send(CommandChangeRudder(rudder))
@@ -56,14 +56,14 @@ class HelmUi : StationUi(Station.Helm) {
     )
     private val jumpDisplay = JumpDisplay(
         canvas = canvas,
-        xExpr = { vmin * 27 },
-        yExpr = { height - if (width >= vmin * 125) vmin * 15 else vmin * 27 }
+        xExpr = { 27.vmin },
+        yExpr = { height - if (width >= 125.vmin) 15.vmin else 27.vmin }
     )
     private val jumpButton = CanvasButton(
         canvas = canvas,
-        xExpr = { vmin * 34 },
-        yExpr = { height - if (width >= vmin * 125) vmin * 3 else vmin * 15 },
-        widthExpr = { vmin * 20 },
+        xExpr = { 34.vmin },
+        yExpr = { height - if (width >= 125.vmin) 3.vmin else 15.vmin },
+        widthExpr = { 20.vmin },
         onClick = { ClientSocket.send(CommandStartJump) },
         initialText = "Jump"
     )

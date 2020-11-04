@@ -194,6 +194,14 @@ data class CanvasDimensions(
         width: Number,
         height: Number
     ) : this(width.toDouble(), height.toDouble())
+
+    val halfWidth = width * 0.5
+
+    val Int.vmin
+        get() = this@CanvasDimensions.vmin * this
+
+    val Double.vmin
+        get() = this@CanvasDimensions.vmin * this
 }
 
 fun CanvasRenderingContext2D.transformReset() = setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)

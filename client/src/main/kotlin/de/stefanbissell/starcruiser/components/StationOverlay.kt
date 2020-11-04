@@ -17,18 +17,18 @@ class StationOverlay : PointerEventHandlerParent() {
 
     private val currentStationButton = CanvasButton(
         canvas = document.canvas2d,
-        xExpr = { width - vmin * 37 },
-        yExpr = { vmin * 12 },
-        widthExpr = { vmin * 35 },
+        xExpr = { width - 37.vmin },
+        yExpr = { 12.vmin },
+        widthExpr = { 35.vmin },
         onClick = { ClientState.toggleStationOverlay() },
         activated = { ClientState.showStationOverlay }
     )
     private val otherStationButtons = Station.values().mapIndexed { index, station ->
         CanvasButton(
             canvas = document.canvas2d,
-            xExpr = { width - vmin * 37 },
-            yExpr = { vmin * 27 + index * vmin * 12 },
-            widthExpr = { vmin * 35 },
+            xExpr = { width - 37.vmin },
+            yExpr = { 27.vmin + index * 12.vmin },
+            widthExpr = { 35.vmin },
             onClick = { switchStation(station) },
             activated = { station == currentStation },
             enabled = { ClientState.showStationOverlay },
@@ -37,9 +37,9 @@ class StationOverlay : PointerEventHandlerParent() {
     }
     private val exitButton = CanvasButton(
         canvas = document.canvas2d,
-        xExpr = { width - vmin * 37 },
-        yExpr = { vmin * 30 + Station.values().size * vmin * 12 },
-        widthExpr = { vmin * 35 },
+        xExpr = { width - 37.vmin },
+        yExpr = { 30.vmin + Station.values().size * 12.vmin },
+        widthExpr = { 35.vmin },
         onClick = { ClientSocket.send(Command.CommandExitShip) },
         enabled = { ClientState.showStationOverlay },
         initialText = "Exit"
@@ -73,11 +73,11 @@ class StationOverlay : PointerEventHandlerParent() {
     private fun drawStationButtons() {
         val dim = calculateRect(
             canvas = document.canvas2d,
-            xExpr = { width - vmin * 38 },
-            yExpr = { vmin * 31 + otherStationButtons.size * vmin * 12 },
-            widthExpr = { vmin * 37 },
-            heightExpr = { (otherStationButtons.size + 1) * vmin * 12 + vmin * 3 },
-            radiusExpr = { vmin * 6 }
+            xExpr = { width - 38.vmin },
+            yExpr = { 31.vmin + otherStationButtons.size * 12.vmin },
+            widthExpr = { 37.vmin },
+            heightExpr = { (otherStationButtons.size + 1) * 12.vmin + 3.vmin },
+            radiusExpr = { 6.vmin }
         )
 
         with(document.canvas2d.context2D) {
