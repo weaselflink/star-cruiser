@@ -11,7 +11,9 @@ import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import kotlin.time.nanoseconds
 
 sealed class StatisticsMessage {
 
@@ -60,20 +62,19 @@ data class StatisticsSnapshot(
     val totalReceived: Long
 ) {
 
+    private val nowWithoutNanos: Instant
+        get() = Clock.System.now().let {
+            it.minus(it.nanosecondsOfSecond.nanoseconds)
+        }
+
     fun toJson() = configuredJson.encodeToString(serializer(), this)
 
     fun log() {
-        println("============== ${Clock.System.now()} ==============")
-        println(
-            "Messages sent: " +
-                "${countSent.toString().padStart(14)} " +
-                "(${totalSent.formatBytes().padStart(12)})"
-        )
-        println(
-            "Messages received: " +
-                "${countReceived.toString().padStart(10)} " +
-                "(${totalReceived.formatBytes().padStart(12)})"
-        )
+        println("============== $nowWithoutNanos ==============")
+        println("Messages sent:     ${countSent.toString().padStart(12)}")
+        println("Bytes sent:        ${totalSent.formatBytes().padStart(12)}")
+        println("Messages received: ${countReceived.toString().padStart(12)}")
+        println("Bytes received:    ${totalReceived.formatBytes().padStart(12)}")
     }
 
     private fun Long.formatBytes(): String {
