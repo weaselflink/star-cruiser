@@ -93,13 +93,17 @@ object TestScenario : Scenario() {
                     radius = 500
                 )
             }
-            enemyRespawnTrigger(defaultSpawnArea, enemyFaction)
+            enemyRespawnTrigger(
+                spawnArea = defaultSpawnArea,
+                factionName = enemyFaction
+            )
         }
 }
 
 private fun ScenarioDefinition.enemyRespawnTrigger(
     spawnArea: Shape,
-    factionName: String
+    factionName: String,
+    countMutator: (Int) -> Int = { it + 1 }
 ) {
     trigger<EnemyRespawnTriggerState> {
         interval = 5.0
@@ -107,7 +111,7 @@ private fun ScenarioDefinition.enemyRespawnTrigger(
             ships.count { it.faction.name == factionName } < 1
         }
         action = { triggerState ->
-            val newCount = triggerState.count + 1
+            val newCount = countMutator(triggerState.count)
             repeat(newCount) {
                 state.spawnNonPlayerShip(
                     NonPlayerShip(
