@@ -4,6 +4,7 @@ import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.shapes.Circle
 import de.stefanbissell.starcruiser.shapes.Polygon
 import de.stefanbissell.starcruiser.shapes.Ring
+import de.stefanbissell.starcruiser.shapes.Shape
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import kotlin.math.PI
 import kotlin.random.Random
@@ -92,27 +93,34 @@ object TestScenario : Scenario() {
                     radius = 500
                 )
             }
-            trigger<EnemyRespawnTriggerState> {
-                interval = 5.0
-                condition = {
-                    ships.count { it.faction.name == enemyFaction } < 1
-                }
-                action = { triggerState ->
-                    val newCount = triggerState.count + 1
-                    repeat(newCount) {
-                        state.spawnNonPlayerShip(
-                            NonPlayerShip(
-                                position = defaultSpawnArea.randomPointInside(),
-                                rotation = Random.nextDouble(PI * 2.0),
-                                faction = view.factionByName(enemyFaction)
-                            )
-                        )
-                    }
-                    EnemyRespawnTriggerState(newCount)
-                }
-                initialState = { EnemyRespawnTriggerState() }
-            }
+            enemyRespawnTrigger(defaultSpawnArea, enemyFaction)
         }
+}
+
+private fun ScenarioDefinition.enemyRespawnTrigger(
+    spawnArea: Shape,
+    factionName: String
+) {
+    trigger<EnemyRespawnTriggerState> {
+        interval = 5.0
+        condition = {
+            ships.count { it.faction.name == factionName } < 1
+        }
+        action = { triggerState ->
+            val newCount = triggerState.count + 1
+            repeat(newCount) {
+                state.spawnNonPlayerShip(
+                    NonPlayerShip(
+                        position = spawnArea.randomPointInside(),
+                        rotation = Random.nextDouble(PI * 2.0),
+                        faction = view.factionByName(factionName)
+                    )
+                )
+            }
+            EnemyRespawnTriggerState(newCount)
+        }
+        initialState = { EnemyRespawnTriggerState() }
+    }
 }
 
 data class EnemyRespawnTriggerState(
