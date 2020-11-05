@@ -32,6 +32,8 @@ class PatrolAi(
                 checkPointReached()
                 steerTowardsNextPoint()
             }
+        } else {
+            ship.throttle = 0
         }
     }
 

@@ -13,12 +13,24 @@ import strikt.assertions.isNotNull
 
 class PatrolAiTest {
 
-    private val ship = NonPlayerShip(faction = TestFactions.neutral)
+    private val ship = NonPlayerShip(faction = TestFactions.neutral).apply {
+        throttle = 10
+    }
     private val time = GameTime.atEpoch()
     private val behaviourAi = BehaviourAi(Behaviour.CombatPatrol)
     private val helmAi = HelmAi()
     private val patrolPath = listOf(p(100, 0), p(100, 100), p(0, 0))
-    private val patrolAi = PatrolAi(behaviourAi, helmAi, patrolPath)
+    private var patrolAi = PatrolAi(behaviourAi, helmAi, patrolPath)
+
+    @Test
+    fun `sets throttle to 0 if path empty`() {
+        patrolAi = PatrolAi(behaviourAi, helmAi, emptyList())
+
+        executeAi()
+
+        expectThat(ship.throttle)
+            .isEqualTo(0)
+    }
 
     @Test
     fun `sets throttle to 50 initially`() {
@@ -35,7 +47,7 @@ class PatrolAiTest {
         executeAi()
 
         expectThat(ship.throttle)
-            .isEqualTo(0)
+            .isEqualTo(10)
     }
 
     @Test
