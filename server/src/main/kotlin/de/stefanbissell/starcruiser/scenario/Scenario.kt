@@ -68,7 +68,7 @@ class ScenarioDefinition {
 
     fun statelessTrigger(block: TriggerDefinition<Unit>.() -> Unit) {
         triggers += TriggerDefinition<Unit>().apply {
-            initialState = { Unit }
+            initialState = {}
             block()
         }
     }
