@@ -1,6 +1,5 @@
 package de.stefanbissell.starcruiser.ai
 
-import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 
@@ -9,7 +8,7 @@ class BehaviourAi(
 ) : ComponentAi() {
 
     override fun execute(aiState: AiState) {
-        behaviour = behaviour.transition(aiState.ship, aiState.time, aiState.contactList)
+        behaviour = behaviour.transition(aiState)
     }
 }
 
@@ -25,20 +24,12 @@ sealed class Behaviour {
     fun NonPlayerShip.shieldsHigh() =
         shieldHandler.currentStrength > template.shield.strength * 0.6
 
-    open fun transition(
-        ship: NonPlayerShip,
-        time: GameTime,
-        contactList: ShipContactList
-    ): Behaviour = this
+    open fun transition(aiState: AiState): Behaviour = this
 
     object Idle : Behaviour() {
 
-        override fun transition(
-            ship: NonPlayerShip,
-            time: GameTime,
-            contactList: ShipContactList
-        ): Behaviour =
-            if (ship.faction.enemies.isNotEmpty()) {
+        override fun transition(aiState: AiState): Behaviour =
+            if (aiState.ship.faction.enemies.isNotEmpty()) {
                 CombatPatrol
             } else {
                 PeacefulPatrol
@@ -47,12 +38,8 @@ sealed class Behaviour {
 
     object PeacefulPatrol : Behaviour(), Patrol {
 
-        override fun transition(
-            ship: NonPlayerShip,
-            time: GameTime,
-            contactList: ShipContactList
-        ): Behaviour =
-            if (ship.shieldHandler.timeSinceLastDamage < 10) {
+        override fun transition(aiState: AiState): Behaviour =
+            if (aiState.ship.shieldHandler.timeSinceLastDamage < 10) {
                 PeacefulEvade
             } else {
                 PeacefulPatrol
@@ -61,12 +48,8 @@ sealed class Behaviour {
 
     object PeacefulEvade : Behaviour(), Evade {
 
-        override fun transition(
-            ship: NonPlayerShip,
-            time: GameTime,
-            contactList: ShipContactList
-        ): Behaviour =
-            if (ship.shieldHandler.timeSinceLastDamage > 30) {
+        override fun transition(aiState: AiState): Behaviour =
+            if (aiState.ship.shieldHandler.timeSinceLastDamage > 30) {
                 PeacefulPatrol
             } else {
                 PeacefulEvade
@@ -75,14 +58,10 @@ sealed class Behaviour {
 
     object CombatPatrol : Behaviour(), Patrol {
 
-        override fun transition(
-            ship: NonPlayerShip,
-            time: GameTime,
-            contactList: ShipContactList
-        ): Behaviour =
+        override fun transition(aiState: AiState): Behaviour =
             when {
-                ship.shieldsLow() -> CombatEvade
-                contactList.enemyInRange() -> Attack
+                aiState.ship.shieldsLow() -> CombatEvade
+                aiState.contactList.enemyInRange() -> Attack
                 else -> CombatPatrol
             }
 
@@ -92,14 +71,10 @@ sealed class Behaviour {
 
     object Attack : Behaviour() {
 
-        override fun transition(
-            ship: NonPlayerShip,
-            time: GameTime,
-            contactList: ShipContactList
-        ): Behaviour =
+        override fun transition(aiState: AiState): Behaviour =
             when {
-                ship.shieldsLow() -> CombatEvade
-                contactList.noEnemyInRange() -> CombatPatrol
+                aiState.ship.shieldsLow() -> CombatEvade
+                aiState.contactList.noEnemyInRange() -> CombatPatrol
                 else -> Attack
             }
 
@@ -109,12 +84,8 @@ sealed class Behaviour {
 
     object CombatEvade : Behaviour(), Evade {
 
-        override fun transition(
-            ship: NonPlayerShip,
-            time: GameTime,
-            contactList: ShipContactList
-        ): Behaviour =
-            if (ship.shieldsHigh()) {
+        override fun transition(aiState: AiState): Behaviour =
+            if (aiState.ship.shieldsHigh()) {
                 CombatPatrol
             } else {
                 CombatEvade
