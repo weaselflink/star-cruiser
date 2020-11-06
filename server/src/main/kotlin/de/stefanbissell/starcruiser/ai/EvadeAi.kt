@@ -1,7 +1,6 @@
 package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.ContactType
-import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.fullCircle
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
@@ -15,13 +14,9 @@ class EvadeAi(
 
     var threat: ObjectId? = null
 
-    override fun execute(
-        ship: NonPlayerShip,
-        time: GameTime,
-        contactList: ShipContactList
-    ) {
+    override fun execute(aiState: AiState) {
         if (behaviourAi.behaviour is Behaviour.Evade) {
-            performEvade(ship, contactList)
+            performEvade(aiState.ship, aiState.contactList)
         }
     }
 

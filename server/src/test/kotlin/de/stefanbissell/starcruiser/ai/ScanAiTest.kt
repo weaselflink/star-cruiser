@@ -122,11 +122,11 @@ class ScanAiTest {
     }
 
     private fun updateAi() {
-        scanAi.update(ship, time, ShipContactList(ship, shipList))
+        scanAi.update(AiState(ship, time, ShipContactList(ship, shipList)))
     }
 
     private fun executeAi() {
-        scanAi.execute(ship, time, ShipContactList(ship, shipList))
+        scanAi.execute(AiState(ship, time, ShipContactList(ship, shipList)))
     }
 
     private fun addShip(

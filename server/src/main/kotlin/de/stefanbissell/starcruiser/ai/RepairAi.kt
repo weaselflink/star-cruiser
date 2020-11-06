@@ -1,9 +1,6 @@
 package de.stefanbissell.starcruiser.ai
 
-import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.PoweredSystemType
-import de.stefanbissell.starcruiser.ships.NonPlayerShip
-import de.stefanbissell.starcruiser.ships.ShipContactList
 
 class RepairAi : ComponentAi() {
 
@@ -17,12 +14,8 @@ class RepairAi : ComponentAi() {
         PoweredSystemType.Reactor
     )
 
-    override fun execute(
-        ship: NonPlayerShip,
-        time: GameTime,
-        contactList: ShipContactList
-    ) {
-        with(ship.powerHandler) {
+    override fun execute(aiState: AiState) {
+        with(aiState.ship.powerHandler) {
             if (!repairing) {
                 priorityList.mapNotNull {
                     poweredSystems[it]

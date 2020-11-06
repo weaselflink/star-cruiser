@@ -32,12 +32,13 @@ class ShipAi(
         time: GameTime,
         contactList: ShipContactList
     ) {
+        val aiState = AiState(
+            ship = ship,
+            time = time,
+            contactList = contactList
+        )
         componentAis.forEach {
-            it.update(
-                ship = ship,
-                time = time,
-                contactList = contactList
-            )
+            it.update(aiState)
         }
     }
 

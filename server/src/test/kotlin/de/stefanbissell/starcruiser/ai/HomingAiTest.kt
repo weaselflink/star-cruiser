@@ -153,7 +153,7 @@ class HomingAiTest {
     }
 
     private fun executeAi() {
-        homingAi.execute(ship, time, ShipContactList(ship, shipList))
+        homingAi.execute(AiState(ship, time, ShipContactList(ship, shipList)))
     }
 
     private fun addShip(

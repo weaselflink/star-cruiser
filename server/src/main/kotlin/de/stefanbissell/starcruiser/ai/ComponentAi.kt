@@ -11,26 +11,20 @@ abstract class ComponentAi(
 
     private var lastCheck: Double = -Double.MAX_VALUE
 
-    fun update(
-        ship: NonPlayerShip,
-        time: GameTime,
-        contactList: ShipContactList
-    ) {
-        if (time.current - lastCheck > interval) {
-            lastCheck = time.current
-            execute(
-                ship = ship,
-                time = time,
-                contactList = contactList
-            )
+    fun update(aiState: AiState) {
+        if (aiState.time.current - lastCheck > interval) {
+            lastCheck = aiState.time.current
+            execute(aiState)
         }
     }
 
     open fun targetDestroyed(shipId: ObjectId) = Unit
 
-    abstract fun execute(
-        ship: NonPlayerShip,
-        time: GameTime,
-        contactList: ShipContactList
-    )
+    abstract fun execute(aiState: AiState)
 }
+
+data class AiState(
+    val ship: NonPlayerShip,
+    val time: GameTime,
+    val contactList: ShipContactList
+)

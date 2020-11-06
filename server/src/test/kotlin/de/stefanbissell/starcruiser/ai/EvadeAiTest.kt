@@ -129,7 +129,7 @@ class EvadeAiTest {
     }
 
     private fun executeAi() {
-        evadeAi.execute(ship, time, ShipContactList(ship, shipList))
+        evadeAi.execute(AiState(ship, time, ShipContactList(ship, shipList)))
     }
 
     private fun addShip(

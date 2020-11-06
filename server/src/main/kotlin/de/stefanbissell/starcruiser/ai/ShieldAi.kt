@@ -1,17 +1,15 @@
 package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.ContactType
-import de.stefanbissell.starcruiser.GameTime
-import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 
 class ShieldAi : ComponentAi() {
 
-    override fun execute(
-        ship: NonPlayerShip,
-        time: GameTime,
-        contactList: ShipContactList
-    ) {
+    override fun execute(aiState: AiState) {
+        aiState.updateShield()
+    }
+
+    private fun AiState.updateShield() {
         with(ship.shieldHandler) {
             val hostile = contactList.closestHostile()
             if (hostile != null && ship.rangeTo(hostile.position) <= 500.0) {

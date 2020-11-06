@@ -14,6 +14,7 @@ import kotlin.math.PI
 
 class HelmAiTest {
 
+    private val time = GameTime.atEpoch()
     private val ship = NonPlayerShip(
         faction = TestFactions.neutral,
         rotation = 0.0
@@ -24,7 +25,7 @@ class HelmAiTest {
     fun `sets rudder to port`() {
         helmAi.targetRotation = PI * 0.5
 
-        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+        executeAi()
 
         expectThat(ship.rudder).isEqualTo(100)
     }
@@ -33,7 +34,7 @@ class HelmAiTest {
     fun `sets rudder to starboard`() {
         helmAi.targetRotation = -PI * 0.5
 
-        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+        executeAi()
 
         expectThat(ship.rudder).isEqualTo(-100)
     }
@@ -43,11 +44,11 @@ class HelmAiTest {
         helmAi.targetRotation = PI * 0.5
         ship.rudder = 100
 
-        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+        executeAi()
 
         ship.rotation = PI * 0.5 - 0.1.toRadians()
 
-        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+        executeAi()
 
         expectThat(helmAi.targetRotation).isNull()
         expectThat(ship.rudder).isEqualTo(0)
@@ -58,11 +59,11 @@ class HelmAiTest {
         helmAi.targetRotation = PI * 0.5
         ship.rudder = 100
 
-        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+        executeAi()
 
         ship.rotation = PI * 0.5 + 10.0.toRadians()
 
-        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+        executeAi()
 
         expectThat(helmAi.targetRotation).isNull()
         expectThat(ship.rudder).isEqualTo(0)
@@ -72,13 +73,13 @@ class HelmAiTest {
     fun `minimal rudder after calculated point`() {
         helmAi.targetRotation = PI * 0.5
 
-        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+        executeAi()
 
         expectThat(ship.rudder).isEqualTo(100)
 
         ship.rotation = PI * 0.5 - 0.3.toRadians()
 
-        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+        executeAi()
 
         expectThat(helmAi.targetRotation).isNotNull()
         expectThat(ship.rudder).isEqualTo(10)
@@ -88,25 +89,29 @@ class HelmAiTest {
     fun `starts second turn`() {
         helmAi.targetRotation = PI * 0.5
 
-        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+        executeAi()
 
         ship.rotation = PI * 0.5
 
-        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+        executeAi()
 
         expectThat(helmAi.targetRotation).isNull()
 
         helmAi.targetRotation = PI
 
-        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+        executeAi()
 
         expectThat(ship.rudder).isEqualTo(100)
 
         ship.rotation = PI
 
-        helmAi.execute(ship, GameTime(), emptyContactList(ship))
+        executeAi()
 
         expectThat(helmAi.targetRotation).isNull()
         expectThat(ship.rudder).isEqualTo(0)
+    }
+
+    private fun executeAi() {
+        helmAi.execute(AiState(ship, time, emptyContactList(ship)))
     }
 }

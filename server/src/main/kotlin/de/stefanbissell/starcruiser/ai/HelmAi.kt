@@ -1,9 +1,7 @@
 package de.stefanbissell.starcruiser.ai
 
-import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.physics.PerformanceAnalysisStore
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
-import de.stefanbissell.starcruiser.ships.ShipContactList
 import de.stefanbissell.starcruiser.smallestSignedAngleBetween
 import de.stefanbissell.starcruiser.toRadians
 import kotlin.math.abs
@@ -17,11 +15,8 @@ class HelmAi : ComponentAi(0.1) {
     var rudderNeutralPoint: Double? = null
     var endTurnCondition: (Double) -> Boolean = { false }
 
-    override fun execute(
-        ship: NonPlayerShip,
-        time: GameTime,
-        contactList: ShipContactList
-    ) {
+    override fun execute(aiState: AiState) {
+        val ship = aiState.ship
         targetRotation?.let {
             val diff = smallestSignedAngleBetween(ship.rotation, it)
             if (endTurnCondition(diff)) {

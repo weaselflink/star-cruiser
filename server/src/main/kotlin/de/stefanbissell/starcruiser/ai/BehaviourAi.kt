@@ -8,8 +8,8 @@ class BehaviourAi(
     var behaviour: Behaviour = Behaviour.Idle
 ) : ComponentAi() {
 
-    override fun execute(ship: NonPlayerShip, time: GameTime, contactList: ShipContactList) {
-        behaviour = behaviour.transition(ship, time, contactList)
+    override fun execute(aiState: AiState) {
+        behaviour = behaviour.transition(aiState.ship, aiState.time, aiState.contactList)
     }
 }
 

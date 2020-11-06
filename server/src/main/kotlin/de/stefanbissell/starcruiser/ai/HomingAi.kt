@@ -1,7 +1,6 @@
 package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.ContactType
-import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.interceptPoint
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
@@ -14,13 +13,9 @@ class HomingAi(
 
     var target: ObjectId? = null
 
-    override fun execute(
-        ship: NonPlayerShip,
-        time: GameTime,
-        contactList: ShipContactList
-    ) {
+    override fun execute(aiState: AiState) {
         if (behaviourAi.behaviour == Behaviour.Attack) {
-            performAttack(ship, contactList)
+            aiState.performAttack()
         }
     }
 
@@ -30,10 +25,7 @@ class HomingAi(
         }
     }
 
-    private fun performAttack(
-        ship: NonPlayerShip,
-        contactList: ShipContactList
-    ) {
+    private fun AiState.performAttack() {
         selectTarget(contactList)
         target?.let {
             contactList[it]

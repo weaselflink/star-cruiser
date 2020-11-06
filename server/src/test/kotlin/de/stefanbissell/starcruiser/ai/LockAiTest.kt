@@ -110,11 +110,11 @@ class LockAiTest {
     }
 
     private fun updateAi() {
-        lockAi.update(ship, time, ShipContactList(ship, shipList))
+        lockAi.update(AiState(ship, time, ShipContactList(ship, shipList)))
     }
 
     private fun executeAi() {
-        lockAi.execute(ship, time, ShipContactList(ship, shipList))
+        lockAi.execute(AiState(ship, time, ShipContactList(ship, shipList)))
     }
 
     private fun addShip(

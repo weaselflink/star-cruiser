@@ -2,10 +2,10 @@ package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TestFactions
+import de.stefanbissell.starcruiser.emptyContactList
 import de.stefanbissell.starcruiser.isNear
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
-import de.stefanbissell.starcruiser.ships.ShipContactList
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -88,6 +88,6 @@ class PatrolAiTest {
     }
 
     private fun executeAi() {
-        patrolAi.execute(ship, time, ShipContactList(ship, emptyList()))
+        patrolAi.execute(AiState(ship, time, emptyContactList(ship)))
     }
 }

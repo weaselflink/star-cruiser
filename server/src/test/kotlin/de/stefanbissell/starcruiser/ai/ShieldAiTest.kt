@@ -20,7 +20,7 @@ class ShieldAiTest {
     private val time = GameTime.atEpoch()
     private val shieldAi = ShieldAi()
 
-    private var contactList = emptyList<Ship>()
+    private var shipList = emptyList<Ship>()
 
     @Test
     fun `lowers shields when no threats known`() {
@@ -72,11 +72,11 @@ class ShieldAiTest {
 
     private fun addHostileShip(position: Vector2) {
         val target = PlayerShip(faction = TestFactions.player, position = position)
-        contactList = listOf(target)
+        shipList = listOf(target)
         ship.scans[target.id] = ScanLevel.Detailed
     }
 
     private fun executeAi() {
-        shieldAi.execute(ship, time, ShipContactList(ship, contactList))
+        shieldAi.execute(AiState(ship, time, ShipContactList(ship, shipList)))
     }
 }

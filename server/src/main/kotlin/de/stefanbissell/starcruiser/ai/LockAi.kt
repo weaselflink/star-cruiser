@@ -1,17 +1,15 @@
 package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.ContactType
-import de.stefanbissell.starcruiser.GameTime
-import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 
 class LockAi : ComponentAi(5.0) {
 
-    override fun execute(
-        ship: NonPlayerShip,
-        time: GameTime,
-        contactList: ShipContactList
-    ) {
+    override fun execute(aiState: AiState) {
+        aiState.updateLock()
+    }
+
+    private fun AiState.updateLock() {
         val lockTarget = ship.lockHandler?.targetId?.let { contactList[it] }
         if (lockTarget != null && !lockTarget.nearScopeRange) {
             ship.abortLock()

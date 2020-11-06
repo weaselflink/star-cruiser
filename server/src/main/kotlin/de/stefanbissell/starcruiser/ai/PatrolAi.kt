@@ -1,9 +1,7 @@
 package de.stefanbissell.starcruiser.ai
 
-import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
-import de.stefanbissell.starcruiser.ships.ShipContactList
 
 class PatrolAi(
     private val behaviourAi: BehaviourAi,
@@ -16,17 +14,13 @@ class PatrolAi(
     private val nextPoint: Vector2
         get() = path[pointInPath]
 
-    override fun execute(
-        ship: NonPlayerShip,
-        time: GameTime,
-        contactList: ShipContactList
-    ) {
+    override fun execute(aiState: AiState) {
         if (behaviourAi.behaviour is Behaviour.Patrol) {
-            performPatrol(ship)
+            aiState.performPatrol()
         }
     }
 
-    private fun performPatrol(ship: NonPlayerShip) {
+    private fun AiState.performPatrol() {
         if (path.isNotEmpty()) {
             with(ship) {
                 checkPointReached()
