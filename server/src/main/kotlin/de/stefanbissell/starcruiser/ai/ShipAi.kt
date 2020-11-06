@@ -14,11 +14,7 @@ class ShipAi(
 
     private val patrolPath = createInitialPatrolPath(ship)
 
-    private val behaviourAi = if (ship.faction.enemies.isNotEmpty()) {
-        BehaviourAi(Behaviour.CombatPatrol)
-    } else {
-        BehaviourAi(Behaviour.IdlePatrol)
-    }
+    private val behaviourAi = BehaviourAi()
     private val helmAi = HelmAi()
     private val componentAis = listOf(
         behaviourAi,

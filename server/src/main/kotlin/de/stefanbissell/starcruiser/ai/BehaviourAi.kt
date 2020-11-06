@@ -5,7 +5,7 @@ import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.ShipContactList
 
 class BehaviourAi(
-    var behaviour: Behaviour
+    var behaviour: Behaviour = Behaviour.Idle
 ) : ComponentAi() {
 
     override fun execute(ship: NonPlayerShip, time: GameTime, contactList: ShipContactList) {
@@ -31,7 +31,21 @@ sealed class Behaviour {
         contactList: ShipContactList
     ): Behaviour = this
 
-    object IdlePatrol : Behaviour(), Patrol {
+    object Idle : Behaviour() {
+
+        override fun transition(
+            ship: NonPlayerShip,
+            time: GameTime,
+            contactList: ShipContactList
+        ): Behaviour =
+            if (ship.faction.enemies.isNotEmpty()) {
+                CombatPatrol
+            } else {
+                PeacefulPatrol
+            }
+    }
+
+    object PeacefulPatrol : Behaviour(), Patrol {
 
         override fun transition(
             ship: NonPlayerShip,
@@ -39,13 +53,13 @@ sealed class Behaviour {
             contactList: ShipContactList
         ): Behaviour =
             if (ship.shieldHandler.timeSinceLastDamage < 10) {
-                IdleEvade
+                PeacefulEvade
             } else {
-                IdlePatrol
+                PeacefulPatrol
             }
     }
 
-    object IdleEvade : Behaviour(), Evade {
+    object PeacefulEvade : Behaviour(), Evade {
 
         override fun transition(
             ship: NonPlayerShip,
@@ -53,9 +67,9 @@ sealed class Behaviour {
             contactList: ShipContactList
         ): Behaviour =
             if (ship.shieldHandler.timeSinceLastDamage > 30) {
-                IdlePatrol
+                PeacefulPatrol
             } else {
-                IdleEvade
+                PeacefulEvade
             }
     }
 

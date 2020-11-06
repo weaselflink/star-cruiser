@@ -22,7 +22,7 @@ class EvadeAiTest {
 
     private val ship = NonPlayerShip(faction = TestFactions.enemy)
     private val time = GameTime.atEpoch()
-    private val behaviourAi = BehaviourAi(Behaviour.IdleEvade)
+    private val behaviourAi = BehaviourAi(Behaviour.PeacefulEvade)
     private val helmAi = HelmAi()
     private val evadeAi = EvadeAi(behaviourAi, helmAi)
 
@@ -39,7 +39,7 @@ class EvadeAiTest {
 
     @Test
     fun `does nothing if behaviour not evade`() {
-        behaviourAi.behaviour = Behaviour.IdlePatrol
+        behaviourAi.behaviour = Behaviour.PeacefulPatrol
 
         executeAi()
 
