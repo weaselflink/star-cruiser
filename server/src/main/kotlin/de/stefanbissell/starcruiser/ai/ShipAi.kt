@@ -12,7 +12,8 @@ class ShipAi(
     val ship: NonPlayerShip
 ) {
 
-    private val orders = sequence<Order> {
+    private val orders = sequence {
+        yield(Order.Patrol(createInitialPatrolPath(ship)))
         if (ship.faction.enemies.isNotEmpty()) {
             yield(Order.SeekAndDestroy)
         }
