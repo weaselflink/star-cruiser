@@ -29,7 +29,7 @@ sealed class Behaviour {
     object Idle : Behaviour() {
 
         override fun transition(aiState: AiState): Behaviour =
-            if (aiState.ship.faction.enemies.isNotEmpty()) {
+            if (aiState.orders.contains(Order.SeekAndDestroy)) {
                 CombatPatrol
             } else {
                 PeacefulPatrol

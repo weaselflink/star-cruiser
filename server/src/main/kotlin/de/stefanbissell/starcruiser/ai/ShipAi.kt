@@ -12,6 +12,11 @@ class ShipAi(
     val ship: NonPlayerShip
 ) {
 
+    private val orders = sequence<Order> {
+        if (ship.faction.enemies.isNotEmpty()) {
+            yield(Order.SeekAndDestroy)
+        }
+    }.toList()
     private val patrolPath = createInitialPatrolPath(ship)
 
     private val behaviourAi = BehaviourAi()
@@ -35,7 +40,8 @@ class ShipAi(
         val aiState = AiState(
             ship = ship,
             time = time,
-            contactList = contactList
+            contactList = contactList,
+            orders = orders
         )
         componentAis.forEach {
             it.update(aiState)

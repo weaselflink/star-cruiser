@@ -26,5 +26,6 @@ abstract class ComponentAi(
 data class AiState(
     val ship: NonPlayerShip,
     val time: GameTime,
-    val contactList: ShipContactList
+    val contactList: ShipContactList,
+    val orders: List<Order> = emptyList()
 )
