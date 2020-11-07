@@ -19,12 +19,12 @@ class PatrolAiTest {
     private val time = GameTime.atEpoch()
     private val behaviourAi = BehaviourAi(Behaviour.CombatPatrol)
     private val helmAi = HelmAi()
-    private val patrolPath = listOf(p(100, 0), p(100, 100), p(0, 0))
-    private var patrolAi = PatrolAi(behaviourAi, helmAi, patrolPath)
+    private var patrolPath = listOf(p(100, 0), p(100, 100), p(0, 0))
+    private var patrolAi = PatrolAi(behaviourAi, helmAi)
 
     @Test
     fun `sets throttle to 0 if path empty`() {
-        patrolAi = PatrolAi(behaviourAi, helmAi, emptyList())
+        patrolPath = emptyList()
 
         executeAi()
 
@@ -88,6 +88,15 @@ class PatrolAiTest {
     }
 
     private fun executeAi() {
-        patrolAi.execute(AiState(ship, time, emptyContactList(ship)))
+        patrolAi.execute(
+            AiState(
+                ship = ship,
+                time = time,
+                contactList = emptyContactList(ship),
+                orders = listOf(
+                    Order.Patrol(patrolPath)
+                )
+            )
+        )
     }
 }

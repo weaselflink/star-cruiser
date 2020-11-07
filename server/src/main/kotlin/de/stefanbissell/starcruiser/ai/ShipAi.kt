@@ -18,7 +18,6 @@ class ShipAi(
             yield(Order.SeekAndDestroy)
         }
     }.toList()
-    private val patrolPath = createInitialPatrolPath(ship)
 
     private val behaviourAi = BehaviourAi()
     private val helmAi = HelmAi()
@@ -29,7 +28,7 @@ class ShipAi(
         ScanAi(),
         LockAi(),
         helmAi,
-        PatrolAi(behaviourAi, helmAi, patrolPath),
+        PatrolAi(behaviourAi, helmAi),
         HomingAi(behaviourAi, helmAi),
         EvadeAi(behaviourAi, helmAi)
     )
