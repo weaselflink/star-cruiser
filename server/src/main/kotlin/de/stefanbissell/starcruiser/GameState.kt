@@ -411,54 +411,52 @@ class GameState {
         ships.remove(shipId)
         physicsEngine.removeObject(shipId)
     }
+}
 
-    companion object {
-        fun CoroutineScope.gameStateActor(): SendChannel<GameStateChange> =
-            Channel<GameStateChange>().also {
-                startConsumer(it)
-            }
+fun CoroutineScope.gameStateActor(): SendChannel<GameStateChange> =
+    Channel<GameStateChange>().also {
+        startConsumer(it)
+    }
 
-        private fun CoroutineScope.startConsumer(channel: Channel<GameStateChange>) {
-            launch {
-                var gameState = GameState()
-                for (change in channel) {
-                    when (change) {
-                        is Restart -> gameState = GameState()
-                        is Update -> gameState.update()
-                        is TogglePause -> gameState.togglePaused()
-                        is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
-                        is NewGameClient -> gameState.clientConnected(change.clientId)
-                        is GameClientDisconnected -> gameState.clientDisconnected(change.clientId)
-                        is JoinShip -> gameState.joinShip(change.clientId, change.objectId, change.station)
-                        is ChangeStation -> gameState.changeStation(change.clientId, change.station)
-                        is ExitShip -> gameState.exitShip(change.clientId)
-                        is SpawnPlayerShip -> gameState.spawnPlayerShip()
-                        is SetThrottle -> gameState.setThrottle(change.clientId, change.value)
-                        is ChangeJumpDistance -> gameState.changeJumpDistance(change.clientId, change.value)
-                        is StartJump -> gameState.startJump(change.clientId)
-                        is SetRudder -> gameState.setRudder(change.clientId, change.value)
-                        is MapClearSelection -> gameState.mapClearSelection(change.clientId)
-                        is MapSelectWaypoint -> gameState.mapSelectWaypoint(change.clientId, change.index)
-                        is MapSelectShip -> gameState.mapSelectShip(change.clientId, change.targetId)
-                        is AddWaypoint -> gameState.addWaypoint(change.clientId, change.position)
-                        is DeleteSelectedWaypoint -> gameState.deleteSelectedWaypoint(change.clientId)
-                        is ScanSelectedShip -> gameState.scanSelectedShip(change.clientId)
-                        is AbortScan -> gameState.abortScan(change.clientId)
-                        is SolveScanGame -> gameState.solveScanGame(change.clientId, change.dimension, change.value)
-                        is LockTarget -> gameState.lockTarget(change.clientId, change.targetId)
-                        is ToggleShieldsUp -> gameState.toggleShieldsUp(change.clientId)
-                        is StartRepair -> gameState.startRepair(change.clientId, change.systemType)
-                        is AbortRepair -> gameState.abortRepair(change.clientId)
-                        is SolveRepairGame -> gameState.solveRepairGame(change.clientId, change.column, change.row)
-                        is SetPower -> gameState.setPower(change.clientId, change.systemType, change.power)
-                        is SetCoolant -> gameState.setCoolant(change.clientId, change.systemType, change.coolant)
-                        is SetMainScreenView -> gameState.setMainScreenView(change.clientId, change.mainScreenView)
-                        is DecreaseShieldModulation -> gameState.decreaseShieldModulation(change.clientId)
-                        is IncreaseShieldModulation -> gameState.increaseShieldModulation(change.clientId)
-                        is DecreaseBeamModulation -> gameState.decreaseBeamModulation(change.clientId)
-                        is IncreaseBeamModulation -> gameState.increaseBeamModulation(change.clientId)
-                    }
-                }
+private fun CoroutineScope.startConsumer(channel: Channel<GameStateChange>) {
+    launch {
+        var gameState = GameState()
+        for (change in channel) {
+            when (change) {
+                is Restart -> gameState = GameState()
+                is Update -> gameState.update()
+                is TogglePause -> gameState.togglePaused()
+                is GetGameStateSnapshot -> change.response.complete(gameState.toMessage(change.clientId))
+                is NewGameClient -> gameState.clientConnected(change.clientId)
+                is GameClientDisconnected -> gameState.clientDisconnected(change.clientId)
+                is JoinShip -> gameState.joinShip(change.clientId, change.objectId, change.station)
+                is ChangeStation -> gameState.changeStation(change.clientId, change.station)
+                is ExitShip -> gameState.exitShip(change.clientId)
+                is SpawnPlayerShip -> gameState.spawnPlayerShip()
+                is SetThrottle -> gameState.setThrottle(change.clientId, change.value)
+                is ChangeJumpDistance -> gameState.changeJumpDistance(change.clientId, change.value)
+                is StartJump -> gameState.startJump(change.clientId)
+                is SetRudder -> gameState.setRudder(change.clientId, change.value)
+                is MapClearSelection -> gameState.mapClearSelection(change.clientId)
+                is MapSelectWaypoint -> gameState.mapSelectWaypoint(change.clientId, change.index)
+                is MapSelectShip -> gameState.mapSelectShip(change.clientId, change.targetId)
+                is AddWaypoint -> gameState.addWaypoint(change.clientId, change.position)
+                is DeleteSelectedWaypoint -> gameState.deleteSelectedWaypoint(change.clientId)
+                is ScanSelectedShip -> gameState.scanSelectedShip(change.clientId)
+                is AbortScan -> gameState.abortScan(change.clientId)
+                is SolveScanGame -> gameState.solveScanGame(change.clientId, change.dimension, change.value)
+                is LockTarget -> gameState.lockTarget(change.clientId, change.targetId)
+                is ToggleShieldsUp -> gameState.toggleShieldsUp(change.clientId)
+                is StartRepair -> gameState.startRepair(change.clientId, change.systemType)
+                is AbortRepair -> gameState.abortRepair(change.clientId)
+                is SolveRepairGame -> gameState.solveRepairGame(change.clientId, change.column, change.row)
+                is SetPower -> gameState.setPower(change.clientId, change.systemType, change.power)
+                is SetCoolant -> gameState.setCoolant(change.clientId, change.systemType, change.coolant)
+                is SetMainScreenView -> gameState.setMainScreenView(change.clientId, change.mainScreenView)
+                is DecreaseShieldModulation -> gameState.decreaseShieldModulation(change.clientId)
+                is IncreaseShieldModulation -> gameState.increaseShieldModulation(change.clientId)
+                is DecreaseBeamModulation -> gameState.decreaseBeamModulation(change.clientId)
+                is IncreaseBeamModulation -> gameState.increaseBeamModulation(change.clientId)
             }
         }
     }

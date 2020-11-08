@@ -1,7 +1,6 @@
 package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.ApplicationConfig.gameStateUpdateIntervalMillis
-import de.stefanbissell.starcruiser.GameState.Companion.gameStateActor
 import de.stefanbissell.starcruiser.client.GameClient.Companion.startGameClient
 import de.stefanbissell.starcruiser.client.StatisticsMessage
 import de.stefanbissell.starcruiser.client.StatisticsSnapshot
