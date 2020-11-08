@@ -237,7 +237,7 @@ class GameClient(
             outgoing: SendChannel<Frame>,
             incoming: ReceiveChannel<Frame>,
             log: Logger
-        ) =
+        ) {
             GameClient(
                 gameStateActor = gameStateActor,
                 statisticsActor = statisticsActor,
@@ -245,5 +245,6 @@ class GameClient(
                 incoming = incoming,
                 log = log
             ).start(this)
+        }
     }
 }
