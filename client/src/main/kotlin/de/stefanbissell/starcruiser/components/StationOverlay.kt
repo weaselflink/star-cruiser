@@ -18,7 +18,7 @@ class StationOverlay : PointerEventHandlerParent() {
 
     private val buttonWidthExpr: CanvasDimensions.() -> Double = { 32.vmin }
     private val buttonHeightExpr: CanvasDimensions.() -> Double = { 8.vmin }
-    private val buttonGapExpr: CanvasDimensions.() -> Double = { 1.vmin }
+    private val buttonFullHeightExpr: CanvasDimensions.() -> Double = { buttonHeightExpr() + 1.vmin }
     private val currentStationButton = CanvasButton(
         canvas = document.canvas2d,
         xExpr = { width - (buttonWidthExpr() + 2.vmin) },
@@ -32,7 +32,7 @@ class StationOverlay : PointerEventHandlerParent() {
         CanvasButton(
             canvas = document.canvas2d,
             xExpr = { width - (buttonWidthExpr() + 2.vmin) },
-            yExpr = { (buttonHeightExpr() * 2 + 4.vmin) + index * (buttonHeightExpr() + buttonGapExpr()) },
+            yExpr = { (buttonHeightExpr() * 2 + 4.vmin) + index * buttonFullHeightExpr() },
             widthExpr = buttonWidthExpr,
             heightExpr = buttonHeightExpr,
             onClick = { switchStation(station) },
@@ -45,7 +45,7 @@ class StationOverlay : PointerEventHandlerParent() {
         canvas = document.canvas2d,
         xExpr = { width - (buttonWidthExpr() + 2.vmin) },
         yExpr = {
-            2.vmin + buttonHeightExpr() + 2.vmin + (Station.values().size + 1) * (buttonHeightExpr() + buttonGapExpr()) + 1.vmin
+            2.vmin + buttonHeightExpr() + 2.vmin + (Station.values().size + 1) * buttonFullHeightExpr() + 1.vmin
         },
         widthExpr = buttonWidthExpr,
         heightExpr = buttonHeightExpr,
@@ -84,10 +84,10 @@ class StationOverlay : PointerEventHandlerParent() {
             canvas = document.canvas2d,
             xExpr = { width - (buttonWidthExpr() + 3.vmin) },
             yExpr = {
-                2.vmin + buttonHeightExpr() + 2.vmin + (Station.values().size + 1) * (buttonHeightExpr() + buttonGapExpr()) + 2.vmin
+                2.vmin + buttonHeightExpr() + 2.vmin + (Station.values().size + 1) * buttonFullHeightExpr() + 2.vmin
             },
             widthExpr = { buttonWidthExpr() + 2.vmin },
-            heightExpr = { (otherStationButtons.size + 1) * (buttonHeightExpr() + buttonGapExpr()) + 3.vmin },
+            heightExpr = { (otherStationButtons.size + 1) * buttonFullHeightExpr() + 3.vmin },
             radiusExpr = { 5.vmin }
         )
 
