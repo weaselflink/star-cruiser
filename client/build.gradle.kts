@@ -1,4 +1,4 @@
-@file:Suppress("PropertyName")
+@file:Suppress("PropertyName", "SuspiciousCollectionReassignment")
 
 val kotlin_version: String by project
 val kotlin_serialization_version: String by project
@@ -15,5 +15,13 @@ kotlin {
     js {
         useCommonJs()
         browser()
+    }
+}
+
+tasks {
+    withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
+        kotlinOptions {
+            freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+        }
     }
 }

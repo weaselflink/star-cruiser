@@ -19,45 +19,42 @@ class StationOverlay : PointerEventHandlerParent() {
     private val buttonWidthExpr: CanvasDimensions.() -> Double = { 32.vmin }
     private val buttonHeightExpr: CanvasDimensions.() -> Double = { 8.vmin }
     private val buttonFullHeightExpr: CanvasDimensions.() -> Double = { buttonHeightExpr() + 1.vmin }
-    private val currentStationButton = CanvasButton(
-        canvas = document.canvas2d,
-        xExpr = { width - (buttonWidthExpr() + 2.vmin) },
-        yExpr = { buttonHeightExpr() + 2.vmin },
-        widthExpr = buttonWidthExpr,
-        heightExpr = buttonHeightExpr,
-        onClick = { ClientState.toggleStationOverlay() },
-        activated = { ClientState.showStationOverlay }
-    )
-    private val otherStationButtons = Station.values().mapIndexed { index, station ->
-        CanvasButton(
-            canvas = document.canvas2d,
-            xExpr = { width - (buttonWidthExpr() + 2.vmin) },
-            yExpr = { (buttonHeightExpr() * 2 + 4.vmin) + index * buttonFullHeightExpr() },
-            widthExpr = buttonWidthExpr,
-            heightExpr = buttonHeightExpr,
-            onClick = { switchStation(station) },
-            activated = { station == currentStation },
-            enabled = { ClientState.showStationOverlay },
-            initialText = station.name
-        )
-    }
-    private val exitButton = CanvasButton(
-        canvas = document.canvas2d,
-        xExpr = { width - (buttonWidthExpr() + 2.vmin) },
-        yExpr = {
-            2.vmin + buttonHeightExpr() + 2.vmin + (Station.values().size + 1) * buttonFullHeightExpr() + 1.vmin
-        },
-        widthExpr = buttonWidthExpr,
-        heightExpr = buttonHeightExpr,
-        onClick = { ClientSocket.send(Command.CommandExitShip) },
-        enabled = { ClientState.showStationOverlay },
-        initialText = "Exit"
-    )
+    private var currentStationButton: CanvasButton
+    private var otherStationButtons: List<CanvasButton>
+    private var exitButton: CanvasButton
 
     private var currentStation = Station.Helm
     var visible = false
 
     init {
+        verticalButtonGroup(
+            canvas = document.canvas2d,
+            rightXExpr = { width },
+            topYExpr = { 0.vmin },
+            buttonWidthExpr = { 32.vmin },
+            buttonHeightExpr = { 8.vmin }
+        ) {
+            currentStationButton = addButton(
+                onClick = { ClientState.toggleStationOverlay() },
+                activated = { ClientState.showStationOverlay }
+            )
+            addGap()
+            otherStationButtons = Station.values().map { station ->
+                addButton(
+                    onClick = { switchStation(station) },
+                    activated = { station == currentStation },
+                    enabled = { ClientState.showStationOverlay },
+                    initialText = station.name
+                )
+            }
+            addGap()
+            exitButton = addButton(
+                onClick = { ClientSocket.send(Command.CommandExitShip) },
+                enabled = { ClientState.showStationOverlay },
+                initialText = "Exit"
+            )
+        }
+
         addChildren(currentStationButton, exitButton)
         addChildren(otherStationButtons)
     }
@@ -84,10 +81,10 @@ class StationOverlay : PointerEventHandlerParent() {
             canvas = document.canvas2d,
             xExpr = { width - (buttonWidthExpr() + 3.vmin) },
             yExpr = {
-                2.vmin + buttonHeightExpr() + 2.vmin + (Station.values().size + 1) * buttonFullHeightExpr() + 2.vmin
+                2.vmin + buttonHeightExpr() + 2.vmin + (Station.values().size + 1) * buttonFullHeightExpr() + 1.vmin
             },
             widthExpr = { buttonWidthExpr() + 2.vmin },
-            heightExpr = { (otherStationButtons.size + 1) * buttonFullHeightExpr() + 3.vmin },
+            heightExpr = { (Station.values().size + 1) * buttonFullHeightExpr() + 2.vmin },
             radiusExpr = { 5.vmin }
         )
 
@@ -103,9 +100,7 @@ class StationOverlay : PointerEventHandlerParent() {
             restore()
         }
 
-        otherStationButtons.forEach {
-            it.draw()
-        }
+        otherStationButtons.forEach(CanvasButton::draw)
         exitButton.draw()
     }
 
