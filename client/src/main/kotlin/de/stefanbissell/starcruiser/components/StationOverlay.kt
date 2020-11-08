@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.components
 
+import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.ClientSocket
 import de.stefanbissell.starcruiser.ClientState
 import de.stefanbissell.starcruiser.Command
@@ -15,20 +16,25 @@ import kotlinx.browser.document
 
 class StationOverlay : PointerEventHandlerParent() {
 
+    private val buttonWidthExpr: CanvasDimensions.() -> Double = { 32.vmin }
+    private val buttonHeightExpr: CanvasDimensions.() -> Double = { 8.vmin }
+    private val buttonGapExpr: CanvasDimensions.() -> Double = { 1.vmin }
     private val currentStationButton = CanvasButton(
         canvas = document.canvas2d,
-        xExpr = { width - 37.vmin },
-        yExpr = { 12.vmin },
-        widthExpr = { 35.vmin },
+        xExpr = { width - (buttonWidthExpr() + 2.vmin) },
+        yExpr = { buttonHeightExpr() + 2.vmin },
+        widthExpr = buttonWidthExpr,
+        heightExpr = buttonHeightExpr,
         onClick = { ClientState.toggleStationOverlay() },
         activated = { ClientState.showStationOverlay }
     )
     private val otherStationButtons = Station.values().mapIndexed { index, station ->
         CanvasButton(
             canvas = document.canvas2d,
-            xExpr = { width - 37.vmin },
-            yExpr = { 27.vmin + index * 12.vmin },
-            widthExpr = { 35.vmin },
+            xExpr = { width - (buttonWidthExpr() + 2.vmin) },
+            yExpr = { (buttonHeightExpr() * 2 + 4.vmin) + index * (buttonHeightExpr() + buttonGapExpr()) },
+            widthExpr = buttonWidthExpr,
+            heightExpr = buttonHeightExpr,
             onClick = { switchStation(station) },
             activated = { station == currentStation },
             enabled = { ClientState.showStationOverlay },
@@ -37,9 +43,12 @@ class StationOverlay : PointerEventHandlerParent() {
     }
     private val exitButton = CanvasButton(
         canvas = document.canvas2d,
-        xExpr = { width - 37.vmin },
-        yExpr = { 30.vmin + Station.values().size * 12.vmin },
-        widthExpr = { 35.vmin },
+        xExpr = { width - (buttonWidthExpr() + 2.vmin) },
+        yExpr = {
+            2.vmin + buttonHeightExpr() + 2.vmin + (Station.values().size + 1) * (buttonHeightExpr() + buttonGapExpr()) + 1.vmin
+        },
+        widthExpr = buttonWidthExpr,
+        heightExpr = buttonHeightExpr,
         onClick = { ClientSocket.send(Command.CommandExitShip) },
         enabled = { ClientState.showStationOverlay },
         initialText = "Exit"
@@ -73,11 +82,13 @@ class StationOverlay : PointerEventHandlerParent() {
     private fun drawStationButtons() {
         val dim = calculateRect(
             canvas = document.canvas2d,
-            xExpr = { width - 38.vmin },
-            yExpr = { 31.vmin + otherStationButtons.size * 12.vmin },
-            widthExpr = { 37.vmin },
-            heightExpr = { (otherStationButtons.size + 1) * 12.vmin + 3.vmin },
-            radiusExpr = { 6.vmin }
+            xExpr = { width - (buttonWidthExpr() + 3.vmin) },
+            yExpr = {
+                2.vmin + buttonHeightExpr() + 2.vmin + (Station.values().size + 1) * (buttonHeightExpr() + buttonGapExpr()) + 2.vmin
+            },
+            widthExpr = { buttonWidthExpr() + 2.vmin },
+            heightExpr = { (otherStationButtons.size + 1) * (buttonHeightExpr() + buttonGapExpr()) + 3.vmin },
+            radiusExpr = { 5.vmin }
         )
 
         with(document.canvas2d.context2D) {
