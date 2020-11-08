@@ -5,7 +5,9 @@ import de.stefanbissell.starcruiser.client.ThrottleMessage.AddInflightMessage
 import de.stefanbissell.starcruiser.client.ThrottleMessage.GetInflightMessageCount
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.actor
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.launch
 
 sealed class ThrottleMessage {
 
@@ -14,19 +16,22 @@ sealed class ThrottleMessage {
     class AcknowledgeInflightMessage(val counter: Long) : ThrottleMessage()
 }
 
-fun CoroutineScope.createThrottleActor() = actor<ThrottleMessage> {
-    var updateCounter: Long = 0
-    val inflightUpdates: MutableList<Long> = mutableListOf()
+fun CoroutineScope.createThrottleActor(): SendChannel<ThrottleMessage> =
+    Channel<ThrottleMessage>().also { channel ->
+        launch {
+            var updateCounter: Long = 0
+            val inflightUpdates: MutableList<Long> = mutableListOf()
 
-    for (message in channel) {
-        when (message) {
-            is AddInflightMessage -> {
-                updateCounter++
-                inflightUpdates += updateCounter
-                message.response.complete(updateCounter)
+            for (message in channel) {
+                when (message) {
+                    is AddInflightMessage -> {
+                        updateCounter++
+                        inflightUpdates += updateCounter
+                        message.response.complete(updateCounter)
+                    }
+                    is GetInflightMessageCount -> message.response.complete(inflightUpdates.size)
+                    is AcknowledgeInflightMessage -> inflightUpdates -= message.counter
+                }
             }
-            is GetInflightMessageCount -> message.response.complete(inflightUpdates.size)
-            is AcknowledgeInflightMessage -> inflightUpdates -= message.counter
         }
     }
-}

@@ -7,7 +7,8 @@ import de.stefanbissell.starcruiser.configuredJson
 import de.stefanbissell.starcruiser.round
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.actor
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -25,16 +26,13 @@ sealed class StatisticsMessage {
     class GetSnapshot(val response: CompletableDeferred<StatisticsSnapshot>) : StatisticsMessage()
 }
 
-fun CoroutineScope.statisticsActor() = actor<StatisticsMessage> {
-    var countSent = 0L
-    var bytesSent = 0L
-    var totalCountSent = 0L
-    var totalBytesSent = 0L
-    var countReceived = 0L
-    var bytesReceived = 0L
-    var totalCountReceived = 0L
-    var totalBytesReceived = 0L
+fun CoroutineScope.statisticsActor(): SendChannel<StatisticsMessage> =
+    Channel<StatisticsMessage>().also { channel ->
+        startLogger(channel)
+        startConsumer(channel)
+    }
 
+private fun CoroutineScope.startLogger(channel: Channel<StatisticsMessage>) {
     launch {
         while (true) {
             delay(statisticsLogIntervalSeconds.seconds)
@@ -43,39 +41,52 @@ fun CoroutineScope.statisticsActor() = actor<StatisticsMessage> {
             response.await().log()
         }
     }
+}
 
-    for (message in channel) {
-        when (message) {
-            is MessageSent -> {
-                countSent++
-                bytesSent += message.size
-            }
-            is MessageReceived -> {
-                countReceived++
-                bytesReceived += message.size
-            }
-            is GetSnapshot -> {
-                totalCountSent += countSent
-                totalBytesSent += bytesSent
-                totalCountReceived += countReceived
-                totalBytesReceived += bytesReceived
-                message.response.complete(
-                    StatisticsSnapshot(
-                        countSent = countSent,
-                        bytesSent = bytesSent,
-                        totalCountSent = totalCountSent,
-                        totalBytesSent = totalBytesSent,
-                        countReceived = countReceived,
-                        bytesReceived = bytesReceived,
-                        totalCountReceived = totalCountReceived,
-                        totalBytesReceived = totalBytesReceived
+private fun CoroutineScope.startConsumer(channel: Channel<StatisticsMessage>) {
+    launch {
+        var countSent = 0L
+        var bytesSent = 0L
+        var totalCountSent = 0L
+        var totalBytesSent = 0L
+        var countReceived = 0L
+        var bytesReceived = 0L
+        var totalCountReceived = 0L
+        var totalBytesReceived = 0L
+
+        for (message in channel) {
+            when (message) {
+                is MessageSent -> {
+                    countSent++
+                    bytesSent += message.size
+                }
+                is MessageReceived -> {
+                    countReceived++
+                    bytesReceived += message.size
+                }
+                is GetSnapshot -> {
+                    totalCountSent += countSent
+                    totalBytesSent += bytesSent
+                    totalCountReceived += countReceived
+                    totalBytesReceived += bytesReceived
+                    message.response.complete(
+                        StatisticsSnapshot(
+                            countSent = countSent,
+                            bytesSent = bytesSent,
+                            totalCountSent = totalCountSent,
+                            totalBytesSent = totalBytesSent,
+                            countReceived = countReceived,
+                            bytesReceived = bytesReceived,
+                            totalCountReceived = totalCountReceived,
+                            totalBytesReceived = totalBytesReceived
+                        )
                     )
-                )
 
-                countSent = 0
-                bytesSent = 0
-                countReceived = 0
-                bytesReceived = 0
+                    countSent = 0
+                    bytesSent = 0
+                    countReceived = 0
+                    bytesReceived = 0
+                }
             }
         }
     }

@@ -53,9 +53,8 @@ tasks {
     withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs += listOf("-Xuse-experimental=kotlinx.coroutines.ObsoleteCoroutinesApi")
-            freeCompilerArgs += listOf("-Xopt-in=kotlin.time.ExperimentalTime")
             freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs += listOf("-Xopt-in=kotlin.time.ExperimentalTime")
         }
     }
 
