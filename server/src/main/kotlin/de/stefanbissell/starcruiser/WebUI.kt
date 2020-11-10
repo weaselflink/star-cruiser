@@ -261,7 +261,14 @@ private val CSSBuilder.popupCss: Unit
         ".popup" {
             fontWeight = bold
             fontSize = 4.vmin
-            standardGrid
+            display = grid
+            gap = Gap("2vmin")
+            padding(3.vmin, 6.vmin)
+            color = lightGrey
+            backgroundColor = black
+            borderWidth = 0.5.vmin
+            borderStyle = solid
+            borderColor = darkGrey
             justifyContent = JustifyContent.center
             borderRadius = 4.vmin
             margin = "30vmin auto"
@@ -273,18 +280,6 @@ private val CSSBuilder.popupCss: Unit
             paddingLeft = 4.vmin
             paddingRight = 4.vmin
         }
-    }
-
-private val CSSBuilder.standardGrid: Unit
-    get() {
-        display = grid
-        gap = Gap("2vmin")
-        padding(3.vmin, 6.vmin)
-        color = lightGrey
-        backgroundColor = black
-        borderWidth = 0.5.vmin
-        borderStyle = solid
-        borderColor = darkGrey
     }
 
 @Suppress("DEPRECATION")
