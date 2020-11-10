@@ -22,6 +22,7 @@ class StationOverlay : PointerEventHandlerParent() {
     private var currentStationButton: CanvasButton
     private var otherStationButtons: List<CanvasButton>
     private var exitButton: CanvasButton
+    private var settingsButton: CanvasButton
 
     private var currentStation = Station.Helm
     var visible = false
@@ -55,7 +56,26 @@ class StationOverlay : PointerEventHandlerParent() {
             )
         }
 
-        addChildren(currentStationButton, exitButton)
+        verticalButtonGroup(
+            canvas = document.canvas2d,
+            leftXExpr = { 0.vmin },
+            topYExpr = { 0.vmin },
+            buttonWidthExpr = { 32.vmin },
+            buttonHeightExpr = { 8.vmin }
+        ) {
+            settingsButton = addButton(
+                onClick = { ClientState.toggleStationOverlay() },
+                activated = { ClientState.showStationOverlay },
+                initialText = "Settings"
+            )
+            addGap()
+        }
+
+        addChildren(
+            currentStationButton,
+            exitButton,
+            settingsButton
+        )
         addChildren(otherStationButtons)
     }
 
@@ -102,6 +122,7 @@ class StationOverlay : PointerEventHandlerParent() {
 
         otherStationButtons.forEach(CanvasButton::draw)
         exitButton.draw()
+        settingsButton.draw()
     }
 
     private fun getNewStation(snapshot: SnapshotMessage.CrewSnapshot) =
