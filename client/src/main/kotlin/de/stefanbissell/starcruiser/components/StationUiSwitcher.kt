@@ -10,7 +10,6 @@ import de.stefanbissell.starcruiser.WeaponsUi
 import de.stefanbissell.starcruiser.canvas2d
 import de.stefanbissell.starcruiser.clear
 import de.stefanbissell.starcruiser.context2D
-import de.stefanbissell.starcruiser.getHtmlElementById
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventDispatcher
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
@@ -36,7 +35,6 @@ class StationUiSwitcher {
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
 
     init {
-        document.getHtmlElementById("common-ship-ui").hidden = true
         pointerEventDispatcher.addHandlers(stationOverlay)
         stations.forEach {
             it.visible = false
