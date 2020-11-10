@@ -205,3 +205,9 @@ data class CanvasDimensions(
 }
 
 fun CanvasRenderingContext2D.transformReset() = setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+
+operator fun (CanvasDimensions.() -> Double).plus(other: CanvasDimensions.() -> Double): CanvasDimensions.() -> Double =
+    { this@plus() + other() }
+
+operator fun (CanvasDimensions.() -> Double).minus(other: CanvasDimensions.() -> Double): CanvasDimensions.() -> Double =
+    { this@minus() - other() }

@@ -1,6 +1,8 @@
 package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
+import de.stefanbissell.starcruiser.minus
+import de.stefanbissell.starcruiser.plus
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -25,7 +27,7 @@ fun verticalButtonGroup(
     val safeLeftXExpr: CanvasDimensions.() -> Double =
         when {
             leftXExpr != null -> leftXExpr
-            rightXExpr != null -> ({ rightXExpr() - (buttonWidthExpr() + paddingExpr()) })
+            rightXExpr != null -> rightXExpr - (buttonWidthExpr + paddingExpr)
             else -> ({ 0.vmin })
         }
 
