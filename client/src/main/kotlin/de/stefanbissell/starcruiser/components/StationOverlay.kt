@@ -23,6 +23,9 @@ class StationOverlay : PointerEventHandlerParent() {
     private var otherStationButtons: List<CanvasButton>
     private var exitButton: CanvasButton
     private var settingsButton: CanvasButton
+    private var fullScreenButton: CanvasButton
+    private var rotateScopeButton: CanvasButton
+    private var pauseButton: CanvasButton
 
     private var currentStation = Station.Helm
     var visible = false
@@ -69,12 +72,29 @@ class StationOverlay : PointerEventHandlerParent() {
                 initialText = "Settings"
             )
             addGap()
+            fullScreenButton = addButton(
+                onClick = { ClientState.toggleFullscreen() },
+                activated = { ClientState.fullScreen },
+                initialText = "Fullscreen"
+            )
+            rotateScopeButton = addButton(
+                onClick = { ClientState.toggleRotateScope() },
+                activated = { ClientState.rotateScope },
+                initialText = "Rotate scope"
+            )
+            pauseButton = addButton(
+                onClick = { ClientSocket.send(Command.CommandTogglePause) },
+                initialText = "Pause"
+            )
         }
 
         addChildren(
             currentStationButton,
             exitButton,
-            settingsButton
+            settingsButton,
+            fullScreenButton,
+            rotateScopeButton,
+            pauseButton
         )
         addChildren(otherStationButtons)
     }
@@ -86,6 +106,7 @@ class StationOverlay : PointerEventHandlerParent() {
             if (ClientState.showStationOverlay) {
                 currentStationButton.text = "Stations"
                 drawStationButtons()
+                drawSettingsButtons()
             } else {
                 currentStationButton.text = currentStation.name
             }
@@ -122,7 +143,36 @@ class StationOverlay : PointerEventHandlerParent() {
 
         otherStationButtons.forEach(CanvasButton::draw)
         exitButton.draw()
+    }
+
+    private fun drawSettingsButtons() {
+        val dim = calculateRect(
+            canvas = document.canvas2d,
+            xExpr = { 1.vmin },
+            yExpr = {
+                2.vmin + buttonHeightExpr() + 2.vmin + 3 * buttonFullHeightExpr()
+            },
+            widthExpr = { buttonWidthExpr() + 2.vmin },
+            heightExpr = { 3 * buttonFullHeightExpr() + 1.vmin },
+            radiusExpr = { 5.vmin }
+        )
+
+        with(document.canvas2d.context2D) {
+            save()
+
+            lineWidth = dim.lineWidth
+            fillStyle = UiStyle.buttonBackgroundColor
+            beginPath()
+            drawRect(dim)
+            fill()
+
+            restore()
+        }
+
         settingsButton.draw()
+        fullScreenButton.draw()
+        rotateScopeButton.draw()
+        pauseButton.draw()
     }
 
     private fun getNewStation(snapshot: SnapshotMessage.CrewSnapshot) =

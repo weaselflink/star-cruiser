@@ -26,7 +26,7 @@ fun verticalButtonGroup(
 
     val safeLeftXExpr: CanvasDimensions.() -> Double =
         when {
-            leftXExpr != null -> leftXExpr
+            leftXExpr != null -> leftXExpr + paddingExpr
             rightXExpr != null -> rightXExpr - (buttonWidthExpr + paddingExpr)
             else -> ({ 0.vmin })
         }
