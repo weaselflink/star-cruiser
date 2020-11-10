@@ -1,6 +1,5 @@
 package de.stefanbissell.starcruiser.components
 
-import de.stefanbissell.starcruiser.CommonShipUi
 import de.stefanbissell.starcruiser.EngineeringUi
 import de.stefanbissell.starcruiser.HelmUi
 import de.stefanbissell.starcruiser.MainScreenUi
@@ -11,6 +10,7 @@ import de.stefanbissell.starcruiser.WeaponsUi
 import de.stefanbissell.starcruiser.canvas2d
 import de.stefanbissell.starcruiser.clear
 import de.stefanbissell.starcruiser.context2D
+import de.stefanbissell.starcruiser.getHtmlElementById
 import de.stefanbissell.starcruiser.input.PointerEvent
 import de.stefanbissell.starcruiser.input.PointerEventDispatcher
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
@@ -19,9 +19,6 @@ import kotlinx.browser.document
 
 class StationUiSwitcher {
 
-    private val commonShipUi = CommonShipUi().apply {
-        hide()
-    }
     private val stationOverlay = StationOverlay()
     private val helmUi = HelmUi()
     private val weaponsUi = WeaponsUi()
@@ -39,6 +36,7 @@ class StationUiSwitcher {
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
 
     init {
+        document.getHtmlElementById("common-ship-ui").hidden = true
         pointerEventDispatcher.addHandlers(stationOverlay)
         stations.forEach {
             it.visible = false
@@ -56,14 +54,10 @@ class StationUiSwitcher {
     }
 
     fun hideAll() {
-        commonShipUi.hide()
         switchTo(null)
     }
 
     fun draw(snapshot: SnapshotMessage.CrewSnapshot) {
-        commonShipUi.apply {
-            show()
-        }
         when (snapshot) {
             is SnapshotMessage.Helm -> {
                 switchTo(Station.Helm)
