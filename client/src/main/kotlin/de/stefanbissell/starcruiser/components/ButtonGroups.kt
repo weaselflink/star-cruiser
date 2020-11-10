@@ -9,7 +9,8 @@ import kotlin.contracts.contract
 @OptIn(ExperimentalContracts::class)
 fun verticalButtonGroup(
     canvas: HTMLCanvasElement,
-    rightXExpr: CanvasDimensions.() -> Double,
+    leftXExpr: (CanvasDimensions.() -> Double)? = null,
+    rightXExpr: (CanvasDimensions.() -> Double)? = null,
     topYExpr: CanvasDimensions.() -> Double,
     buttonWidthExpr: CanvasDimensions.() -> Double,
     buttonHeightExpr: CanvasDimensions.() -> Double,
@@ -21,9 +22,16 @@ fun verticalButtonGroup(
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
+    val safeLeftXExpr: CanvasDimensions.() -> Double =
+        when {
+            leftXExpr != null -> leftXExpr
+            rightXExpr != null -> ({ rightXExpr() - (buttonWidthExpr() + paddingExpr()) })
+            else -> ({ 0.vmin })
+        }
+
     VerticalButtonGroup(
         canvas = canvas,
-        rightXExpr = rightXExpr,
+        leftXExpr = safeLeftXExpr,
         topYExpr = topYExpr,
         buttonWidthExpr = buttonWidthExpr,
         buttonHeightExpr = buttonHeightExpr,
@@ -34,7 +42,7 @@ fun verticalButtonGroup(
 
 class VerticalButtonGroup(
     private val canvas: HTMLCanvasElement,
-    private val rightXExpr: CanvasDimensions.() -> Double,
+    private val leftXExpr: CanvasDimensions.() -> Double,
     private val topYExpr: CanvasDimensions.() -> Double,
     private val buttonWidthExpr: CanvasDimensions.() -> Double,
     private val buttonHeightExpr: CanvasDimensions.() -> Double,
@@ -56,7 +64,7 @@ class VerticalButtonGroup(
         index++
         return CanvasButton(
             canvas = canvas,
-            xExpr = { rightXExpr() - (buttonWidthExpr() + paddingExpr()) },
+            xExpr = leftXExpr,
             yExpr = {
                 topYExpr() + paddingExpr() +
                     buttonHeightExpr() +
