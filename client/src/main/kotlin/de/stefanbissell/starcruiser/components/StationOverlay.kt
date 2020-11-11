@@ -48,7 +48,7 @@ class StationOverlay : PointerEventHandlerParent() {
                     onClick = { switchStation(station) },
                     activated = { station == currentStation },
                     enabled = { ClientState.showStationOverlay },
-                    initialText = station.name
+                    initialText = station.label
                 )
             }
             addGap()

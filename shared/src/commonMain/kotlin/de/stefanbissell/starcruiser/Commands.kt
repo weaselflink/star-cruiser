@@ -103,10 +103,15 @@ sealed class Command {
 }
 
 @Serializable
-enum class Station {
+enum class Station(
+    private val labelOverride: String? = null
+) {
     Helm,
     Weapons,
     Navigation,
     Engineering,
-    MainScreen
+    MainScreen("Main screen");
+
+    val label: String
+        get() = labelOverride ?: name
 }
