@@ -9,12 +9,13 @@ import de.stefanbissell.starcruiser.NewGameClient
 import de.stefanbissell.starcruiser.SnapshotMessage
 import io.ktor.http.cio.websocket.Frame
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.Test
@@ -121,8 +122,9 @@ class GameClientTest {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun withGameClient(block: suspend CoroutineScope.() -> Unit) {
-        runBlocking {
+        runBlockingTest {
             val supervisorJob = SupervisorJob()
             launch(supervisorJob) {
                 for (gameStateChange in gameStateActor) {

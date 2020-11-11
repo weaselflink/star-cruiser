@@ -6,6 +6,7 @@ val logback_version: String by project
 val ktor_version: String by project
 val kotlin_version: String by project
 val kotlin_serialization_version: String by project
+val kotlin_coroutine_version: String by project
 val junit_version: String by project
 val strikt_version: String by project
 
@@ -38,6 +39,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutine_version")
     testImplementation("io.strikt:strikt-core:$strikt_version")
     testImplementation("io.mockk:mockk:1.10.2")
 }
