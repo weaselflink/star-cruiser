@@ -38,6 +38,8 @@ data class ShipTemplate(
             leftArc = 10
         )
     ),
+    val launchTubes: List<LaunchTube> = emptyList(),
+    val magazine: Magazine = Magazine(),
     val shield: ShieldTemplate = ShieldTemplate(),
     val hull: Double = 10.0,
     val jumpDrive: JumpDrive = JumpDrive(),
@@ -105,6 +107,16 @@ data class BeamWeapon(
         return angle <= leftArc.toRadians() && angle >= rightArc.toRadians()
     }
 }
+
+data class LaunchTube(
+    val position: Vector3 = Vector3(),
+    val direction: Int = 0,
+    val reloadSpeed: Double = 0.05
+)
+
+data class Magazine(
+    val capacity: Int = 20
+)
 
 data class ShieldTemplate(
     val radius: Double = 17.0,

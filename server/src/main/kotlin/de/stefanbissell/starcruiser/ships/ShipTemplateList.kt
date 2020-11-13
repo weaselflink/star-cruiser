@@ -23,6 +23,16 @@ val cruiserTemplate = ShipTemplate().copy(
             leftArc = 10
         )
     ),
+    launchTubes = listOf(
+        LaunchTube(
+            position = Vector3(-13.45, 0.0, -5),
+            direction = 80
+        ),
+        LaunchTube(
+            position = Vector3(13.45, 0.0, -5),
+            direction = -80
+        )
+    ),
     shield = ShieldTemplate().copy(
         radius = 24.5
     ),
