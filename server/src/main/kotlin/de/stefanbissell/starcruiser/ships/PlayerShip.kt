@@ -347,15 +347,13 @@ class PlayerShip(
         physicsEngine: PhysicsEngine,
         contactList: ShipContactList
     ) {
-        beamHandlerContainer.beamHandlers.forEach {
-            it.update(
-                time = time,
-                boostLevel = Weapons.boostLevel,
-                contactList = contactList,
-                lockHandler = lockHandler,
-                physicsEngine = physicsEngine
-            )
-        }
+        beamHandlerContainer.update(
+            time = time,
+            boostLevel = Weapons.boostLevel,
+            contactList = contactList,
+            lockHandler = lockHandler,
+            physicsEngine = physicsEngine
+        )
     }
 
     private fun updateScan(time: GameTime, contactList: ShipContactList) {
