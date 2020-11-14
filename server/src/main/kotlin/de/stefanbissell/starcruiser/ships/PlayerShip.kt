@@ -320,6 +320,8 @@ class PlayerShip(
 
     override fun toBeamsMessage() = beamHandlerContainer.toMessage(lockHandler)
 
+    fun toTubesMessage() = tubeHandlerContainer.toMessage()
+
     fun toMapSelectionMessage(contactList: ShipContactList) =
         mapSelection.let { selection ->
             when (selection) {

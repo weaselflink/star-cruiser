@@ -259,7 +259,8 @@ class GameState {
             asteroids = getScopeAsteroids(ship),
             hull = ship.hull,
             hullMax = ship.template.hull,
-            shield = ship.toShieldMessage()
+            shield = ship.toShieldMessage(),
+            tubes = ship.toTubesMessage()
         )
     }
 

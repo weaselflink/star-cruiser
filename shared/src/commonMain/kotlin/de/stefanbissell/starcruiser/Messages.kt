@@ -95,7 +95,8 @@ sealed class SnapshotMessage {
         override val asteroids: List<ScopeAsteroidMessage>,
         val hull: Double,
         val hullMax: Double,
-        val shield: ShieldMessage
+        val shield: ShieldMessage,
+        val tubes: TubesMessage
     ) : SnapshotMessage(), ShortRangeScopeStation, CrewSnapshot
 
     @Serializable
