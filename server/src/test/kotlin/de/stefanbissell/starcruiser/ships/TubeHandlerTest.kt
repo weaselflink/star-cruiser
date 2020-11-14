@@ -79,6 +79,28 @@ class TubeHandlerTest {
     }
 
     @Test
+    fun `updates reload progress with low boost level`() {
+        power = 0.1
+        tubeHandler.status = TubeStatus.Reloading()
+        stepTime(0.7 / launchTube.reloadSpeed)
+
+        expectThat(tubeHandler.status)
+            .isA<TubeStatus.Reloading>()
+            .get { progress }.isNear(0.07)
+    }
+
+    @Test
+    fun `updates reload progress with high boost level`() {
+        power = 1.5
+        tubeHandler.status = TubeStatus.Reloading()
+        stepTime(0.4 / launchTube.reloadSpeed)
+
+        expectThat(tubeHandler.status)
+            .isA<TubeStatus.Reloading>()
+            .get { progress }.isNear(0.6)
+    }
+
+    @Test
     fun `reloading tube becomes ready`() {
         tubeHandler.status = TubeStatus.Reloading()
         stepTime(1.1 / launchTube.reloadSpeed)
