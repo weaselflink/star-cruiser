@@ -10,7 +10,9 @@ class TubeHandlerContainerTest {
 
     private val ship = NonPlayerShip(faction = TestFactions.neutral)
     private val tubeHandlerContainer = TubeHandlerContainer(
-        listOf(LaunchTube(), LaunchTube()), Magazine(), ship
+        launchTubes = listOf(LaunchTube(), LaunchTube()),
+        magazine = Magazine(),
+        ship = ship
     )
 
     @Test
