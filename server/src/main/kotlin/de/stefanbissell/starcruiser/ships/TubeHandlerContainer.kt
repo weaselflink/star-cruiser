@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
+import de.stefanbissell.starcruiser.TubesMessage
 
 class TubeHandlerContainer(
     launchTubes: List<LaunchTube>,
@@ -35,4 +36,13 @@ class TubeHandlerContainer(
             startReload()
         }
     }
+
+    fun toMessage() =
+        TubesMessage(
+            magazineMax = magazine.capacity,
+            magazineCurrent = magazine.capacity,
+            tubes = tubeHandlers.map {
+                it.status
+            }
+        )
 }

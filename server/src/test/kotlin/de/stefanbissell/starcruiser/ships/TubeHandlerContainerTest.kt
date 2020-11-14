@@ -1,9 +1,11 @@
 package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.TestFactions
+import de.stefanbissell.starcruiser.TubeStatus
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.all
+import strikt.assertions.containsExactly
 import strikt.assertions.isEqualTo
 
 class TubeHandlerContainerTest {
@@ -55,5 +57,20 @@ class TubeHandlerContainerTest {
             .all {
                 get { status }.isEqualTo(TubeStatus.Ready)
             }
+    }
+
+    @Test
+    fun `creates message for client`() {
+        tubeHandlerContainer.tubeHandlers[0].status = TubeStatus.Ready
+        tubeHandlerContainer.tubeHandlers[1].status = TubeStatus.Reloading(0.4)
+
+        expectThat(tubeHandlerContainer.toMessage()) {
+            get { magazineMax }.isEqualTo(Magazine().capacity)
+            get { magazineCurrent }.isEqualTo(Magazine().capacity)
+            get { tubes }.containsExactly(
+                TubeStatus.Ready,
+                TubeStatus.Reloading(0.4)
+            )
+        }
     }
 }

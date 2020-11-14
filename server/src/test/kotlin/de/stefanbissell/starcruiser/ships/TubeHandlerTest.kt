@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TestFactions
+import de.stefanbissell.starcruiser.TubeStatus
 import de.stefanbissell.starcruiser.isNear
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat

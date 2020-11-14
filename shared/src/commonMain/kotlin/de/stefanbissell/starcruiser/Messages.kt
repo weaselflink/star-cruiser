@@ -380,6 +380,25 @@ sealed class BeamStatus {
 }
 
 @Serializable
+data class TubesMessage(
+    val magazineMax: Int,
+    val magazineCurrent: Int,
+    val tubes: List<TubeStatus>
+)
+
+@Serializable
+sealed class TubeStatus {
+
+    object Empty : TubeStatus()
+
+    data class Reloading(val progress: Double = 0.0) : TubeStatus() {
+        fun update(change: Double) = copy(progress = progress + change)
+    }
+
+    object Ready : TubeStatus()
+}
+
+@Serializable
 data class ShieldMessage(
     val radius: Double,
     val up: Boolean,

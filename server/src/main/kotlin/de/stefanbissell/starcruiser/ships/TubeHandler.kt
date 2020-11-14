@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
+import de.stefanbissell.starcruiser.TubeStatus
 
 class TubeHandler(
     val launchTube: LaunchTube,
@@ -35,15 +36,4 @@ class TubeHandler(
             status = TubeStatus.Reloading()
         }
     }
-}
-
-sealed class TubeStatus {
-
-    object Empty : TubeStatus()
-
-    data class Reloading(val progress: Double = 0.0) : TubeStatus() {
-        fun update(change: Double) = copy(progress = progress + change)
-    }
-
-    object Ready : TubeStatus()
 }
