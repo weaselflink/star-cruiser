@@ -46,6 +46,7 @@ class PlayerShip(
     private val throttleHandler = ThrottleHandler(template)
     private val powerHandler = PowerHandler(template)
     val beamHandlerContainer = BeamHandlerContainer(template.beams, this)
+    val tubeHandlerContainer = TubeHandlerContainer(template.launchTubes, template.magazine, this)
     val shieldHandler = ShieldHandler(template.shield)
     private var mapSelection: MapSelection = MapSelection.None
     private var scanHandler: ScanHandler? = null
@@ -82,6 +83,7 @@ class PlayerShip(
     ) {
         powerHandler.update(time)
         updateBeams(time, physicsEngine, contactList)
+        updateTubes(time)
         shieldHandler.update(time, Shields.boostLevel)
         jumpHandler.update(time, Jump.boostLevel)
         updateScan(time, contactList)
@@ -353,6 +355,15 @@ class PlayerShip(
             contactList = contactList,
             lockHandler = lockHandler,
             physicsEngine = physicsEngine
+        )
+    }
+
+    private fun updateTubes(
+        time: GameTime
+    ) {
+        tubeHandlerContainer.update(
+            time = time,
+            boostLevel = Weapons.boostLevel
         )
     }
 
