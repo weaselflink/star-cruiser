@@ -9,4 +9,16 @@ class TubeHandlerContainer(
     val tubeHandlers = launchTubes.map {
         TubeHandler(it, ship)
     }
+
+    fun launch(index: Int) {
+        tubeHandlers.getOrNull(index)?.apply {
+            launch()
+        }
+    }
+
+    fun startReload(index: Int) {
+        tubeHandlers.getOrNull(index)?.apply {
+            startReload()
+        }
+    }
 }

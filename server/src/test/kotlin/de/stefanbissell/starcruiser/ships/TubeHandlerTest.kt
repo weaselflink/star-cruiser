@@ -44,7 +44,7 @@ class TubeHandlerTest {
 
     @Test
     fun `requesting reload on empty tube starts reloading`() {
-        tubeHandler.reload()
+        tubeHandler.startReload()
 
         expectThat(tubeHandler.status)
             .isEqualTo(TubeStatus.Reloading())
@@ -53,7 +53,7 @@ class TubeHandlerTest {
     @Test
     fun `requesting reload on reloading tube does nothing`() {
         tubeHandler.status = TubeStatus.Reloading(0.5)
-        tubeHandler.reload()
+        tubeHandler.startReload()
 
         expectThat(tubeHandler.status)
             .isEqualTo(TubeStatus.Reloading(0.5))
@@ -62,7 +62,7 @@ class TubeHandlerTest {
     @Test
     fun `requesting reload on ready tube does nothing`() {
         tubeHandler.status = TubeStatus.Ready
-        tubeHandler.reload()
+        tubeHandler.startReload()
 
         expectThat(tubeHandler.status)
             .isEqualTo(TubeStatus.Ready)

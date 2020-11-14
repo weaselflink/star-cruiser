@@ -30,7 +30,7 @@ class TubeHandler(
         }
     }
 
-    fun reload() {
+    fun startReload() {
         if (status is TubeStatus.Empty) {
             status = TubeStatus.Reloading()
         }
