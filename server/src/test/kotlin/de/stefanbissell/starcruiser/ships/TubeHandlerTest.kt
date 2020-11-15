@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
+import strikt.assertions.isFalse
+import strikt.assertions.isTrue
 
 class TubeHandlerTest {
 
@@ -45,7 +47,8 @@ class TubeHandlerTest {
 
     @Test
     fun `requesting reload on empty tube starts reloading`() {
-        tubeHandler.startReload()
+        expectThat(tubeHandler.startReload())
+            .isTrue()
 
         expectThat(tubeHandler.status)
             .isEqualTo(TubeStatus.Reloading())
@@ -54,7 +57,8 @@ class TubeHandlerTest {
     @Test
     fun `requesting reload on reloading tube does nothing`() {
         tubeHandler.status = TubeStatus.Reloading(0.5)
-        tubeHandler.startReload()
+        expectThat(tubeHandler.startReload())
+            .isFalse()
 
         expectThat(tubeHandler.status)
             .isEqualTo(TubeStatus.Reloading(0.5))
@@ -63,7 +67,8 @@ class TubeHandlerTest {
     @Test
     fun `requesting reload on ready tube does nothing`() {
         tubeHandler.status = TubeStatus.Ready
-        tubeHandler.startReload()
+        expectThat(tubeHandler.startReload())
+            .isFalse()
 
         expectThat(tubeHandler.status)
             .isEqualTo(TubeStatus.Ready)
