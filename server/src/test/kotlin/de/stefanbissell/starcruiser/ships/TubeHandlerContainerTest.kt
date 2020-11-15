@@ -18,12 +18,40 @@ class TubeHandlerContainerTest {
     )
 
     @Test
+    fun `initially at full magazine capacity`() {
+        expectThat(tubeHandlerContainer.magazineRemaining)
+            .isEqualTo(Magazine().capacity)
+    }
+
+    @Test
     fun `starts reload for given tube`() {
         tubeHandlerContainer.startReload(1)
 
         expectThat(tubeHandlerContainer.tubeHandlers[1])
             .get { status }
             .isEqualTo(TubeStatus.Reloading())
+    }
+
+    @Test
+    fun `reduces magazine remaining on reload`() {
+        tubeHandlerContainer.startReload(1)
+
+        expectThat(tubeHandlerContainer.magazineRemaining)
+            .isEqualTo(Magazine().capacity - 1)
+    }
+
+    @Test
+    fun `does not reload when magazine empty`() {
+        tubeHandlerContainer.magazineRemaining = 1
+        tubeHandlerContainer.startReload(0)
+        tubeHandlerContainer.startReload(1)
+
+        expectThat(tubeHandlerContainer.tubeHandlers[0])
+            .get { status }
+            .isEqualTo(TubeStatus.Reloading())
+        expectThat(tubeHandlerContainer.tubeHandlers[1])
+            .get { status }
+            .isEqualTo(TubeStatus.Empty)
     }
 
     @Test
@@ -61,12 +89,13 @@ class TubeHandlerContainerTest {
 
     @Test
     fun `creates message for client`() {
+        tubeHandlerContainer.magazineRemaining = 10
         tubeHandlerContainer.tubeHandlers[0].status = TubeStatus.Ready
         tubeHandlerContainer.tubeHandlers[1].status = TubeStatus.Reloading(0.4)
 
         expectThat(tubeHandlerContainer.toMessage()) {
             get { magazineMax }.isEqualTo(Magazine().capacity)
-            get { magazineCurrent }.isEqualTo(Magazine().capacity)
+            get { magazineRemaining }.isEqualTo(10)
             get { tubes }.containsExactly(
                 TubeStatus.Ready,
                 TubeStatus.Reloading(0.4)

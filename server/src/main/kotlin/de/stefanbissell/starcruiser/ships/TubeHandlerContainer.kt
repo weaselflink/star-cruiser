@@ -9,6 +9,7 @@ class TubeHandlerContainer(
     val ship: Ship
 ) {
 
+    var magazineRemaining = magazine.capacity
     val tubeHandlers = launchTubes.map {
         TubeHandler(it, ship)
     }
@@ -32,15 +33,19 @@ class TubeHandlerContainer(
     }
 
     fun startReload(index: Int) {
-        tubeHandlers.getOrNull(index)?.apply {
-            startReload()
+        if (magazineRemaining > 0) {
+            tubeHandlers.getOrNull(index)?.apply {
+                if (startReload()) {
+                    magazineRemaining--
+                }
+            }
         }
     }
 
     fun toMessage() =
         TubesMessage(
             magazineMax = magazine.capacity,
-            magazineCurrent = magazine.capacity,
+            magazineRemaining = magazineRemaining,
             tubes = tubeHandlers.map {
                 it.status
             }

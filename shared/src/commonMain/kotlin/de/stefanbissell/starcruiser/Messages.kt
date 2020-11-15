@@ -383,7 +383,7 @@ sealed class BeamStatus {
 @Serializable
 data class TubesMessage(
     val magazineMax: Int,
-    val magazineCurrent: Int,
+    val magazineRemaining: Int,
     val tubes: List<TubeStatus>
 )
 
