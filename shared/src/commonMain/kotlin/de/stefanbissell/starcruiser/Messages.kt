@@ -390,12 +390,15 @@ data class TubesMessage(
 @Serializable
 sealed class TubeStatus {
 
+    @Serializable
     object Empty : TubeStatus()
 
+    @Serializable
     data class Reloading(val progress: Double = 0.0) : TubeStatus() {
         fun update(change: Double) = copy(progress = progress + change)
     }
 
+    @Serializable
     object Ready : TubeStatus()
 }
 
