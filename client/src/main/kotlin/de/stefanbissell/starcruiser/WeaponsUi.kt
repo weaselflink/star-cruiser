@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser
 import de.stefanbissell.starcruiser.Command.CommandLockTarget
 import de.stefanbissell.starcruiser.components.CanvasButton
 import de.stefanbissell.starcruiser.components.HullDisplay
+import de.stefanbissell.starcruiser.components.LaunchTubeUi
 import de.stefanbissell.starcruiser.components.ModulationUi
 import de.stefanbissell.starcruiser.components.ShieldsDisplay
 import de.stefanbissell.starcruiser.components.ShortRangeScope
@@ -52,6 +53,11 @@ class WeaponsUi : StationUi(Station.Weapons) {
         widthExpr = { 20.vmin },
         onClick = { toggleShields() }
     )
+    private val launchTubeUi = LaunchTubeUi(
+        canvas = canvas,
+        xExpr = { width - 48.vmin },
+        yExpr = { height - 2.vmin }
+    )
 
     private var selectingTarget = false
 
@@ -81,6 +87,7 @@ class WeaponsUi : StationUi(Station.Weapons) {
         shieldsButton.draw()
         beamModulationUi.draw(snapshot.shortRangeScope.beams.modulation)
         shieldModulationUi.draw(snapshot.shield.modulation)
+        launchTubeUi.draw(snapshot.tubes)
     }
 
     private fun contactSelected(targetId: ObjectId) {
