@@ -46,7 +46,7 @@ class PlayerShip(
     private val throttleHandler = ThrottleHandler(template)
     private val powerHandler = PowerHandler(template)
     val beamHandlerContainer = BeamHandlerContainer(template.beams, this)
-    val tubeHandlerContainer = TubeHandlerContainer(template.launchTubes, template.magazine, this)
+    val tubeHandlerContainer = TubeHandlerContainer(template.tubes, template.magazine, this)
     val shieldHandler = ShieldHandler(template.shield)
     private var mapSelection: MapSelection = MapSelection.None
     private var scanHandler: ScanHandler? = null
@@ -254,6 +254,14 @@ class PlayerShip(
 
     fun increaseBeamModulation() {
         beamHandlerContainer.modulation += 1
+    }
+
+    fun reloadTube(index: Int) {
+        tubeHandlerContainer.startReload(index)
+    }
+
+    fun launchTube(index: Int) {
+        tubeHandlerContainer.launch(index)
     }
 
     override fun inSensorRange(other: Vector2?) =

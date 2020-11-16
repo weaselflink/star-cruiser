@@ -23,12 +23,12 @@ val cruiserTemplate = ShipTemplate().copy(
             leftArc = 10
         )
     ),
-    launchTubes = listOf(
-        LaunchTube(
+    tubes = listOf(
+        Tube(
             position = Vector3(-13.45, 0.0, -5),
             direction = 80
         ),
-        LaunchTube(
+        Tube(
             position = Vector3(13.45, 0.0, -5),
             direction = -80
         )

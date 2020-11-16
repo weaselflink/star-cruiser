@@ -228,6 +228,14 @@ class GameState {
         getClientShip(clientId)?.increaseBeamModulation()
     }
 
+    fun reloadTube(clientId: ClientId, index: Int) {
+        getClientShip(clientId)?.reloadTube(index)
+    }
+
+    fun launchTube(clientId: ClientId, index: Int) {
+        getClientShip(clientId)?.launchTube(index)
+    }
+
     fun toView() =
         GameStateView(
             currentTime = time.current,
@@ -458,6 +466,8 @@ private fun CoroutineScope.startConsumer(channel: Channel<GameStateChange>) {
                 is IncreaseShieldModulation -> gameState.increaseShieldModulation(change.clientId)
                 is DecreaseBeamModulation -> gameState.decreaseBeamModulation(change.clientId)
                 is IncreaseBeamModulation -> gameState.increaseBeamModulation(change.clientId)
+                is ReloadTube -> gameState.reloadTube(change.clientId, change.index)
+                is LaunchTube -> gameState.launchTube(change.clientId, change.index)
             }
         }
     }

@@ -38,7 +38,7 @@ data class ShipTemplate(
             leftArc = 10
         )
     ),
-    val launchTubes: List<LaunchTube> = emptyList(),
+    val tubes: List<Tube> = emptyList(),
     val magazine: Magazine = Magazine(),
     val shield: ShieldTemplate = ShieldTemplate(),
     val hull: Double = 10.0,
@@ -108,7 +108,7 @@ data class BeamWeapon(
     }
 }
 
-data class LaunchTube(
+data class Tube(
     val position: Vector3 = Vector3(),
     val direction: Int = 0,
     val reloadSpeed: Double = 0.05

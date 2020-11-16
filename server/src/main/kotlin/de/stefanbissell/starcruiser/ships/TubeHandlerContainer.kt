@@ -4,13 +4,13 @@ import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TubesMessage
 
 class TubeHandlerContainer(
-    launchTubes: List<LaunchTube>,
+    tubes: List<Tube>,
     val magazine: Magazine,
     val ship: Ship
 ) {
 
     var magazineRemaining = magazine.capacity
-    val tubeHandlers = launchTubes.map {
+    val tubeHandlers = tubes.map {
         TubeHandler(it, ship)
     }
 

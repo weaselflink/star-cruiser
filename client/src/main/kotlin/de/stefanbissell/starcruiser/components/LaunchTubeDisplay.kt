@@ -1,6 +1,8 @@
 package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
+import de.stefanbissell.starcruiser.ClientSocket
+import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.TubeStatus
 import org.w3c.dom.HTMLCanvasElement
 
@@ -28,6 +30,7 @@ class LaunchTubeDisplay(
         yExpr = yExpr,
         widthExpr = { 20.vmin },
         heightExpr = { 8.vmin },
+        onClick = { onActionButton() },
         enabled = { actionPossible }
     )
 
@@ -70,5 +73,13 @@ class LaunchTubeDisplay(
         }
 
         actionButton.draw()
+    }
+
+    private fun onActionButton() {
+        when (currentStatus) {
+            is TubeStatus.Empty -> ClientSocket.send(Command.CommandReloadTube(index))
+            is TubeStatus.Ready -> ClientSocket.send(Command.CommandLaunchTube(index))
+            else -> Unit
+        }
     }
 }

@@ -4,7 +4,7 @@ import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TubeStatus
 
 class TubeHandler(
-    val launchTube: LaunchTube,
+    val tube: Tube,
     val ship: Ship
 ) {
 
@@ -16,7 +16,7 @@ class TubeHandler(
     ) {
         val currentStatus = status
         if (currentStatus is TubeStatus.Reloading) {
-            val currentProgress = time.delta * launchTube.reloadSpeed * boostLevel
+            val currentProgress = time.delta * tube.reloadSpeed * boostLevel
             status = if (currentStatus.progress + currentProgress < 1.0) {
                 currentStatus.update(currentProgress)
             } else {

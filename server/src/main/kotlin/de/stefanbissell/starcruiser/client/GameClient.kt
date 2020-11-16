@@ -19,11 +19,13 @@ import de.stefanbissell.starcruiser.GetGameStateSnapshot
 import de.stefanbissell.starcruiser.IncreaseBeamModulation
 import de.stefanbissell.starcruiser.IncreaseShieldModulation
 import de.stefanbissell.starcruiser.JoinShip
+import de.stefanbissell.starcruiser.LaunchTube
 import de.stefanbissell.starcruiser.LockTarget
 import de.stefanbissell.starcruiser.MapClearSelection
 import de.stefanbissell.starcruiser.MapSelectShip
 import de.stefanbissell.starcruiser.MapSelectWaypoint
 import de.stefanbissell.starcruiser.NewGameClient
+import de.stefanbissell.starcruiser.ReloadTube
 import de.stefanbissell.starcruiser.ScanSelectedShip
 import de.stefanbissell.starcruiser.SetCoolant
 import de.stefanbissell.starcruiser.SetMainScreenView
@@ -166,6 +168,12 @@ class GameClient(
                 )
                 is Command.CommandIncreaseBeamModulation -> gameStateActor.send(
                     IncreaseBeamModulation(id)
+                )
+                is Command.CommandReloadTube -> gameStateActor.send(
+                    ReloadTube(id, command.index)
+                )
+                is Command.CommandLaunchTube -> gameStateActor.send(
+                    LaunchTube(id, command.index)
                 )
             }
         }

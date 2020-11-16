@@ -95,6 +95,12 @@ sealed class Command {
     @Serializable
     object CommandIncreaseBeamModulation : Command()
 
+    @Serializable
+    data class CommandReloadTube(val index: Int) : Command()
+
+    @Serializable
+    data class CommandLaunchTube(val index: Int) : Command()
+
     fun toJson() = configuredJson.encodeToString(serializer(), this)
 
     companion object {
