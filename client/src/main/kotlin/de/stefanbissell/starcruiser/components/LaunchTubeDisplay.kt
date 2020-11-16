@@ -12,7 +12,7 @@ class LaunchTubeDisplay(
     xExpr: CanvasDimensions.() -> Double,
     yExpr: CanvasDimensions.() -> Double,
     private val index: Int
-): PointerEventHandlerParent() {
+) : PointerEventHandlerParent() {
 
     private var currentStatus: TubeStatus = TubeStatus.Empty
     private val actionPossible

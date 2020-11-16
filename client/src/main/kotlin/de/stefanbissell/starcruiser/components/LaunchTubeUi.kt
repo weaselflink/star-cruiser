@@ -14,18 +14,18 @@ class LaunchTubeUi(
     private var tubeDisplays = emptyList<LaunchTubeDisplay>()
 
     fun draw(tubesMessage: TubesMessage) {
-        if (tubesMessage.tubes.size != tubeDisplays.size) {
+        val size = tubesMessage.tubes.size
+        if (size != tubeDisplays.size) {
             tubeDisplays.forEach {
                 removeChildren(it)
             }
 
             tubeDisplays = tubesMessage.tubes
-                .reversed()
                 .mapIndexed { index, _ ->
                     LaunchTubeDisplay(
                         canvas = canvas,
                         xExpr = xExpr,
-                        yExpr = { yExpr() - 10.vmin * index },
+                        yExpr = { yExpr() - 10.vmin * (size - (index + 1)) },
                         index = index
                     ).also {
                         addChildren(it)
@@ -33,7 +33,6 @@ class LaunchTubeUi(
                 }
         }
         tubesMessage.tubes
-            .reversed()
             .forEachIndexed { index, tubeStatus ->
                 tubeDisplays[index].draw(tubeStatus)
             }
