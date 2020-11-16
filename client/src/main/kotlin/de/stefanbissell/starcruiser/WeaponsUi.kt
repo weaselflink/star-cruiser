@@ -67,6 +67,7 @@ class WeaponsUi : StationUi(Station.Weapons) {
             shieldsButton,
             beamModulationUi,
             shieldModulationUi,
+            launchTubeUi,
             shortRangeScope
         )
     }

@@ -14,10 +14,10 @@ open class PointerEventHandlerParent : PointerEventHandler {
     }
 
     fun removeChildren(vararg handlersToRemove: PointerEventHandler) {
-        addChildren(handlersToRemove.toList())
+        removeChildren(handlersToRemove.toList())
     }
 
-    fun removeChildren(handlersToRemove: Iterable<PointerEventHandler>) {
+    private fun removeChildren(handlersToRemove: Iterable<PointerEventHandler>) {
         handlers.removeAll { handler ->
             handlersToRemove.any { handler === it }
         }

@@ -4,6 +4,7 @@ import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.ClientSocket
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.TubeStatus
+import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import org.w3c.dom.HTMLCanvasElement
 
 class LaunchTubeDisplay(
@@ -11,7 +12,7 @@ class LaunchTubeDisplay(
     xExpr: CanvasDimensions.() -> Double,
     yExpr: CanvasDimensions.() -> Double,
     private val index: Int
-) {
+): PointerEventHandlerParent() {
 
     private var currentStatus: TubeStatus = TubeStatus.Empty
     private val actionPossible
@@ -33,6 +34,10 @@ class LaunchTubeDisplay(
         onClick = { onActionButton() },
         enabled = { actionPossible }
     )
+
+    init {
+        addChildren(actionButton)
+    }
 
     fun draw(status: TubeStatus) {
         currentStatus = status
@@ -76,6 +81,8 @@ class LaunchTubeDisplay(
     }
 
     private fun onActionButton() {
+        println("onActionButton")
+
         when (currentStatus) {
             is TubeStatus.Empty -> ClientSocket.send(Command.CommandReloadTube(index))
             is TubeStatus.Ready -> ClientSocket.send(Command.CommandLaunchTube(index))
