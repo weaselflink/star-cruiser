@@ -115,7 +115,7 @@ data class Tube(
 )
 
 data class Magazine(
-    val capacity: Int = 20
+    val capacity: Int = 10
 )
 
 data class ShieldTemplate(

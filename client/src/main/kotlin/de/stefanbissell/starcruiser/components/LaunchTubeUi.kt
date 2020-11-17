@@ -16,7 +16,9 @@ class LaunchTubeUi(
         xExpr = xExpr,
         yExpr = { yExpr() - 10.vmin * tubeDisplays.size },
         widthExpr = { 46.vmin }
-    )
+    ).also {
+        it.leftText = "Magazine"
+    }
     private var tubeDisplays = emptyList<LaunchTubeDisplay>()
 
     fun draw(tubesMessage: TubesMessage) {
