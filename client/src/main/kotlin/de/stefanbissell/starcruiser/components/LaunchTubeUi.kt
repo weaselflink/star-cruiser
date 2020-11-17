@@ -11,10 +11,17 @@ class LaunchTubeUi(
     private val yExpr: CanvasDimensions.() -> Double,
 ) : PointerEventHandlerParent() {
 
+    private val magazineDisplay = CanvasProgress(
+        canvas = canvas,
+        xExpr = xExpr,
+        yExpr = { yExpr() - 10.vmin * tubeDisplays.size },
+        widthExpr = { 46.vmin }
+    )
     private var tubeDisplays = emptyList<LaunchTubeDisplay>()
 
     fun draw(tubesMessage: TubesMessage) {
         updateTubeDisplays(tubesMessage)
+        drawMagazine(tubesMessage)
         drawTubeDisplays(tubesMessage)
     }
 
@@ -47,5 +54,13 @@ class LaunchTubeUi(
             .forEachIndexed { index, tubeStatus ->
                 tubeDisplays[index].draw(tubeStatus)
             }
+    }
+
+    private fun drawMagazine(tubesMessage: TubesMessage) {
+        val remaining = tubesMessage.magazineRemaining
+        val max = tubesMessage.magazineMax
+        magazineDisplay.progress = remaining.toDouble() / max.toDouble()
+        magazineDisplay.rightText = "$remaining/$max"
+        magazineDisplay.draw()
     }
 }
