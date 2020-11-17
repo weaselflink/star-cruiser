@@ -14,6 +14,11 @@ class LaunchTubeUi(
     private var tubeDisplays = emptyList<LaunchTubeDisplay>()
 
     fun draw(tubesMessage: TubesMessage) {
+        updateTubeDisplays(tubesMessage)
+        drawTubeDisplays(tubesMessage)
+    }
+
+    private fun updateTubeDisplays(tubesMessage: TubesMessage) {
         val size = tubesMessage.tubes.size
         if (size != tubeDisplays.size) {
             tubeDisplays.forEach {
@@ -22,16 +27,22 @@ class LaunchTubeUi(
 
             tubeDisplays = tubesMessage.tubes
                 .mapIndexed { index, _ ->
-                    LaunchTubeDisplay(
-                        canvas = canvas,
-                        xExpr = xExpr,
-                        yExpr = { yExpr() - 10.vmin * (size - (index + 1)) },
-                        index = index
-                    ).also {
-                        addChildren(it)
-                    }
+                    createTubeDisplay(size, index)
                 }
         }
+    }
+
+    private fun createTubeDisplay(size: Int, index: Int) =
+        LaunchTubeDisplay(
+            canvas = canvas,
+            xExpr = xExpr,
+            yExpr = { yExpr() - 10.vmin * (size - (index + 1)) },
+            index = index
+        ).also {
+            addChildren(it)
+        }
+
+    private fun drawTubeDisplays(tubesMessage: TubesMessage) {
         tubesMessage.tubes
             .forEachIndexed { index, tubeStatus ->
                 tubeDisplays[index].draw(tubeStatus)
