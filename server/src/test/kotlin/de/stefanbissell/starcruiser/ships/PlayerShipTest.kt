@@ -210,7 +210,7 @@ class PlayerShipTest {
         stepTime(2)
 
         verify(exactly = 1) {
-            physicsEngine.updateShip(
+            physicsEngine.updateObject(
                 ship.id,
                 50 * ship.template.aheadThrustFactor,
                 50 * ship.template.rudderFactor
@@ -226,7 +226,7 @@ class PlayerShipTest {
         stepTime(2)
 
         verify(exactly = 1) {
-            physicsEngine.updateShip(
+            physicsEngine.updateObject(
                 ship.id,
                 50 * ship.template.aheadThrustFactor * 1.5,
                 50 * ship.template.rudderFactor
@@ -242,7 +242,7 @@ class PlayerShipTest {
         stepTime(2)
 
         verify(exactly = 1) {
-            physicsEngine.updateShip(
+            physicsEngine.updateObject(
                 ship.id,
                 50 * ship.template.aheadThrustFactor,
                 50 * ship.template.rudderFactor * 0.8

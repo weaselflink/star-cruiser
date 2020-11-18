@@ -406,9 +406,9 @@ class PlayerShip(
     private fun updatePhysics(physicsEngine: PhysicsEngine) {
         val effectiveThrust = throttleHandler.effectiveThrust(Impulse.boostLevel)
         val effectiveRudder = rudder * template.rudderFactor * Maneuver.boostLevel
-        physicsEngine.updateShip(id, effectiveThrust, effectiveRudder)
+        physicsEngine.updateObject(id, effectiveThrust, effectiveRudder)
 
-        physicsEngine.getBodyParameters(id)?.let {
+        physicsEngine.getBodyParameters(id)?.also {
             position = it.position
             rotation = it.rotation
             speed = it.speed

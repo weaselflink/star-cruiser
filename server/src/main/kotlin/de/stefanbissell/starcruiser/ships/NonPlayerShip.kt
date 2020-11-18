@@ -170,9 +170,9 @@ class NonPlayerShip(
             throttle * template.aheadThrustFactor
         }
         val effectiveRudder = rudder * template.rudderFactor
-        physicsEngine.updateShip(id, effectiveThrust, effectiveRudder)
+        physicsEngine.updateObject(id, effectiveThrust, effectiveRudder)
 
-        physicsEngine.getBodyParameters(id)?.let {
+        physicsEngine.getBodyParameters(id)?.also {
             position = it.position
             rotation = it.rotation
             speed = it.speed

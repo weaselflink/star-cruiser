@@ -11,7 +11,7 @@ class Asteroid(
 ) {
 
     fun update(physicsEngine: PhysicsEngine) {
-        physicsEngine.getBodyParameters(id)?.let {
+        physicsEngine.getBodyParameters(id)?.also {
             position = it.position
             rotation = it.rotation
         }

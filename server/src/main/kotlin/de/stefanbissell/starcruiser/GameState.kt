@@ -18,6 +18,7 @@ import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
 import de.stefanbissell.starcruiser.ships.ShipContactList
+import de.stefanbissell.starcruiser.ships.Torpedo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
@@ -34,6 +35,7 @@ class GameState {
         TriggerHandler(it)
     }
     private val ships = mutableMapOf<ObjectId, Ship>()
+    private val torpedoes = mutableListOf<Torpedo>()
     private val playerShips
         get() = ships.values
             .filterIsInstance<PlayerShip>()
@@ -120,6 +122,7 @@ class GameState {
 
         physicsEngine.step(time.delta)
         updateShips()
+        updateTorpedoes()
         updateAsteroids()
         updateTriggers()
     }
@@ -350,6 +353,21 @@ class GameState {
         }
     }
 
+    private fun updateTorpedoes() {
+        torpedoes.forEach { torpedoEntry ->
+            torpedoEntry.apply {
+                update(physicsEngine)
+            }
+        }
+        torpedoes.map {
+            it.endUpdate()
+        }.filter {
+            it.destroyed
+        }.forEach {
+            destroyTorpedo(it.id)
+        }
+    }
+
     private fun updateAsteroids() {
         asteroids.forEach {
             it.update(physicsEngine)
@@ -419,6 +437,11 @@ class GameState {
         }
         ships.remove(shipId)
         physicsEngine.removeObject(shipId)
+    }
+
+    private fun destroyTorpedo(torpedoId: ObjectId) {
+        torpedoes.removeIf { it.id == torpedoId }
+        physicsEngine.removeObject(torpedoId)
     }
 }
 

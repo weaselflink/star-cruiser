@@ -5,6 +5,7 @@ import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.ships.Ship
 import de.stefanbissell.starcruiser.ships.ShipTemplate
+import de.stefanbissell.starcruiser.ships.Torpedo
 import org.jbox2d.callbacks.RayCastCallback
 import org.jbox2d.collision.shapes.CircleShape
 import org.jbox2d.collision.shapes.PolygonShape
@@ -27,6 +28,10 @@ class PhysicsEngine {
         bodies[ship.id] = ship.toBody(sleepingAllowed)
     }
 
+    fun addTorpedo(torpedo: Torpedo, sleepingAllowed: Boolean = true) {
+        bodies[torpedo.id] = torpedo.toBody(sleepingAllowed)
+    }
+
     fun addAsteroid(asteroid: Asteroid) {
         bodies[asteroid.id] = asteroid.toBody()
     }
@@ -37,7 +42,7 @@ class PhysicsEngine {
         }
     }
 
-    fun updateShip(objectId: ObjectId, thrust: Double, rudder: Double) {
+    fun updateObject(objectId: ObjectId, thrust: Double, rudder: Double = 0.0) {
         bodies[objectId]?.apply {
             if (thrust != 0.0) {
                 applyForceToCenter(
@@ -112,6 +117,25 @@ class PhysicsEngine {
                 geometry.density.toFloat()
             )
         }
+    }
+
+    private fun Torpedo.toBody(sleepingAllowed: Boolean = true) =
+        createDynamicBody(
+            position,
+            rotation
+        ).apply {
+            isSleepingAllowed = sleepingAllowed
+            m_userData = this@toBody.id
+            createFixtures(this@toBody)
+        }
+
+    private fun Body.createFixtures(torpedo: Torpedo) {
+        createFixture(
+            CircleShape().apply {
+                radius = torpedo.radius.toFloat()
+            },
+            torpedo.density.toFloat()
+        )
     }
 
     private fun Asteroid.toBody() =
