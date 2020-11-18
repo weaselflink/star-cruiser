@@ -9,6 +9,7 @@ class TubeHandler(
 ) {
 
     var status: TubeStatus = TubeStatus.Empty
+    var newTorpedo = false
 
     fun update(
         time: GameTime,
@@ -28,6 +29,7 @@ class TubeHandler(
     fun launch() {
         if (status is TubeStatus.Ready) {
             status = TubeStatus.Empty
+            newTorpedo = true
         }
     }
 
@@ -39,4 +41,9 @@ class TubeHandler(
             false
         }
     }
+
+    fun endUpdate() =
+        newTorpedo.also {
+            newTorpedo = false
+        }
 }

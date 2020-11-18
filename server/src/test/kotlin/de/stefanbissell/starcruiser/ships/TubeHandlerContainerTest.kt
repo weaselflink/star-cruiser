@@ -2,17 +2,35 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.TubeStatus
+import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.Vector3
+import de.stefanbissell.starcruiser.isNear
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.all
 import strikt.assertions.containsExactly
+import strikt.assertions.hasSize
+import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
+import strikt.assertions.withFirst
+import kotlin.math.PI
 
 class TubeHandlerContainerTest {
 
-    private val ship = NonPlayerShip(faction = TestFactions.neutral)
+    private val ship = NonPlayerShip(
+        faction = TestFactions.neutral,
+        position = Vector2(100, 200),
+        rotation = PI
+    )
     private val tubeHandlerContainer = TubeHandlerContainer(
-        tubes = listOf(Tube(), Tube()),
+        tubes = listOf(
+            Tube(
+                position = Vector3(2, 3, 4),
+                direction = -45,
+                velocity = 5.0
+            ),
+            Tube()
+        ),
         magazine = Magazine(),
         ship = ship
     )
@@ -72,6 +90,34 @@ class TubeHandlerContainerTest {
         expectThat(tubeHandlerContainer.tubeHandlers[0])
             .get { status }
             .isEqualTo(TubeStatus.Empty)
+    }
+
+    @Test
+    fun `launch creates torpedo`() {
+        tubeHandlerContainer.tubeHandlers[0].status = TubeStatus.Ready
+        tubeHandlerContainer.launch(0)
+
+        val expectedRotation = PI * 0.75
+        expectThat(tubeHandlerContainer.endUpdate())
+            .hasSize(1)
+            .withFirst {
+                get { position }.isNear(
+                    Vector2(100, 200) +
+                        Vector2(2, 3).rotate(expectedRotation)
+                )
+                get { rotation }.isNear(expectedRotation)
+                get { speed }.isNear(
+                    Vector2(5, 0).rotate(expectedRotation)
+                )
+            }
+    }
+
+    @Test
+    fun `creates no torpedoes without launch`() {
+        tubeHandlerContainer.tubeHandlers[0].status = TubeStatus.Ready
+
+        expectThat(tubeHandlerContainer.endUpdate())
+            .isEmpty()
     }
 
     @Test

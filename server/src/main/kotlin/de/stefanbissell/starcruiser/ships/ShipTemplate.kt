@@ -111,7 +111,8 @@ data class BeamWeapon(
 data class Tube(
     val position: Vector3 = Vector3(),
     val direction: Int = 0,
-    val reloadSpeed: Double = 0.05
+    val reloadSpeed: Double = 0.05,
+    val velocity: Double = 2.0
 )
 
 data class Magazine(

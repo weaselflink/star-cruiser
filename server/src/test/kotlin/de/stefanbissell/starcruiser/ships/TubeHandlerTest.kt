@@ -46,6 +46,19 @@ class TubeHandlerTest {
     }
 
     @Test
+    fun `requesting launch on ready tube creates new torpedo`() {
+        tubeHandler.status = TubeStatus.Ready
+        tubeHandler.launch()
+
+        expectThat(tubeHandler.newTorpedo)
+            .isTrue()
+        expectThat(tubeHandler.endUpdate())
+            .isTrue()
+        expectThat(tubeHandler.newTorpedo)
+            .isFalse()
+    }
+
+    @Test
     fun `requesting reload on empty tube starts reloading`() {
         expectThat(tubeHandler.startReload())
             .isTrue()

@@ -16,8 +16,8 @@ class Torpedo(
     var rotation: Double = 90.0.toRadians(),
     var speed: Vector2 = Vector2(),
     val radius: Double = 1.0,
-    val mass: Double = 100.0,
-    val thrust: Double = 50.0
+    private val mass: Double = 100.0,
+    private val thrust: Double = 50.0
 ) {
 
     val density

@@ -2,6 +2,8 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TubesMessage
+import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.toRadians
 
 class TubeHandlerContainer(
     tubes: List<Tube>,
@@ -25,6 +27,19 @@ class TubeHandlerContainer(
             )
         }
     }
+
+    fun endUpdate(): List<Torpedo> =
+        tubeHandlers.filter {
+            it.endUpdate()
+        }.map {
+            val rotation = ship.rotation + it.tube.direction.toRadians()
+            Torpedo(
+                faction = ship.faction,
+                position = ship.position + it.tube.position.toVector2().rotate(rotation),
+                rotation = rotation,
+                speed = Vector2(it.tube.velocity, 0).rotate(rotation)
+            )
+        }
 
     fun launch(index: Int) {
         tubeHandlers.getOrNull(index)?.apply {

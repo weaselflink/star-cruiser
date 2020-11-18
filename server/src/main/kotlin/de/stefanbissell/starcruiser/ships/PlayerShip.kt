@@ -104,6 +104,7 @@ class PlayerShip(
             physicsEngine.jumpShip(id, jumpHandler.jumpDistance)
             jumpHandler.endJump()
         }
+        tubeHandlerContainer.endUpdate()
         return ShipUpdateResult(
             id = id,
             destroyed = destroyed
