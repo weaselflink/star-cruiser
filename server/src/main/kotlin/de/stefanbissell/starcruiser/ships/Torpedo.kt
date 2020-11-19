@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.ships
 
+import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
@@ -17,15 +18,20 @@ class Torpedo(
     var speed: Vector2 = Vector2(),
     val radius: Double = 1.0,
     private val mass: Double = 100.0,
-    private val thrust: Double = 50.0
+    private val thrust: Double = 50.0,
+    private val maxBurnTime: Double = 30.0
 ) {
 
+    var timeSinceLaunch = 0.0
     val density
         get() = mass / (0.5 * PI * radius * radius)
 
     fun update(
+        time: GameTime,
         physicsEngine: PhysicsEngine
     ) {
+        timeSinceLaunch += time.delta
+
         physicsEngine.updateObject(id, thrust)
 
         physicsEngine.getBodyParameters(id)?.also {
@@ -36,6 +42,7 @@ class Torpedo(
     }
 
     fun endUpdate(): ShipUpdateResult {
-        return ShipUpdateResult(id, false)
+        val destroyed = timeSinceLaunch > maxBurnTime
+        return ShipUpdateResult(id, destroyed)
     }
 }

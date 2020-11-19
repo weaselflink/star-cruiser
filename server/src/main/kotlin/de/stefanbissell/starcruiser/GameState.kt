@@ -365,7 +365,7 @@ class GameState {
     private fun updateTorpedoes() {
         torpedoes.values.forEach { torpedoEntry ->
             torpedoEntry.apply {
-                update(physicsEngine)
+                update(time, physicsEngine)
             }
         }
         torpedoes.values.map {
