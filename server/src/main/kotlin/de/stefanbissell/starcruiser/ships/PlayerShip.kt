@@ -104,10 +104,11 @@ class PlayerShip(
             physicsEngine.jumpShip(id, jumpHandler.jumpDistance)
             jumpHandler.endJump()
         }
-        tubeHandlerContainer.endUpdate()
+        val torpedoes = tubeHandlerContainer.endUpdate()
         return ShipUpdateResult(
             id = id,
-            destroyed = destroyed
+            destroyed = destroyed,
+            torpedoes = torpedoes
         )
     }
 
@@ -533,5 +534,6 @@ private sealed class MapSelection {
 
 data class ShipUpdateResult(
     val id: ObjectId,
-    val destroyed: Boolean
+    val destroyed: Boolean,
+    val torpedoes: List<Torpedo> = emptyList()
 )

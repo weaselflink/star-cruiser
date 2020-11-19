@@ -35,7 +35,7 @@ class GameState {
         TriggerHandler(it)
     }
     private val ships = mutableMapOf<ObjectId, Ship>()
-    private val torpedoes = mutableListOf<Torpedo>()
+    private val torpedoes = mutableMapOf<ObjectId, Torpedo>()
     private val playerShips
         get() = ships.values
             .filterIsInstance<PlayerShip>()
@@ -344,9 +344,18 @@ class GameState {
                 update(time, physicsEngine, contactList)
             }
         }
-        ships.map {
+        val updateResults = ships.map {
             it.value.endUpdate(time, physicsEngine)
-        }.filter {
+        }
+
+        updateResults.flatMap {
+            it.torpedoes
+        }.forEach {
+            torpedoes[it.id] = it
+            physicsEngine.addTorpedo(it)
+        }
+
+        updateResults.filter {
             it.destroyed
         }.forEach {
             destroyShip(it.id)
@@ -354,12 +363,12 @@ class GameState {
     }
 
     private fun updateTorpedoes() {
-        torpedoes.forEach { torpedoEntry ->
+        torpedoes.values.forEach { torpedoEntry ->
             torpedoEntry.apply {
                 update(physicsEngine)
             }
         }
-        torpedoes.map {
+        torpedoes.values.map {
             it.endUpdate()
         }.filter {
             it.destroyed
@@ -440,7 +449,7 @@ class GameState {
     }
 
     private fun destroyTorpedo(torpedoId: ObjectId) {
-        torpedoes.removeIf { it.id == torpedoId }
+        torpedoes.remove(torpedoId)
         physicsEngine.removeObject(torpedoId)
     }
 }

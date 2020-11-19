@@ -190,6 +190,7 @@ data class ContactMessage(
 @Serializable
 data class MapContactMessage(
     val id: ObjectId,
+    val shipType: ShipType = ShipType.Vessel,
     val type: ContactType,
     val designation: String,
     override val position: Vector2,
@@ -199,6 +200,7 @@ data class MapContactMessage(
 @Serializable
 data class ScopeContactMessage(
     val id: ObjectId,
+    val shipType: ShipType = ShipType.Vessel,
     val type: ContactType,
     val designation: String,
     val relativePosition: Vector2,
@@ -256,6 +258,11 @@ enum class MainScreenView {
             Top -> Scope
             Scope -> Front
         }
+}
+
+enum class ShipType {
+    Vessel,
+    Projectile
 }
 
 enum class ContactType {
