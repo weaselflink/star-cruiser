@@ -81,8 +81,6 @@ class LaunchTubeDisplay(
     }
 
     private fun onActionButton() {
-        println("onActionButton")
-
         when (currentStatus) {
             is TubeStatus.Empty -> ClientSocket.send(Command.CommandReloadTube(index))
             is TubeStatus.Ready -> ClientSocket.send(Command.CommandLaunchTube(index))
