@@ -14,10 +14,10 @@ import de.stefanbissell.starcruiser.scenario.GameStateMutator
 import de.stefanbissell.starcruiser.scenario.GameStateView
 import de.stefanbissell.starcruiser.scenario.TestScenario
 import de.stefanbissell.starcruiser.scenario.TriggerHandler
+import de.stefanbissell.starcruiser.ships.ContactList
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
-import de.stefanbissell.starcruiser.ships.ShipContactList
 import de.stefanbissell.starcruiser.ships.Torpedo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -64,7 +64,7 @@ class GameState {
             is ShipDestroyed -> SnapshotMessage.ShipDestroyed
             is InShip -> {
                 val ship = state.ship
-                val contactList = ShipContactList(ship, ships)
+                val contactList = ContactList(ship, ships, torpedoes)
                 when (state.station) {
                     Helm -> toHelmMessage(ship, contactList)
                     Weapons -> toWeaponsMessage(ship, contactList)
@@ -248,7 +248,7 @@ class GameState {
 
     private fun toHelmMessage(
         ship: PlayerShip,
-        contactList: ShipContactList
+        contactList: ContactList
     ): SnapshotMessage.Helm {
         return SnapshotMessage.Helm(
             shortRangeScope = ship.toShortRangeScopeMessage(),
@@ -262,7 +262,7 @@ class GameState {
 
     private fun toWeaponsMessage(
         ship: PlayerShip,
-        contactList: ShipContactList
+        contactList: ContactList
     ): SnapshotMessage.Weapons {
         return SnapshotMessage.Weapons(
             shortRangeScope = ship.toShortRangeScopeMessage(),
@@ -277,7 +277,7 @@ class GameState {
 
     private fun toNavigationMessage(
         ship: PlayerShip,
-        contactList: ShipContactList
+        contactList: ContactList
     ): SnapshotMessage.Navigation {
         return SnapshotMessage.Navigation(
             ship = ship.toNavigationMessage(contactList),
@@ -294,20 +294,20 @@ class GameState {
         )
     }
 
-    private fun toMainScreenMessage(ship: PlayerShip, contactList: ShipContactList): SnapshotMessage =
+    private fun toMainScreenMessage(ship: PlayerShip, contactList: ContactList): SnapshotMessage =
         when (ship.mainScreenView) {
             MainScreenView.Scope -> toMainScreenShortRangeScope(ship, contactList)
             else -> toMainScreen3d(ship, contactList)
         }
 
-    private fun toMainScreenShortRangeScope(ship: PlayerShip, contactList: ShipContactList) =
+    private fun toMainScreenShortRangeScope(ship: PlayerShip, contactList: ContactList) =
         SnapshotMessage.MainScreenShortRangeScope(
             shortRangeScope = ship.toShortRangeScopeMessage(),
             contacts = contactList.getScopeContacts(),
             asteroids = getScopeAsteroids(ship)
         )
 
-    private fun toMainScreen3d(ship: PlayerShip, contactList: ShipContactList) =
+    private fun toMainScreen3d(ship: PlayerShip, contactList: ContactList) =
         SnapshotMessage.MainScreen3d(
             ship = ship.toMessage(),
             contacts = contactList.getContacts(),
@@ -340,7 +340,7 @@ class GameState {
     private fun updateShips() {
         ships.forEach { shipEntry ->
             shipEntry.value.apply {
-                val contactList = ShipContactList(this, ships)
+                val contactList = ContactList(this, ships, torpedoes)
                 update(time, physicsEngine, contactList)
             }
         }
@@ -350,9 +350,13 @@ class GameState {
 
         updateResults.flatMap {
             it.torpedoes
-        }.forEach {
-            torpedoes[it.id] = it
-            physicsEngine.addTorpedo(it)
+        }.forEach { torpedo ->
+            torpedoes[torpedo.id] = torpedo
+            ships[torpedo.launcherId]?.also { launcher ->
+                launcher.scans[torpedo.id] = ScanLevel.Detailed
+            }
+
+            physicsEngine.addTorpedo(torpedo)
         }
 
         updateResults.filter {
@@ -401,17 +405,17 @@ class GameState {
             if (it is InShip) it.ship else null
         }
 
-    private fun ShipContactList.getContacts(): List<ContactMessage> {
+    private fun ContactList.getContacts(): List<ContactMessage> {
         return contacts.values
-            .map { it.toContactMessage() }
+            .mapNotNull { it.toContactMessage() }
     }
 
-    private fun ShipContactList.getMapContacts(): List<MapContactMessage> {
+    private fun ContactList.getMapContacts(): List<MapContactMessage> {
         return allInSensorRange()
             .map { it.toMapContactMessage() }
     }
 
-    private fun ShipContactList.getScopeContacts(): List<ScopeContactMessage> {
+    private fun ContactList.getScopeContacts(): List<ScopeContactMessage> {
         return allNearScopeRange()
             .map { it.toScopeContactMessage() }
     }

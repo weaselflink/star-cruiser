@@ -1,7 +1,7 @@
 package de.stefanbissell.starcruiser
 
+import de.stefanbissell.starcruiser.ships.ContactList
 import de.stefanbissell.starcruiser.ships.Ship
-import de.stefanbissell.starcruiser.ships.ShipContactList
 import strikt.api.Assertion
 import strikt.assertions.isEqualTo
 
@@ -16,4 +16,4 @@ fun Assertion.Builder<Vector2>.isNear(expected: Vector2, tolerance: Double = 0.0
         }
     }
 
-fun emptyContactList(ship: Ship) = ShipContactList(ship, emptyList())
+fun emptyContactList(ship: Ship) = ContactList(ship, emptyList())

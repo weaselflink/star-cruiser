@@ -123,7 +123,8 @@ class PhysicsEngine {
     private fun Torpedo.toBody(sleepingAllowed: Boolean = true) =
         createDynamicBody(
             position,
-            rotation
+            rotation,
+            speed
         ).apply {
             isSleepingAllowed = sleepingAllowed
             m_userData = this@toBody.id
@@ -160,11 +161,15 @@ class PhysicsEngine {
 
     private fun createDynamicBody(
         position: Vector2,
-        rotation: Double
+        rotation: Double,
+        speed: Vector2? = null
     ) = world.createBody {
         type = BodyType.DYNAMIC
         this.position.set(position.toVec2())
         angle = rotation.toFloat()
+        if (speed != null) {
+            linearVelocity = speed.toVec2()
+        }
         linearDamping = 0.4f
         angularDamping = 0.95f
     }

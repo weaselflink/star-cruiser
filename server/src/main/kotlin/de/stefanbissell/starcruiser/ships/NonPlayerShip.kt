@@ -41,7 +41,7 @@ class NonPlayerShip(
     override fun update(
         time: GameTime,
         physicsEngine: PhysicsEngine,
-        contactList: ShipContactList
+        contactList: ContactList
     ) {
         powerHandler.update(time)
         updateBeams(time, physicsEngine, contactList)
@@ -127,7 +127,7 @@ class NonPlayerShip(
     private fun updateBeams(
         time: GameTime,
         physicsEngine: PhysicsEngine,
-        contactList: ShipContactList
+        contactList: ContactList
     ) {
         beamHandlerContainer.update(
             time = time,
@@ -137,7 +137,7 @@ class NonPlayerShip(
         )
     }
 
-    private fun updateScan(time: GameTime, contactList: ShipContactList) {
+    private fun updateScan(time: GameTime, contactList: ContactList) {
         scanHandler?.apply {
             if (contactList.outOfSensorRange(targetId)) {
                 abortScan()
@@ -154,7 +154,7 @@ class NonPlayerShip(
         }
     }
 
-    private fun updateLock(time: GameTime, contactList: ShipContactList) {
+    private fun updateLock(time: GameTime, contactList: ContactList) {
         lockHandler?.apply {
             if (contactList.outOfSensorRange(targetId)) {
                 abortLock()

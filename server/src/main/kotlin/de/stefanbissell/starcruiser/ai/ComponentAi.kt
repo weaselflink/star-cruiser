@@ -2,8 +2,8 @@ package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.ships.ContactList
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
-import de.stefanbissell.starcruiser.ships.ShipContactList
 
 abstract class ComponentAi(
     private val interval: Double = 1.0
@@ -26,6 +26,6 @@ abstract class ComponentAi(
 data class AiState(
     val ship: NonPlayerShip,
     val time: GameTime,
-    val contactList: ShipContactList,
+    val contactList: ContactList,
     val orders: List<Order> = emptyList()
 )

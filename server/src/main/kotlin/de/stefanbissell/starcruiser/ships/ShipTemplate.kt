@@ -98,7 +98,7 @@ data class BeamWeapon(
 ) {
 
     fun isInRange(relativePosition: Vector2): Boolean {
-        val pos = relativePosition - Vector2(-position.z, position.x)
+        val pos = relativePosition - position2d
         val distance = pos.length()
         if (distance < range.first || distance > range.last) {
             return false
@@ -106,14 +106,21 @@ data class BeamWeapon(
         val angle = pos.angle()
         return angle <= leftArc.toRadians() && angle >= rightArc.toRadians()
     }
+
+    val position2d
+        get() = Vector2(-position.z, position.x)
 }
 
 data class Tube(
     val position: Vector3 = Vector3(),
     val direction: Int = 0,
     val reloadSpeed: Double = 0.05,
-    val velocity: Double = 2.0
-)
+    val velocity: Double = 8.0
+) {
+
+    val position2d
+        get() = Vector2(-position.z, position.x)
+}
 
 data class Magazine(
     val capacity: Int = 10

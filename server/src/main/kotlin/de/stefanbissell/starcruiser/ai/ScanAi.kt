@@ -1,7 +1,8 @@
 package de.stefanbissell.starcruiser.ai
 
 import de.stefanbissell.starcruiser.ContactType
-import de.stefanbissell.starcruiser.ships.ShipContactList
+import de.stefanbissell.starcruiser.ships.ContactList
+import de.stefanbissell.starcruiser.ships.onlyVessels
 
 class ScanAi : ComponentAi(5.0) {
 
@@ -17,8 +18,9 @@ class ScanAi : ComponentAi(5.0) {
         }
     }
 
-    private fun ShipContactList.selectScanTarget(): ShipContactList.ShipContact? {
+    private fun ContactList.selectScanTarget(): ContactList.Contact? {
         val (friendlies, rest) = allInSensorRange()
+            .onlyVessels()
             .filter {
                 it.scanLevel.canBeIncreased
             }

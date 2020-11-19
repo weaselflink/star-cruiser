@@ -5,8 +5,8 @@ import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.fullCircle
 import de.stefanbissell.starcruiser.randomAngle
+import de.stefanbissell.starcruiser.ships.ContactList
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
-import de.stefanbissell.starcruiser.ships.ShipContactList
 
 class ShipAi(
     val ship: NonPlayerShip
@@ -35,7 +35,7 @@ class ShipAi(
 
     fun update(
         time: GameTime,
-        contactList: ShipContactList
+        contactList: ContactList
     ) {
         val aiState = AiState(
             ship = ship,

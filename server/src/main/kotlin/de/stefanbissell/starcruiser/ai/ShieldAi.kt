@@ -1,7 +1,8 @@
 package de.stefanbissell.starcruiser.ai
 
-import de.stefanbissell.starcruiser.ContactType
-import de.stefanbissell.starcruiser.ships.ShipContactList
+import de.stefanbissell.starcruiser.ships.ContactList
+import de.stefanbissell.starcruiser.ships.onlyEnemies
+import de.stefanbissell.starcruiser.ships.onlyVessels
 
 class ShieldAi : ComponentAi() {
 
@@ -24,9 +25,9 @@ class ShieldAi : ComponentAi() {
         }
     }
 
-    private fun ShipContactList.closestHostile() =
+    private fun ContactList.closestHostile() =
         allInSensorRange()
-            .firstOrNull {
-                it.contactType == ContactType.Enemy
-            }
+            .onlyVessels()
+            .onlyEnemies()
+            .firstOrNull()
 }

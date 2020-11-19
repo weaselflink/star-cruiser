@@ -22,7 +22,7 @@ class BeamHandlerContainer(
     fun update(
         time: GameTime,
         boostLevel: Double = 1.0,
-        contactList: ShipContactList,
+        contactList: ContactList,
         lockHandler: LockHandler?,
         physicsEngine: PhysicsEngine
     ) {

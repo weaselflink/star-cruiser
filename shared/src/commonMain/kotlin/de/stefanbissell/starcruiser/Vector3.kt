@@ -26,7 +26,4 @@ data class Vector3(
 
     fun length(): Double =
         sqrt(x * x + y * y + z * z)
-
-    fun toVector2() =
-        Vector2(x, y)
 }

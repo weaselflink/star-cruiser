@@ -1,7 +1,8 @@
 package de.stefanbissell.starcruiser.ai
 
+import de.stefanbissell.starcruiser.ships.ContactList
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
-import de.stefanbissell.starcruiser.ships.ShipContactList
+import de.stefanbissell.starcruiser.ships.onlyVessels
 
 class BehaviourAi(
     var behaviour: Behaviour = Behaviour.Idle
@@ -65,8 +66,10 @@ sealed class Behaviour {
                 else -> CombatPatrol
             }
 
-        private fun ShipContactList.enemyInRange() =
-            allInSensorRange().any { it.isEnemy }
+        private fun ContactList.enemyInRange() =
+            allInSensorRange()
+                .onlyVessels()
+                .any { it.isEnemy }
     }
 
     object Attack : Behaviour() {
@@ -78,8 +81,10 @@ sealed class Behaviour {
                 else -> Attack
             }
 
-        private fun ShipContactList.noEnemyInRange() =
-            allInSensorRange().none { it.isEnemy }
+        private fun ContactList.noEnemyInRange() =
+            allInSensorRange()
+                .onlyVessels()
+                .none { it.isEnemy }
     }
 
     object CombatEvade : Behaviour(), Evade {

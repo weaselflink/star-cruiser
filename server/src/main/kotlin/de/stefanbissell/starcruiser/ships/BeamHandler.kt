@@ -22,7 +22,7 @@ class BeamHandler(
     fun update(
         time: GameTime,
         boostLevel: Double = 1.0,
-        contactList: ShipContactList,
+        contactList: ContactList,
         lockHandler: LockHandler?,
         physicsEngine: PhysicsEngine
     ) {
@@ -56,7 +56,8 @@ class BeamHandler(
             }
         }
         if (status is BeamStatus.Firing) {
-            getLockedTarget(contactList, lockHandler)?.ship
+            getLockedTarget(contactList, lockHandler)
+                ?.asShip()
                 ?.takeDamage(targetSystemType, time.delta, parent.modulation)
         }
     }
@@ -75,23 +76,23 @@ class BeamHandler(
     private fun getLockedTargetId(lockHandler: LockHandler?) =
         if (lockHandler?.isComplete == true) lockHandler.targetId else null
 
-    private fun getLockedTarget(contactList: ShipContactList, lockHandler: LockHandler?) =
+    private fun getLockedTarget(contactList: ContactList, lockHandler: LockHandler?) =
         getLockedTargetId(lockHandler)?.let { contactList[it] }
 
     private fun isLockedTargetInRange(
-        contactList: ShipContactList,
+        contactList: ContactList,
         lockHandler: LockHandler?,
         physicsEngine: PhysicsEngine
     ) = getLockedTarget(contactList, lockHandler)?.let {
         inRange(it) && unobstructed(it, physicsEngine)
     } ?: false
 
-    private fun inRange(contact: ShipContactList.ShipContact) =
+    private fun inRange(contact: ContactList.Contact) =
         contact.relativePosition
             .rotate(-ship.rotation)
             .let { beamWeapon.isInRange(it) }
 
-    private fun unobstructed(contact: ShipContactList.ShipContact, physicsEngine: PhysicsEngine): Boolean {
+    private fun unobstructed(contact: ContactList.Contact, physicsEngine: PhysicsEngine): Boolean {
         val ignore = listOf(ship.id, contact.id)
         val obstructions = physicsEngine.findObstructions(beamPosition, contact.position, ignore)
         return obstructions.isEmpty()

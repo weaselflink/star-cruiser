@@ -3,8 +3,9 @@ package de.stefanbissell.starcruiser.ai
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.fullCircle
+import de.stefanbissell.starcruiser.ships.ContactList
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
-import de.stefanbissell.starcruiser.ships.ShipContactList
+import de.stefanbissell.starcruiser.ships.onlyVessels
 import kotlin.math.PI
 
 class EvadeAi(
@@ -22,7 +23,7 @@ class EvadeAi(
 
     private fun performEvade(
         ship: NonPlayerShip,
-        contactList: ShipContactList
+        contactList: ContactList
     ) {
         contactList.selectThreat()
         threat?.let {
@@ -34,7 +35,7 @@ class EvadeAi(
 
     private fun steerClearOfThreat(
         ship: NonPlayerShip,
-        contact: ShipContactList.ShipContact
+        contact: ContactList.Contact
     ) {
         ship.throttle = 70
         if (helmAi.targetRotation == null) {
@@ -43,12 +44,13 @@ class EvadeAi(
     }
 
     private fun angleAwayFromTarget(
-        targetShip: ShipContactList.ShipContact
+        target: ContactList.Contact
     ): Double =
-        (targetShip.relativePosition.angle() + PI) % fullCircle
+        (target.relativePosition.angle() + PI) % fullCircle
 
-    private fun ShipContactList.selectThreat() {
+    private fun ContactList.selectThreat() {
         val (enemies, rest) = allInSensorRange()
+            .onlyVessels()
             .filter {
                 it.contactType != ContactType.Friendly
             }

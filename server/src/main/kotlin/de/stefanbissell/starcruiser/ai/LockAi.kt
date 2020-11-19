@@ -1,7 +1,8 @@
 package de.stefanbissell.starcruiser.ai
 
-import de.stefanbissell.starcruiser.ContactType
-import de.stefanbissell.starcruiser.ships.ShipContactList
+import de.stefanbissell.starcruiser.ships.ContactList
+import de.stefanbissell.starcruiser.ships.onlyEnemies
+import de.stefanbissell.starcruiser.ships.onlyVessels
 
 class LockAi : ComponentAi(5.0) {
 
@@ -21,10 +22,9 @@ class LockAi : ComponentAi(5.0) {
         }
     }
 
-    private fun ShipContactList.selectLockTarget() =
+    private fun ContactList.selectLockTarget() =
         allNearScopeRange()
-            .filter {
-                it.contactType == ContactType.Enemy
-            }
+            .onlyVessels()
+            .onlyEnemies()
             .minByOrNull { it.range }
 }

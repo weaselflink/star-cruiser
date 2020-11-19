@@ -79,7 +79,7 @@ class PlayerShip(
     override fun update(
         time: GameTime,
         physicsEngine: PhysicsEngine,
-        contactList: ShipContactList
+        contactList: ContactList
     ) {
         powerHandler.update(time)
         updateBeams(time, physicsEngine, contactList)
@@ -293,7 +293,7 @@ class PlayerShip(
             rearCamera = template.rearCamera.toMessage()
         )
 
-    fun toNavigationMessage(contactList: ShipContactList) =
+    fun toNavigationMessage(contactList: ContactList) =
         NavigationShipMessage(
             id = id,
             position = position.twoDigits(),
@@ -332,7 +332,7 @@ class PlayerShip(
 
     fun toTubesMessage() = tubeHandlerContainer.toMessage()
 
-    fun toMapSelectionMessage(contactList: ShipContactList) =
+    fun toMapSelectionMessage(contactList: ContactList) =
         mapSelection.let { selection ->
             when (selection) {
                 is MapSelection.Waypoint -> {
@@ -359,7 +359,7 @@ class PlayerShip(
     private fun updateBeams(
         time: GameTime,
         physicsEngine: PhysicsEngine,
-        contactList: ShipContactList
+        contactList: ContactList
     ) {
         beamHandlerContainer.update(
             time = time,
@@ -379,7 +379,7 @@ class PlayerShip(
         )
     }
 
-    private fun updateScan(time: GameTime, contactList: ShipContactList) {
+    private fun updateScan(time: GameTime, contactList: ContactList) {
         scanHandler?.apply {
             if (contactList.outOfSensorRange(targetId)) {
                 abortScan()
@@ -396,7 +396,7 @@ class PlayerShip(
         }
     }
 
-    private fun updateLock(time: GameTime, contactList: ShipContactList) {
+    private fun updateLock(time: GameTime, contactList: ContactList) {
         lockHandler?.apply {
             if (contactList.outOfSensorRange(targetId)) {
                 lockHandler = null
@@ -430,7 +430,7 @@ class PlayerShip(
         }
     }
 
-    private fun updateMapSelection(contactList: ShipContactList) {
+    private fun updateMapSelection(contactList: ContactList) {
         mapSelection.also {
             if (it is MapSelection.Ship && contactList.outOfSensorRange(it.targetId)) {
                 mapSelection = MapSelection.None
@@ -451,41 +451,42 @@ class PlayerShip(
             }
 
     private fun toShipMapSelectionMessage(
-        contactList: ShipContactList,
+        contactList: ContactList,
         selection: MapSelection.Ship
     ) =
-        contactList[selection.targetId]?.let { contact ->
-            MapSelectionMessage(
-                position = contact.position,
-                label = contact.designation,
-                bearing = bearingTo(contact.position),
-                range = rangeTo(contact.position).roundToInt(),
-                canScan = true
-            ).let { message ->
-                val ship = contact.ship
-                when (contact.scanLevel) {
-                    ScanLevel.Detailed -> {
-                        message.copy(
-                            hullRatio = (max(0.0, ship.hull) / ship.template.hull).fiveDigits(),
-                            shield = ship.toSimpleShieldMessage(),
-                            shieldModulation = ship.toShieldMessage().modulation,
-                            beamModulation = ship.toBeamsMessage().modulation,
-                            systemsDamage = ship.systemsDamage,
-                            canScan = false
-                        )
-                    }
-                    ScanLevel.Basic -> {
-                        message.copy(
-                            hullRatio = (ship.hull / ship.template.hull).fiveDigits(),
-                            shield = ship.toSimpleShieldMessage()
-                        )
-                    }
-                    else -> {
-                        message
+        contactList[selection.targetId]
+            ?.let { contact ->
+                MapSelectionMessage(
+                    position = contact.position,
+                    label = contact.designation,
+                    bearing = bearingTo(contact.position),
+                    range = rangeTo(contact.position).roundToInt(),
+                    canScan = contact.scanLevel.canBeIncreased
+                ).let { message ->
+                    val ship = contact.dynamicObject
+                    val scanLevel = contact.scanLevel
+                    when {
+                        scanLevel == ScanLevel.Detailed && ship is Ship -> {
+                            message.copy(
+                                hullRatio = (max(0.0, ship.hull) / ship.template.hull).fiveDigits(),
+                                shield = ship.toSimpleShieldMessage(),
+                                shieldModulation = ship.toShieldMessage().modulation,
+                                beamModulation = ship.toBeamsMessage().modulation,
+                                systemsDamage = ship.systemsDamage
+                            )
+                        }
+                        scanLevel == ScanLevel.Basic && ship is Ship -> {
+                            message.copy(
+                                hullRatio = (ship.hull / ship.template.hull).fiveDigits(),
+                                shield = ship.toSimpleShieldMessage()
+                            )
+                        }
+                        else -> {
+                            message
+                        }
                     }
                 }
             }
-        }
 
     private fun canIncreaseScanLevel(targetId: ObjectId) = getScanLevel(targetId).canBeIncreased
 

@@ -4,10 +4,12 @@ import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ScopeContactMessage
+import de.stefanbissell.starcruiser.ShipType
 
-class ShipContactList(
+class ContactList(
     val relativeTo: Ship,
-    allShips: Map<ObjectId, Ship>,
+    allShips: Map<ObjectId, Ship> = emptyMap(),
+    allTorpedoes: Map<ObjectId, Torpedo> = emptyMap()
 ) {
 
     constructor(
@@ -15,12 +17,9 @@ class ShipContactList(
         list: List<Ship>
     ) : this(relativeTo, list.associateBy { it.id })
 
-    val contacts: Map<ObjectId, ShipContact> = allShips
+    val contacts: Map<ObjectId, Contact> = (allShips + allTorpedoes)
         .filterKeys { it != relativeTo.id }
-        .mapValues { ShipContact(it.value) }
-    val enemies
-        get() = contacts.values
-            .filter { it.contactType == ContactType.Enemy }
+        .mapValues { Contact(it.value) }
 
     operator fun get(key: ObjectId) = contacts[key]
 
@@ -35,12 +34,12 @@ class ShipContactList(
             !it.inSensorRange
         } ?: false
 
-    inner class ShipContact(val ship: Ship) {
-        val id = ship.id
-        val designation = ship.designation
-        val position = ship.position
-        val rotation = ship.rotation
-        val speed = ship.speed
+    inner class Contact(val dynamicObject: DynamicObject) {
+        val id = dynamicObject.id
+        val designation = dynamicObject.designation
+        val position = dynamicObject.position
+        val rotation = dynamicObject.rotation
+        val speed = dynamicObject.speed
         val relativePosition by lazy {
             position - relativeTo.position
         }
@@ -48,21 +47,28 @@ class ShipContactList(
             relativePosition.length()
         }
         val inSensorRange by lazy {
-            relativeTo.inSensorRange(ship)
+            relativeTo.inSensorRange(dynamicObject)
         }
         val nearScopeRange by lazy {
             range <= relativeTo.template.shortRangeScopeRange * 1.1
         }
-        val contactType = relativeTo.getContactType(ship)
+        val shipType = ShipType.Vessel
+        val contactType = relativeTo.getContactType(dynamicObject)
         val isEnemy = contactType == ContactType.Enemy
-        val scanLevel = relativeTo.getScanLevel(ship.id)
+        val scanLevel = relativeTo.getScanLevel(dynamicObject.id)
 
+        fun asShip() = if (dynamicObject is Ship) dynamicObject else null
         fun toContactMessage() =
-            ship.toContactMessage(relativeTo)
+            if (dynamicObject is Ship) {
+                dynamicObject.toContactMessage(relativeTo)
+            } else {
+                null
+            }
 
         fun toMapContactMessage() =
             MapContactMessage(
                 id = id,
+                shipType = shipType,
                 type = contactType,
                 designation = designation,
                 position = position,
@@ -72,6 +78,7 @@ class ShipContactList(
         fun toScopeContactMessage() =
             ScopeContactMessage(
                 id = id,
+                shipType = shipType,
                 type = contactType,
                 designation = designation,
                 relativePosition = relativePosition,
@@ -80,3 +87,9 @@ class ShipContactList(
             )
     }
 }
+
+fun List<ContactList.Contact>.onlyVessels() =
+    filter { it.shipType == ShipType.Vessel }
+
+fun List<ContactList.Contact>.onlyEnemies() =
+    filter { it.contactType == ContactType.Enemy }

@@ -9,30 +9,28 @@ import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.ShieldMessage
+import de.stefanbissell.starcruiser.ShipType
 import de.stefanbissell.starcruiser.SimpleShieldMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
-import de.stefanbissell.starcruiser.scenario.Faction
 import kotlin.math.max
 
-interface Ship {
+interface Ship : DynamicObject {
 
-    val id: ObjectId
     val template: ShipTemplate
-    val faction: Faction
-    val designation: String
-    var position: Vector2
-    var rotation: Double
-    val speed: Vector2
+    override var position: Vector2
+    override var rotation: Double
     var hull: Double
     val systemsDamage: Map<PoweredSystemType, Double>
     val scans: MutableMap<ObjectId, ScanLevel>
+    override val shipType: ShipType
+        get() = ShipType.Vessel
 
     fun update(
         time: GameTime,
         physicsEngine: PhysicsEngine,
-        contactList: ShipContactList = ShipContactList(this, emptyMap())
+        contactList: ContactList = ContactList(this)
     )
 
     fun endUpdate(
@@ -56,7 +54,7 @@ interface Ship {
 
     fun isLocking(targetId: ObjectId): Boolean
 
-    fun inSensorRange(other: Ship?) = inSensorRange(other?.position)
+    fun inSensorRange(other: DynamicObject?) = inSensorRange(other?.position)
 
     fun inSensorRange(other: Asteroid?) = inSensorRange(other?.position)
 
@@ -64,12 +62,10 @@ interface Ship {
 
     fun targetDestroyed(shipId: ObjectId)
 
-    fun takeDamage(targetSystemType: PoweredSystemType, amount: Double, modulation: Int)
-
     fun getScanLevel(targetId: ObjectId) =
         scans[targetId] ?: ScanLevel.None
 
-    fun getContactType(other: Ship) =
+    fun getContactType(other: DynamicObject) =
         getScanLevel(other.id).let { scanLevel ->
             if (other.faction == faction) {
                 ContactType.Friendly

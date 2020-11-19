@@ -19,7 +19,7 @@ class BeamHandlerTest {
     private val beamWeapon = BeamWeapon(Vector3())
     private var power = 1.0
     private val ship = PlayerShip(faction = TestFactions.player)
-    private var contactList: ShipContactList = ShipContactList(ship, emptyList())
+    private var contactList: ContactList = ContactList(ship, emptyList())
     private val target = PlayerShip(faction = TestFactions.enemy).apply {
         position = p(0, 1000)
         setShieldsUp(false)
@@ -133,7 +133,7 @@ class BeamHandlerTest {
     }
 
     private fun cancelLock() {
-        contactList = ShipContactList(ship, emptyList())
+        contactList = ContactList(ship, emptyList())
         lockHandler = null
     }
 
@@ -154,7 +154,7 @@ class BeamHandlerTest {
         lockHandler = LockHandler(target.id, 1.0).apply {
             update(lockTime)
         }
-        contactList = ShipContactList(ship, listOf(target))
+        contactList = ContactList(ship, listOf(target))
     }
 
     private fun targetInRange() {

@@ -1,10 +1,11 @@
 package de.stefanbissell.starcruiser.ai
 
-import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.interceptPoint
+import de.stefanbissell.starcruiser.ships.ContactList
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
-import de.stefanbissell.starcruiser.ships.ShipContactList
+import de.stefanbissell.starcruiser.ships.onlyEnemies
+import de.stefanbissell.starcruiser.ships.onlyVessels
 
 class HomingAi(
     private val behaviourAi: BehaviourAi,
@@ -37,7 +38,7 @@ class HomingAi(
     }
 
     private fun steerTowardsTarget(
-        it: ShipContactList.ShipContact,
+        it: ContactList.Contact,
         ship: NonPlayerShip
     ) {
         if (it.range >= 100.0) {
@@ -52,38 +53,38 @@ class HomingAi(
 
     private fun angleToTarget(
         ship: NonPlayerShip,
-        targetShip: ShipContactList.ShipContact
+        target: ContactList.Contact
     ): Double =
-        if (targetShip.range > 200.0) {
+        if (target.range > 200.0) {
             interceptPoint(
                 interceptorPosition = ship.position,
                 interceptorSpeed = ship.speed.length(),
-                targetPosition = targetShip.position,
-                targetSpeed = targetShip.speed
+                targetPosition = target.position,
+                targetSpeed = target.speed
             )?.let {
                 it - ship.position
-            }?.angle() ?: targetShip.relativePosition.angle()
+            }?.angle() ?: target.relativePosition.angle()
         } else {
-            targetShip.relativePosition.angle()
+            target.relativePosition.angle()
         }
 
-    private fun selectTarget(contactList: ShipContactList) {
+    private fun selectTarget(contactList: ContactList) {
         clearInvalidTarget(contactList)
         if (target == null) {
             selectNewTarget(contactList)
         }
     }
 
-    private fun selectNewTarget(contactList: ShipContactList) {
+    private fun selectNewTarget(contactList: ContactList) {
         target = contactList.allInSensorRange()
-            .filter {
-                it.contactType == ContactType.Enemy
-            }.minByOrNull {
+            .onlyVessels()
+            .onlyEnemies()
+            .minByOrNull {
                 it.range
             }?.id
     }
 
-    private fun clearInvalidTarget(contactList: ShipContactList) {
+    private fun clearInvalidTarget(contactList: ContactList) {
         target?.let {
             contactList[it]
         }.also {

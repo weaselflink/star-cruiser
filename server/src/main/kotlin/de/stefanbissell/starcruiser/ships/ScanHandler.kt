@@ -32,7 +32,7 @@ class ScanHandler(
         game.adjustInput(dimension, value)
     }
 
-    fun toMessage(contactList: ShipContactList) =
+    fun toMessage(contactList: ContactList) =
         ScanProgressMessage(
             targetId = targetId,
             designation = contactList[targetId]?.designation ?: "unknown",

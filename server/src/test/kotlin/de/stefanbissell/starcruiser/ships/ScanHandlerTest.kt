@@ -90,7 +90,7 @@ class ScanHandlerTest {
 
     private fun ScanHandler.toMessage() =
         toMessage(
-            ShipContactList(
+            ContactList(
                 PlayerShip(faction = TestFactions.player),
                 listOf(PlayerShip(id = targetId, designation = "dummy", faction = TestFactions.player))
             )

@@ -47,7 +47,7 @@ class PlayerShipTest {
         beamHandlerContainer.modulation = 0
     }
 
-    private var contactList = ShipContactList(ship, emptyList())
+    private var contactList = ContactList(ship, emptyList())
 
     @BeforeEach
     fun setUp() {
@@ -617,7 +617,7 @@ class PlayerShipTest {
         ).apply {
             shieldHandler.modulation = 2
         }
-        contactList = ShipContactList(ship, listOf(target))
+        contactList = ContactList(ship, listOf(target))
         return target
     }
 

@@ -1,6 +1,8 @@
 package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
+import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.p
@@ -19,9 +21,10 @@ class TorpedoTest {
 
     private val time = GameTime.atEpoch()
     private val maxBurnTime = 10.0
-    private val thrust =20.0
+    private val thrust = 20.0
     private val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
     private val torpedo = Torpedo(
+        launcherId = ObjectId.random(),
         faction = TestFactions.player,
         position = p(3, -4),
         thrust = thrust,
@@ -59,6 +62,14 @@ class TorpedoTest {
                 thrust
             )
         }
+    }
+
+    @Test
+    fun `destroyed on taking damage`() {
+        torpedo.takeDamage(PoweredSystemType.Shields, 0.1, 0)
+
+        expectThat(stepTime(1).destroyed)
+            .isTrue()
     }
 
     private fun stepTime(seconds: Number): ShipUpdateResult {

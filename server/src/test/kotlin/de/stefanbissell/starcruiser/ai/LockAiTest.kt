@@ -6,9 +6,9 @@ import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.p
+import de.stefanbissell.starcruiser.ships.ContactList
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
-import de.stefanbissell.starcruiser.ships.ShipContactList
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -110,11 +110,11 @@ class LockAiTest {
     }
 
     private fun updateAi() {
-        lockAi.update(AiState(ship, time, ShipContactList(ship, shipList)))
+        lockAi.update(AiState(ship, time, ContactList(ship, shipList)))
     }
 
     private fun executeAi() {
-        lockAi.execute(AiState(ship, time, ShipContactList(ship, shipList)))
+        lockAi.execute(AiState(ship, time, ContactList(ship, shipList)))
     }
 
     private fun addShip(
