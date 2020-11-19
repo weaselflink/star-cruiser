@@ -122,7 +122,7 @@ class GameState {
 
         physicsEngine.step(time.delta)
         updateShips()
-        updateTorpedoes()
+        updateTorpedoes(physicsEngine.collisions)
         updateAsteroids()
         updateTriggers()
     }
@@ -366,18 +366,33 @@ class GameState {
         }
     }
 
-    private fun updateTorpedoes() {
+    private fun updateTorpedoes(collisions: List<Pair<ObjectId, ObjectId>>) {
         torpedoes.values.forEach { torpedoEntry ->
             torpedoEntry.apply {
                 update(time, physicsEngine)
             }
         }
+        val destructionPending = mutableSetOf<ObjectId>()
         torpedoes.values.map {
             it.endUpdate()
         }.filter {
             it.destroyed
         }.forEach {
-            destroyTorpedo(it.id)
+            destructionPending += it.id
+        }
+
+        collisions.flatMap {
+            it.toList()
+        }.mapNotNull {
+            torpedoes[it]
+        }.filter {
+            it.timeSinceLaunch > 0.5
+        }.forEach {
+            destructionPending += it.id
+        }
+
+        destructionPending.forEach {
+            destroyTorpedo(it)
         }
     }
 

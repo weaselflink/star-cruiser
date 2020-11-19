@@ -6,7 +6,10 @@ import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.ships.Ship
 import de.stefanbissell.starcruiser.ships.ShipTemplate
 import de.stefanbissell.starcruiser.ships.Torpedo
+import org.jbox2d.callbacks.ContactImpulse
+import org.jbox2d.callbacks.ContactListener
 import org.jbox2d.callbacks.RayCastCallback
+import org.jbox2d.collision.Manifold
 import org.jbox2d.collision.shapes.CircleShape
 import org.jbox2d.collision.shapes.PolygonShape
 import org.jbox2d.common.Mat22
@@ -17,13 +20,21 @@ import org.jbox2d.dynamics.BodyType
 import org.jbox2d.dynamics.Fixture
 import org.jbox2d.dynamics.FixtureDef
 import org.jbox2d.dynamics.World
+import org.jbox2d.dynamics.contacts.Contact
 
 class PhysicsEngine {
 
-    private val world = World(Vec2())
-    private val bodies: MutableMap<ObjectId, Body> = mutableMapOf()
+    private val world = World(Vec2()).also {
+        it.setContactListener(ContactCallback())
+    }
+    private val bodies = mutableMapOf<ObjectId, Body>()
 
-    fun step(delta: Number) = world.step(delta.toFloat(), 6, 2)
+    val collisions = mutableListOf<Pair<ObjectId, ObjectId>>()
+
+    fun step(delta: Number) {
+        collisions.clear()
+        world.step(delta.toFloat(), 6, 2)
+    }
 
     fun addShip(ship: Ship, sleepingAllowed: Boolean = true) {
         bodies[ship.id] = ship.toBody(sleepingAllowed)
@@ -200,6 +211,23 @@ class PhysicsEngine {
             }
             return 1f
         }
+    }
+
+    private inner class ContactCallback : ContactListener {
+        override fun beginContact(contact: Contact) {
+            collisions += contact.objectIds
+        }
+
+        override fun endContact(contact: Contact) {}
+
+        override fun preSolve(contact: Contact, oldManifold: Manifold) {}
+
+        override fun postSolve(contact: Contact, impulse: ContactImpulse) {}
+
+        private val Contact.objectIds
+            get() = listOf(fixtureA, fixtureB)
+                .map { it.body.m_userData as ObjectId }
+                .let { Pair(it.first(), it.last()) }
     }
 }
 
