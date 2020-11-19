@@ -52,12 +52,13 @@ class ContactList(
         val nearScopeRange by lazy {
             range <= relativeTo.template.shortRangeScopeRange * 1.1
         }
-        val shipType = ShipType.Vessel
+        val shipType = if (dynamicObject is Ship) ShipType.Vessel else ShipType.Projectile
         val contactType = relativeTo.getContactType(dynamicObject)
         val isEnemy = contactType == ContactType.Enemy
         val scanLevel = relativeTo.getScanLevel(dynamicObject.id)
 
         fun asShip() = if (dynamicObject is Ship) dynamicObject else null
+
         fun toContactMessage() =
             if (dynamicObject is Ship) {
                 dynamicObject.toContactMessage(relativeTo)

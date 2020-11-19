@@ -62,7 +62,7 @@ fun CanvasRenderingContext2D.circle(
     anticlockwise: Boolean = false
 ) = ellipse(x, y, radius, radius, 0.0, startAngle, endAngle, anticlockwise)
 
-fun CanvasRenderingContext2D.drawShipSymbol(rot: Double, baseUnit: Double) {
+fun CanvasRenderingContext2D.drawVesselSymbol(rot: Double, baseUnit: Double) {
     save()
     rotate(-rot)
     beginPath()
@@ -70,6 +70,18 @@ fun CanvasRenderingContext2D.drawShipSymbol(rot: Double, baseUnit: Double) {
     lineTo(baseUnit * 1.6, baseUnit * 0.0)
     lineTo(baseUnit * -1.4, baseUnit * 1.0)
     lineTo(baseUnit * -0.9, baseUnit * 0.0)
+    closePath()
+    stroke()
+    restore()
+}
+
+fun CanvasRenderingContext2D.drawProjectileSymbol(rot: Double, baseUnit: Double) {
+    save()
+    rotate(-rot)
+    beginPath()
+    moveTo(baseUnit * -0.8, baseUnit * -0.4)
+    lineTo(baseUnit * 1.0, baseUnit * 0.0)
+    lineTo(baseUnit * -0.8, baseUnit * 0.4)
     closePath()
     stroke()
     restore()

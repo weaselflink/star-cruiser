@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.MapSelectionMessage
 import de.stefanbissell.starcruiser.NavigationShipMessage
 import de.stefanbissell.starcruiser.Positional
+import de.stefanbissell.starcruiser.ShipType
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
@@ -18,7 +19,8 @@ import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.dimensions
 import de.stefanbissell.starcruiser.drawAsteroidSymbol
 import de.stefanbissell.starcruiser.drawLockMarker
-import de.stefanbissell.starcruiser.drawShipSymbol
+import de.stefanbissell.starcruiser.drawProjectileSymbol
+import de.stefanbissell.starcruiser.drawVesselSymbol
 import de.stefanbissell.starcruiser.enemyContactStyle
 import de.stefanbissell.starcruiser.environmentContactStyle
 import de.stefanbissell.starcruiser.friendlyContactStyle
@@ -208,7 +210,11 @@ class NavigationMap(
         }
 
         translate(contact.position.adjustForMap())
-        drawShipSymbol(contact.rotation, dim.vmin * 0.8)
+        if (contact.shipType == ShipType.Vessel) {
+            drawVesselSymbol(contact.rotation, dim.vmin * 0.8)
+        } else {
+            drawProjectileSymbol(contact.rotation, dim.vmin * 0.8)
+        }
 
         translate(0.0, -dim.vmin * 3)
         fillText(contact.designation, 0.0, 0.0)
@@ -231,7 +237,7 @@ class NavigationMap(
         translateToCenter()
         translate(ship.position.adjustForMap())
         shipStyle(dim)
-        drawShipSymbol(ship.rotation, dim.vmin * 0.8)
+        drawVesselSymbol(ship.rotation, dim.vmin * 0.8)
         restore()
     }
 

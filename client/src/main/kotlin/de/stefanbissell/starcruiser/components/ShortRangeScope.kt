@@ -7,6 +7,7 @@ import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ScopeAsteroidMessage
 import de.stefanbissell.starcruiser.ScopeContactMessage
+import de.stefanbissell.starcruiser.ShipType
 import de.stefanbissell.starcruiser.SnapshotMessage.ShortRangeScopeStation
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
@@ -17,7 +18,8 @@ import de.stefanbissell.starcruiser.dimensions
 import de.stefanbissell.starcruiser.drawAsteroidSymbol
 import de.stefanbissell.starcruiser.drawLockMarker
 import de.stefanbissell.starcruiser.drawPill
-import de.stefanbissell.starcruiser.drawShipSymbol
+import de.stefanbissell.starcruiser.drawProjectileSymbol
+import de.stefanbissell.starcruiser.drawVesselSymbol
 import de.stefanbissell.starcruiser.enemyContactStyle
 import de.stefanbissell.starcruiser.environmentContactStyle
 import de.stefanbissell.starcruiser.friendlyContactStyle
@@ -357,7 +359,11 @@ class ShortRangeScope(
             ContactType.Neutral -> neutralContactStyle(dim)
             else -> unknownContactStyle(dim)
         }
-        drawShipSymbol(contact.rotation, dim.vmin * 0.8)
+        if (contact.shipType == ShipType.Vessel) {
+            drawVesselSymbol(contact.rotation, dim.vmin * 0.8)
+        } else {
+            drawProjectileSymbol(contact.rotation, dim.vmin * 0.8)
+        }
     }
 
     private fun CanvasRenderingContext2D.drawScopeEdge() {
@@ -373,7 +379,7 @@ class ShortRangeScope(
     private fun CanvasRenderingContext2D.drawShip(snapshot: ShortRangeScopeStation) {
         save()
         shipStyle(dim)
-        drawShipSymbol(snapshot.shortRangeScope.rotation, dim.vmin * 0.8)
+        drawVesselSymbol(snapshot.shortRangeScope.rotation, dim.vmin * 0.8)
         restore()
     }
 
