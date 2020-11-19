@@ -15,6 +15,7 @@ import org.jbox2d.dynamics.Body
 import org.jbox2d.dynamics.BodyDef
 import org.jbox2d.dynamics.BodyType
 import org.jbox2d.dynamics.Fixture
+import org.jbox2d.dynamics.FixtureDef
 import org.jbox2d.dynamics.World
 
 class PhysicsEngine {
@@ -110,12 +111,12 @@ class PhysicsEngine {
             val points = geometry.shape.border.map {
                 Vec2(it.x.toFloat(), it.y.toFloat())
             }.toTypedArray()
-            createFixture(
-                PolygonShape().apply {
+            fixture {
+                shape = PolygonShape().apply {
                     set(points, points.size)
-                },
-                geometry.density.toFloat()
-            )
+                }
+                density = geometry.density.toFloat()
+            }
         }
     }
 
@@ -126,16 +127,17 @@ class PhysicsEngine {
         ).apply {
             isSleepingAllowed = sleepingAllowed
             m_userData = this@toBody.id
-            createFixtures(this@toBody)
+            createFixture(this@toBody)
         }
 
-    private fun Body.createFixtures(torpedo: Torpedo) {
-        createFixture(
-            CircleShape().apply {
+    private fun Body.createFixture(torpedo: Torpedo) {
+        fixture {
+            shape = CircleShape().apply {
                 radius = torpedo.radius.toFloat()
-            },
-            torpedo.density.toFloat()
-        )
+            }
+            density = torpedo.density.toFloat()
+            isSensor = true
+        }
     }
 
     private fun Asteroid.toBody() =
@@ -148,12 +150,12 @@ class PhysicsEngine {
         }
 
     private fun Body.createFixture(asteroid: Asteroid) {
-        createFixture(
-            CircleShape().apply {
+        fixture {
+            shape = CircleShape().apply {
                 radius = asteroid.radius.toFloat()
-            },
-            0.02f
-        )
+            }
+            density = 0.02f
+        }
     }
 
     private fun createDynamicBody(
@@ -165,6 +167,12 @@ class PhysicsEngine {
         angle = rotation.toFloat()
         linearDamping = 0.4f
         angularDamping = 0.95f
+    }
+
+    private fun Body.fixture(block: FixtureDef.() -> Unit) {
+        createFixture(
+            FixtureDef().apply(block)
+        )
     }
 
     private fun Vec2.toVector2(): Vector2 =
