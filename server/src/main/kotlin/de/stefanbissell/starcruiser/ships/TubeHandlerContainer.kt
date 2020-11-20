@@ -33,12 +33,13 @@ class TubeHandlerContainer(
             it.endUpdate()
         }.map {
             val rotation = ship.rotation + it.tube.direction.toRadians()
+            val direction = Vector2(1, 0).rotate(rotation)
             Torpedo(
                 launcherId = ship.id,
                 faction = ship.faction,
-                position = ship.position + it.tube.position2d.rotate(rotation),
+                position = ship.position + it.tube.position2d.rotate(ship.rotation),
                 rotation = rotation,
-                speed = Vector2(it.tube.velocity, 0).rotate(rotation)
+                speed = direction * it.tube.velocity
             )
         }
 

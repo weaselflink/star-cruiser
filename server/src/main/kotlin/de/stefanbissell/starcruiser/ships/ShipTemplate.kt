@@ -108,7 +108,7 @@ data class BeamWeapon(
     }
 
     val position2d
-        get() = Vector2(-position.z, position.x)
+        get() = Vector2(-position.z, -position.x)
 }
 
 data class Tube(
@@ -119,7 +119,7 @@ data class Tube(
 ) {
 
     val position2d
-        get() = Vector2(-position.z, position.x)
+        get() = Vector2(-position.z, -position.x)
 }
 
 data class Magazine(
