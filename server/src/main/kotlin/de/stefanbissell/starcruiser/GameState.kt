@@ -386,7 +386,7 @@ class GameState {
         }.mapNotNull {
             torpedoes[it]
         }.filter {
-            it.timeSinceLaunch > 0.5
+            it.timeSinceLaunch > 0.1
         }.forEach {
             destructionPending += it.id
         }

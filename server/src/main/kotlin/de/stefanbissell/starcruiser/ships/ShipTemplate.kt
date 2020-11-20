@@ -115,7 +115,8 @@ data class Tube(
     val position: Vector3 = Vector3(),
     val direction: Int = 0,
     val reloadSpeed: Double = 0.05,
-    val velocity: Double = 8.0
+    val velocity: Double = 8.0,
+    val torpedoTemplate: TorpedoTemplate = TorpedoTemplate()
 ) {
 
     val position2d

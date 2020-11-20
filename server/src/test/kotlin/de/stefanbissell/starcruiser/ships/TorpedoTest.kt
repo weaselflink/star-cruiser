@@ -27,8 +27,10 @@ class TorpedoTest {
         launcherId = ObjectId.random(),
         faction = TestFactions.player,
         position = p(3, -4),
-        thrust = thrust,
-        maxBurnTime = maxBurnTime
+        template = TorpedoTemplate(
+            thrust = thrust,
+            maxBurnTime = maxBurnTime
+        )
     )
 
     @BeforeEach

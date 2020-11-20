@@ -145,7 +145,7 @@ class PhysicsEngine {
     private fun Body.createFixture(torpedo: Torpedo) {
         fixture {
             shape = CircleShape().apply {
-                radius = torpedo.radius.toFloat()
+                radius = torpedo.template.radius.toFloat()
             }
             density = torpedo.density.toFloat()
             isSensor = true

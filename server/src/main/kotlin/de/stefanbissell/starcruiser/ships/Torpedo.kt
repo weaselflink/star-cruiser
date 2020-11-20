@@ -19,10 +19,7 @@ class Torpedo(
     override var position: Vector2 = Vector2(),
     override var rotation: Double = 90.0.toRadians(),
     override var speed: Vector2 = Vector2(),
-    val radius: Double = 1.0,
-    private val mass: Double = 100.0,
-    private val thrust: Double = 2_000.0,
-    private val maxBurnTime: Double = 20.0
+    val template: TorpedoTemplate = TorpedoTemplate()
 ) : DynamicObject {
 
     override val shipType: ShipType
@@ -30,18 +27,18 @@ class Torpedo(
     var timeSinceLaunch = 0.0
     var destroyed = false
     val density
-        get() = mass / (0.5 * PI * radius * radius)
+        get() = template.mass / (0.5 * PI * template.radius * template.radius)
 
     fun update(
         time: GameTime,
         physicsEngine: PhysicsEngine
     ) {
         timeSinceLaunch += time.delta
-        if (timeSinceLaunch > maxBurnTime) {
+        if (timeSinceLaunch > template.maxBurnTime) {
             destroyed = true
         }
 
-        physicsEngine.updateObject(id, thrust)
+        physicsEngine.updateObject(id, template.thrust)
 
         physicsEngine.getBodyParameters(id)?.also {
             position = it.position
