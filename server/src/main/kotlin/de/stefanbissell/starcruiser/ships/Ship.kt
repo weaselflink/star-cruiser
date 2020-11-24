@@ -22,6 +22,8 @@ interface Ship : DynamicObject {
     override var position: Vector2
     override var rotation: Double
     var hull: Double
+    val destroyed
+        get() = hull <= 0.0
     val systemsDamage: Map<PoweredSystemType, Double>
     val scans: MutableMap<ObjectId, ScanLevel>
     override val shipType: ShipType

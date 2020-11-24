@@ -8,7 +8,6 @@ import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.physics.BodyParameters
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
-import de.stefanbissell.starcruiser.ships.ShipUpdateResult
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -45,13 +44,15 @@ class TorpedoTest {
 
     @Test
     fun `not destroyed before max burn time`() {
-        expectThat(stepTime(maxBurnTime - 1).destroyed)
+        stepTime(maxBurnTime - 1)
+        expectThat(torpedo.destroyed)
             .isFalse()
     }
 
     @Test
     fun `destroyed after max burn time`() {
-        expectThat(stepTime(maxBurnTime + 1).destroyed)
+        stepTime(maxBurnTime + 1)
+        expectThat(torpedo.destroyed)
             .isTrue()
     }
 
@@ -71,13 +72,12 @@ class TorpedoTest {
     fun `destroyed on taking damage`() {
         torpedo.takeDamage(PoweredSystemType.Shields, 0.1, 0)
 
-        expectThat(stepTime(1).destroyed)
+        expectThat(torpedo.destroyed)
             .isTrue()
     }
 
-    private fun stepTime(seconds: Number): ShipUpdateResult {
+    private fun stepTime(seconds: Number) {
         time.update(seconds.toDouble())
         torpedo.update(time, physicsEngine)
-        return torpedo.endUpdate()
     }
 }

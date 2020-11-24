@@ -9,7 +9,6 @@ import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.randomShipName
 import de.stefanbissell.starcruiser.scenario.Faction
 import de.stefanbissell.starcruiser.ships.DynamicObject
-import de.stefanbissell.starcruiser.ships.ShipUpdateResult
 import de.stefanbissell.starcruiser.toRadians
 import kotlin.math.PI
 
@@ -47,10 +46,6 @@ class Torpedo(
             rotation = it.rotation
             speed = it.speed
         }
-    }
-
-    fun endUpdate(): ShipUpdateResult {
-        return ShipUpdateResult(id, destroyed)
     }
 
     override fun takeDamage(targetSystemType: PoweredSystemType, amount: Double, modulation: Int) {

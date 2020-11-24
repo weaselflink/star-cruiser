@@ -373,7 +373,8 @@ class PlayerShipTest {
             .isNear(0.0)
         expectThat(ship.hull)
             .isNear(ship.template.hull - 5.0)
-        expectThat(stepTime(0.1).destroyed)
+        stepTime(0.1)
+        expectThat(ship.destroyed)
             .isFalse()
     }
 
@@ -396,7 +397,8 @@ class PlayerShipTest {
             .isNear(0.0)
         expectThat(ship.hull)
             .isNear(-5.0)
-        expectThat(stepTime(0.1).destroyed)
+        stepTime(0.1)
+        expectThat(ship.destroyed)
             .isTrue()
     }
 

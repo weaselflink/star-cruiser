@@ -359,10 +359,10 @@ class GameState {
             physicsEngine.addTorpedo(torpedo)
         }
 
-        updateResults.filter {
-            it.destroyed
+        ships.filter {
+            it.value.destroyed
         }.forEach {
-            destroyShip(it.id)
+            destroyShip(it.value.id)
         }
     }
 
@@ -373,9 +373,7 @@ class GameState {
             }
         }
         val destructionPending = mutableSetOf<ObjectId>()
-        torpedoes.values.map {
-            it.endUpdate()
-        }.filter {
+        torpedoes.values.filter {
             it.destroyed
         }.forEach {
             destructionPending += it.id
