@@ -40,6 +40,11 @@ class BeamHandlerContainer(
         }
     }
 
+    fun endUpdate(): List<DamageEvent> =
+        beamHandlers.mapNotNull {
+            it.endUpdate()
+        }
+
     fun toMessage(lockHandler: LockHandler?) =
         BeamsMessage(
             modulation = modulation,

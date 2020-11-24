@@ -16,11 +16,13 @@ class BeamHandler(
     private val parent: BeamHandlerContainer
 ) {
 
-    private var status: BeamStatus = BeamStatus.Idle
-    private var targetSystemType = PoweredSystemType.random()
     private val position2d = beamWeapon.position.let { Vector2(it.x, it.y) }
     private val beamPosition
         get() = ship.position + (position2d.rotate(ship.rotation))
+
+    private var status: BeamStatus = BeamStatus.Idle
+    private var targetSystemType = PoweredSystemType.random()
+    private var damageEvent: DamageEvent? = null
 
     fun update(
         time: GameTime,
@@ -61,8 +63,17 @@ class BeamHandler(
         if (status is BeamStatus.Firing) {
             getLockedTarget(contactList, lockHandler)
                 ?.asShip()
-                ?.takeDamage(targetSystemType, time.delta, parent.modulation)
+                ?.also {
+                    it.takeDamage(targetSystemType, time.delta, parent.modulation)
+                    damageEvent = DamageEvent.Beam(it.id, targetSystemType, time.delta, parent.modulation)
+                }
         }
+    }
+
+    fun endUpdate(): DamageEvent? {
+        val lastEvent = damageEvent
+        damageEvent = null
+        return lastEvent
     }
 
     fun toMessage(lockHandler: LockHandler?) =

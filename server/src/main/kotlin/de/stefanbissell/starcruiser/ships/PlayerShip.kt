@@ -26,6 +26,7 @@ import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.randomShipName
 import de.stefanbissell.starcruiser.scenario.Faction
 import de.stefanbissell.starcruiser.ships.combat.BeamHandlerContainer
+import de.stefanbissell.starcruiser.ships.combat.DamageEvent
 import de.stefanbissell.starcruiser.ships.combat.LockHandler
 import de.stefanbissell.starcruiser.ships.combat.ShieldHandler
 import de.stefanbissell.starcruiser.ships.combat.Torpedo
@@ -110,10 +111,12 @@ class PlayerShip(
             jumpHandler.endJump()
         }
         val torpedoes = tubeHandlerContainer.endUpdate()
+        val damageEvents = beamHandlerContainer.endUpdate()
         return ShipUpdateResult(
             id = id,
             destroyed = destroyed,
-            torpedoes = torpedoes
+            torpedoes = torpedoes,
+            damageEvents = damageEvents
         )
     }
 
@@ -541,5 +544,6 @@ private sealed class MapSelection {
 data class ShipUpdateResult(
     val id: ObjectId,
     val destroyed: Boolean,
-    val torpedoes: List<Torpedo> = emptyList()
+    val torpedoes: List<Torpedo> = emptyList(),
+    val damageEvents: List<DamageEvent> = emptyList()
 )

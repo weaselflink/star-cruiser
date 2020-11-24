@@ -4,6 +4,7 @@ import de.stefanbissell.starcruiser.BeamStatus
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.Vector3
+import de.stefanbissell.starcruiser.isNear
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.ships.BeamWeapon
@@ -14,7 +15,9 @@ import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.isA
 import strikt.assertions.isEqualTo
+import strikt.assertions.isNotNull
 
 class BeamHandlerTest {
 
@@ -30,6 +33,7 @@ class BeamHandlerTest {
     private var lockHandler: LockHandler? = null
     private val beamHandler = BeamHandlerContainer(listOf(beamWeapon), ship).beamHandlers.first()
     private val physicsEngine = mockk<PhysicsEngine>()
+    private var damageEvent: DamageEvent? = null
 
     @BeforeEach
     internal fun setUp() {
@@ -129,10 +133,16 @@ class BeamHandlerTest {
     fun `deals damage to target`() {
         targetLockedAndInRange()
         stepTime(1.0)
-        stepTime(1.0)
 
         expectThat(target.hull)
             .isEqualTo(target.template.hull - 1.0)
+        expectThat(damageEvent)
+            .isNotNull()
+            .isA<DamageEvent.Beam>()
+            .and {
+                get { target }.isEqualTo(target.id)
+                get { amount }.isNear(1.0)
+            }
     }
 
     private fun cancelLock() {
@@ -171,5 +181,6 @@ class BeamHandlerTest {
     private fun stepTime(seconds: Number) {
         time.update(seconds.toDouble())
         beamHandler.update(time, power, contactList, lockHandler, physicsEngine)
+        damageEvent = beamHandler.endUpdate()
     }
 }
