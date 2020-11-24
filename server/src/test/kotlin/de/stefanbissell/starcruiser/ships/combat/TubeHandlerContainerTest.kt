@@ -1,10 +1,13 @@
-package de.stefanbissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.TubeStatus
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.Vector3
 import de.stefanbissell.starcruiser.isNear
+import de.stefanbissell.starcruiser.ships.Magazine
+import de.stefanbissell.starcruiser.ships.NonPlayerShip
+import de.stefanbissell.starcruiser.ships.Tube
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.all

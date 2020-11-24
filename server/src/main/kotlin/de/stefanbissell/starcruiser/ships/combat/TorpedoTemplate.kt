@@ -1,4 +1,4 @@
-package de.stefanbissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships.combat
 
 data class TorpedoTemplate(
     val radius: Double = 1.0,

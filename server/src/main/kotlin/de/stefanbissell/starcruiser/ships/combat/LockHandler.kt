@@ -1,9 +1,10 @@
-package de.stefanbissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.clamp
+import de.stefanbissell.starcruiser.ships.BoostLevel
 
 class LockHandler(
     val targetId: ObjectId,

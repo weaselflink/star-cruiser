@@ -1,4 +1,4 @@
-package de.stefanbissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.BeamMessage
 import de.stefanbissell.starcruiser.BeamStatus
@@ -6,6 +6,9 @@ import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
+import de.stefanbissell.starcruiser.ships.BeamWeapon
+import de.stefanbissell.starcruiser.ships.ContactList
+import de.stefanbissell.starcruiser.ships.Ship
 
 class BeamHandler(
     private val beamWeapon: BeamWeapon,

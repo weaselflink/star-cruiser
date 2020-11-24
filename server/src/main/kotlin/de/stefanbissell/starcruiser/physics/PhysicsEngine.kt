@@ -5,7 +5,7 @@ import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.ships.Ship
 import de.stefanbissell.starcruiser.ships.ShipTemplate
-import de.stefanbissell.starcruiser.ships.Torpedo
+import de.stefanbissell.starcruiser.ships.combat.Torpedo
 import org.jbox2d.callbacks.ContactImpulse
 import org.jbox2d.callbacks.ContactListener
 import org.jbox2d.callbacks.RayCastCallback

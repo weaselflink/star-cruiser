@@ -5,6 +5,7 @@ import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.Vector3
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.shapes.Polygon
+import de.stefanbissell.starcruiser.ships.combat.TorpedoTemplate
 import de.stefanbissell.starcruiser.toRadians
 import kotlin.math.PI
 import kotlin.math.roundToInt

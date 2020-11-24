@@ -10,6 +10,9 @@ import de.stefanbissell.starcruiser.ai.ShipAi
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.randomShipName
 import de.stefanbissell.starcruiser.scenario.Faction
+import de.stefanbissell.starcruiser.ships.combat.BeamHandlerContainer
+import de.stefanbissell.starcruiser.ships.combat.LockHandler
+import de.stefanbissell.starcruiser.ships.combat.ShieldHandler
 import de.stefanbissell.starcruiser.toRadians
 import kotlin.math.max
 

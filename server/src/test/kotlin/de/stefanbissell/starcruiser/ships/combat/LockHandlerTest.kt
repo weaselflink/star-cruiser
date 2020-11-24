@@ -1,4 +1,4 @@
-package de.stefanbissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.LockStatus

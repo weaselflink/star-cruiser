@@ -5,6 +5,7 @@ import de.stefanbissell.starcruiser.MapContactMessage
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ScopeContactMessage
 import de.stefanbissell.starcruiser.ShipType
+import de.stefanbissell.starcruiser.ships.combat.Torpedo
 
 class ContactList(
     val relativeTo: Ship,

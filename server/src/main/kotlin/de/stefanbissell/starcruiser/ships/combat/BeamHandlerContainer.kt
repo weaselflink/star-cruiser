@@ -1,9 +1,12 @@
-package de.stefanbissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.BeamsMessage
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
+import de.stefanbissell.starcruiser.ships.BeamWeapon
+import de.stefanbissell.starcruiser.ships.ContactList
+import de.stefanbissell.starcruiser.ships.Ship
 import kotlin.random.Random
 
 class BeamHandlerContainer(

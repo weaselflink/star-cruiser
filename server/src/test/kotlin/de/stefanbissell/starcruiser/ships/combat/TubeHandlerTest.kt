@@ -1,9 +1,11 @@
-package de.stefanbissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.TubeStatus
 import de.stefanbissell.starcruiser.isNear
+import de.stefanbissell.starcruiser.ships.PlayerShip
+import de.stefanbissell.starcruiser.ships.Tube
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isA

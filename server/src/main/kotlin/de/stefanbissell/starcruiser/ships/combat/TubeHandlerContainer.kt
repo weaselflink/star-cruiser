@@ -1,8 +1,11 @@
-package de.stefanbissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TubesMessage
 import de.stefanbissell.starcruiser.Vector2
+import de.stefanbissell.starcruiser.ships.Magazine
+import de.stefanbissell.starcruiser.ships.Ship
+import de.stefanbissell.starcruiser.ships.Tube
 import de.stefanbissell.starcruiser.toRadians
 
 class TubeHandlerContainer(

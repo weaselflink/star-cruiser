@@ -1,7 +1,9 @@
-package de.stefanbissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TubeStatus
+import de.stefanbissell.starcruiser.ships.Ship
+import de.stefanbissell.starcruiser.ships.Tube
 
 class TubeHandler(
     val tube: Tube,

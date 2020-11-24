@@ -18,7 +18,7 @@ import de.stefanbissell.starcruiser.ships.ContactList
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
-import de.stefanbissell.starcruiser.ships.Torpedo
+import de.stefanbissell.starcruiser.ships.combat.Torpedo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel

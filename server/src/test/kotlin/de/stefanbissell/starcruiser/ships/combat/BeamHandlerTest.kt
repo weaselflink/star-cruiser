@@ -1,4 +1,4 @@
-package de.stefanbissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.BeamStatus
 import de.stefanbissell.starcruiser.GameTime
@@ -6,6 +6,9 @@ import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.Vector3
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
+import de.stefanbissell.starcruiser.ships.BeamWeapon
+import de.stefanbissell.starcruiser.ships.ContactList
+import de.stefanbissell.starcruiser.ships.PlayerShip
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach

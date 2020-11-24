@@ -25,6 +25,11 @@ import de.stefanbissell.starcruiser.fiveDigits
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.randomShipName
 import de.stefanbissell.starcruiser.scenario.Faction
+import de.stefanbissell.starcruiser.ships.combat.BeamHandlerContainer
+import de.stefanbissell.starcruiser.ships.combat.LockHandler
+import de.stefanbissell.starcruiser.ships.combat.ShieldHandler
+import de.stefanbissell.starcruiser.ships.combat.Torpedo
+import de.stefanbissell.starcruiser.ships.combat.TubeHandlerContainer
 import de.stefanbissell.starcruiser.toIntHeading
 import de.stefanbissell.starcruiser.toRadians
 import de.stefanbissell.starcruiser.twoDigits

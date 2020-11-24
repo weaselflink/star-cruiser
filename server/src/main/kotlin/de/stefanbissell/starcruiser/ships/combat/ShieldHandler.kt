@@ -1,9 +1,10 @@
-package de.stefanbissell.starcruiser.ships
+package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ShieldMessage
 import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.moduloDistance
+import de.stefanbissell.starcruiser.ships.ShieldTemplate
 import de.stefanbissell.starcruiser.twoDigits
 import kotlin.math.max
 import kotlin.random.Random
