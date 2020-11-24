@@ -60,8 +60,8 @@ class NonPlayerShip(
         physicsEngine: PhysicsEngine
     ): ShipUpdateResult {
         shieldHandler.endUpdate(time)
-        val damageEvents = beamHandlerContainer.endUpdate()
         val destroyed = hull <= 0.0
+        val damageEvents = beamHandlerContainer.endUpdate()
         return ShipUpdateResult(
             id = id,
             destroyed = destroyed,

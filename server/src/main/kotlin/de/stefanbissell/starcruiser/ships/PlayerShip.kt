@@ -106,12 +106,12 @@ class PlayerShip(
     ): ShipUpdateResult {
         shieldHandler.endUpdate(time)
         val destroyed = hull <= 0.0
+        val damageEvents = beamHandlerContainer.endUpdate()
         if (!destroyed && jumpHandler.jumpComplete) {
             physicsEngine.jumpShip(id, jumpHandler.jumpDistance)
             jumpHandler.endJump()
         }
         val torpedoes = tubeHandlerContainer.endUpdate()
-        val damageEvents = beamHandlerContainer.endUpdate()
         return ShipUpdateResult(
             id = id,
             destroyed = destroyed,
