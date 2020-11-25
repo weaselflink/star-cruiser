@@ -50,7 +50,7 @@ class PlayerShip(
     private val waypoints: MutableList<Waypoint> = mutableListOf()
     private val history = mutableListOf<Pair<Double, Vector2>>()
     private val throttleHandler = ThrottleHandler(template)
-    private val powerHandler = PowerHandler(template)
+    val powerHandler = PowerHandler(template)
     val beamHandlerContainer = BeamHandlerContainer(template.beams, this)
     val tubeHandlerContainer = TubeHandlerContainer(template.tubes, template.magazine, this)
     val shieldHandler = ShieldHandler(template.shield)
@@ -113,7 +113,13 @@ class PlayerShip(
                     powerHandler.takeDamage(damageEvent.targetedSystem, damageEvent.amount)
                 }
             }
-            else -> {}
+            is DamageEvent.Torpedo -> {
+                hull -= damageEvent.amount
+                val damagePerSystem = damageEvent.amount / PoweredSystemType.values().size
+                PoweredSystemType.values().forEach {
+                    powerHandler.takeDamage(it, damagePerSystem)
+                }
+            }
         }
     }
 

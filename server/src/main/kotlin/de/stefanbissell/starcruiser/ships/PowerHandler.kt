@@ -20,7 +20,7 @@ class PowerHandler(
     private var capacitors = shipTemplate.maxCapacitors
     private val maxCapacitors
         get() = shipTemplate.maxCapacitors
-    private val poweredSystems = PoweredSystemType.values()
+    val poweredSystems = PoweredSystemType.values()
         .associate { it to PoweredSystem() }
         .toMutableMap()
 

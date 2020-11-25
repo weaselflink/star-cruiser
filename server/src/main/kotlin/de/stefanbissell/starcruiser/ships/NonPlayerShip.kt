@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.ships
 import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.ai.ShipAi
@@ -69,7 +70,13 @@ class NonPlayerShip(
                     powerHandler.takeDamage(damageEvent.targetedSystem, damageEvent.amount)
                 }
             }
-            else -> {}
+            is DamageEvent.Torpedo -> {
+                hull -= damageEvent.amount
+                val damagePerSystem = damageEvent.amount / PoweredSystemType.values().size
+                PoweredSystemType.values().forEach {
+                    powerHandler.takeDamage(it, damagePerSystem)
+                }
+            }
         }
     }
 

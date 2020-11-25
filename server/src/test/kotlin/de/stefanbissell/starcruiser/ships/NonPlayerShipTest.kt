@@ -9,10 +9,12 @@ import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.isNear
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
+import de.stefanbissell.starcruiser.ships.combat.DamageEvent
 import de.stefanbissell.starcruiser.takeDamage
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.all
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isNotNull
@@ -32,11 +34,29 @@ class NonPlayerShipTest {
     private var contactList = emptyList<Ship>()
 
     @Test
-    fun `takes damage to shields`() {
+    fun `takes beam damage to shields`() {
         ship.takeDamage(PoweredSystemType.Reactor, 10.0, 0)
 
         expectThat(ship.shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 10.0)
+    }
+
+    @Test
+    fun `takes torpedo damage to hull and all systems`() {
+        ship.applyDamage(
+            DamageEvent.Torpedo(ship.id, 7.0)
+        )
+
+        expectThat(ship.hull)
+            .isNear(ship.template.hull - 7.0)
+        expectThat(ship.powerHandler.poweredSystems.values)
+            .all {
+                get { damage }
+                    .isNear(
+                        (7.0 / PoweredSystemType.values().size) /
+                            ship.template.poweredSystemDamageCapacity
+                    )
+            }
     }
 
     @Test

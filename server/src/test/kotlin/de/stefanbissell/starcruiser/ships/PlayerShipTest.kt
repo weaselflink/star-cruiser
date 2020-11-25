@@ -24,6 +24,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.all
 import strikt.assertions.containsExactly
 import strikt.assertions.hasEntry
 import strikt.assertions.isA
@@ -397,6 +398,24 @@ class PlayerShipTest {
         expectThat(ship.toPowerMessage().settings[Reactor]?.damage)
             .isNotNull()
             .isNear(5.0 / ship.template.poweredSystemDamageCapacity)
+    }
+
+    @Test
+    fun `takes torpedo damage to hull and all systems`() {
+        ship.applyDamage(
+            DamageEvent.Torpedo(ship.id, 7.0)
+        )
+
+        expectThat(ship.hull)
+            .isNear(ship.template.hull - 7.0)
+        expectThat(ship.powerHandler.poweredSystems.values)
+            .all {
+                get { damage }
+                    .isNear(
+                        (7.0 / PoweredSystemType.values().size) /
+                            ship.template.poweredSystemDamageCapacity
+                    )
+            }
     }
 
     @Test
