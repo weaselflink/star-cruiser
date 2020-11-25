@@ -36,11 +36,6 @@ interface Ship : DynamicObject {
         contactList: ContactList = ContactList(this)
     )
 
-    fun endUpdate(
-        time: GameTime,
-        physicsEngine: PhysicsEngine
-    ): ShipUpdateResult
-
     fun toContactMessage(relativeTo: Ship): ContactMessage
 
     fun toShieldMessage(): ShieldMessage

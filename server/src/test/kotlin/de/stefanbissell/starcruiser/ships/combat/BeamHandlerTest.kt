@@ -129,12 +129,10 @@ class BeamHandlerTest {
     }
 
     @Test
-    fun `deals damage to target`() {
+    fun `create damage event for target`() {
         targetLockedAndInRange()
         stepTime(1.0)
 
-        expectThat(target.hull)
-            .isEqualTo(target.template.hull - 1.0)
         expectThat(beamHandler.damageEvent)
             .isNotNull()
             .isA<DamageEvent.Beam>()

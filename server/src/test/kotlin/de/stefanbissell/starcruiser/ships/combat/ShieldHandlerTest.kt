@@ -45,8 +45,6 @@ class ShieldHandlerTest {
     fun `shields are activated after taking damage since last update`() {
         shieldHandler.takeDamageAndReportHullDamage(3.0, 0)
 
-        stepTime(0.1)
-
         expectThat(shieldHandler.toMessage().activated)
             .isTrue()
 
@@ -63,17 +61,17 @@ class ShieldHandlerTest {
         stepTime(1.0)
 
         expectThat(shieldHandler.timeSinceLastDamage)
+            .isNear(1.0)
+
+        stepTime(2.5)
+
+        expectThat(shieldHandler.timeSinceLastDamage)
+            .isNear(3.5)
+
+        shieldHandler.takeDamageAndReportHullDamage(3.0, 0)
+
+        expectThat(shieldHandler.timeSinceLastDamage)
             .isEqualTo(0.0)
-
-        stepTime(2.5)
-
-        expectThat(shieldHandler.timeSinceLastDamage)
-            .isEqualTo(2.5)
-
-        stepTime(2.5)
-
-        expectThat(shieldHandler.timeSinceLastDamage)
-            .isEqualTo(5.0)
     }
 
     @Test
@@ -239,6 +237,5 @@ class ShieldHandlerTest {
     private fun stepTime(seconds: Number) {
         time.update(seconds.toDouble())
         shieldHandler.update(time, power)
-        shieldHandler.endUpdate(time)
     }
 }

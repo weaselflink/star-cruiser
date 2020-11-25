@@ -18,6 +18,7 @@ import de.stefanbissell.starcruiser.ships.ContactList
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.PlayerShip
 import de.stefanbissell.starcruiser.ships.Ship
+import de.stefanbissell.starcruiser.ships.combat.DamageEvent
 import de.stefanbissell.starcruiser.ships.combat.Torpedo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -338,15 +339,16 @@ class GameState {
     }
 
     private fun updateShips() {
-        ships.forEach { shipEntry ->
-            shipEntry.value.apply {
-                val contactList = ContactList(this, ships, torpedoes)
-                update(time, physicsEngine, contactList)
+        val updateResults = ships.values
+            .onEach { ship ->
+                ship.apply {
+                    val contactList = ContactList(this, ships, torpedoes)
+                    update(time, physicsEngine, contactList)
+                }
             }
-        }
-        val updateResults = ships.map {
-            it.value.endUpdate(time, physicsEngine)
-        }
+            .map { ship ->
+                ship.updateResult
+            }
 
         updateResults.flatMap {
             it.torpedoes
@@ -357,6 +359,21 @@ class GameState {
             }
 
             physicsEngine.addTorpedo(torpedo)
+        }
+
+        updateResults.flatMap {
+            it.damageEvents
+        }.forEach { damageEvent ->
+            getDynamicObject(damageEvent.target)
+                ?.also {
+                    if (damageEvent is DamageEvent.Beam) {
+                        it.takeDamage(
+                            targetSystemType = damageEvent.targetedSystem,
+                            amount = damageEvent.amount,
+                            modulation = damageEvent.modulation
+                        )
+                    }
+                }
         }
 
         ships.filter {
@@ -399,6 +416,8 @@ class GameState {
             it.update(physicsEngine)
         }
     }
+
+    private fun getDynamicObject(id: ObjectId) = ships[id] ?: torpedoes[id]
 
     private fun updateTriggers() {
         val gameStateMutator = GameStateMutator(

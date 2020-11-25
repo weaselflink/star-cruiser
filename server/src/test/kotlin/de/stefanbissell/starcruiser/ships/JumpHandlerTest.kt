@@ -2,7 +2,11 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.JumpDriveMessage
+import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.isNear
+import de.stefanbissell.starcruiser.physics.PhysicsEngine
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isA
@@ -15,9 +19,11 @@ import strikt.assertions.isTrue
 class JumpHandlerTest {
 
     private val time = GameTime.atEpoch()
+    private val physicsEngine = mockk<PhysicsEngine>(relaxed = true)
     private val jumpDrive = JumpDrive()
     private var power = 1.0
-    private val jumpHandler = JumpHandler(jumpDrive)
+    private val ship = PlayerShip(faction = TestFactions.player)
+    private val jumpHandler = JumpHandler(jumpDrive, ship)
 
     @Test
     fun `ready initially`() {
@@ -43,21 +49,19 @@ class JumpHandlerTest {
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Jumping>()
             .get { progress }.isNear(0.5)
-        expectThat(jumpHandler.jumpComplete)
-            .isFalse()
     }
 
     @Test
     fun `reports jump complete`() {
         jumpHandler.startJump()
 
-        stepTime(1.0 / jumpDrive.jumpingSpeed * 1.2)
+        stepTime(1.0 / jumpDrive.jumpingSpeed * 1.1)
 
         expectThat(jumpHandler.toMessage())
-            .isA<JumpDriveMessage.Jumping>()
-            .get { progress }.isNear(1.2)
-        expectThat(jumpHandler.jumpComplete)
-            .isTrue()
+            .isA<JumpDriveMessage.Recharging>()
+            .get { progress }.isNear(0.0)
+        expectThat(jumpHandler.ready)
+            .isFalse()
     }
 
     @Test
@@ -65,8 +69,6 @@ class JumpHandlerTest {
         jumpHandler.startJump()
 
         stepTime(1.0 / jumpDrive.jumpingSpeed * 1.2)
-
-        jumpHandler.endJump()
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Recharging>()
@@ -78,8 +80,8 @@ class JumpHandlerTest {
     @Test
     fun `updates progress when recharging`() {
         jumpHandler.startJump()
-        jumpHandler.endJump()
 
+        stepTime(1.0 / jumpDrive.jumpingSpeed * 1.2)
         stepTime(1.0 / jumpDrive.rechargeSpeed * 0.5)
 
         expectThat(jumpHandler.toMessage())
@@ -93,8 +95,8 @@ class JumpHandlerTest {
     fun `updates progress when recharging adjusted for low boost level`() {
         power = 0.5
         jumpHandler.startJump()
-        jumpHandler.endJump()
 
+        stepTime(1.0 / jumpDrive.jumpingSpeed * 1.2)
         stepTime(1.0 / jumpDrive.rechargeSpeed * 0.5)
 
         expectThat(jumpHandler.toMessage())
@@ -108,8 +110,8 @@ class JumpHandlerTest {
     fun `updates progress when recharging adjusted for high boost level`() {
         power = 1.5
         jumpHandler.startJump()
-        jumpHandler.endJump()
 
+        stepTime(1.0 / jumpDrive.jumpingSpeed * 1.2)
         stepTime(1.0 / jumpDrive.rechargeSpeed * 0.5)
 
         expectThat(jumpHandler.toMessage())
@@ -122,8 +124,8 @@ class JumpHandlerTest {
     @Test
     fun `reports ready when recharged`() {
         jumpHandler.startJump()
-        jumpHandler.endJump()
 
+        stepTime(1.0 / jumpDrive.jumpingSpeed * 1.2)
         stepTime(1.0 / jumpDrive.rechargeSpeed * 1.2)
 
         expectThat(jumpHandler.toMessage())
@@ -153,19 +155,21 @@ class JumpHandlerTest {
 
         stepTime(0.8)
 
-        expectThat(jumpHandler.toMessage())
-            .isA<JumpDriveMessage.Jumping>()
-            .get { animation }.isNotNull().isNear(0.0)
-
-        jumpHandler.endJump()
-
-        stepTime(0.2)
+        verify(exactly = 1) {
+            physicsEngine.jumpShip(ship.id, jumpHandler.jumpDistance)
+        }
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Recharging>()
-            .get { animation }.isNotNull().isNear(0.2)
+            .get { animation }.isNotNull().isNear(0.0)
 
-        stepTime(1.2)
+        stepTime(0.6)
+
+        expectThat(jumpHandler.toMessage())
+            .isA<JumpDriveMessage.Recharging>()
+            .get { animation }.isNotNull().isNear(0.6)
+
+        stepTime(0.6)
 
         expectThat(jumpHandler.toMessage())
             .isA<JumpDriveMessage.Recharging>()
@@ -174,6 +178,6 @@ class JumpHandlerTest {
 
     private fun stepTime(seconds: Number) {
         time.update(seconds.toDouble())
-        jumpHandler.update(time, power)
+        jumpHandler.update(time, physicsEngine, power)
     }
 }

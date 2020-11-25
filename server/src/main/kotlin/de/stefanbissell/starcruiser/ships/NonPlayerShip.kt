@@ -60,17 +60,6 @@ class NonPlayerShip(
         updatePhysics(physicsEngine)
     }
 
-    override fun endUpdate(
-        time: GameTime,
-        physicsEngine: PhysicsEngine
-    ): ShipUpdateResult {
-        shieldHandler.endUpdate(time)
-        return ShipUpdateResult(
-            id = id,
-            damageEvents = beamHandlerContainer.damageEvents
-        )
-    }
-
     override fun takeDamage(targetSystemType: PoweredSystemType, amount: Double, modulation: Int) {
         val hullDamage = shieldHandler.takeDamageAndReportHullDamage(amount, modulation)
         if (hullDamage > 0.0) {

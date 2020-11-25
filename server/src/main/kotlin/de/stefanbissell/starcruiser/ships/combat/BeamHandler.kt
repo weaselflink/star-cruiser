@@ -63,15 +63,11 @@ class BeamHandler(
         }
         if (status is BeamStatus.Firing) {
             getLockedTarget(contactList, lockHandler)
-                ?.asShip()
                 ?.also {
-                    it.takeDamage(targetSystemType, time.delta, parent.modulation)
                     damageEvent = DamageEvent.Beam(it.id, targetSystemType, time.delta, parent.modulation)
                 }
         }
     }
-
-    fun endUpdate(): DamageEvent? = damageEvent
 
     fun toMessage(lockHandler: LockHandler?) =
         BeamMessage(

@@ -16,6 +16,7 @@ import de.stefanbissell.starcruiser.isNear
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.physics.BodyParameters
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
+import de.stefanbissell.starcruiser.ships.combat.DamageEvent
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -31,6 +32,7 @@ import strikt.assertions.isFalse
 import strikt.assertions.isNotNull
 import strikt.assertions.isNull
 import strikt.assertions.isTrue
+import strikt.assertions.one
 
 class PlayerShipTest {
 
@@ -296,7 +298,14 @@ class PlayerShipTest {
 
         stepTime(0.5)
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Firing>()
-        expectThat(target.toMessage().shield.strength).isEqualTo(target.template.shield.strength - 0.5)
+        expectThat(ship.updateResult.damageEvents)
+            .one {
+                isA<DamageEvent.Beam>()
+                    .and {
+                        get { this@get.target }.isEqualTo(target.id)
+                        get { amount }.isNear(0.5)
+                    }
+            }
 
         stepTime(1.5)
         expectThat(ship.toMessage().beams.first().status).isA<BeamStatus.Recharging>()
@@ -606,7 +615,6 @@ class PlayerShipTest {
     private fun stepTime(seconds: Number) {
         time.update(seconds.toDouble())
         ship.update(time, physicsEngine, contactList)
-        ship.endUpdate(time, physicsEngine)
     }
 
     private fun addShip(

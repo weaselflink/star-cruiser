@@ -58,8 +58,6 @@ class ContactList(
         val isEnemy = contactType == ContactType.Enemy
         val scanLevel = relativeTo.getScanLevel(dynamicObject.id)
 
-        fun asShip() = if (dynamicObject is Ship) dynamicObject else null
-
         fun toContactMessage() =
             if (dynamicObject is Ship) {
                 dynamicObject.toContactMessage(relativeTo)

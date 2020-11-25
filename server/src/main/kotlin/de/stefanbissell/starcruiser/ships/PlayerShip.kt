@@ -68,9 +68,7 @@ class PlayerShip(
             torpedoes = tubeHandlerContainer.torpedoes,
             damageEvents = beamHandlerContainer.damageEvents
         )
-    private val jumpHandler = JumpHandler(
-        jumpDrive = template.jumpDrive
-    )
+    private val jumpHandler = JumpHandler(template.jumpDrive, this)
     var mainScreenView = MainScreenView.Front
     val sensorRange: Double
         get() = max(template.shortRangeScopeRange, template.sensorRange * Sensors.boostLevel)
@@ -97,29 +95,13 @@ class PlayerShip(
         updateBeams(time, physicsEngine, contactList)
         updateTubes(time)
         shieldHandler.update(time, Shields.boostLevel)
-        jumpHandler.update(time, Jump.boostLevel)
+        jumpHandler.update(time, physicsEngine, Jump.boostLevel)
         updateScan(time, contactList)
         updateLock(time, contactList)
         throttleHandler.update(time)
         updatePhysics(physicsEngine)
         updateHistory(time)
         updateMapSelection(contactList)
-    }
-
-    override fun endUpdate(
-        time: GameTime,
-        physicsEngine: PhysicsEngine
-    ): ShipUpdateResult {
-        shieldHandler.endUpdate(time)
-        if (!destroyed && jumpHandler.jumpComplete) {
-            physicsEngine.jumpShip(id, jumpHandler.jumpDistance)
-            jumpHandler.endJump()
-        }
-        return ShipUpdateResult(
-            id = id,
-            torpedoes = tubeHandlerContainer.torpedoes,
-            damageEvents = beamHandlerContainer.damageEvents
-        )
     }
 
     override fun takeDamage(targetSystemType: PoweredSystemType, amount: Double, modulation: Int) {

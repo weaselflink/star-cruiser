@@ -4,11 +4,13 @@ import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.JumpDriveMessage
 import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.fiveDigits
+import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import kotlin.math.max
 import kotlin.math.min
 
 class JumpHandler(
-    private val jumpDrive: JumpDrive
+    private val jumpDrive: JumpDrive,
+    private val ship: PlayerShip
 ) {
 
     var jumping: Boolean = false
@@ -21,16 +23,24 @@ class JumpHandler(
 
     val ready: Boolean
         get() = rechargeProgress >= 1.0
-    val jumpComplete: Boolean
+    private val jumpComplete: Boolean
         get() = jumping && jumpProgress >= 1.0
 
-    fun update(time: GameTime, boostLevel: Double) {
+    fun update(
+        time: GameTime,
+        physicsEngine: PhysicsEngine,
+        boostLevel: Double
+    ) {
         if (jumping) {
             jumpProgress += time.delta * jumpDrive.jumpingSpeed
         } else {
             rechargeProgress = min(1.0, rechargeProgress + time.delta * jumpDrive.rechargeSpeed * boostLevel)
         }
         updateAnimation(time)
+        if (jumpComplete) {
+            physicsEngine.jumpShip(ship.id, jumpDistance)
+            endJump()
+        }
     }
 
     fun changeJumpDistance(value: Double) {
@@ -38,11 +48,13 @@ class JumpHandler(
     }
 
     fun startJump() {
-        jumping = true
-        rechargeProgress = 0.0
+        if (ready) {
+            jumping = true
+            rechargeProgress = 0.0
+        }
     }
 
-    fun endJump() {
+    private fun endJump() {
         jumping = false
         jumpProgress = 0.0
         animation = 0.0
