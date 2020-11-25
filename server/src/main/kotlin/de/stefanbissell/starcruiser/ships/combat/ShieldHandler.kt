@@ -43,16 +43,6 @@ class ShieldHandler(
         currentStrength += rechargeAmount(time, boostLevel)
     }
 
-    fun takeDamageAndReportHullDamage(amount: Double, modulation: Int): Double {
-        timeSinceLastDamage = 0.0
-        return if (up) {
-            val effectiveDamage = amount * modulationMultiplier(modulation)
-            takeDamageToShieldAndThenHull(effectiveDamage)
-        } else {
-            amount
-        }
-    }
-
     fun takeDamageAndReportHullDamage(beamDamageEvent: DamageEvent.Beam): Double {
         timeSinceLastDamage = 0.0
         return if (up) {

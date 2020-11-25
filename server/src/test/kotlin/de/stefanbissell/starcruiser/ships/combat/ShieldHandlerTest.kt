@@ -1,6 +1,8 @@
 package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.GameTime
+import de.stefanbissell.starcruiser.ObjectId
+import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.isNear
 import de.stefanbissell.starcruiser.ships.ShieldTemplate
 import org.junit.jupiter.api.Test
@@ -35,7 +37,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `applies damage to shields and reports no hull damage if shields up`() {
-        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 0))
+        expectThat(shieldHandler.takeBeamDamage(3.0, 0))
             .isEqualTo(0.0)
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0)
@@ -43,7 +45,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `shields are activated after taking damage since last update`() {
-        shieldHandler.takeDamageAndReportHullDamage(3.0, 0)
+        shieldHandler.takeBeamDamage(3.0, 0)
 
         expectThat(shieldHandler.toMessage().activated)
             .isTrue()
@@ -56,7 +58,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `tracks time since last damage`() {
-        shieldHandler.takeDamageAndReportHullDamage(3.0, 0)
+        shieldHandler.takeBeamDamage(3.0, 0)
 
         stepTime(1.0)
 
@@ -68,7 +70,7 @@ class ShieldHandlerTest {
         expectThat(shieldHandler.timeSinceLastDamage)
             .isNear(3.5)
 
-        shieldHandler.takeDamageAndReportHullDamage(3.0, 0)
+        shieldHandler.takeBeamDamage(3.0, 0)
 
         expectThat(shieldHandler.timeSinceLastDamage)
             .isEqualTo(0.0)
@@ -76,7 +78,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `recharges shields`() {
-        shieldHandler.takeDamageAndReportHullDamage(3.0, 0)
+        shieldHandler.takeBeamDamage(3.0, 0)
 
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0)
@@ -90,7 +92,7 @@ class ShieldHandlerTest {
     @Test
     fun `recharges shields adjusted for low boost level`() {
         power = 0.5
-        shieldHandler.takeDamageAndReportHullDamage(3.0, 0)
+        shieldHandler.takeBeamDamage(3.0, 0)
 
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0)
@@ -104,7 +106,7 @@ class ShieldHandlerTest {
     @Test
     fun `recharges shields adjusted for high boost level`() {
         power = 2.0
-        shieldHandler.takeDamageAndReportHullDamage(3.0, 0)
+        shieldHandler.takeBeamDamage(3.0, 0)
 
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0)
@@ -119,7 +121,7 @@ class ShieldHandlerTest {
     fun `reports damage to hull if shields down`() {
         shieldHandler.up = false
 
-        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 0))
+        expectThat(shieldHandler.takeBeamDamage(3.0, 0))
             .isEqualTo(3.0)
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength)
@@ -127,7 +129,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `reports damage to hull if damage exceeds shields`() {
-        expectThat(shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength + 3.0, 0))
+        expectThat(shieldHandler.takeBeamDamage(shieldTemplate.strength + 3.0, 0))
             .isEqualTo(3.0)
         expectThat(shieldHandler.toMessage().strength)
             .isNear(0.0)
@@ -135,7 +137,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `shields go down if below failure strength`() {
-        shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength - shieldTemplate.failureStrength + 3.0, 0)
+        shieldHandler.takeBeamDamage(shieldTemplate.strength - shieldTemplate.failureStrength + 3.0, 0)
 
         stepTime(0.1)
 
@@ -145,7 +147,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `shield cannot go up if below activation strength`() {
-        shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength - shieldTemplate.activationStrength + 3.0, 0)
+        shieldHandler.takeBeamDamage(shieldTemplate.strength - shieldTemplate.activationStrength + 3.0, 0)
         shieldHandler.up = false
         shieldHandler.up = true
 
@@ -155,7 +157,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `shield can go up after reaching activation strength`() {
-        shieldHandler.takeDamageAndReportHullDamage(shieldTemplate.strength - shieldTemplate.activationStrength + 3.0, 0)
+        shieldHandler.takeBeamDamage(shieldTemplate.strength - shieldTemplate.activationStrength + 3.0, 0)
         shieldHandler.up = false
 
         stepTime(4.0 / shieldTemplate.rechargeSpeed)
@@ -196,7 +198,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `halves damage when modulation matches beams`() {
-        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 2))
+        expectThat(shieldHandler.takeBeamDamage(3.0, 2))
             .isEqualTo(0.0)
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 1.5)
@@ -204,7 +206,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `three quarter damage when modulation near beams`() {
-        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 3))
+        expectThat(shieldHandler.takeBeamDamage(3.0, 3))
             .isEqualTo(0.0)
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 2.25)
@@ -212,7 +214,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `normal damage when modulation slightly mismatches beams`() {
-        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 4))
+        expectThat(shieldHandler.takeBeamDamage(3.0, 4))
             .isEqualTo(0.0)
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 3.0)
@@ -220,7 +222,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `one and a half damage when modulation strongly mismatches beams`() {
-        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 5))
+        expectThat(shieldHandler.takeBeamDamage(3.0, 5))
             .isEqualTo(0.0)
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 4.5)
@@ -228,7 +230,7 @@ class ShieldHandlerTest {
 
     @Test
     fun `doubles damage when modulation completely mismatches beams`() {
-        expectThat(shieldHandler.takeDamageAndReportHullDamage(3.0, 6))
+        expectThat(shieldHandler.takeBeamDamage(3.0, 6))
             .isEqualTo(0.0)
         expectThat(shieldHandler.toMessage().strength)
             .isNear(shieldTemplate.strength - 6.0)
@@ -238,4 +240,7 @@ class ShieldHandlerTest {
         time.update(seconds.toDouble())
         shieldHandler.update(time, power)
     }
+
+    private fun ShieldHandler.takeBeamDamage(amount: Double, modulation: Int) =
+        takeDamageAndReportHullDamage(DamageEvent.Beam(ObjectId.random(), PoweredSystemType.Jump, amount, modulation))
 }
