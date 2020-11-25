@@ -12,6 +12,7 @@ class TubeHandler(
 
     var status: TubeStatus = TubeStatus.Empty
     var newTorpedo = false
+    var launchRequested = false
 
     fun update(
         time: GameTime,
@@ -19,6 +20,11 @@ class TubeHandler(
     ) {
         newTorpedo = false
         val currentStatus = status
+        if (launchRequested && currentStatus is TubeStatus.Ready) {
+            status = TubeStatus.Empty
+            newTorpedo = true
+        }
+        launchRequested = false
         if (currentStatus is TubeStatus.Reloading) {
             val currentProgress = time.delta * tube.reloadSpeed * boostLevel
             status = if (currentStatus.progress + currentProgress < 1.0) {
@@ -29,14 +35,11 @@ class TubeHandler(
         }
     }
 
-    fun launch() {
-        if (status is TubeStatus.Ready) {
-            status = TubeStatus.Empty
-            newTorpedo = true
-        }
+    fun requestLaunch() {
+        launchRequested = true
     }
 
-    fun startReload(): Boolean {
+    fun requestReload(): Boolean {
         return if (status is TubeStatus.Empty) {
             status = TubeStatus.Reloading()
             true

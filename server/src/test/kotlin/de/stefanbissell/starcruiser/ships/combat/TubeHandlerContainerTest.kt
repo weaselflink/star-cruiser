@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.ships.combat
 
+import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.TubeStatus
 import de.stefanbissell.starcruiser.Vector2
@@ -20,6 +21,7 @@ import kotlin.math.PI
 
 class TubeHandlerContainerTest {
 
+    private val time = GameTime.atEpoch()
     private val ship = NonPlayerShip(
         faction = TestFactions.neutral,
         position = Vector2(100, 200),
@@ -89,6 +91,7 @@ class TubeHandlerContainerTest {
     fun `launches from given tube`() {
         tubeHandlerContainer.tubeHandlers[0].status = TubeStatus.Ready
         tubeHandlerContainer.launch(0)
+        stepTime(0.1)
 
         expectThat(tubeHandlerContainer.tubeHandlers[0])
             .get { status }
@@ -99,6 +102,7 @@ class TubeHandlerContainerTest {
     fun `launch creates torpedo`() {
         tubeHandlerContainer.tubeHandlers[0].status = TubeStatus.Ready
         tubeHandlerContainer.launch(0)
+        stepTime(0.1)
 
         val expectedRotation = PI * 0.75
         expectThat(tubeHandlerContainer.torpedoes)
@@ -150,5 +154,10 @@ class TubeHandlerContainerTest {
                 TubeStatus.Reloading(0.4)
             )
         }
+    }
+
+    private fun stepTime(seconds: Number) {
+        time.update(seconds.toDouble())
+        tubeHandlerContainer.update(time, 1.0)
     }
 }

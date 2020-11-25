@@ -49,14 +49,14 @@ class TubeHandlerContainer(
 
     fun launch(index: Int) {
         tubeHandlers.getOrNull(index)?.apply {
-            launch()
+            requestLaunch()
         }
     }
 
     fun startReload(index: Int) {
         if (magazineRemaining > 0) {
             tubeHandlers.getOrNull(index)?.apply {
-                if (startReload()) {
+                if (requestReload()) {
                     magazineRemaining--
                 }
             }
