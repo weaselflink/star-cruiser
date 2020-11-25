@@ -126,8 +126,9 @@ class GameState {
         updateAsteroids()
         updateTorpedoes()
         updateShips()
+        handleCollisions(physicsEngine.collisions)
         handleEvents()
-        removeDestroyed(physicsEngine.collisions)
+        removeDestroyed()
         updateTriggers()
     }
 
@@ -387,6 +388,23 @@ class GameState {
         }
     }
 
+    private fun handleCollisions(collisions: List<Pair<ObjectId, ObjectId>>) {
+        collisions.filter {
+            torpedoes.containsKey(it.first) || torpedoes.containsKey(it.second)
+        }.map { pair ->
+            if (torpedoes.containsKey(pair.first)) {
+                torpedoes[pair.first]!! to pair.second
+            } else {
+                torpedoes[pair.second]!! to pair.first
+            }
+        }.filter { (torpedo, _) ->
+            torpedo.timeSinceLaunch > 0.1
+        }.forEach { (torpedo, other) ->
+            unhandledEvents += DamageEvent.Torpedo(other, torpedo.template.damage)
+            unhandledEvents += DamageEvent.Torpedo(torpedo.id, torpedo.template.damage)
+        }
+    }
+
     private fun handleEvents() {
         unhandledEvents.forEach { damageEvent ->
             getDynamicObject(damageEvent.target)
@@ -396,32 +414,17 @@ class GameState {
         }
     }
 
-    private fun removeDestroyed(collisions: List<Pair<ObjectId, ObjectId>>) {
+    private fun removeDestroyed() {
         ships.filter {
             it.value.destroyed
         }.forEach {
             destroyShip(it.value.id)
         }
 
-        val destructionPending = mutableSetOf<ObjectId>()
         torpedoes.values.filter {
             it.destroyed
         }.forEach {
-            destructionPending += it.id
-        }
-
-        collisions.flatMap {
-            it.toList()
-        }.mapNotNull {
-            torpedoes[it]
-        }.filter {
-            it.timeSinceLaunch > 0.1
-        }.forEach {
-            destructionPending += it.id
-        }
-
-        destructionPending.forEach {
-            destroyTorpedo(it)
+            destroyTorpedo(it.id)
         }
     }
 
