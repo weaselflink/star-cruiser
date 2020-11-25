@@ -251,11 +251,11 @@ class PlayerShip(
     }
 
     fun reloadTube(index: Int) {
-        tubeHandlerContainer.startReload(index)
+        tubeHandlerContainer.requestReload(index)
     }
 
     fun launchTube(index: Int) {
-        tubeHandlerContainer.launch(index)
+        tubeHandlerContainer.requestLaunch(index)
     }
 
     override fun inSensorRange(other: Vector2?) =

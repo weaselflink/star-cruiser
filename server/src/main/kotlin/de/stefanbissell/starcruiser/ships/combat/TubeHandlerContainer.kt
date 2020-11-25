@@ -47,13 +47,13 @@ class TubeHandlerContainer(
         }
     }
 
-    fun launch(index: Int) {
+    fun requestLaunch(index: Int) {
         tubeHandlers.getOrNull(index)?.apply {
             requestLaunch()
         }
     }
 
-    fun startReload(index: Int) {
+    fun requestReload(index: Int) {
         if (magazineRemaining > 0) {
             tubeHandlers.getOrNull(index)?.apply {
                 if (requestReload()) {

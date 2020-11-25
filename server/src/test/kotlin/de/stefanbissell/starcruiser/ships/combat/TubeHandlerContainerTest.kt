@@ -48,7 +48,7 @@ class TubeHandlerContainerTest {
 
     @Test
     fun `starts reload for given tube`() {
-        tubeHandlerContainer.startReload(1)
+        tubeHandlerContainer.requestReload(1)
 
         expectThat(tubeHandlerContainer.tubeHandlers[1])
             .get { status }
@@ -57,7 +57,7 @@ class TubeHandlerContainerTest {
 
     @Test
     fun `reduces magazine remaining on reload`() {
-        tubeHandlerContainer.startReload(1)
+        tubeHandlerContainer.requestReload(1)
 
         expectThat(tubeHandlerContainer.magazineRemaining)
             .isEqualTo(Magazine().capacity - 1)
@@ -66,8 +66,8 @@ class TubeHandlerContainerTest {
     @Test
     fun `does not reload when magazine empty`() {
         tubeHandlerContainer.magazineRemaining = 1
-        tubeHandlerContainer.startReload(0)
-        tubeHandlerContainer.startReload(1)
+        tubeHandlerContainer.requestReload(0)
+        tubeHandlerContainer.requestReload(1)
 
         expectThat(tubeHandlerContainer.tubeHandlers[0])
             .get { status }
@@ -79,7 +79,7 @@ class TubeHandlerContainerTest {
 
     @Test
     fun `ignores invalid index for start reload call`() {
-        tubeHandlerContainer.startReload(-1)
+        tubeHandlerContainer.requestReload(-1)
 
         expectThat(tubeHandlerContainer.tubeHandlers)
             .all {
@@ -90,8 +90,8 @@ class TubeHandlerContainerTest {
     @Test
     fun `launches from given tube`() {
         tubeHandlerContainer.tubeHandlers[0].status = TubeStatus.Ready
-        tubeHandlerContainer.launch(0)
-        stepTime(0.1)
+        tubeHandlerContainer.requestLaunch(0)
+        stepTime()
 
         expectThat(tubeHandlerContainer.tubeHandlers[0])
             .get { status }
@@ -101,8 +101,8 @@ class TubeHandlerContainerTest {
     @Test
     fun `launch creates torpedo`() {
         tubeHandlerContainer.tubeHandlers[0].status = TubeStatus.Ready
-        tubeHandlerContainer.launch(0)
-        stepTime(0.1)
+        tubeHandlerContainer.requestLaunch(0)
+        stepTime()
 
         val expectedRotation = PI * 0.75
         expectThat(tubeHandlerContainer.torpedoes)
@@ -132,7 +132,7 @@ class TubeHandlerContainerTest {
         tubeHandlerContainer.tubeHandlers.forEach {
             it.status = TubeStatus.Ready
         }
-        tubeHandlerContainer.launch(2)
+        tubeHandlerContainer.requestLaunch(2)
 
         expectThat(tubeHandlerContainer.tubeHandlers)
             .all {
@@ -156,7 +156,7 @@ class TubeHandlerContainerTest {
         }
     }
 
-    private fun stepTime(seconds: Number) {
+    private fun stepTime(seconds: Number = 0.1) {
         time.update(seconds.toDouble())
         tubeHandlerContainer.update(time, 1.0)
     }
