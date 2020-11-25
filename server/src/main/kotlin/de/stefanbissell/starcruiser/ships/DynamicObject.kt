@@ -1,10 +1,10 @@
 package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.ObjectId
-import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.ShipType
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.scenario.Faction
+import de.stefanbissell.starcruiser.ships.combat.DamageEvent
 
 interface DynamicObject {
 
@@ -16,5 +16,5 @@ interface DynamicObject {
     val rotation: Double
     val speed: Vector2
 
-    fun takeDamage(targetSystemType: PoweredSystemType, amount: Double, modulation: Int)
+    fun applyDamage(damageEvent: DamageEvent)
 }

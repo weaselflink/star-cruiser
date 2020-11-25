@@ -2,7 +2,6 @@ package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
-import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.ShipType
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
@@ -48,7 +47,7 @@ class Torpedo(
         }
     }
 
-    override fun takeDamage(targetSystemType: PoweredSystemType, amount: Double, modulation: Int) {
+    override fun applyDamage(damageEvent: DamageEvent) {
         destroyed = true
     }
 }

@@ -329,7 +329,7 @@ class GameState {
             ships[it.id] = it
             physicsEngine.addShip(it)
             it.toggleShieldsUp()
-            it.takeDamage(PoweredSystemType.Jump, 2.5, 0)
+            it.applyDamage(DamageEvent.Beam(it.id, PoweredSystemType.Jump, 2.5, 0))
             it.toggleShieldsUp()
         }
     }
@@ -391,13 +391,7 @@ class GameState {
         unhandledEvents.forEach { damageEvent ->
             getDynamicObject(damageEvent.target)
                 ?.also {
-                    if (damageEvent is DamageEvent.Beam) {
-                        it.takeDamage(
-                            targetSystemType = damageEvent.targetedSystem,
-                            amount = damageEvent.amount,
-                            modulation = damageEvent.modulation
-                        )
-                    }
+                    it.applyDamage(damageEvent)
                 }
         }
     }

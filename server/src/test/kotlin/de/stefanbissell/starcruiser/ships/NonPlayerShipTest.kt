@@ -9,6 +9,7 @@ import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.isNear
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
+import de.stefanbissell.starcruiser.takeDamage
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat

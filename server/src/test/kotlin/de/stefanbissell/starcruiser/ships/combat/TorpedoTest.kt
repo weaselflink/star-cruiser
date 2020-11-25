@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.physics.BodyParameters
 import de.stefanbissell.starcruiser.physics.PhysicsEngine
+import de.stefanbissell.starcruiser.takeDamage
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

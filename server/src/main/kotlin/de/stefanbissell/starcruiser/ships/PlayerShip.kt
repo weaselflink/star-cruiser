@@ -104,11 +104,16 @@ class PlayerShip(
         updateMapSelection(contactList)
     }
 
-    override fun takeDamage(targetSystemType: PoweredSystemType, amount: Double, modulation: Int) {
-        val hullDamage = shieldHandler.takeDamageAndReportHullDamage(amount, modulation)
-        if (hullDamage > 0.0) {
-            hull -= hullDamage
-            powerHandler.takeDamage(targetSystemType, amount)
+    override fun applyDamage(damageEvent: DamageEvent) {
+        when (damageEvent) {
+            is DamageEvent.Beam -> {
+                val hullDamage = shieldHandler.takeDamageAndReportHullDamage(damageEvent)
+                if (hullDamage > 0.0) {
+                    hull -= hullDamage
+                    powerHandler.takeDamage(damageEvent.targetedSystem, damageEvent.amount)
+                }
+            }
+            else -> {}
         }
     }
 

@@ -3,7 +3,6 @@ package de.stefanbissell.starcruiser.ships
 import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
-import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.ScanLevel
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.ai.ShipAi
@@ -11,6 +10,7 @@ import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.randomShipName
 import de.stefanbissell.starcruiser.scenario.Faction
 import de.stefanbissell.starcruiser.ships.combat.BeamHandlerContainer
+import de.stefanbissell.starcruiser.ships.combat.DamageEvent
 import de.stefanbissell.starcruiser.ships.combat.LockHandler
 import de.stefanbissell.starcruiser.ships.combat.ShieldHandler
 import de.stefanbissell.starcruiser.toRadians
@@ -60,11 +60,16 @@ class NonPlayerShip(
         updatePhysics(physicsEngine)
     }
 
-    override fun takeDamage(targetSystemType: PoweredSystemType, amount: Double, modulation: Int) {
-        val hullDamage = shieldHandler.takeDamageAndReportHullDamage(amount, modulation)
-        if (hullDamage > 0.0) {
-            hull -= hullDamage
-            powerHandler.takeDamage(targetSystemType, hullDamage)
+    override fun applyDamage(damageEvent: DamageEvent) {
+        when (damageEvent) {
+            is DamageEvent.Beam -> {
+                val hullDamage = shieldHandler.takeDamageAndReportHullDamage(damageEvent)
+                if (hullDamage > 0.0) {
+                    hull -= hullDamage
+                    powerHandler.takeDamage(damageEvent.targetedSystem, damageEvent.amount)
+                }
+            }
+            else -> {}
         }
     }
 

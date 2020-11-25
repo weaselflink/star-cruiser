@@ -53,6 +53,16 @@ class ShieldHandler(
         }
     }
 
+    fun takeDamageAndReportHullDamage(beamDamageEvent: DamageEvent.Beam): Double {
+        timeSinceLastDamage = 0.0
+        return if (up) {
+            val effectiveDamage = beamDamageEvent.amount * modulationMultiplier(beamDamageEvent.modulation)
+            takeDamageToShieldAndThenHull(effectiveDamage)
+        } else {
+            beamDamageEvent.amount
+        }
+    }
+
     fun toggleUp() {
         up = !up
     }

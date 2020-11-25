@@ -5,6 +5,7 @@ import de.stefanbissell.starcruiser.PoweredSystemType
 import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.emptyContactList
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
+import de.stefanbissell.starcruiser.takeDamage
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
