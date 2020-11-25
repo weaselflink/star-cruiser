@@ -62,6 +62,12 @@ class PlayerShip(
     override val scans = mutableMapOf<ObjectId, ScanLevel>()
     override val systemsDamage
         get() = powerHandler.systemsDamage
+    override val updateResult: ShipUpdateResult
+        get() = ShipUpdateResult(
+            id = id,
+            torpedoes = tubeHandlerContainer.torpedoes,
+            damageEvents = beamHandlerContainer.damageEvents
+        )
     private val jumpHandler = JumpHandler(
         jumpDrive = template.jumpDrive
     )
@@ -105,16 +111,14 @@ class PlayerShip(
         physicsEngine: PhysicsEngine
     ): ShipUpdateResult {
         shieldHandler.endUpdate(time)
-        val damageEvents = beamHandlerContainer.endUpdate()
         if (!destroyed && jumpHandler.jumpComplete) {
             physicsEngine.jumpShip(id, jumpHandler.jumpDistance)
             jumpHandler.endJump()
         }
-        val torpedoes = tubeHandlerContainer.endUpdate()
         return ShipUpdateResult(
             id = id,
-            torpedoes = torpedoes,
-            damageEvents = damageEvents
+            torpedoes = tubeHandlerContainer.torpedoes,
+            damageEvents = beamHandlerContainer.damageEvents
         )
     }
 

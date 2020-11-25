@@ -18,22 +18,9 @@ class TubeHandlerContainer(
     val tubeHandlers = tubes.map {
         TubeHandler(it, ship)
     }
-
-    fun update(
-        time: GameTime,
-        boostLevel: Double = 1.0
-    ) {
-        tubeHandlers.forEach {
-            it.update(
-                time = time,
-                boostLevel = boostLevel
-            )
-        }
-    }
-
-    fun endUpdate(): List<Torpedo> =
-        tubeHandlers.filter {
-            it.endUpdate()
+    val torpedoes
+        get() = tubeHandlers.filter {
+            it.newTorpedo
         }.map {
             val rotation = ship.rotation + it.tube.direction.toRadians()
             val direction = Vector2(1, 0).rotate(rotation)
@@ -47,6 +34,18 @@ class TubeHandlerContainer(
                 speed = direction * it.tube.velocity
             )
         }
+
+    fun update(
+        time: GameTime,
+        boostLevel: Double = 1.0
+    ) {
+        tubeHandlers.forEach {
+            it.update(
+                time = time,
+                boostLevel = boostLevel
+            )
+        }
+    }
 
     fun launch(index: Int) {
         tubeHandlers.getOrNull(index)?.apply {

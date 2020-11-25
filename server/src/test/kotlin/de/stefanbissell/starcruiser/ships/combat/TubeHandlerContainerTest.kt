@@ -101,7 +101,7 @@ class TubeHandlerContainerTest {
         tubeHandlerContainer.launch(0)
 
         val expectedRotation = PI * 0.75
-        expectThat(tubeHandlerContainer.endUpdate())
+        expectThat(tubeHandlerContainer.torpedoes)
             .hasSize(1)
             .withFirst {
                 get { position }.isNear(
@@ -119,7 +119,7 @@ class TubeHandlerContainerTest {
     fun `creates no torpedoes without launch`() {
         tubeHandlerContainer.tubeHandlers[0].status = TubeStatus.Ready
 
-        expectThat(tubeHandlerContainer.endUpdate())
+        expectThat(tubeHandlerContainer.torpedoes)
             .isEmpty()
     }
 

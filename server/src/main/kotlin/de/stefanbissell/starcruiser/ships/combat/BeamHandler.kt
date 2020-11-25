@@ -22,7 +22,7 @@ class BeamHandler(
 
     private var status: BeamStatus = BeamStatus.Idle
     private var targetSystemType = PoweredSystemType.random()
-    private var damageEvent: DamageEvent? = null
+    var damageEvent: DamageEvent? = null
 
     fun update(
         time: GameTime,
@@ -31,6 +31,7 @@ class BeamHandler(
         lockHandler: LockHandler?,
         physicsEngine: PhysicsEngine
     ) {
+        damageEvent = null
         val lockedTargetInRange = isLockedTargetInRange(contactList, lockHandler, physicsEngine)
         when (val current = status) {
             is BeamStatus.Idle -> if (lockedTargetInRange) {
@@ -70,11 +71,7 @@ class BeamHandler(
         }
     }
 
-    fun endUpdate(): DamageEvent? {
-        val lastEvent = damageEvent
-        damageEvent = null
-        return lastEvent
-    }
+    fun endUpdate(): DamageEvent? = damageEvent
 
     fun toMessage(lockHandler: LockHandler?) =
         BeamMessage(

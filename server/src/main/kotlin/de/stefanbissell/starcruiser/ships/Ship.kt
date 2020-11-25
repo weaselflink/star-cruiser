@@ -28,6 +28,7 @@ interface Ship : DynamicObject {
     val scans: MutableMap<ObjectId, ScanLevel>
     override val shipType: ShipType
         get() = ShipType.Vessel
+    val updateResult: ShipUpdateResult
 
     fun update(
         time: GameTime,

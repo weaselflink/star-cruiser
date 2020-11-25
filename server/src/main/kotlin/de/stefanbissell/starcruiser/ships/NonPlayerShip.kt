@@ -40,6 +40,11 @@ class NonPlayerShip(
     override val scans = mutableMapOf<ObjectId, ScanLevel>()
     override val systemsDamage
         get() = powerHandler.systemsDamage
+    override val updateResult: ShipUpdateResult
+        get() = ShipUpdateResult(
+            id = id,
+            damageEvents = beamHandlerContainer.damageEvents
+        )
 
     override fun update(
         time: GameTime,
@@ -60,10 +65,9 @@ class NonPlayerShip(
         physicsEngine: PhysicsEngine
     ): ShipUpdateResult {
         shieldHandler.endUpdate(time)
-        val damageEvents = beamHandlerContainer.endUpdate()
         return ShipUpdateResult(
             id = id,
-            damageEvents = damageEvents
+            damageEvents = beamHandlerContainer.damageEvents
         )
     }
 

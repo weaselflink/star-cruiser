@@ -33,7 +33,6 @@ class BeamHandlerTest {
     private var lockHandler: LockHandler? = null
     private val beamHandler = BeamHandlerContainer(listOf(beamWeapon), ship).beamHandlers.first()
     private val physicsEngine = mockk<PhysicsEngine>()
-    private var damageEvent: DamageEvent? = null
 
     @BeforeEach
     internal fun setUp() {
@@ -136,7 +135,7 @@ class BeamHandlerTest {
 
         expectThat(target.hull)
             .isEqualTo(target.template.hull - 1.0)
-        expectThat(damageEvent)
+        expectThat(beamHandler.damageEvent)
             .isNotNull()
             .isA<DamageEvent.Beam>()
             .and {
@@ -181,6 +180,5 @@ class BeamHandlerTest {
     private fun stepTime(seconds: Number) {
         time.update(seconds.toDouble())
         beamHandler.update(time, power, contactList, lockHandler, physicsEngine)
-        damageEvent = beamHandler.endUpdate()
     }
 }

@@ -54,10 +54,6 @@ class TubeHandlerTest {
 
         expectThat(tubeHandler.newTorpedo)
             .isTrue()
-        expectThat(tubeHandler.endUpdate())
-            .isTrue()
-        expectThat(tubeHandler.newTorpedo)
-            .isFalse()
     }
 
     @Test

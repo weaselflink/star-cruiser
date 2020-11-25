@@ -17,6 +17,7 @@ class TubeHandler(
         time: GameTime,
         boostLevel: Double = 1.0
     ) {
+        newTorpedo = false
         val currentStatus = status
         if (currentStatus is TubeStatus.Reloading) {
             val currentProgress = time.delta * tube.reloadSpeed * boostLevel
@@ -43,9 +44,4 @@ class TubeHandler(
             false
         }
     }
-
-    fun endUpdate() =
-        newTorpedo.also {
-            newTorpedo = false
-        }
 }

@@ -21,6 +21,8 @@ class BeamHandlerContainer(
     val beamHandlers = beamWeapons.map {
         BeamHandler(it, ship, this)
     }
+    val damageEvents
+        get() = beamHandlers.mapNotNull { it.damageEvent }
 
     fun update(
         time: GameTime,
@@ -39,11 +41,6 @@ class BeamHandlerContainer(
             )
         }
     }
-
-    fun endUpdate(): List<DamageEvent> =
-        beamHandlers.mapNotNull {
-            it.endUpdate()
-        }
 
     fun toMessage(lockHandler: LockHandler?) =
         BeamsMessage(
