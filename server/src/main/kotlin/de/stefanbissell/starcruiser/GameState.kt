@@ -43,8 +43,8 @@ class GameState {
             .associateBy { it.id }
     private val asteroids = mutableListOf<Asteroid>()
     private val clients = mutableMapOf<ClientId, Client>()
-
     private val physicsEngine = PhysicsEngine()
+    private val unhandledEvents = mutableListOf<DamageEvent>()
 
     init {
         scenario.asteroids.forEach {
@@ -121,10 +121,13 @@ class GameState {
 
         time.update(Clock.System.now())
 
+        unhandledEvents.clear()
         physicsEngine.step(time.delta)
-        updateShips()
-        updateTorpedoes(physicsEngine.collisions)
         updateAsteroids()
+        updateTorpedoes()
+        updateShips()
+        handleEvents()
+        removeDestroyed(physicsEngine.collisions)
         updateTriggers()
     }
 
@@ -361,9 +364,31 @@ class GameState {
             physicsEngine.addTorpedo(torpedo)
         }
 
-        updateResults.flatMap {
-            it.damageEvents
-        }.forEach { damageEvent ->
+        unhandledEvents += updateResults.flatMap { it.damageEvents }
+
+        ships.filter {
+            it.value.destroyed
+        }.forEach {
+            destroyShip(it.value.id)
+        }
+    }
+
+    private fun updateTorpedoes() {
+        torpedoes.values.forEach { torpedoEntry ->
+            torpedoEntry.apply {
+                update(time, physicsEngine)
+            }
+        }
+    }
+
+    private fun updateAsteroids() {
+        asteroids.forEach {
+            it.update(physicsEngine)
+        }
+    }
+
+    private fun handleEvents() {
+        unhandledEvents.forEach { damageEvent ->
             getDynamicObject(damageEvent.target)
                 ?.also {
                     if (damageEvent is DamageEvent.Beam) {
@@ -375,20 +400,15 @@ class GameState {
                     }
                 }
         }
+    }
 
+    private fun removeDestroyed(collisions: List<Pair<ObjectId, ObjectId>>) {
         ships.filter {
             it.value.destroyed
         }.forEach {
             destroyShip(it.value.id)
         }
-    }
 
-    private fun updateTorpedoes(collisions: List<Pair<ObjectId, ObjectId>>) {
-        torpedoes.values.forEach { torpedoEntry ->
-            torpedoEntry.apply {
-                update(time, physicsEngine)
-            }
-        }
         val destructionPending = mutableSetOf<ObjectId>()
         torpedoes.values.filter {
             it.destroyed
@@ -408,12 +428,6 @@ class GameState {
 
         destructionPending.forEach {
             destroyTorpedo(it)
-        }
-    }
-
-    private fun updateAsteroids() {
-        asteroids.forEach {
-            it.update(physicsEngine)
         }
     }
 
@@ -485,6 +499,9 @@ class GameState {
     }
 
     private fun destroyTorpedo(torpedoId: ObjectId) {
+        ships.values.forEach {
+            it.targetDestroyed(torpedoId)
+        }
         torpedoes.remove(torpedoId)
         physicsEngine.removeObject(torpedoId)
     }

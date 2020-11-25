@@ -112,17 +112,17 @@ class PlayerShip(
         }
     }
 
-    override fun targetDestroyed(shipId: ObjectId) {
-        if (mapSelection.isShipSelected(shipId)) {
+    override fun targetDestroyed(id: ObjectId) {
+        if (mapSelection.isShipSelected(id)) {
             mapSelection = MapSelection.None
         }
-        if (scanHandler?.targetId == shipId) {
+        if (scanHandler?.targetId == id) {
             abortScan()
         }
-        if (lockHandler?.targetId == shipId) {
+        if (lockHandler?.targetId == id) {
             lockHandler = null
         }
-        scans.remove(shipId)
+        scans.remove(id)
     }
 
     fun changeJumpDistance(value: Double) {

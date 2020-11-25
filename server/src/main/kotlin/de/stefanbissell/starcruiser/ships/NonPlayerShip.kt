@@ -68,14 +68,14 @@ class NonPlayerShip(
         }
     }
 
-    override fun targetDestroyed(shipId: ObjectId) {
-        if (scanHandler?.targetId == shipId) {
+    override fun targetDestroyed(id: ObjectId) {
+        if (scanHandler?.targetId == id) {
             abortScan()
         }
-        if (lockHandler?.targetId == shipId) {
+        if (lockHandler?.targetId == id) {
             abortLock()
         }
-        shipAi.targetDestroyed(shipId)
+        shipAi.targetDestroyed(id)
     }
 
     override fun toContactMessage(relativeTo: Ship) =

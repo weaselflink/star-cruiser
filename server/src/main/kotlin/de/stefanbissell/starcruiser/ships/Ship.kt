@@ -58,7 +58,7 @@ interface Ship : DynamicObject {
 
     fun inSensorRange(other: Vector2?): Boolean
 
-    fun targetDestroyed(shipId: ObjectId)
+    fun targetDestroyed(id: ObjectId)
 
     fun getScanLevel(targetId: ObjectId) =
         scans[targetId] ?: ScanLevel.None
