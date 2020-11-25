@@ -219,16 +219,14 @@ class NonPlayerShipTest {
             .isEqualTo(ContactType.Neutral)
     }
 
-    private fun stepTime(
-        seconds: Number
-    ): ShipUpdateResult {
+    private fun stepTime(seconds: Number) {
         time.update(seconds.toDouble())
         ship.update(
             time = time,
             physicsEngine = physicsEngine,
             contactList = ContactList(ship, contactList)
         )
-        return ship.endUpdate(time, physicsEngine)
+        ship.endUpdate(time, physicsEngine)
     }
 
     private fun addShip(
