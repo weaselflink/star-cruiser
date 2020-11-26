@@ -27,7 +27,7 @@ dependencies {
 
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_serialization_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.1")
     implementation("org.jetbrains:kotlin-css:1.0.0-pre.129-kotlin-1.4.20")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
