@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.components.UiStyle
 import org.w3c.dom.CENTER
+import org.w3c.dom.CanvasLineCap
 import org.w3c.dom.CanvasLineJoin
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextAlign
@@ -23,6 +24,13 @@ fun CanvasRenderingContext2D.shipStyle(dim: CanvasDimensions) {
 fun CanvasRenderingContext2D.beamStyle(dim: CanvasDimensions) {
     strokeStyle = "#dc143c"
     lineWidth = dim.vmin * 0.3
+}
+
+fun CanvasRenderingContext2D.tubeStyle(dim: CanvasDimensions) {
+    strokeStyle = "#dc143c50"
+    lineWidth = dim.vmin * 0.3
+    lineCap = CanvasLineCap.ROUND
+    setLineDash(arrayOf(dim.vmin * 2, dim.vmin * 2))
 }
 
 fun CanvasRenderingContext2D.unknownContactStyle(dim: CanvasDimensions) {

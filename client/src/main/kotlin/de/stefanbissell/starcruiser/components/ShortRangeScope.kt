@@ -35,6 +35,7 @@ import de.stefanbissell.starcruiser.toIntHeading
 import de.stefanbissell.starcruiser.toRadians
 import de.stefanbissell.starcruiser.translate
 import de.stefanbissell.starcruiser.translateToCenter
+import de.stefanbissell.starcruiser.tubeStyle
 import de.stefanbissell.starcruiser.unknownContactStyle
 import de.stefanbissell.starcruiser.wayPointStyle
 import org.w3c.dom.CENTER
@@ -108,6 +109,7 @@ class ShortRangeScope(
 
         drawHistory(snapshot)
         drawBeams(snapshot)
+        drawTubes(snapshot)
         drawAsteroids(snapshot)
         drawWaypoints(snapshot)
         drawContacts(snapshot)
@@ -211,6 +213,29 @@ class ShortRangeScope(
             circle(0.0, 0.0, maxRange, left, right)
             circle(0.0, 0.0, minRange, right, left, true)
             closePath()
+            stroke()
+            restore()
+        }
+
+        restore()
+    }
+
+    private fun CanvasRenderingContext2D.drawTubes(snapshot: ShortRangeScopeStation) {
+        save()
+        tubeStyle(dim)
+        rotate(-snapshot.shortRangeScope.rotation)
+
+        for (tube in snapshot.shortRangeScope.tubes) {
+            val x = -tube.position.z.adjustForScope()
+            val y = tube.position.x.adjustForScope()
+            val range = 300.0.adjustForScope()
+
+            save()
+            translate(x, y)
+            rotate(-tube.rotation)
+            beginPath()
+            moveTo(0.0, 0.0)
+            lineTo(range, 0.0)
             stroke()
             restore()
         }
