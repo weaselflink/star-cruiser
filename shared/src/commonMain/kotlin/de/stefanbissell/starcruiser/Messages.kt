@@ -172,7 +172,8 @@ data class ShortRangeScopeMessage(
     val history: List<Vector2>,
     val waypoints: List<WaypointMessage>,
     val lockProgress: LockStatus,
-    val beams: BeamsMessage
+    val beams: BeamsMessage,
+    val tubes: List<TubeDirectionMessage>
 )
 
 @Serializable
@@ -386,6 +387,12 @@ sealed class BeamStatus {
         fun update(change: Double) = copy(progress = progress + change)
     }
 }
+
+@Serializable
+data class TubeDirectionMessage(
+    val position: Vector3 = Vector3(),
+    val rotation: Double
+)
 
 @Serializable
 data class TubesMessage(

@@ -314,7 +314,8 @@ class PlayerShip(
             history = history.map { (it.second - position).twoDigits() },
             waypoints = waypoints.map { it.toWaypointMessage() },
             lockProgress = lockHandler?.toMessage() ?: LockStatus.NoLock,
-            beams = toBeamsMessage()
+            beams = toBeamsMessage(),
+            tubes = emptyList()
         )
 
     override fun toContactMessage(relativeTo: Ship) =
