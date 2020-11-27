@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TestFactions
+import de.stefanbissell.starcruiser.TubeDirectionMessage
 import de.stefanbissell.starcruiser.TubeStatus
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.Vector3
@@ -9,6 +10,7 @@ import de.stefanbissell.starcruiser.isNear
 import de.stefanbissell.starcruiser.ships.Magazine
 import de.stefanbissell.starcruiser.ships.NonPlayerShip
 import de.stefanbissell.starcruiser.ships.Tube
+import de.stefanbissell.starcruiser.toRadians
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.all
@@ -34,7 +36,11 @@ class TubeHandlerContainerTest {
                 direction = -45,
                 velocity = 5.0
             ),
-            Tube()
+            Tube(
+                position = Vector3(4, 3, 2),
+                direction = 45,
+                velocity = 5.0
+            )
         ),
         magazine = Magazine(),
         ship = ship
@@ -154,6 +160,20 @@ class TubeHandlerContainerTest {
                 TubeStatus.Reloading(0.4)
             )
         }
+    }
+
+    @Test
+    fun `tube direction message on contains loaded tube`() {
+        tubeHandlerContainer.tubeHandlers[0].status = TubeStatus.Empty
+        tubeHandlerContainer.tubeHandlers[1].status = TubeStatus.Ready
+
+        expectThat(tubeHandlerContainer.toDirectionMessage())
+            .containsExactly(
+                TubeDirectionMessage(
+                    position = Vector3(4, 3, 2),
+                    rotation = 45.0.toRadians()
+                )
+            )
     }
 
     private fun stepTime(seconds: Number = 0.1) {

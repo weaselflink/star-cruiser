@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TubeDirectionMessage
+import de.stefanbissell.starcruiser.TubeStatus
 import de.stefanbissell.starcruiser.TubesMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.ships.Magazine
@@ -74,10 +75,12 @@ class TubeHandlerContainer(
         )
 
     fun toDirectionMessage() =
-        tubeHandlers.map {
-            TubeDirectionMessage(
-                position = it.tube.position,
-                rotation = it.tube.direction.toRadians()
-            )
-        }
+        tubeHandlers
+            .filter { it.status == TubeStatus.Ready }
+            .map {
+                TubeDirectionMessage(
+                    position = it.tube.position,
+                    rotation = it.tube.direction.toRadians()
+                )
+            }
 }
