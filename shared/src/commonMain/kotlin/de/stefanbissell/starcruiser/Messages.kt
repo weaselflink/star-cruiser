@@ -414,6 +414,9 @@ sealed class TubeStatus {
 
     @Serializable
     object Ready : TubeStatus()
+
+    @Serializable
+    object Launching : TubeStatus()
 }
 
 @Serializable

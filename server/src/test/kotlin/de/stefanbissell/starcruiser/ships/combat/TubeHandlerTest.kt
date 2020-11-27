@@ -39,18 +39,17 @@ class TubeHandlerTest {
     }
 
     @Test
-    fun `requesting launch on ready tube does not change status immediately`() {
+    fun `requesting launch on ready tube changes status to launching`() {
         tubeHandler.status = TubeStatus.Ready
         tubeHandler.requestLaunch()
 
         expectThat(tubeHandler.status)
-            .isEqualTo(TubeStatus.Ready)
+            .isEqualTo(TubeStatus.Launching)
     }
 
     @Test
-    fun `requesting launch on ready tube empties it on next update`() {
-        tubeHandler.status = TubeStatus.Ready
-        tubeHandler.requestLaunch()
+    fun `launching ready tube becomes empty after update`() {
+        tubeHandler.status = TubeStatus.Launching
         stepTime(0.1)
 
         expectThat(tubeHandler.status)
@@ -58,9 +57,8 @@ class TubeHandlerTest {
     }
 
     @Test
-    fun `requesting launch on ready tube creates new torpedo on next update`() {
-        tubeHandler.status = TubeStatus.Ready
-        tubeHandler.requestLaunch()
+    fun `launching ready tube creates new torpedo`() {
+        tubeHandler.status = TubeStatus.Launching
         stepTime(0.1)
 
         expectThat(tubeHandler.newTorpedo)

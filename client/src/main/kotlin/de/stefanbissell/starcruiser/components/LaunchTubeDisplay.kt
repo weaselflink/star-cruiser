@@ -15,8 +15,8 @@ class LaunchTubeDisplay(
 ) : PointerEventHandlerParent() {
 
     private var currentStatus: TubeStatus = TubeStatus.Empty
-    private val actionPossible
-        get() = currentStatus !is TubeStatus.Reloading
+    private val actionPossible: Boolean
+        get() = currentStatus in listOf<TubeStatus>(TubeStatus.Empty, TubeStatus.Ready)
 
     private val statusBar = CanvasProgress(
         canvas = canvas,
@@ -59,6 +59,10 @@ class LaunchTubeDisplay(
                 statusBar.leftText = "Ready"
                 statusBar.progress = 1.0
             }
+            is TubeStatus.Launching -> {
+                statusBar.leftText = "Launching"
+                statusBar.progress = 1.0
+            }
         }
 
         statusBar.draw()
@@ -74,6 +78,9 @@ class LaunchTubeDisplay(
             }
             is TubeStatus.Ready -> {
                 actionButton.text = "Launch"
+            }
+            is TubeStatus.Launching -> {
+                statusBar.leftText = "Launch"
             }
         }
 
