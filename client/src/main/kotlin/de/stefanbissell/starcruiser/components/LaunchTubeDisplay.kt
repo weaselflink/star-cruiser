@@ -73,18 +73,17 @@ class LaunchTubeDisplay(
             is TubeStatus.Empty -> {
                 actionButton.text = "Load"
             }
-            is TubeStatus.Reloading -> {
-                actionButton.text = "Load"
-            }
             is TubeStatus.Ready -> {
                 actionButton.text = "Launch"
             }
-            is TubeStatus.Launching -> {
-                statusBar.leftText = "Launch"
+            else -> {
+                actionButton.text = "---"
             }
         }
 
-        actionButton.draw()
+        if (actionPossible) {
+            actionButton.draw()
+        }
     }
 
     private fun onActionButton() {
