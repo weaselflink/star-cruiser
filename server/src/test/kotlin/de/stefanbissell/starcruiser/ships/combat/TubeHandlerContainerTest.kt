@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.ships.combat
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TestFactions
 import de.stefanbissell.starcruiser.TubeDirectionMessage
+import de.stefanbissell.starcruiser.TubeMessage
 import de.stefanbissell.starcruiser.TubeStatus
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.Vector3
@@ -32,11 +33,13 @@ class TubeHandlerContainerTest {
     private val tubeHandlerContainer = TubeHandlerContainer(
         tubes = listOf(
             Tube(
+                designation = "Tube 1",
                 position = Vector3(2, 3, 4),
                 direction = -45,
                 velocity = 5.0
             ),
             Tube(
+                designation = "Tube 2",
                 position = Vector3(4, 3, 2),
                 direction = 45,
                 velocity = 5.0
@@ -156,8 +159,14 @@ class TubeHandlerContainerTest {
             get { magazineMax }.isEqualTo(Magazine().capacity)
             get { magazineRemaining }.isEqualTo(10)
             get { tubes }.containsExactly(
-                TubeStatus.Ready,
-                TubeStatus.Reloading(0.4)
+                TubeMessage(
+                    designation = "Tube 1",
+                    status = TubeStatus.Ready
+                ),
+                TubeMessage(
+                    designation = "Tube 2",
+                    status = TubeStatus.Reloading(0.4)
+                )
             )
         }
     }

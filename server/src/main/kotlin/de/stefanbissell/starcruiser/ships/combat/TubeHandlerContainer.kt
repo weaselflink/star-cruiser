@@ -2,6 +2,7 @@ package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.TubeDirectionMessage
+import de.stefanbissell.starcruiser.TubeMessage
 import de.stefanbissell.starcruiser.TubeStatus
 import de.stefanbissell.starcruiser.TubesMessage
 import de.stefanbissell.starcruiser.Vector2
@@ -70,7 +71,10 @@ class TubeHandlerContainer(
             magazineMax = magazine.capacity,
             magazineRemaining = magazineRemaining,
             tubes = tubeHandlers.map {
-                it.status
+                TubeMessage(
+                    designation = it.tube.designation,
+                    status = it.status
+                )
             }
         )
 

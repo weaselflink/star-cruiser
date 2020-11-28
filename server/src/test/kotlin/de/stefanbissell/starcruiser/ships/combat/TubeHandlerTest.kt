@@ -16,7 +16,7 @@ import strikt.assertions.isTrue
 class TubeHandlerTest {
 
     private val time = GameTime.atEpoch()
-    private val launchTube = Tube()
+    private val launchTube = Tube(designation = "---")
     private var power = 1.0
     private val ship = PlayerShip(faction = TestFactions.player)
     private val tubeHandler = TubeHandler(launchTube, ship)

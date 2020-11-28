@@ -398,7 +398,13 @@ data class TubeDirectionMessage(
 data class TubesMessage(
     val magazineMax: Int,
     val magazineRemaining: Int,
-    val tubes: List<TubeStatus>
+    val tubes: List<TubeMessage>
+)
+
+@Serializable
+data class TubeMessage(
+    val designation: String,
+    val status: TubeStatus
 )
 
 @Serializable

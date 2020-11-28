@@ -25,10 +25,12 @@ val cruiserTemplate = ShipTemplate().copy(
     ),
     tubes = listOf(
         Tube(
+            designation = "Port",
             position = Vector3(-13.45, 0.0, -5),
             direction = 80
         ),
         Tube(
+            designation = "Stbd",
             position = Vector3(13.45, 0.0, -5),
             direction = -80
         )

@@ -3,6 +3,7 @@ package de.stefanbissell.starcruiser.components
 import de.stefanbissell.starcruiser.CanvasDimensions
 import de.stefanbissell.starcruiser.ClientSocket
 import de.stefanbissell.starcruiser.Command
+import de.stefanbissell.starcruiser.TubeMessage
 import de.stefanbissell.starcruiser.TubeStatus
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import org.w3c.dom.HTMLCanvasElement
@@ -39,28 +40,22 @@ class LaunchTubeDisplay(
         addChildren(actionButton)
     }
 
-    fun draw(status: TubeStatus) {
-        currentStatus = status
-        drawStatus()
+    fun draw(tubeMessage: TubeMessage) {
+        currentStatus = tubeMessage.status
+        drawStatus(tubeMessage.designation)
         drawButton()
     }
 
-    private fun drawStatus() {
+    private fun drawStatus(designation: String) {
+        statusBar.leftText = designation
         when (val status = currentStatus) {
             is TubeStatus.Empty -> {
-                statusBar.leftText = "Empty"
                 statusBar.progress = 0.0
             }
             is TubeStatus.Reloading -> {
-                statusBar.leftText = "Reloading"
                 statusBar.progress = status.progress
             }
-            is TubeStatus.Ready -> {
-                statusBar.leftText = "Ready"
-                statusBar.progress = 1.0
-            }
-            is TubeStatus.Launching -> {
-                statusBar.leftText = "Launching"
+            else -> {
                 statusBar.progress = 1.0
             }
         }

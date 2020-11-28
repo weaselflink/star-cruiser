@@ -53,8 +53,8 @@ class LaunchTubeUi(
 
     private fun drawTubeDisplays(tubesMessage: TubesMessage) {
         tubesMessage.tubes
-            .forEachIndexed { index, tubeStatus ->
-                tubeDisplays[index].draw(tubeStatus)
+            .forEachIndexed { index, tubeMessage ->
+                tubeDisplays[index].draw(tubeMessage)
             }
     }
 

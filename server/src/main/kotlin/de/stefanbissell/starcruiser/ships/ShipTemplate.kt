@@ -113,6 +113,7 @@ data class BeamWeapon(
 }
 
 data class Tube(
+    val designation: String,
     val position: Vector3 = Vector3(),
     val direction: Int = 0,
     val reloadSpeed: Double = 0.05,
