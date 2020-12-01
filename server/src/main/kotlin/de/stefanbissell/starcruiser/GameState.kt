@@ -450,7 +450,7 @@ class GameState {
 
     private fun ContactList.getContacts(): List<ContactMessage> {
         return contacts.values
-            .mapNotNull { it.toContactMessage() }
+            .mapNotNull { it.contactMessage }
     }
 
     private fun ContactList.getMapContacts(): List<MapContactMessage> {

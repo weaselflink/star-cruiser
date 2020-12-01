@@ -427,8 +427,8 @@ sealed class TubeStatus {
 
 @Serializable
 data class ContactShieldMessage(
-    val radius: Double,
-    val activated: Boolean
+    val radius: Double = 1.0,
+    val activated: Boolean = false
 )
 
 @Serializable

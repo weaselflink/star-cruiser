@@ -134,7 +134,7 @@ class MainScene {
             ownShip.hideShield()
         }
         contactHandler.nodes.forEach { node ->
-            snapshot.contacts.firstOrNull { it.id == node.key }?.let { contact ->
+            snapshot.contacts.firstOrNull { it.id == node.key }?.also { contact ->
                 if (contact.shield.activated) {
                     node.value.showShield(contact.shield.radius)
                 } else {
@@ -206,7 +206,7 @@ class MainScene {
     }
 
     private fun loadObjectModels() {
-        listOf("carrier", "cruiser01", "asteroid01").forEach(this::loadObjectModel)
+        listOf("carrier", "cruiser01", "asteroid01", "torpedo01").forEach(this::loadObjectModel)
     }
 
     private fun loadObjectModel(name: String) {

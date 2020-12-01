@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser.ships.combat
 
 import de.stefanbissell.starcruiser.ContactMessage
+import de.stefanbissell.starcruiser.ContactShieldMessage
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ShipType
@@ -53,5 +54,15 @@ class Torpedo(
         destroyed = true
     }
 
-    override fun toContactMessage(relativeTo: Ship): ContactMessage? = null
+    override fun toContactMessage(relativeTo: Ship) =
+        ContactMessage(
+            id = id,
+            model = template.model,
+            position = position,
+            relativePosition = (position - relativeTo.position),
+            rotation = rotation,
+            beams = emptyList(),
+            shield = ContactShieldMessage(),
+            jumpAnimation = null
+        )
 }

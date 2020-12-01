@@ -57,9 +57,9 @@ class ContactList(
         val contactType = relativeTo.getContactType(dynamicObject)
         val isEnemy = contactType == ContactType.Enemy
         val scanLevel = relativeTo.getScanLevel(dynamicObject.id)
-
-        fun toContactMessage() =
+        val contactMessage by lazy {
             dynamicObject.toContactMessage(relativeTo)
+        }
 
         fun toMapContactMessage() =
             MapContactMessage(

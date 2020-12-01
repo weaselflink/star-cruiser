@@ -27,6 +27,7 @@ class GroupHandler<G : ObjectGroup, M : IdentifiableWithModel>(
         addNew(messages)
         removeOld(messages, oldIds)
         updateRemaining(messages)
+        println("${nodes.size} contact nodes")
     }
 
     private fun addNew(messages: List<M>) {
