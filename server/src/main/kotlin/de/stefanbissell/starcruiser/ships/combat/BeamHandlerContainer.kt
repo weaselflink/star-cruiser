@@ -47,4 +47,7 @@ class BeamHandlerContainer(
             modulation = modulation,
             beams = beamHandlers.map { it.toMessage(lockHandler) }
         )
+
+    fun toContactMessage(lockHandler: LockHandler?) =
+        beamHandlers.map { it.toMessage(lockHandler) }
 }

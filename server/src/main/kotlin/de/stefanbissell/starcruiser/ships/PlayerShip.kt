@@ -325,8 +325,8 @@ class PlayerShip(
             position = position,
             relativePosition = (position - relativeTo.position),
             rotation = rotation,
-            beams = toBeamsMessage(),
-            shield = toShieldMessage(),
+            beams = beamHandlerContainer.toContactMessage(lockHandler),
+            shield = shieldHandler.toContactMessage(),
             jumpAnimation = jumpHandler.toMessage().animation
         )
 

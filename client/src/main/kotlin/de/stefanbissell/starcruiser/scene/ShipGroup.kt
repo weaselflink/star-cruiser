@@ -2,8 +2,8 @@ package de.stefanbissell.starcruiser.scene
 
 import de.stefanbissell.starcruiser.BeamMessage
 import de.stefanbissell.starcruiser.BeamStatus
+import de.stefanbissell.starcruiser.ContactShieldMessage
 import de.stefanbissell.starcruiser.ObjectId
-import de.stefanbissell.starcruiser.ShieldMessage
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Vector2
 import three.core.Object3D
@@ -75,7 +75,7 @@ class ShipGroup : ObjectGroup {
     private fun updateBeam(snapshot: SnapshotMessage.MainScreen3d, beamMessage: BeamMessage) {
         val relativePosition = snapshot.getTargetPosition(beamMessage.targetId) ?: return
         val shieldRadius = snapshot.getTargetShield(beamMessage.targetId)?.let {
-            if (it.up) it.radius else 0.0
+            if (it.activated) it.radius else 0.0
         } ?: 0.0
         val targetPosition = relativePosition.toWorld()
 
@@ -100,8 +100,8 @@ class ShipGroup : ObjectGroup {
             ?: if (ship.id == targetId) Vector2() else null
     }
 
-    private fun SnapshotMessage.MainScreen3d.getTargetShield(targetId: ObjectId?): ShieldMessage? {
+    private fun SnapshotMessage.MainScreen3d.getTargetShield(targetId: ObjectId?): ContactShieldMessage? {
         return contacts.firstOrNull { it.id == targetId }?.shield
-            ?: if (ship.id == targetId) ship.shield else null
+            ?: if (ship.id == targetId) ship.shield.toContactShieldMessage() else null
     }
 }

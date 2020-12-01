@@ -183,8 +183,8 @@ data class ContactMessage(
     override val position: Vector2,
     val relativePosition: Vector2,
     val rotation: Double,
-    val beams: BeamsMessage,
-    val shield: ShieldMessage,
+    val beams: List<BeamMessage>,
+    val shield: ContactShieldMessage,
     val jumpAnimation: Double?
 ) : IdentifiableWithModel, Positional
 
@@ -426,6 +426,12 @@ sealed class TubeStatus {
 }
 
 @Serializable
+data class ContactShieldMessage(
+    val radius: Double,
+    val activated: Boolean
+)
+
+@Serializable
 data class ShieldMessage(
     val radius: Double,
     val up: Boolean,
@@ -433,7 +439,14 @@ data class ShieldMessage(
     val strength: Double,
     val max: Double,
     val modulation: Int
-)
+) {
+
+    fun toContactShieldMessage() =
+        ContactShieldMessage(
+            radius = radius,
+            activated = activated
+        )
+}
 
 @Serializable
 sealed class JumpDriveMessage {

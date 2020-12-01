@@ -97,8 +97,8 @@ class NonPlayerShip(
             position = position,
             relativePosition = (position - relativeTo.position),
             rotation = rotation,
-            beams = toBeamsMessage(),
-            shield = toShieldMessage(),
+            beams = beamHandlerContainer.toContactMessage(lockHandler),
+            shield = shieldHandler.toContactMessage(),
             jumpAnimation = null
         )
 

@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.ships.combat
 
+import de.stefanbissell.starcruiser.ContactShieldMessage
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ShieldMessage
 import de.stefanbissell.starcruiser.clamp
@@ -67,6 +68,12 @@ class ShieldHandler(
             strength = currentStrength.twoDigits(),
             max = shieldTemplate.strength,
             modulation = modulation
+        )
+
+    fun toContactMessage() =
+        ContactShieldMessage(
+            radius = shieldTemplate.radius,
+            activated = activated
         )
 
     private fun modulationMultiplier(beamModulation: Int) =
