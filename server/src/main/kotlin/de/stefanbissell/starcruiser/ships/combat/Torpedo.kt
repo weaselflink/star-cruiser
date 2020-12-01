@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.ships.combat
 
+import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ShipType
@@ -52,5 +53,5 @@ class Torpedo(
         destroyed = true
     }
 
-    override fun toContactMessage(relativeTo: Ship) = null
+    override fun toContactMessage(relativeTo: Ship): ContactMessage? = null
 }
