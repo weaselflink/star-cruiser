@@ -2,7 +2,6 @@ package de.stefanbissell.starcruiser.ships
 
 import de.stefanbissell.starcruiser.Asteroid
 import de.stefanbissell.starcruiser.BeamsMessage
-import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.ContactType
 import de.stefanbissell.starcruiser.GameTime
 import de.stefanbissell.starcruiser.ObjectId
@@ -35,8 +34,6 @@ interface Ship : DynamicObject {
         physicsEngine: PhysicsEngine,
         contactList: ContactList = ContactList(this)
     )
-
-    fun toContactMessage(relativeTo: Ship): ContactMessage
 
     fun toShieldMessage(): ShieldMessage
 

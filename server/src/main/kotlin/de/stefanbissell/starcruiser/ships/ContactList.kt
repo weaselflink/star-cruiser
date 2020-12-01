@@ -59,11 +59,7 @@ class ContactList(
         val scanLevel = relativeTo.getScanLevel(dynamicObject.id)
 
         fun toContactMessage() =
-            if (dynamicObject is Ship) {
-                dynamicObject.toContactMessage(relativeTo)
-            } else {
-                null
-            }
+            dynamicObject.toContactMessage(relativeTo)
 
         fun toMapContactMessage() =
             MapContactMessage(

@@ -8,6 +8,7 @@ import de.stefanbissell.starcruiser.physics.PhysicsEngine
 import de.stefanbissell.starcruiser.randomShipName
 import de.stefanbissell.starcruiser.scenario.Faction
 import de.stefanbissell.starcruiser.ships.DynamicObject
+import de.stefanbissell.starcruiser.ships.Ship
 import de.stefanbissell.starcruiser.toRadians
 import kotlin.math.PI
 
@@ -50,4 +51,6 @@ class Torpedo(
     override fun applyDamage(damageEvent: DamageEvent) {
         destroyed = true
     }
+
+    override fun toContactMessage(relativeTo: Ship) = null
 }

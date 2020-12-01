@@ -1,5 +1,6 @@
 package de.stefanbissell.starcruiser.ships
 
+import de.stefanbissell.starcruiser.ContactMessage
 import de.stefanbissell.starcruiser.ObjectId
 import de.stefanbissell.starcruiser.ShipType
 import de.stefanbissell.starcruiser.Vector2
@@ -17,4 +18,6 @@ interface DynamicObject {
     val speed: Vector2
 
     fun applyDamage(damageEvent: DamageEvent)
+
+    fun toContactMessage(relativeTo: Ship): ContactMessage?
 }
