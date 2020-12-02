@@ -1,7 +1,9 @@
 package de.stefanbissell.starcruiser.shapes
 
 import de.stefanbissell.starcruiser.p
+import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestFactory
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
@@ -42,44 +44,72 @@ class PolygonTest {
             .isEqualTo(Box(p(1, 1), p(7, 5)))
     }
 
-    @Test
-    fun `recognizes points inside triangle`() {
-        expectThat(triangle.isInside(p(0.1, 0.1))).isTrue()
-        expectThat(triangle.isInside(p(0.5, 0.5))).isTrue()
-        expectThat(triangle.isInside(p(1, 2))).isTrue()
-        expectThat(triangle.isInside(p(4, 0.5))).isTrue()
-    }
+    @TestFactory
+    fun `recognizes points inside triangle`() =
+        listOf(
+            p(0.1, 0.1),
+            p(0.5, 0.5),
+            p(1, 2),
+            p(4, 0.5)
+        ).map {
+            dynamicTest(
+                "p(${it.x}, ${it.y}) is inside triangle"
+            ) {
+                expectThat(triangle.isInside(it)).isTrue()
+            }
+        }
 
-    @Test
-    fun `recognizes points outside triangle`() {
-        expectThat(triangle.isInside(p(-0.1, 0.1))).isFalse()
-        expectThat(triangle.isInside(p(0.1, -0.1))).isFalse()
-        expectThat(triangle.isInside(p(-0.5, 0.5))).isFalse()
-        expectThat(triangle.isInside(p(0.5, -0.5))).isFalse()
-        expectThat(triangle.isInside(p(3, 2))).isFalse()
-        expectThat(triangle.isInside(p(6, 1))).isFalse()
-    }
+    @TestFactory
+    fun `recognizes points outside triangle`() =
+        listOf(
+            p(-0.1, 0.1),
+            p(0.1, -0.1),
+            p(-0.5, 0.5),
+            p(0.5, -0.5),
+            p(3, 2),
+            p(6, 1)
+        ).map {
+            dynamicTest(
+                "p(${it.x}, ${it.y}) is outside triangle"
+            ) {
+                expectThat(triangle.isInside(it)).isFalse()
+            }
+        }
 
-    @Test
-    fun `recognizes points inside horseshoe`() {
-        expectThat(horseshoe.isInside(p(2, 2))).isTrue()
-        expectThat(horseshoe.isInside(p(2, 4))).isTrue()
-        expectThat(horseshoe.isInside(p(6, 2))).isTrue()
-        expectThat(horseshoe.isInside(p(6, 4))).isTrue()
-    }
+    @TestFactory
+    fun `recognizes points inside horseshoe`() =
+        listOf(
+            p(2, 2),
+            p(2, 4),
+            p(6, 2),
+            p(6, 4)
+        ).map {
+            dynamicTest(
+                "p(${it.x}, ${it.y}) is inside horseshoe"
+            ) {
+                expectThat(horseshoe.isInside(it)).isTrue()
+            }
+        }
 
-    @Test
-    fun `recognizes points outside horseshoe`() {
-        expectThat(horseshoe.isInside(p(0, 0))).isFalse()
-        expectThat(horseshoe.isInside(p(0, 4))).isFalse()
-        expectThat(horseshoe.isInside(p(2, 6))).isFalse()
-        expectThat(horseshoe.isInside(p(4, 4))).isFalse()
-        expectThat(horseshoe.isInside(p(6, 6))).isFalse()
-        expectThat(horseshoe.isInside(p(8, 4))).isFalse()
-        expectThat(horseshoe.isInside(p(8, 4))).isFalse()
-        expectThat(horseshoe.isInside(p(6, 0))).isFalse()
-        expectThat(horseshoe.isInside(p(2, 0))).isFalse()
-    }
+    @TestFactory
+    fun `recognizes points outside horseshoe`() =
+        listOf(
+            p(0, 0),
+            p(0, 4),
+            p(2, 6),
+            p(4, 4),
+            p(6, 6),
+            p(8, 4),
+            p(8, 4),
+            p(6, 0),
+            p(2, 0)
+        ).map {
+            dynamicTest(
+                "p(${it.x}, ${it.y}) is outside horseshoe"
+            ) {
+                expectThat(horseshoe.isInside(it)).isFalse()
+            }
+        }
 
     @Test
     fun `yields random point inside`() {
