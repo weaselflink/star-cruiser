@@ -35,12 +35,7 @@ class ContactList(
             !it.inSensorRange
         } ?: false
 
-    inner class Contact(val dynamicObject: DynamicObject) {
-        val id = dynamicObject.id
-        val designation = dynamicObject.designation
-        val position = dynamicObject.position
-        val rotation = dynamicObject.rotation
-        val speed = dynamicObject.speed
+    inner class Contact(val dynamicObject: DynamicObject) : DynamicObject by dynamicObject {
         val relativePosition by lazy {
             position - relativeTo.position
         }
@@ -53,12 +48,11 @@ class ContactList(
         val nearScopeRange by lazy {
             range <= relativeTo.template.shortRangeScopeRange * 1.1
         }
-        val shipType = if (dynamicObject is Ship) ShipType.Vessel else ShipType.Projectile
         val contactType = relativeTo.getContactType(dynamicObject)
         val isEnemy = contactType == ContactType.Enemy
         val scanLevel = relativeTo.getScanLevel(dynamicObject.id)
         val contactMessage by lazy {
-            dynamicObject.toContactMessage(relativeTo)
+            toContactMessage(relativeTo)
         }
 
         fun toMapContactMessage() =
