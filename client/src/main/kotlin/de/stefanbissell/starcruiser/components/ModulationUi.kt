@@ -18,15 +18,13 @@ class ModulationUi(
     canvas: HTMLCanvasElement,
     private val xExpr: CanvasDimensions.() -> Double,
     private val yExpr: CanvasDimensions.() -> Double,
+    private val widthExpr: CanvasDimensions.() -> Double = { 46.vmin },
+    private val heightExpr: CanvasDimensions.() -> Double = { 10.vmin },
     private val decreaseCommand: Command,
     private val increaseCommand: Command
 ) : PointerEventHandlerParent() {
 
     private val ctx = canvas.context2D
-    private val CanvasDimensions.componentWidth
-        get() = 46.vmin
-    private val CanvasDimensions.componentHeight
-        get() = 10.vmin
     private val CanvasDimensions.buttonWidth
         get() = 12.vmin
 
@@ -35,16 +33,16 @@ class ModulationUi(
         xExpr = { xExpr() },
         yExpr = { yExpr() },
         widthExpr = { buttonWidth },
-        heightExpr = { componentHeight },
+        heightExpr = { heightExpr() },
         onClick = { ClientSocket.send(decreaseCommand) },
         initialText = "◄"
     )
     private val increaseButton = CanvasButton(
         canvas = canvas,
-        xExpr = { xExpr() + (componentWidth - buttonWidth) },
+        xExpr = { xExpr() + (widthExpr() - buttonWidth) },
         yExpr = { yExpr() },
         widthExpr = { buttonWidth },
-        heightExpr = { componentHeight },
+        heightExpr = { heightExpr() },
         onClick = { ClientSocket.send(increaseCommand) },
         initialText = "►"
     )
@@ -75,8 +73,8 @@ class ModulationUi(
         drawPill(
             x = dim.xExpr(),
             y = dim.yExpr(),
-            width = dim.componentWidth,
-            height = dim.componentHeight
+            width = dim.widthExpr(),
+            height = dim.heightExpr()
         )
         fill()
 
@@ -87,8 +85,8 @@ class ModulationUi(
         save()
 
         modulationTextStyle(dim)
-        val x = dim.xExpr() + dim.componentWidth * 0.5
-        val y = dim.yExpr() - dim.componentHeight * 0.35
+        val x = dim.xExpr() + dim.widthExpr() * 0.5
+        val y = dim.yExpr() - dim.heightExpr() * 0.35
         val value = modulation * 2 + 78
         val text = "$value PHz"
         fillText(text, x, y)
@@ -100,7 +98,7 @@ class ModulationUi(
         fillStyle = UiStyle.buttonForegroundColor
         textAlign = CanvasTextAlign.CENTER
         textBaseline = CanvasTextBaseline.ALPHABETIC
-        val textSize = dim.componentHeight * 0.5
+        val textSize = dim.heightExpr() * 0.5
         font = UiStyle.font(textSize)
     }
 }
