@@ -1,10 +1,11 @@
 package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.Command.CommandLockTarget
+import de.stefanbissell.starcruiser.components.BeamModulationUi
 import de.stefanbissell.starcruiser.components.CanvasButton
 import de.stefanbissell.starcruiser.components.HullDisplay
 import de.stefanbissell.starcruiser.components.LaunchTubeUi
-import de.stefanbissell.starcruiser.components.ModulationUi
+import de.stefanbissell.starcruiser.components.ShieldModulationUi
 import de.stefanbissell.starcruiser.components.ShieldsDisplay
 import de.stefanbissell.starcruiser.components.ShortRangeScope
 import de.stefanbissell.starcruiser.components.StationUi
@@ -32,20 +33,8 @@ class WeaponsUi : StationUi(Station.Weapons) {
         xExpr = { 2.vmin },
         yExpr = { height - 26.vmin }
     )
-    private val beamModulationUi = ModulationUi(
-        canvas = canvas,
-        xExpr = { 2.vmin },
-        yExpr = { height - 45.vmin },
-        decreaseCommand = Command.CommandDecreaseBeamModulation,
-        increaseCommand = Command.CommandIncreaseBeamModulation
-    )
-    private val shieldModulationUi = ModulationUi(
-        canvas = canvas,
-        xExpr = { 2.vmin },
-        yExpr = { height - 14.vmin },
-        decreaseCommand = Command.CommandDecreaseShieldModulation,
-        increaseCommand = Command.CommandIncreaseShieldModulation
-    )
+    private val beamModulationUi = BeamModulationUi(canvas)
+    private val shieldModulationUi = ShieldModulationUi(canvas)
     private val shieldsButton = CanvasButton(
         canvas = canvas,
         xExpr = { 15.vmin },
