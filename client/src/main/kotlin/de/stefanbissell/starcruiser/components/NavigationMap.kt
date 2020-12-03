@@ -13,7 +13,6 @@ import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.WaypointMessage
 import de.stefanbissell.starcruiser.circle
-import de.stefanbissell.starcruiser.clamp
 import de.stefanbissell.starcruiser.clear
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.dimensions
@@ -66,14 +65,6 @@ class NavigationMap(
 
     init {
         addChildren(MapPointerEventHandler())
-    }
-
-    fun zoomIn() {
-        scaleSetting = (scaleSetting - 1).clamp(0, 6)
-    }
-
-    fun zoomOut() {
-        scaleSetting = (scaleSetting + 1).clamp(0, 6)
     }
 
     fun changeZoom(value: Double) {
