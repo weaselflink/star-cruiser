@@ -52,8 +52,8 @@ class MapSelectionDetails(
         yExpr = { dim.topY + 9.vmin },
         widthExpr = { widthExpr() - 4.vmin },
         heightExpr = { 6.vmin },
-        decreaseAction = { page = DetailsPage.Overview },
-        increaseAction = { page = DetailsPage.Details },
+        decreaseAction = { page = page.previous },
+        increaseAction = { page = page.next },
         initialText = "Overview"
     )
 
@@ -98,7 +98,7 @@ class MapSelectionDetails(
         drawDesignation(mapSelection.label)
 
         val hasDetails = mapSelection.systemsDamage != null
-        if (page == DetailsPage.Details && hasDetails) {
+        if (page == DetailsPage.Systems && hasDetails) {
             drawDetails(mapSelection)
         } else {
             drawBasic(mapSelection)
@@ -234,5 +234,17 @@ class MapSelectionDetails(
 
 private enum class DetailsPage {
     Overview,
-    Details
+    Systems;
+
+    val previous
+        get() = when (this) {
+            Overview -> Overview
+            Systems -> Overview
+        }
+
+    val next
+        get() = when (this) {
+            Overview -> Systems
+            Systems -> Systems
+        }
 }
