@@ -53,7 +53,9 @@ class MapSelectionDetails(
         widthExpr = { widthExpr() - 4.vmin },
         heightExpr = { 6.vmin },
         decreaseAction = { page = page.previous },
+        decreaseEnabled = { page != page.previous },
         increaseAction = { page = page.next },
+        increaseEnabled = { page != page.next },
         initialText = "Overview"
     )
 

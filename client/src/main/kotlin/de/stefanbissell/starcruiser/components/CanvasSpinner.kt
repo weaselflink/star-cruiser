@@ -19,7 +19,9 @@ class CanvasSpinner(
     private val widthExpr: CanvasDimensions.() -> Double,
     private val heightExpr: CanvasDimensions.() -> Double = { 10.vmin },
     private val decreaseAction: () -> Unit,
+    private val decreaseEnabled: () -> Boolean = { true },
     private val increaseAction: () -> Unit,
+    private val increaseEnabled: () -> Boolean = { true },
     initialText: String? = null
 ) : PointerEventHandlerParent() {
 
@@ -34,6 +36,7 @@ class CanvasSpinner(
         widthExpr = { buttonWidth },
         heightExpr = { heightExpr() },
         onClick = { decreaseAction() },
+        enabled = { decreaseEnabled() },
         initialText = "◄"
     )
     private val increaseButton = CanvasButton(
@@ -43,6 +46,7 @@ class CanvasSpinner(
         widthExpr = { buttonWidth },
         heightExpr = { heightExpr() },
         onClick = { increaseAction() },
+        enabled = { increaseEnabled() },
         initialText = "►"
     )
 

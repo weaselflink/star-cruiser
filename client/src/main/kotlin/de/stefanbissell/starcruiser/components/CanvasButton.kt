@@ -73,7 +73,11 @@ class CanvasButton(
         drawPill(dim)
         fill()
 
-        strokeStyle = UiStyle.buttonForegroundColor
+        strokeStyle = if (enabled()) {
+            UiStyle.buttonForegroundColor
+        } else {
+            UiStyle.buttonPressedColor
+        }
         beginPath()
         drawPill(dim)
         stroke()
@@ -81,10 +85,10 @@ class CanvasButton(
 
     private fun CanvasRenderingContext2D.drawText(dim: ComponentDimensions) {
         text?.also {
-            fillStyle = if (activated()) {
-                UiStyle.buttonBackgroundColor
-            } else {
-                UiStyle.buttonForegroundColor
+            fillStyle = when {
+                activated() -> UiStyle.buttonBackgroundColor
+                enabled() -> UiStyle.buttonForegroundColor
+                else -> UiStyle.buttonPressedColor
             }
             textAlign = CanvasTextAlign.CENTER
             textBaseline = CanvasTextBaseline.ALPHABETIC
