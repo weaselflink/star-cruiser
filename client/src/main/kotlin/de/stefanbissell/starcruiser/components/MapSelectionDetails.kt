@@ -52,8 +52,8 @@ class MapSelectionDetails(
         yExpr = { dim.topY + 9.vmin },
         widthExpr = { widthExpr() - 4.vmin },
         heightExpr = { 6.vmin },
-        decreaseAction = { showDetails = false },
-        increaseAction = { showDetails = true },
+        decreaseAction = { page = DetailsPage.Overview },
+        increaseAction = { page = DetailsPage.Details },
         initialText = "Overview"
     )
 
@@ -63,7 +63,7 @@ class MapSelectionDetails(
         get() = mapSelection != null
     private val innerX
         get() = dim.leftX + dim.canvas.vmin * 4
-    private var showDetails = false
+    private var page = DetailsPage.Overview
 
     init {
         addChildren(actionButton, spinner)
@@ -98,14 +98,13 @@ class MapSelectionDetails(
         drawDesignation(mapSelection.label)
 
         val hasDetails = mapSelection.systemsDamage != null
-        if (showDetails && hasDetails) {
-            spinner.text = "Details"
+        if (page == DetailsPage.Details && hasDetails) {
             drawDetails(mapSelection)
         } else {
-            spinner.text = "Overview"
             drawBasic(mapSelection)
         }
         if (hasDetails) {
+            spinner.text = page.name
             spinner.draw()
         }
         when {
@@ -231,4 +230,9 @@ class MapSelectionDetails(
             widthExpr = widthExpr,
             heightExpr = heightExpr
         )
+}
+
+private enum class DetailsPage {
+    Overview,
+    Details
 }
