@@ -28,26 +28,16 @@ class MapSelectionDetails(
     private val hullDisplay = HullDisplay(
         canvas = canvas,
         xExpr = { innerX },
-        yExpr = { dim.topY + 22.vmin },
+        yExpr = { dim.topY + 32.vmin },
         widthExpr = { dim.width - 8.vmin },
         heightExpr = { 4.vmin }
     )
     private val shieldsDisplay = ShieldsDisplay(
         canvas = canvas,
         xExpr = { innerX },
-        yExpr = { dim.topY + 28.vmin },
+        yExpr = { dim.topY + 38.vmin },
         widthExpr = { dim.width - 8.vmin },
         heightExpr = { 4.vmin }
-    )
-    private val detailsButton = CanvasButton(
-        canvas = canvas,
-        xExpr = { dim.rightX - 14.vmin },
-        yExpr = { dim.topY + 7.vmin },
-        widthExpr = { 12.vmin },
-        heightExpr = { 5.vmin },
-        onClick = { detailsButtonClicked() },
-        activated = { showDetails },
-        initialText = "Details"
     )
     private val actionButton = CanvasButton(
         canvas = canvas,
@@ -55,6 +45,16 @@ class MapSelectionDetails(
         yExpr = { dim.bottomY - 5.vmin },
         widthExpr = { 24.vmin },
         onClick = { actionButtonClicked() }
+    )
+    private val spinner = CanvasSpinner(
+        canvas = canvas,
+        xExpr = { dim.leftX + 2.vmin },
+        yExpr = { dim.topY + 9.vmin },
+        widthExpr = { widthExpr() - 4.vmin },
+        heightExpr = { 6.vmin },
+        decreaseAction = { showDetails = false },
+        increaseAction = { showDetails = true },
+        initialText = "Overview"
     )
 
     private var dim = calculateComponentDimensions()
@@ -66,7 +66,7 @@ class MapSelectionDetails(
     private var showDetails = false
 
     init {
-        addChildren(detailsButton, actionButton)
+        addChildren(actionButton, spinner)
     }
 
     override fun isInterestedIn(pointerEvent: PointerEvent): Boolean {
@@ -80,10 +80,6 @@ class MapSelectionDetails(
         this.mapSelection = mapSelection?.also {
             ctx.draw(it)
         }
-    }
-
-    private fun detailsButtonClicked() {
-        showDetails = !showDetails
     }
 
     private fun actionButtonClicked() {
@@ -103,12 +99,14 @@ class MapSelectionDetails(
 
         val hasDetails = mapSelection.systemsDamage != null
         if (showDetails && hasDetails) {
+            spinner.text = "Details"
             drawDetails(mapSelection)
         } else {
+            spinner.text = "Overview"
             drawBasic(mapSelection)
         }
         if (hasDetails) {
-            detailsButton.draw()
+            spinner.draw()
         }
         when {
             mapSelection.canScan -> {
@@ -127,7 +125,7 @@ class MapSelectionDetails(
             CanvasProgress(
                 canvas = canvas,
                 xExpr = { innerX },
-                yExpr = { dim.topY + 14.vmin + 5.vmin * index },
+                yExpr = { dim.topY + 24.vmin + 5.vmin * index },
                 widthExpr = { dim.width - 8.vmin },
                 heightExpr = { 4.vmin },
             ).apply {
@@ -178,31 +176,31 @@ class MapSelectionDetails(
 
         font = UiStyle.boldFont(dim.canvas.vmin * 3)
         fillStyle = UiStyle.buttonForegroundColor
-        fillText(designation, innerX, dim.topY + dim.canvas.vmin * 6)
+        fillText(designation, innerX, dim.topY + dim.canvas.vmin * 16)
 
         restore()
     }
 
     private fun CanvasRenderingContext2D.drawBearing(bearing: Int) {
         val text = bearing.pad(3)
-        drawAttribute(dim.canvas.vmin * 12, "Bearing", text)
+        drawAttribute(dim.canvas.vmin * 22, "Bearing", text)
     }
 
     private fun CanvasRenderingContext2D.drawRange(range: Int) {
         val text = range.formatThousands()
-        drawAttribute(dim.canvas.vmin * 16, "Range", text)
+        drawAttribute(dim.canvas.vmin * 26, "Range", text)
     }
 
     private fun CanvasRenderingContext2D.drawShieldModulation(modulation: Int) {
         val value = modulation * 2 + 78
         val text = "$value PHz"
-        drawAttribute(dim.canvas.vmin * 32, "∿ Shields", text)
+        drawAttribute(dim.canvas.vmin * 42, "∿ Shields", text)
     }
 
     private fun CanvasRenderingContext2D.drawBeamModulation(modulation: Int) {
         val value = modulation * 2 + 78
         val text = "$value PHz"
-        drawAttribute(dim.canvas.vmin * 36, "∿ Beams", text)
+        drawAttribute(dim.canvas.vmin * 46, "∿ Beams", text)
     }
 
     private fun CanvasRenderingContext2D.drawAttribute(

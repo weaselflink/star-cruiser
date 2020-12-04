@@ -1,8 +1,6 @@
 package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
-import de.stefanbissell.starcruiser.ClientSocket
-import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.dimensions
 import de.stefanbissell.starcruiser.drawPill
@@ -20,14 +18,14 @@ class CanvasSpinner(
     private val yExpr: CanvasDimensions.() -> Double,
     private val widthExpr: CanvasDimensions.() -> Double,
     private val heightExpr: CanvasDimensions.() -> Double = { 10.vmin },
-    private val decreaseCommand: Command,
-    private val increaseCommand: Command,
+    private val decreaseAction: () -> Unit,
+    private val increaseAction: () -> Unit,
     initialText: String? = null
 ) : PointerEventHandlerParent() {
 
     private val ctx = canvas.context2D
     private val CanvasDimensions.buttonWidth
-        get() = 12.vmin
+        get() = heightExpr() * 1.2
 
     private val decreaseButton = CanvasButton(
         canvas = canvas,
@@ -35,7 +33,7 @@ class CanvasSpinner(
         yExpr = { yExpr() },
         widthExpr = { buttonWidth },
         heightExpr = { heightExpr() },
-        onClick = { ClientSocket.send(decreaseCommand) },
+        onClick = { decreaseAction() },
         initialText = "◄"
     )
     private val increaseButton = CanvasButton(
@@ -44,7 +42,7 @@ class CanvasSpinner(
         yExpr = { yExpr() },
         widthExpr = { buttonWidth },
         heightExpr = { heightExpr() },
-        onClick = { ClientSocket.send(increaseCommand) },
+        onClick = { increaseAction() },
         initialText = "►"
     )
 

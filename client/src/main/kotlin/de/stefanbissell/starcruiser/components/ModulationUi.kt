@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser.components
 
 import de.stefanbissell.starcruiser.CanvasDimensions
+import de.stefanbissell.starcruiser.ClientSocket
 import de.stefanbissell.starcruiser.Command
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
 import org.w3c.dom.HTMLCanvasElement
@@ -19,8 +20,8 @@ open class ModulationUi(
         xExpr = { xExpr() },
         yExpr = { yExpr() },
         widthExpr = { widthExpr() },
-        decreaseCommand = decreaseCommand,
-        increaseCommand = increaseCommand
+        decreaseAction = { ClientSocket.send(decreaseCommand) },
+        increaseAction = { ClientSocket.send(increaseCommand) }
     )
 
     init {
