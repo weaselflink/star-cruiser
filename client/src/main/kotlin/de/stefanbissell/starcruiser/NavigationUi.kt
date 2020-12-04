@@ -6,9 +6,9 @@ import de.stefanbissell.starcruiser.Command.CommandScanSelectedShip
 import de.stefanbissell.starcruiser.components.CanvasButton
 import de.stefanbissell.starcruiser.components.CanvasSlider
 import de.stefanbissell.starcruiser.components.MapClick
+import de.stefanbissell.starcruiser.components.MapSelectionDetails
 import de.stefanbissell.starcruiser.components.NavigationMap
 import de.stefanbissell.starcruiser.components.ScanDisplay
-import de.stefanbissell.starcruiser.components.SelectionDetails
 import de.stefanbissell.starcruiser.components.StationUi
 import de.stefanbissell.starcruiser.components.UiStyle
 import org.w3c.dom.CanvasRenderingContext2D
@@ -16,7 +16,7 @@ import org.w3c.dom.CanvasRenderingContext2D
 class NavigationUi : StationUi(Station.Navigation) {
 
     private val navigationMap = NavigationMap(canvas) { handleMapClick(it) }
-    private val selectionDetails = SelectionDetails(
+    private val mapSelectionDetails = MapSelectionDetails(
         canvas = canvas,
         onScan = { scanShipClicked() },
         onDelete = { deleteWaypointClicked() }
@@ -74,7 +74,7 @@ class NavigationUi : StationUi(Station.Navigation) {
             zoomSlider,
             addWaypointButton,
             centerButton,
-            selectionDetails,
+            mapSelectionDetails,
             navigationMap
         )
     }
@@ -82,7 +82,7 @@ class NavigationUi : StationUi(Station.Navigation) {
     fun draw(snapshot: SnapshotMessage.Navigation) {
         ctx.draw(snapshot)
 
-        selectionDetails.draw(snapshot.mapSelection)
+        mapSelectionDetails.draw(snapshot.mapSelection)
         scanDisplay.draw(snapshot.ship.scanProgress)
     }
 

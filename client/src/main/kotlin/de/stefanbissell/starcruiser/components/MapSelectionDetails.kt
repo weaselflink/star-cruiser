@@ -14,7 +14,7 @@ import org.w3c.dom.CanvasTextAlign
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.RIGHT
 
-class SelectionDetails(
+class MapSelectionDetails(
     private val canvas: HTMLCanvasElement,
     private val xExpr: CanvasDimensions.() -> Double = { width - 42.vmin },
     private val yExpr: CanvasDimensions.() -> Double = { height - 2.vmin },
