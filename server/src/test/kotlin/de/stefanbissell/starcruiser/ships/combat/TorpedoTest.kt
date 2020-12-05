@@ -29,8 +29,10 @@ class TorpedoTest {
         faction = TestFactions.player,
         position = p(3, -4),
         template = TorpedoTemplate(
-            thrust = thrust,
-            maxBurnTime = maxBurnTime
+            drive = TorpedoDriveTemplate(
+                thrust = thrust,
+                maxBurnTime = maxBurnTime
+            )
         )
     )
 

@@ -30,18 +30,18 @@ class Torpedo(
     var timeSinceLaunch = 0.0
     var destroyed = false
     val density
-        get() = template.mass / (0.5 * PI * template.radius * template.radius)
+        get() = template.totalMass / (0.5 * PI * template.radius * template.radius)
 
     fun update(
         time: GameTime,
         physicsEngine: PhysicsEngine
     ) {
         timeSinceLaunch += time.delta
-        if (timeSinceLaunch > template.maxBurnTime) {
+        if (timeSinceLaunch > template.drive.maxBurnTime) {
             destroyed = true
         }
 
-        physicsEngine.updateObject(id, template.thrust)
+        physicsEngine.updateObject(id, template.drive.thrust)
 
         physicsEngine.getBodyParameters(id)?.also {
             position = it.position

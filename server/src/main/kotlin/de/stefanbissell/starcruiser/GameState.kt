@@ -400,8 +400,9 @@ class GameState {
         }.filter { (torpedo, _) ->
             torpedo.timeSinceLaunch > 0.1
         }.forEach { (torpedo, other) ->
-            unhandledEvents += DamageEvent.Torpedo(other, torpedo.template.damage)
-            unhandledEvents += DamageEvent.Torpedo(torpedo.id, torpedo.template.damage)
+            val damage = torpedo.template.warhead.damage
+            unhandledEvents += DamageEvent.Torpedo(other, damage)
+            unhandledEvents += DamageEvent.Torpedo(torpedo.id, damage)
         }
     }
 

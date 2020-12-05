@@ -108,7 +108,7 @@ data class BeamWeapon(
         return angle <= leftArc.toRadians() && angle >= rightArc.toRadians()
     }
 
-    val position2d
+    private val position2d
         get() = Vector2(-position.z, -position.x)
 }
 
