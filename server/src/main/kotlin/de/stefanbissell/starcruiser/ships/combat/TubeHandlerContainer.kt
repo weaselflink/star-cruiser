@@ -34,7 +34,11 @@ class TubeHandlerContainer(
                     it.tube.position2d.rotate(ship.rotation) +
                     direction * it.tube.torpedoTemplate.radius * 1.1,
                 rotation = rotation,
-                speed = ship.speed + (direction * it.tube.velocity)
+                speed = ship.speed + (direction * it.tube.velocity),
+                template = TorpedoTemplate(
+                    drive = magazine.driveTemplate,
+                    warhead = magazine.warheadTemplate
+                )
             )
         }
 

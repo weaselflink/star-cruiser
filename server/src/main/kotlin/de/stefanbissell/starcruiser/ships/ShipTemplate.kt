@@ -5,7 +5,9 @@ import de.stefanbissell.starcruiser.Vector2
 import de.stefanbissell.starcruiser.Vector3
 import de.stefanbissell.starcruiser.p
 import de.stefanbissell.starcruiser.shapes.Polygon
+import de.stefanbissell.starcruiser.ships.combat.TorpedoDriveTemplate
 import de.stefanbissell.starcruiser.ships.combat.TorpedoTemplate
+import de.stefanbissell.starcruiser.ships.combat.TorpedoWarheadTemplate
 import de.stefanbissell.starcruiser.toRadians
 import kotlin.math.PI
 import kotlin.math.roundToInt
@@ -126,7 +128,9 @@ data class Tube(
 }
 
 data class Magazine(
-    val capacity: Int = 10
+    val capacity: Int = 10,
+    val driveTemplate: TorpedoDriveTemplate = TorpedoDriveTemplate(),
+    val warheadTemplate: TorpedoWarheadTemplate = TorpedoWarheadTemplate()
 )
 
 data class ShieldTemplate(

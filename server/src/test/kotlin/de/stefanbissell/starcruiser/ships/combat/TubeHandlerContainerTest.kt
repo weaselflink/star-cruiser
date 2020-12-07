@@ -45,7 +45,10 @@ class TubeHandlerContainerTest {
                 velocity = 5.0
             )
         ),
-        magazine = Magazine(),
+        magazine = Magazine(
+            driveTemplate = TorpedoDriveTemplate(name = "TestDrive"),
+            warheadTemplate = TorpedoWarheadTemplate(name = "TestWarhead")
+        ),
         ship = ship
     )
 
@@ -108,7 +111,7 @@ class TubeHandlerContainerTest {
     }
 
     @Test
-    fun `launch creates torpedo`() {
+    fun `launch creates torpedo based on magazine settings`() {
         tubeHandlerContainer.tubeHandlers[0].status = TubeStatus.Ready
         tubeHandlerContainer.requestLaunch(0)
         stepTime()
@@ -125,6 +128,8 @@ class TubeHandlerContainerTest {
                 get { speed }.isNear(
                     Vector2(5, 0).rotate(expectedRotation)
                 )
+                get { template.drive.name }.isEqualTo("TestDrive")
+                get { template.warhead.name }.isEqualTo("TestWarhead")
             }
     }
 
