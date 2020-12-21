@@ -1,6 +1,7 @@
 package de.stefanbissell.starcruiser
 
 import de.stefanbissell.starcruiser.components.StationUiSwitcher
+import de.stefanbissell.starcruiser.input.PointerEventDispatcher
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.events.KeyboardEvent
@@ -8,17 +9,25 @@ import org.w3c.dom.events.KeyboardEvent
 class MainUi {
 
     private val joinUi = JoinUi().apply { show() }
-    private val destroyedUi = DestroyedUi().apply { hide() }
     private val stationUiSwitcher = StationUiSwitcher()
+    private val destroyedUi = DestroyedUi()
+    private val canvas = document.canvas2d
+    private val pointerEventDispatcher = PointerEventDispatcher(canvas)
 
     init {
         window.requestAnimationFrame { step() }
         window.onresize = {
+            canvas.updateSize()
             stationUiSwitcher.resize()
         }
 
         document.onkeydown = { handleKeyDown(it) }
         document.onkeyup = { handleKeyUp(it) }
+
+        pointerEventDispatcher.addHandlers(
+            stationUiSwitcher,
+            destroyedUi
+        )
     }
 
     private fun step() {
@@ -32,7 +41,7 @@ class MainUi {
     private fun drawUi(stateCopy: GameStateMessage) {
         when (val snapshot = stateCopy.snapshot) {
             is SnapshotMessage.ShipSelection -> {
-                destroyedUi.hide()
+                destroyedUi.visible = false
                 stationUiSwitcher.hideAll()
                 joinUi.apply {
                     show()
@@ -42,7 +51,10 @@ class MainUi {
             is SnapshotMessage.ShipDestroyed -> {
                 joinUi.hide()
                 stationUiSwitcher.hideAll()
-                destroyedUi.show()
+                destroyedUi.apply {
+                    visible = true
+                    draw()
+                }
             }
             is SnapshotMessage.CrewSnapshot -> {
                 drawShipUi(snapshot)
@@ -52,7 +64,7 @@ class MainUi {
 
     private fun drawShipUi(snapshot: SnapshotMessage.CrewSnapshot) {
         joinUi.hide()
-        destroyedUi.hide()
+        destroyedUi.visible = false
         stationUiSwitcher.draw(snapshot)
     }
 

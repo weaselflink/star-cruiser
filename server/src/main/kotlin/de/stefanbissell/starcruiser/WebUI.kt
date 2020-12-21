@@ -36,7 +36,6 @@ import kotlinx.css.body
 import kotlinx.css.borderBottomLeftRadius
 import kotlinx.css.borderBottomRightRadius
 import kotlinx.css.borderColor
-import kotlinx.css.borderRadius
 import kotlinx.css.borderStyle
 import kotlinx.css.borderTopLeftRadius
 import kotlinx.css.borderTopRightRadius
@@ -82,7 +81,6 @@ import kotlinx.html.head
 import kotlinx.html.id
 import kotlinx.html.link
 import kotlinx.html.meta
-import kotlinx.html.p
 import kotlinx.html.script
 import kotlinx.html.style
 
@@ -126,7 +124,6 @@ fun Routing.webUi() {
                 alignSelf = Align.flexStart
             }
             buttonCss
-            popupCss
         }
     }
 
@@ -158,7 +155,6 @@ fun Routing.webUi() {
                 canvas(classes = "canvas2d") {}
                 canvas(classes = "canvas3d") {}
                 joinUi
-                destroyedUi
             }
         }
     }
@@ -176,18 +172,6 @@ private val BODY.joinUi
             button(classes = "playerShipsPrev leftEdge") { +"Prev" }
             div(classes = "playerShips") {}
             button(classes = "playerShipsNext leftEdge") { +"Next" }
-        }
-    }
-
-private val BODY.destroyedUi
-    get() = htmlUi("destroyed-ui") {
-        div(classes = "popup") {
-            p {
-                +"Your ship was destroyed"
-            }
-            button(classes = "toSelection") {
-                +"To Selection"
-            }
         }
     }
 
@@ -253,32 +237,6 @@ private val CSSBuilder.buttonCss: Unit
             color = black
             backgroundColor = dimGrey
             borderColor = dimGrey
-        }
-    }
-
-private val CSSBuilder.popupCss: Unit
-    get() {
-        ".popup" {
-            fontWeight = bold
-            fontSize = 4.vmin
-            display = grid
-            gap = Gap("2vmin")
-            padding(3.vmin, 6.vmin)
-            color = lightGrey
-            backgroundColor = black
-            borderWidth = 0.5.vmin
-            borderStyle = solid
-            borderColor = darkGrey
-            justifyContent = JustifyContent.center
-            borderRadius = 4.vmin
-            margin = "30vmin auto"
-            width = 60.vmin
-            height = 25.vmin
-        }
-        ".popup button" {
-            borderRadius = 4.vmin
-            paddingLeft = 4.vmin
-            paddingRight = 4.vmin
         }
     }
 

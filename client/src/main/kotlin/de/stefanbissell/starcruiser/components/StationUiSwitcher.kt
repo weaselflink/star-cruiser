@@ -11,12 +11,10 @@ import de.stefanbissell.starcruiser.canvas2d
 import de.stefanbissell.starcruiser.clear
 import de.stefanbissell.starcruiser.context2D
 import de.stefanbissell.starcruiser.input.PointerEvent
-import de.stefanbissell.starcruiser.input.PointerEventDispatcher
 import de.stefanbissell.starcruiser.input.PointerEventHandlerParent
-import de.stefanbissell.starcruiser.updateSize
 import kotlinx.browser.document
 
-class StationUiSwitcher {
+class StationUiSwitcher : PointerEventHandlerParent() {
 
     private val stationOverlay = StationOverlay()
     private val helmUi = HelmUi()
@@ -32,20 +30,18 @@ class StationUiSwitcher {
         mainScreenUi
     )
     private val canvas = document.canvas2d
-    private val pointerEventDispatcher = PointerEventDispatcher(canvas)
 
     init {
-        pointerEventDispatcher.addHandlers(stationOverlay)
+        addChildren(stationOverlay)
         stations.forEach {
             it.visible = false
             it.hide()
-            pointerEventDispatcher.addHandlers(it)
+            addChildren(it)
         }
         resize()
     }
 
     fun resize() {
-        canvas.updateSize()
         stations.forEach {
             it.resize()
         }
