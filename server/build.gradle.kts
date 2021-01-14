@@ -28,7 +28,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.1")
-    implementation("org.jetbrains:kotlin-css:1.0.0-pre.136-kotlin-1.4.21")
+    implementation("org.jetbrains:kotlin-css:1.0.0-pre.137-kotlin-1.4.21")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-core:$ktor_version")
@@ -42,7 +42,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutine_version")
     testImplementation("io.strikt:strikt-core:$strikt_version")
-    testImplementation("io.mockk:mockk:1.10.4")
+    testImplementation("io.mockk:mockk:1.10.5")
 }
 
 tasks {
