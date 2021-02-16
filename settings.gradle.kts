@@ -11,7 +11,7 @@ pluginManagement {
         kotlin("plugin.serialization") version kotlin_version
         id("com.github.johnrengelman.shadow") version "6.1.0"
         id("com.github.ben-manes.versions") version "0.36.0"
-        id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
+        id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
         id("com.adarshr.test-logger") version "2.1.1"
     }
 }
