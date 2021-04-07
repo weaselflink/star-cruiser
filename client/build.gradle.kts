@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":shared"))
+    implementation(projects.shared)
 }
 
 kotlin {
