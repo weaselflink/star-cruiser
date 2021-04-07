@@ -27,6 +27,12 @@ allprojects {
         jcenter()
         maven(url = "https://kotlin.bintray.com/ktor")
         maven(url = "https://kotlin.bintray.com/kotlinx")
+        maven {
+            url = uri("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
+            content {
+                includeGroup("org.jetbrains.kotlinx")
+            }
+        }
         maven(url = "https://jitpack.io")
     }
 
@@ -43,6 +49,8 @@ allprojects {
     }
 }
 
-ktlint {
-    version.set("0.40.0")
+subprojects {
+    ktlint {
+        version.set("0.41.0")
+    }
 }

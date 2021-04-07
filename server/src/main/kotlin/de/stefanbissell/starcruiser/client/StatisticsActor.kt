@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import kotlin.time.Duration
 import kotlin.time.nanoseconds
 import kotlin.time.seconds
 
@@ -35,7 +36,7 @@ fun CoroutineScope.statisticsActor(): SendChannel<StatisticsMessage> =
 private fun CoroutineScope.startLogger(channel: Channel<StatisticsMessage>) {
     launch {
         while (true) {
-            delay(statisticsLogIntervalSeconds.seconds)
+            delay(Duration.seconds(statisticsLogIntervalSeconds))
             val response = CompletableDeferred<StatisticsSnapshot>()
             channel.send(GetSnapshot(response))
             response.await().log()
@@ -106,7 +107,7 @@ data class StatisticsSnapshot(
 
     private val nowWithoutNanos: Instant
         get() = Clock.System.now().let {
-            it.minus(it.nanosecondsOfSecond.nanoseconds)
+            it.minus(Duration.nanoseconds(it.nanosecondsOfSecond))
         }
 
     fun toJson() = configuredJson.encodeToString(serializer(), this)

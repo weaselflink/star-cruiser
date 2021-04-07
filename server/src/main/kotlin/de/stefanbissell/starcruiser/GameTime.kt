@@ -4,6 +4,7 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.until
+import kotlin.time.Duration
 import kotlin.time.seconds
 
 class GameTime(
@@ -37,7 +38,7 @@ class GameTime(
     fun update(secondsToAdd: Number) {
         delta = secondsToAdd.toDouble()
         current += delta
-        lastUpdate = lastUpdate?.plus(secondsToAdd.toDouble().seconds)
+        lastUpdate = lastUpdate?.plus(Duration.seconds(secondsToAdd.toDouble()))
     }
 
     companion object {
