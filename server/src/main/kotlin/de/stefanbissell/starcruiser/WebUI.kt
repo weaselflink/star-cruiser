@@ -71,7 +71,7 @@ private val BODY.joinUi
     get() = htmlUi("join-ui") {
         div(classes = "topLeftButtons") {
             button(classes = "spawn leftEdge") {
-                style = "marginBottom = 2vmin;"
+                style = "margin-bottom = 2vmin;"
                 +"+ Spawn ship"
             }
             button(classes = "playerShipsPrev leftEdge") { +"Prev" }
