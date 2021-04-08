@@ -1,0 +1,91 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #222;
+    color: white;
+    font-family: sans-serif;
+}
+
+body .canvas2d {
+    z-index: 2;
+}
+
+body .canvas3d {
+    z-index: 1;
+}
+
+::backdrop {
+    background-color: #222;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.playerShips {
+    display: grid;
+    gap: 1vmin;
+    align-self: flex-start;
+}
+
+#join-ui {
+    position: absolute;
+    z-index: 10;
+}
+
+#destroyed-ui {
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    display: grid;
+    min-height: 100vh;
+    align-content: center;
+    justify-content: center;
+}
+
+.topLeftButtons {
+    position: fixed;
+    display: grid;
+    gap: 1vmin;
+    margin-top: 1vmin;
+    top: 0;
+    left: 0;
+    padding(4vmin, 0vmin);
+}
+
+button {
+    display: block;
+    color: lightGrey;
+    background-color: black;
+    text-align: left;
+    border-width: 0.5vmin;
+    border-style: solid;
+    border-color: darkGrey;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 3vmin;
+    padding-top: 1vmin;
+    padding-bottom: 1.5vmin;
+    outline: none;
+}
+
+button:hover {
+    color: black;
+    background-color: dimgrey;
+}
+
+button.leftEdge {
+    padding-right: 3vmin;
+    padding-left: 2vmin;
+    border-radius: 0 4vmin 4vmin 0;
+}
+
+button:active {
+    color: black;
+    background-color: dimGrey;
+    border-color: dimGrey;
+}

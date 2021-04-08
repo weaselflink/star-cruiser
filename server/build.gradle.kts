@@ -29,7 +29,6 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.1")
-    implementation("org.jetbrains:kotlin-css:1.0.0-pre.148-kotlin-1.4.30")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-core:$ktor_version")
