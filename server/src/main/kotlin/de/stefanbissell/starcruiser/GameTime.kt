@@ -28,7 +28,7 @@ class GameTime(
 
     fun update(now: Instant) {
         delta = lastUpdate?.let {
-            (it.until(now, DateTimeUnit.MILLISECOND)) / 1_000.0
+            (now - it).inWholeMilliseconds / 1_000.0
         } ?: 0.001
         current += delta
         lastUpdate = now
@@ -41,9 +41,6 @@ class GameTime(
     }
 
     private operator fun Instant?.plus(seconds: Double) =
-        this?.plus(Duration.seconds(seconds))
-
-    private operator fun Instant?.plus(seconds: Long) =
         this?.plus(Duration.seconds(seconds))
 
     companion object {
