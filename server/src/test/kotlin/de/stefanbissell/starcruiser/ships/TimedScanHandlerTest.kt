@@ -9,6 +9,7 @@ import strikt.assertions.isTrue
 
 class TimedScanHandlerTest {
 
+    private val time = GameTime.atEpoch()
     private val scanningSpeed = 0.1
     private val scanHandler = TimedScanHandler(ObjectId.random(), scanningSpeed)
 
@@ -35,7 +36,7 @@ class TimedScanHandlerTest {
     }
 
     private fun stepTime(seconds: Number) {
-        val time = GameTime.atEpoch().apply { update(seconds.toDouble()) }
+        time.update(seconds)
         scanHandler.update(time)
     }
 }

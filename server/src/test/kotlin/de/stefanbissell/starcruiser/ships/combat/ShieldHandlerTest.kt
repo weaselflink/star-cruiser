@@ -237,7 +237,7 @@ class ShieldHandlerTest {
     }
 
     private fun stepTime(seconds: Number) {
-        time.update(seconds.toDouble())
+        time.update(seconds)
         shieldHandler.update(time, power)
     }
 

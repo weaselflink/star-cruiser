@@ -177,7 +177,7 @@ class JumpHandlerTest {
     }
 
     private fun stepTime(seconds: Number) {
-        time.update(seconds.toDouble())
+        time.update(seconds)
         jumpHandler.update(time, physicsEngine, power)
     }
 }

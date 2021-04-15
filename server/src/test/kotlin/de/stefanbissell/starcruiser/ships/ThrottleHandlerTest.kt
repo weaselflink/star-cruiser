@@ -63,7 +63,7 @@ class ThrottleHandlerTest {
     }
 
     private fun stepTime(seconds: Number) {
-        time.update(seconds.toDouble())
+        time.update(seconds)
         throttleHandler.update(time)
     }
 }

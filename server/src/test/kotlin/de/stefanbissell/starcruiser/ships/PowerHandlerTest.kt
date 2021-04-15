@@ -169,7 +169,7 @@ class PowerHandlerTest {
     }
 
     private fun stepTime(seconds: Number) {
-        time.update(seconds.toDouble())
+        time.update(seconds)
         powerHandler.update(time)
     }
 

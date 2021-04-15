@@ -136,7 +136,7 @@ class TubeHandlerTest {
     }
 
     private fun stepTime(seconds: Number) {
-        time.update(seconds.toDouble())
+        time.update(seconds)
         tubeHandler.update(time, power)
     }
 }

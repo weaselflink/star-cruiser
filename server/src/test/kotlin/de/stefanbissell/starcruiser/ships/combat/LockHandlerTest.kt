@@ -68,7 +68,7 @@ class LockHandlerTest {
     }
 
     private fun stepTime(seconds: Number) {
-        time.update(seconds.toDouble())
+        time.update(seconds)
         lockHandler.update(time)
     }
 }

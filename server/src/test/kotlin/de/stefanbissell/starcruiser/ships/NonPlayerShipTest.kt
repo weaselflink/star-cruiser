@@ -241,7 +241,7 @@ class NonPlayerShipTest {
     }
 
     private fun stepTime(seconds: Number) {
-        time.update(seconds.toDouble())
+        time.update(seconds)
         ship.update(
             time = time,
             physicsEngine = physicsEngine,

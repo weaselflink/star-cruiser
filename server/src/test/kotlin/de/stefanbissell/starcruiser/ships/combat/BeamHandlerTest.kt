@@ -176,7 +176,7 @@ class BeamHandlerTest {
     }
 
     private fun stepTime(seconds: Number) {
-        time.update(seconds.toDouble())
+        time.update(seconds)
         beamHandler.update(time, power, contactList, lockHandler, physicsEngine)
     }
 }
