@@ -1,7 +1,7 @@
 ![Build master](https://github.com/weaselflink/star-cruiser/workflows/Build%20master/badge.svg) 
 [![Last commit](https://img.shields.io/github/last-commit/weaselflink/star-cruiser)](https://github.com/weaselflink/star-cruiser/commits/master)
 [![Last release version](https://img.shields.io/github/v/release/weaselflink/star-cruiser)](https://github.com/weaselflink/star-cruiser/releases/latest)
-[![Using Kotlin 1.5.0-RC](https://img.shields.io/badge/kotlin-1.5.0--RC-blue)](https://blog.jetbrains.com/kotlin/2021/04/kotlin-1-5-0-rc-released/)
+[![Using Kotlin 1.5.0](https://img.shields.io/badge/kotlin-1.5.0-blue)](https://blog.jetbrains.com/kotlin/2021/04/kotlin-1-5-0-rc-released/)
 [![License GPLv3](https://img.shields.io/github/license/weaselflink/star-cruiser)](https://github.com/weaselflink/star-cruiser/blob/master/LICENSE)
 
 ## Star Cruiser Crew Simulator
