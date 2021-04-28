@@ -116,13 +116,14 @@ class TubeHandlerContainerTest {
         tubeHandlerContainer.requestLaunch(0)
         stepTime()
 
-        val expectedRotation = PI * 0.75
+        val expectedRotation = ship.rotation - PI * 0.25
         expectThat(tubeHandlerContainer.torpedoes)
             .hasSize(1)
             .withFirst {
                 get { position }.isNear(
                     Vector2(100, 200) +
-                        Vector2(2, 3).rotate(expectedRotation)
+                        Vector2(-4, -2).rotate(ship.rotation) +
+                        Vector2(1.1, 0).rotate(expectedRotation)
                 )
                 get { rotation }.isNear(expectedRotation)
                 get { speed }.isNear(

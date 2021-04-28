@@ -11,11 +11,9 @@ fun Assertion.Builder<Double>.isNear(expected: Number, tolerance: Double = 0.000
     isEqualTo(expected.toDouble(), tolerance)
 
 fun Assertion.Builder<Vector2>.isNear(expected: Vector2, tolerance: Double = 0.0000001) =
-    assert("is within $tolerance of $expected") {
-        and {
-            get { x }.isEqualTo(expected.x, tolerance)
-            get { y }.isEqualTo(expected.y, tolerance)
-        }
+    and {
+        get { x }.isEqualTo(expected.x, tolerance)
+        get { y }.isEqualTo(expected.y, tolerance)
     }
 
 fun emptyContactList(ship: Ship) = ContactList(ship, emptyList())
