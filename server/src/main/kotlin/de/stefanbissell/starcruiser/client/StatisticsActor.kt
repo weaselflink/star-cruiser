@@ -15,8 +15,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
-import kotlin.time.nanoseconds
-import kotlin.time.seconds
 
 private const val statisticsLogIntervalSeconds = 10
 
