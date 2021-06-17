@@ -18,8 +18,7 @@ plugins {
 }
 
 application {
-    @Suppress("DEPRECATION")
-    mainClassName = "io.ktor.server.netty.EngineMain"
+    mainClass.set("io.ktor.server.netty.EngineMain")
 }
 
 dependencies {
