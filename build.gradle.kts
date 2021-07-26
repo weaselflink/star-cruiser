@@ -47,9 +47,3 @@ allprojects {
         }
     }
 }
-
-subprojects {
-    ktlint {
-        version.set("0.41.0")
-    }
-}
