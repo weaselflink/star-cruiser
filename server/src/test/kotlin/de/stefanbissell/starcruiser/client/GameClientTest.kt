@@ -7,6 +7,7 @@ import de.stefanbissell.starcruiser.GameStateMessage
 import de.stefanbissell.starcruiser.GetGameStateSnapshot
 import de.stefanbissell.starcruiser.NewGameClient
 import de.stefanbissell.starcruiser.SnapshotMessage
+import de.stefanbissell.starcruiser.expectWithTimeout
 import io.ktor.http.cio.websocket.Frame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -50,7 +51,7 @@ class GameClientTest {
     @Test
     fun `send new game client message to game state`() {
         withGameClient {
-            expectWithTimeout(1000) {
+            expectWithTimeout {
                 expectThat(gameStateChanges).one {
                     isEqualTo(NewGameClient(clientId))
                 }
@@ -61,7 +62,7 @@ class GameClientTest {
     @Test
     fun `requests game state`() {
         withGameClient {
-            expectWithTimeout(1000) {
+            expectWithTimeout {
                 expectThat(gameStateChanges).one {
                     isA<GetGameStateSnapshot>()
                         .get { clientId }.isEqualTo(clientId)
@@ -74,7 +75,7 @@ class GameClientTest {
     fun `sends update`() {
         val update = SnapshotMessage.ShipSelection(emptyList())
         withGameClient {
-            expectWithTimeout(1000) {
+            expectWithTimeout {
                 val request = gameStateChanges
                     .filterIsInstance<GetGameStateSnapshot>()
                     .firstOrNull { it.clientId == clientId }
@@ -82,7 +83,7 @@ class GameClientTest {
 
                 request!!.response.complete(update)
             }
-            expectWithTimeout(1000) {
+            expectWithTimeout {
                 expectThat(messages).one {
                     expectGameStateMessage()
                         .isEqualTo(GameStateMessage(1L, update))
@@ -97,7 +98,7 @@ class GameClientTest {
             launch {
                 sendCommand(Command.CommandExitShip)
             }
-            expectWithTimeout(1000) {
+            expectWithTimeout {
                 expectThat(gameStateChanges).one {
                     isEqualTo(ExitShip(clientId))
                 }
@@ -114,7 +115,7 @@ class GameClientTest {
             launch {
                 sendCommand(Command.CommandExitShip)
             }
-            expectWithTimeout(1000) {
+            expectWithTimeout {
                 expectThat(gameStateChanges).one {
                     isEqualTo(ExitShip(clientId))
                 }
@@ -151,30 +152,6 @@ class GameClientTest {
                 }
             } finally {
                 supervisorJob.complete()
-            }
-        }
-    }
-
-    private suspend fun expectWithTimeout(timeMillis: Long, block: suspend () -> Unit) {
-        var exception: Throwable? = null
-        try {
-            withTimeout(timeMillis) {
-                var waiting = true
-                while (waiting) {
-                    try {
-                        block()
-                        waiting = false
-                    } catch (ex: Throwable) {
-                        exception = ex
-                    }
-                    delay(100)
-                }
-            }
-        } catch (ex: Throwable) {
-            if (ex is TimeoutCancellationException && exception != null) {
-                throw exception!!
-            } else {
-                throw ex
             }
         }
     }

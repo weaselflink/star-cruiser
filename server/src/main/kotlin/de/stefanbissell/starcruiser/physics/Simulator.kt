@@ -85,7 +85,7 @@ class Simulator(
             val absoluteMax = points.last().bodyParameters.rotationSpeed
             val indexAt99 = points.indexOfFirst { it.bodyParameters.rotationSpeed > absoluteMax * 0.99 }
             val pointAt99 = points[indexAt99]
-            val relevantPoints = points.subList(0, indexAt99 + 1)
+            val relevantPoints = points.slice(0..indexAt99)
             return AngularAccelerationData(
                 maxRotationSpeed = pointAt99.bodyParameters.rotationSpeed.fiveDigits(),
                 timeToMax = pointAt99.time.fiveDigits(),
