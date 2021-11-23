@@ -50,6 +50,6 @@ allprojects {
 
 subprojects {
     ktlint {
-        version.set("0.42.1")
+        version.set("0.43.0")
     }
 }
