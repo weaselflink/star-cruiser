@@ -24,7 +24,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
@@ -50,8 +50,8 @@ fun Application.module() {
     }
 
     install(WebSockets) {
-        pingPeriod = Duration.seconds(15).toJavaDuration()
-        timeout = Duration.seconds(15).toJavaDuration()
+        pingPeriod = 15.seconds.toJavaDuration()
+        timeout = 15.seconds.toJavaDuration()
         maxFrameSize = Long.MAX_VALUE
         masking = false
     }

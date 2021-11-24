@@ -1,5 +1,7 @@
 @file:Suppress("PropertyName", "SuspiciousCollectionReassignment")
 
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+
 val kotlin_version: String by project
 val kotlin_serialization_version: String by project
 
@@ -19,7 +21,7 @@ kotlin {
 }
 
 tasks {
-    withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
+    withType<KotlinCompile<*>>().all {
         kotlinOptions {
             freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
         }

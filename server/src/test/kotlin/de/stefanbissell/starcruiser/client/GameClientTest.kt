@@ -14,7 +14,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.jupiter.api.Test
 import org.slf4j.helpers.NOPLogger.NOP_LOGGER
@@ -122,7 +122,7 @@ class GameClientTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun withGameClient(block: suspend CoroutineScope.() -> Unit) {
-        runBlockingTest {
+        runTest {
             val supervisorJob = SupervisorJob()
             launch(supervisorJob) {
                 for (gameStateChange in gameStateActor) {

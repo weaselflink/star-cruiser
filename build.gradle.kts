@@ -10,7 +10,7 @@ plugins {
     kotlin("plugin.serialization") apply false
     id("com.github.johnrengelman.shadow") apply false
     id("com.github.ben-manes.versions")
-    id("org.jlleitschuh.gradle.ktlint")
+    id("org.jlleitschuh.gradle.ktlint") apply false
     id("com.adarshr.test-logger")
 }
 
@@ -19,7 +19,6 @@ allprojects {
     version = "0.40.0"
 
     apply(plugin = "com.github.ben-manes.versions")
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "com.adarshr.test-logger")
 
     repositories {
@@ -45,11 +44,5 @@ allprojects {
                 isNonStable(candidate.version)
             }
         }
-    }
-}
-
-subprojects {
-    ktlint {
-        version.set("0.43.0")
     }
 }

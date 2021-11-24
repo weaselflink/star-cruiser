@@ -31,6 +31,7 @@ class TubeHandler(
                     TubeStatus.Ready
                 }
             }
+            else -> {}
         }
     }
 

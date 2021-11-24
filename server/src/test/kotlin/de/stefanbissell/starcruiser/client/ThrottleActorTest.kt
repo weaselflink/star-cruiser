@@ -3,7 +3,7 @@ package de.stefanbissell.starcruiser.client
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -60,7 +60,7 @@ class ThrottleActorTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun runActorTest(block: suspend SendChannel<ThrottleMessage>.() -> Unit) {
-        runBlockingTest {
+        runTest {
             val channel = createThrottleActor()
             try {
                 channel.block()

@@ -344,6 +344,7 @@ class ShortRangeScope(
             when (val lock = snapshot.shortRangeScope.lockProgress) {
                 is LockStatus.InProgress -> drawLockProgress(snapshot, lock.targetId, lock.progress)
                 is LockStatus.Locked -> drawLockProgress(snapshot, lock.targetId, 1.0)
+                LockStatus.NoLock -> {}
             }
         }
     }

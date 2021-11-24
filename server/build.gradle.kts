@@ -15,6 +15,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("com.github.johnrengelman.shadow")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 application {
@@ -79,4 +80,8 @@ tasks {
             into("js")
         }
     }
+}
+
+ktlint {
+    version.set("0.43.0")
 }

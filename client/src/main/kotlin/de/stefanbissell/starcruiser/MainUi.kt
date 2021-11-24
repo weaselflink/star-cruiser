@@ -59,6 +59,7 @@ class MainUi {
             is SnapshotMessage.CrewSnapshot -> {
                 drawShipUi(snapshot)
             }
+            else -> {}
         }
     }
 
