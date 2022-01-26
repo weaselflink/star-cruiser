@@ -16,3 +16,4 @@ client/out
 client/build
 
 models/*.blend1
+kotlin-js-store

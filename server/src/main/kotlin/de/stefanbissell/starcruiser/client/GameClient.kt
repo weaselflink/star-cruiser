@@ -175,7 +175,7 @@ class GameClient(
                 is Command.CommandLaunchTube -> gameStateActor.send(
                     LaunchTube(id, command.index)
                 )
-                null -> {}
+                else -> {}
             }
         }
 

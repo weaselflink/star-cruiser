@@ -2,6 +2,7 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val java_version: String by project
 val logback_version: String by project
 val ktor_version: String by project
 val kotlin_version: String by project
@@ -23,12 +24,12 @@ application {
 }
 
 dependencies {
-    implementation(projects.shared)
+    implementation(project(path = ":shared", configuration = "jvmRuntimeElements"))
 
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_serialization_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-core:$ktor_version")
@@ -42,7 +43,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutine_version")
     testImplementation("io.strikt:strikt-core:$strikt_version")
-    testImplementation("io.mockk:mockk:1.12.1")
+    testImplementation("io.mockk:mockk:1.12.2")
 }
 
 tasks {
@@ -53,9 +54,9 @@ tasks {
         }
     }
 
-    withType<KotlinCompile>().configureEach {
+    withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "11"
+            jvmTarget = java_version
             freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
             freeCompilerArgs += listOf("-Xopt-in=kotlin.time.ExperimentalTime")
         }

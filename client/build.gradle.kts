@@ -2,6 +2,7 @@
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
+val java_version: String by project
 val kotlin_version: String by project
 val kotlin_serialization_version: String by project
 

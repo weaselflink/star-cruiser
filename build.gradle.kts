@@ -10,7 +10,7 @@ plugins {
     kotlin("plugin.serialization") apply false
     id("com.github.johnrengelman.shadow") apply false
     id("com.github.ben-manes.versions")
-    id("org.jlleitschuh.gradle.ktlint") apply false
+    id("org.jlleitschuh.gradle.ktlint")
     id("com.adarshr.test-logger")
 }
 
@@ -19,19 +19,11 @@ allprojects {
     version = "0.40.0"
 
     apply(plugin = "com.github.ben-manes.versions")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "com.adarshr.test-logger")
 
     repositories {
         mavenCentral()
-        maven(url = "https://kotlin.bintray.com/ktor")
-        maven(url = "https://kotlin.bintray.com/kotlinx")
-        maven {
-            url = uri("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
-            content {
-                includeGroup("org.jetbrains.kotlinx")
-            }
-        }
-        maven(url = "https://jitpack.io")
     }
 
     testlogger {
@@ -44,5 +36,11 @@ allprojects {
                 isNonStable(candidate.version)
             }
         }
+    }
+}
+
+subprojects {
+    ktlint {
+        version.set("0.43.2")
     }
 }

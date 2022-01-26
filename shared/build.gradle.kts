@@ -3,6 +3,7 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
+val java_version: String by project
 val kotlin_version: String by project
 val ktor_version: String by project
 val kotlin_serialization_version: String by project
@@ -24,6 +25,14 @@ kotlin {
     }
 
     jvm {
+        withJava()
+
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = java_version
+            }
+        }
+
         compilations["main"].defaultSourceSet {
             dependencies {
                 implementation(kotlin("stdlib-jdk8"))
@@ -53,7 +62,7 @@ tasks {
 
     withType<KotlinJvmCompile>().configureEach {
         kotlinOptions {
-            jvmTarget = "11"
+            jvmTarget = java_version
         }
     }
 
