@@ -34,7 +34,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-core:$ktor_version")
     implementation("io.ktor:ktor-websockets:$ktor_version")
-    implementation("io.ktor:ktor-html-builder:$ktor_version")
+    implementation("io.ktor:ktor-server-html-builder:$ktor_version")
     implementation("io.ktor:ktor-serialization:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlin_coroutine_version")
     implementation("org.jbox2d:jbox2d-library:2.2.1.1")
@@ -84,5 +84,5 @@ tasks {
 }
 
 ktlint {
-    version.set("0.43.0")
+    version.set("0.46.1")
 }
