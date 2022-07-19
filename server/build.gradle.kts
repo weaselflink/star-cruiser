@@ -84,5 +84,5 @@ tasks {
 }
 
 ktlint {
-    version.set("0.46.1")
+    version.set("0.43.0")
 }
