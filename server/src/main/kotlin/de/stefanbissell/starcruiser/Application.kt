@@ -5,21 +5,21 @@ import de.stefanbissell.starcruiser.client.GameClient.Companion.startGameClient
 import de.stefanbissell.starcruiser.client.StatisticsMessage
 import de.stefanbissell.starcruiser.client.StatisticsSnapshot
 import de.stefanbissell.starcruiser.client.statisticsActor
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.application.log
-import io.ktor.features.ContentNegotiation
-import io.ktor.http.cio.websocket.pingPeriod
-import io.ktor.http.cio.websocket.timeout
-import io.ktor.response.respondRedirect
-import io.ktor.response.respondText
-import io.ktor.routing.get
-import io.ktor.routing.routing
-import io.ktor.serialization.json
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.application.log
 import io.ktor.server.netty.EngineMain
-import io.ktor.websocket.WebSockets
-import io.ktor.websocket.webSocket
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.response.respondRedirect
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
+import io.ktor.server.websocket.WebSockets
+import io.ktor.server.websocket.pingPeriod
+import io.ktor.server.websocket.timeout
+import io.ktor.server.websocket.webSocket
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -38,6 +38,8 @@ object ApplicationConfig {
 
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
+
+    log
 
     val gameStateActor = gameStateActor()
     val statisticsActor = statisticsActor()
@@ -82,7 +84,7 @@ fun Application.module() {
                 statisticsActor = statisticsActor,
                 outgoing = outgoing,
                 incoming = incoming,
-                log = log
+                log = this@module.log
             )
         }
     }

@@ -8,7 +8,7 @@ import de.stefanbissell.starcruiser.GetGameStateSnapshot
 import de.stefanbissell.starcruiser.NewGameClient
 import de.stefanbissell.starcruiser.SnapshotMessage
 import de.stefanbissell.starcruiser.expectWithTimeout
-import io.ktor.http.cio.websocket.Frame
+import io.ktor.websocket.Frame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob

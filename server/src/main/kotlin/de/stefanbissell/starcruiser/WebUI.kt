@@ -1,12 +1,12 @@
 package de.stefanbissell.starcruiser
 
-import io.ktor.application.call
-import io.ktor.html.respondHtml
 import io.ktor.http.LinkHeader
-import io.ktor.http.content.resources
-import io.ktor.http.content.static
-import io.ktor.routing.Routing
-import io.ktor.routing.get
+import io.ktor.server.application.call
+import io.ktor.server.html.respondHtml
+import io.ktor.server.http.content.resources
+import io.ktor.server.http.content.static
+import io.ktor.server.routing.Routing
+import io.ktor.server.routing.get
 import kotlinx.html.BODY
 import kotlinx.html.DIV
 import kotlinx.html.ScriptType

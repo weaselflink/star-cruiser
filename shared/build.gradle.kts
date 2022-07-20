@@ -1,7 +1,7 @@
 @file:Suppress("PropertyName", "SuspiciousCollectionReassignment")
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 val java_version: String by project
 val kotlin_version: String by project
@@ -55,8 +55,8 @@ kotlin {
 tasks {
     withType<KotlinCompile<*>>().all {
         kotlinOptions {
-            freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
-            freeCompilerArgs += listOf("-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi")
+            freeCompilerArgs += listOf("-opt-in=kotlin.ExperimentalUnsignedTypes")
+            freeCompilerArgs += listOf("-opt-in=kotlinx.serialization.ExperimentalSerializationApi")
         }
     }
 

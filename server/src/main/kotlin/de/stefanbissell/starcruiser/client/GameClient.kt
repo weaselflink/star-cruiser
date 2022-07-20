@@ -44,7 +44,8 @@ import de.stefanbissell.starcruiser.Uuid
 import de.stefanbissell.starcruiser.client.ThrottleMessage.AcknowledgeInflightMessage
 import de.stefanbissell.starcruiser.client.ThrottleMessage.AddInflightMessage
 import de.stefanbissell.starcruiser.client.ThrottleMessage.GetInflightMessageCount
-import io.ktor.http.cio.websocket.Frame
+import io.ktor.util.logging.Logger
+import io.ktor.websocket.Frame
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -54,7 +55,6 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import org.slf4j.Logger
 
 data class ClientId(private val id: String) {
 

@@ -33,7 +33,9 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-core:$ktor_version")
-    implementation("io.ktor:ktor-websockets:$ktor_version")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation("io.ktor:ktor-server-websockets:$ktor_version")
     implementation("io.ktor:ktor-server-html-builder:$ktor_version")
     implementation("io.ktor:ktor-serialization:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlin_coroutine_version")
@@ -57,8 +59,8 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = java_version
-            freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
-            freeCompilerArgs += listOf("-Xopt-in=kotlin.time.ExperimentalTime")
+            freeCompilerArgs += listOf("-opt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs += listOf("-opt-in=kotlin.time.ExperimentalTime")
         }
     }
 
@@ -74,7 +76,7 @@ tasks {
         archiveVersion.set("")
     }
 
-    withType<ProcessResources> {
+    processResources {
         dependsOn(project(":client").tasks["browserProductionWebpack"])
 
         from(project(":client").buildDir.resolve("distributions")) {
