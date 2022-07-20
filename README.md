@@ -1,7 +1,7 @@
 ![Build master](https://github.com/weaselflink/star-cruiser/workflows/Build%20master/badge.svg) 
 [![Last commit](https://img.shields.io/github/last-commit/weaselflink/star-cruiser)](https://github.com/weaselflink/star-cruiser/commits/master)
 [![Last release version](https://img.shields.io/github/v/release/weaselflink/star-cruiser)](https://github.com/weaselflink/star-cruiser/releases/latest)
-[![Using Kotlin 1.6.10](https://img.shields.io/badge/kotlin-1.6.10-blue)](https://blog.jetbrains.com/kotlin/2021/11/kotlin-1-6-0-is-released/)
+[![Using Kotlin 1.7.10](https://img.shields.io/badge/kotlin-1.7.10-blue)](https://blog.jetbrains.com/kotlin/2022/06/kotlin-1-7-0-released/)
 [![License GPLv3](https://img.shields.io/github/license/weaselflink/star-cruiser)](https://github.com/weaselflink/star-cruiser/blob/master/LICENSE)
 
 ## Star Cruiser Crew Simulator
@@ -47,7 +47,7 @@ Change ship stations via the buttons on the right.
 
 ### Thanks to
 
-Initial space ship model created by [niko-3d-models](https://niko-3d-models.itch.io). 
+Initial spaceship model created by [niko-3d-models](https://niko-3d-models.itch.io). 
 The model is from the [free sci-fi spaceships pack](https://niko-3d-models.itch.io/free-sc-fi-spaceships-pack).
 
 Textures for sky box created with [Spacescape](http://wwwtyro.github.io/space-3d) 
