@@ -1,6 +1,6 @@
 
 fun isNonStable(version: String): Boolean {
-    return listOf("alpha", "dev").any { version.lowercase().contains(it) }
+    return listOf("alpha", "dev").any { version.toLowerCase().contains(it) }
 }
 
 plugins {
