@@ -2,7 +2,6 @@ package de.stefanbissell.starcruiser
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -27,24 +26,26 @@ interface Positional {
     val position: Vector2
 }
 
-@Serializable
+@Serializable(with = ObjectIdAsStringSerializer::class)
 data class ObjectId(val id: String) {
 
-    @Suppress("EXPERIMENTAL_API_USAGE")
-    @Serializer(forClass = ObjectId::class)
-    companion object : KSerializer<ObjectId> {
-        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ShipId", PrimitiveKind.STRING)
-
-        override fun serialize(encoder: Encoder, value: ObjectId) {
-            encoder.encodeString(value.id)
-        }
-
-        override fun deserialize(decoder: Decoder): ObjectId {
-            return ObjectId(decoder.decodeString())
-        }
-
+    companion object {
         fun random() = ObjectId(Uuid().toString())
     }
+}
+
+object ObjectIdAsStringSerializer : KSerializer<ObjectId> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ShipId", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: ObjectId) {
+        encoder.encodeString(value.id)
+    }
+
+    override fun deserialize(decoder: Decoder): ObjectId {
+        return ObjectId(decoder.decodeString())
+    }
+
+    fun random() = ObjectId(Uuid().toString())
 }
 
 @Serializable

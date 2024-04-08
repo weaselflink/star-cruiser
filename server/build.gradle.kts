@@ -1,7 +1,5 @@
 @file:Suppress("PropertyName", "SuspiciousCollectionReassignment")
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 val java_version: String by project
 val logback_version: String by project
 val ktor_version: String by project
@@ -17,6 +15,10 @@ plugins {
     kotlin("plugin.serialization")
     id("com.github.johnrengelman.shadow")
     id("org.jlleitschuh.gradle.ktlint")
+}
+
+kotlin {
+    jvmToolchain(java_version.toInt())
 }
 
 application {
@@ -56,14 +58,6 @@ tasks {
         }
     }
 
-    withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = java_version
-            freeCompilerArgs += listOf("-opt-in=kotlin.RequiresOptIn")
-            freeCompilerArgs += listOf("-opt-in=kotlin.time.ExperimentalTime")
-        }
-    }
-
     withType<Jar> {
         manifest {
             attributes(
@@ -77,7 +71,7 @@ tasks {
     }
 
     processResources {
-        dependsOn(project(":client").tasks["browserProductionWebpack"])
+        dependsOn(project(":client").tasks["jsBrowserProductionWebpack"])
 
         from(project(":client").layout.buildDirectory.file("distributions")) {
             into("js")

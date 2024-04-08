@@ -25,8 +25,6 @@ kotlin {
     }
 
     jvm {
-        withJava()
-
         compilations.all {
             kotlinOptions {
                 jvmTarget = java_version
@@ -47,8 +45,9 @@ kotlin {
         }
     }
 
-    js {
+    js(IR) {
         browser()
+        binaries.executable()
     }
 }
 

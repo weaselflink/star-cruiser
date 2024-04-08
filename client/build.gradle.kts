@@ -7,18 +7,18 @@ val kotlin_version: String by project
 val kotlin_serialization_version: String by project
 
 plugins {
-    kotlin("js")
-}
-
-dependencies {
-    implementation(projects.shared)
+    kotlin("multiplatform")
 }
 
 kotlin {
-    js {
-        useCommonJs()
+    js(IR) {
         browser()
+        binaries.executable()
     }
+}
+
+dependencies {
+    commonMainImplementation(projects.shared)
 }
 
 tasks {
