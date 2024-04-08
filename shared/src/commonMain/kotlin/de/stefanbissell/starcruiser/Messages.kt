@@ -496,7 +496,7 @@ enum class PoweredSystemType(
         get() = labelOverride ?: name
 
     companion object {
-        fun random(): PoweredSystemType = values()[Random.nextInt(values().size)]
+        fun random(): PoweredSystemType = entries[Random.nextInt(entries.size)]
     }
 }
 

@@ -71,9 +71,10 @@ tasks {
     }
 
     processResources {
+        dependsOn(project(":client").tasks["jsBrowserDistribution"])
         dependsOn(project(":client").tasks["jsBrowserProductionWebpack"])
 
-        from(project(":client").layout.buildDirectory.file("distributions")) {
+        from(project(":client").layout.buildDirectory.file("dist/js/productionExecutable")) {
             into("js")
         }
     }

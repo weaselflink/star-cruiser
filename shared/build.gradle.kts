@@ -46,7 +46,7 @@ kotlin {
     }
 
     js(IR) {
-        browser()
+        browser {}
         binaries.executable()
     }
 }
