@@ -29,7 +29,7 @@ data class PerformanceAnalysis(
 
     fun calculateTurn(angle: Double): Double {
         val accelerationProfile = angularAccelerationData.profile
-        val decelerationProfile = angularDecelerationData.profile.reversed()
+        val decelerationProfile = angularDecelerationData.profile.asReversed()
 
         val result = accelerationProfile.lastOrNull { acc ->
             val corresponding = decelerationProfile.firstOrNull { dec ->

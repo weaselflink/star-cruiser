@@ -1,8 +1,4 @@
 
-fun isNonStable(version: String): Boolean {
-    return listOf("alpha", "dev").any { version.toLowerCase().contains(it) }
-}
-
 plugins {
     kotlin("multiplatform") apply false
     kotlin("jvm") apply false
@@ -10,6 +6,7 @@ plugins {
     kotlin("plugin.serialization") apply false
     id("com.github.johnrengelman.shadow") apply false
     id("com.github.ben-manes.versions")
+    id("se.ascp.gradle.gradle-versions-filter")
     id("org.jlleitschuh.gradle.ktlint")
     id("com.adarshr.test-logger")
 }
@@ -28,14 +25,6 @@ allprojects {
 
     testlogger {
         setTheme("mocha")
-    }
-
-    tasks {
-        dependencyUpdates {
-            rejectVersionIf {
-                isNonStable(candidate.version)
-            }
-        }
     }
 }
 

@@ -79,12 +79,8 @@ tasks {
     processResources {
         dependsOn(project(":client").tasks["browserProductionWebpack"])
 
-        from(project(":client").buildDir.resolve("distributions")) {
+        from(project(":client").layout.buildDirectory.file("distributions")) {
             into("js")
         }
     }
-}
-
-ktlint {
-    version.set("0.43.0")
 }
