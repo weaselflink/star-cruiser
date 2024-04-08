@@ -2,7 +2,6 @@
 plugins {
     kotlin("multiplatform") apply false
     kotlin("jvm") apply false
-    kotlin("js") apply false
     kotlin("plugin.serialization") apply false
     id("com.github.johnrengelman.shadow") apply false
     id("com.github.ben-manes.versions")
