@@ -1,23 +1,23 @@
 
 plugins {
-    kotlin("multiplatform") apply false
-    kotlin("jvm") apply false
-    kotlin("plugin.serialization") apply false
-    id("com.github.johnrengelman.shadow") apply false
-    id("com.github.ben-manes.versions")
-    id("se.ascp.gradle.gradle-versions-filter")
-    id("org.jlleitschuh.gradle.ktlint")
-    id("com.adarshr.test-logger")
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.serialization) apply false
+    alias(libs.plugins.shadow) apply false
+    alias(libs.plugins.versions)
+    alias(libs.plugins.version.filter)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.test.logger)
 }
 
 allprojects {
     group = "de.stefanbissell.starcruiser"
     version = "0.41.0"
 
-    apply(plugin = "com.github.ben-manes.versions")
-    apply(plugin = "se.ascp.gradle.gradle-versions-filter")
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    apply(plugin = "com.adarshr.test-logger")
+    apply(plugin = rootProject.libs.plugins.versions.get().pluginId)
+    apply(plugin = rootProject.libs.plugins.version.filter.get().pluginId)
+    apply(plugin = rootProject.libs.plugins.ktlint.get().pluginId)
+    apply(plugin = rootProject.libs.plugins.test.logger.get().pluginId)
 
     repositories {
         mavenCentral()

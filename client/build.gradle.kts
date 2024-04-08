@@ -1,9 +1,5 @@
-@file:Suppress("PropertyName", "SuspiciousCollectionReassignment")
-
-val kotlin_version: String by project
-
 plugins {
-    kotlin("multiplatform")
+    alias(libs.plugins.kotlin.multiplatform)
 }
 
 kotlin {

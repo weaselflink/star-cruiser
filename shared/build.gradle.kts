@@ -1,25 +1,16 @@
-@file:Suppress("PropertyName", "SuspiciousCollectionReassignment")
-
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
-val java_version: String by project
-val kotlin_version: String by project
-val ktor_version: String by project
-val kotlin_serialization_version: String by project
-val junit_version: String by project
-val strikt_version: String by project
-
 plugins {
-    kotlin("multiplatform")
-    kotlin("plugin.serialization")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.serialization)
 }
 
 kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_serialization_version")
+                implementation(libs.bundles.kotlin.serialization)
             }
         }
     }
@@ -27,20 +18,19 @@ kotlin {
     jvm {
         compilations.all {
             kotlinOptions {
-                jvmTarget = java_version
+                jvmTarget = libs.versions.java.get()
             }
         }
 
         compilations["main"].defaultSourceSet {
             dependencies {
-                implementation(kotlin("stdlib-jdk8"))
+                implementation(libs.kotlin.stdlib)
             }
         }
 
         compilations["test"].defaultSourceSet {
             dependencies {
-                implementation("org.junit.jupiter:junit-jupiter:$junit_version")
-                implementation("io.strikt:strikt-core:$strikt_version")
+                implementation(libs.bundles.test.base)
             }
         }
     }
@@ -61,7 +51,7 @@ tasks {
 
     withType<KotlinJvmCompile>().configureEach {
         kotlinOptions {
-            jvmTarget = java_version
+            jvmTarget = libs.versions.java.get()
         }
     }
 

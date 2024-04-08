@@ -1,0 +1,82 @@
+[versions]
+java = "17"
+kotlin = "1.9.23"
+kotlin-serialization = "1.6.3"
+kotlin-coroutine = "1.8.0"
+kotlin-datetime = "0.5.0"
+ktor = "2.3.10"
+logback = "1.5.3"
+shadow = "8.1.1"
+versions = "0.51.0"
+versions-filter = "0.1.16"
+serialization = "1.9.23"
+jbox2d = "2.2.1.1"
+junit = "5.10.2"
+strikt = "0.34.1"
+mockk = "1.13.10"
+ktlint = "10.3.0"
+test-logger = "4.0.0"
+
+[libraries]
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlin-datetime" }
+
+ktor-server-netty = { group = "io.ktor", name = "ktor-server-netty", version.ref = "ktor" }
+ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
+ktor-server-content-negotiation = { group = "io.ktor", name = "ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-serialization = { group = "io.ktor", name = "ktor-serialization", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-websockets = { group = "io.ktor", name = "ktor-server-websockets", version.ref = "ktor" }
+ktor-server-html-builder = { group = "io.ktor", name = "ktor-server-html-builder", version.ref = "ktor" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "kotlin-coroutine" }
+jbox2d = { module = "org.jbox2d:jbox2d-library", version.ref = "jbox2d" }
+
+junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+strikt = { module = "io.strikt:strikt-core", version.ref = "strikt" }
+ktor-server-tests = { group = "io.ktor", name = "ktor-server-tests", version.ref = "ktor" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin-coroutine" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+
+[bundles]
+kotlin-server = [
+    "kotlin-reflect",
+    "kotlinx-serialization-json",
+    "kotlinx-datetime"
+]
+kotlin-serialization = [
+    "kotlinx-serialization-json"
+]
+ktor = [
+    "ktor-server-core",
+    "ktor-server-netty",
+    "ktor-server-content-negotiation",
+    "ktor-serialization",
+    "ktor-serialization-kotlinx-json",
+    "ktor-server-websockets",
+    "ktor-server-html-builder",
+    "kotlinx-coroutines",
+    "logback-classic"
+]
+test-base = [
+    "junit",
+    "strikt"
+]
+test-ktor = [
+    "ktor-server-tests",
+    "kotlinx-coroutines-test",
+    "mockk"
+]
+
+[plugins]
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
+version-filter = { id = "se.ascp.gradle.gradle-versions-filter", version.ref = "versions-filter" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serialization" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+test-logger = { id = "com.adarshr.test-logger", version.ref = "test-logger" }
