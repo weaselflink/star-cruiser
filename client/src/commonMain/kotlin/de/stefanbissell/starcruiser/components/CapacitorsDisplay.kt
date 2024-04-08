@@ -9,7 +9,7 @@ import org.w3c.dom.HTMLCanvasElement
 class CapacitorsDisplay(
     canvas: HTMLCanvasElement,
     xExpr: CanvasDimensions.() -> Double = { halfWidth - 40.vmin },
-    yExpr: CanvasDimensions.() -> Double = { height - 6.vmin - 10.vmin * PoweredSystemType.values().size },
+    yExpr: CanvasDimensions.() -> Double = { height - 6.vmin - 10.vmin * PoweredSystemType.entries.size },
     widthExpr: CanvasDimensions.() -> Double = { 80.vmin },
     heightExpr: CanvasDimensions.() -> Double = { 6.vmin }
 ) {

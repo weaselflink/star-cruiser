@@ -13,7 +13,7 @@ enum class Visibility {
 }
 
 var HTMLElement.visibility: Visibility
-    get() = Visibility.values().firstOrNull { it.name == style.visibility } ?: Visibility.visible
+    get() = Visibility.entries.firstOrNull { it.name == style.visibility } ?: Visibility.visible
     set(value) {
         style.visibility = value.name
     }

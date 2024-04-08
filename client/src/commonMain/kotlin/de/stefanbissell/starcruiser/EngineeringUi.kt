@@ -10,7 +10,7 @@ class EngineeringUi : StationUi(Station.Engineering) {
 
     private val capacitorsDisplay = CapacitorsDisplay(canvas)
     private val repairDisplay = RepairDisplay(canvas)
-    private val powerDisplays = PoweredSystemType.values().mapIndexed { index, systemType ->
+    private val powerDisplays = PoweredSystemType.entries.mapIndexed { index, systemType ->
         systemType to PowerDisplay(
             systemType = systemType,
             canvas = canvas,

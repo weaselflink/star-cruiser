@@ -43,7 +43,7 @@ class StationOverlay : PointerEventHandlerParent() {
                 activated = { ClientState.showStationOverlay }
             )
             addGap()
-            otherStationButtons = Station.values().map { station ->
+            otherStationButtons = Station.entries.map { station ->
                 addButton(
                     onClick = { switchStation(station) },
                     activated = { station == currentStation },
@@ -122,10 +122,10 @@ class StationOverlay : PointerEventHandlerParent() {
             canvas = document.canvas2d,
             xExpr = { width - (buttonWidthExpr() + 3.vmin) },
             yExpr = {
-                2.vmin + buttonHeightExpr() + 2.vmin + (Station.values().size + 1) * buttonFullHeightExpr() + 1.vmin
+                2.vmin + buttonHeightExpr() + 2.vmin + (Station.entries.size + 1) * buttonFullHeightExpr() + 1.vmin
             },
             widthExpr = { buttonWidthExpr() + 2.vmin },
-            heightExpr = { (Station.values().size + 1) * buttonFullHeightExpr() + 2.vmin },
+            heightExpr = { (Station.entries.size + 1) * buttonFullHeightExpr() + 2.vmin },
             radiusExpr = { 5.vmin }
         )
 

@@ -30,7 +30,7 @@ class MainScreenUi : StationUi(Station.MainScreen) {
         canvas = canvas
     )
     private var view = MainScreenView.Front
-    private val viewButtons = MainScreenView.values()
+    private val viewButtons = MainScreenView.entries
         .mapIndexed { index, view ->
             createViewButton(
                 mainScreenView = view,

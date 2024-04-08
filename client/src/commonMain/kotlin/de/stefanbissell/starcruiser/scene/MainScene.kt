@@ -63,7 +63,7 @@ class MainScene {
     private val objectModels = mutableMapOf<String, Group>()
     private var shieldModel: Group? = null
 
-    private val cameras = CameraPosition.values()
+    private val cameras = CameraPosition.entries
         .associate { pos ->
             if (pos == CameraPosition.Top) {
                 pos to createTopCamera().also { ownShip += it }
