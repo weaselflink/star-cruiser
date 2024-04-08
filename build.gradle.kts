@@ -16,6 +16,7 @@ allprojects {
     version = "0.41.0"
 
     apply(plugin = "com.github.ben-manes.versions")
+    apply(plugin = "se.ascp.gradle.gradle-versions-filter")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "com.adarshr.test-logger")
 
