@@ -28,9 +28,3 @@ allprojects {
         setTheme("mocha")
     }
 }
-
-subprojects {
-    ktlint {
-        version.set("0.43.0")
-    }
-}
