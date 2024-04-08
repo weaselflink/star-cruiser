@@ -59,6 +59,7 @@ import kotlinx.coroutines.launch
 data class ClientId(private val id: String) {
 
     companion object {
+        @OptIn(ExperimentalUnsignedTypes::class)
         fun random() = ClientId(Uuid().toString())
     }
 }

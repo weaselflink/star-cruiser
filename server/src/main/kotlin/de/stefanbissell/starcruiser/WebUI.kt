@@ -3,8 +3,7 @@ package de.stefanbissell.starcruiser
 import io.ktor.http.LinkHeader
 import io.ktor.server.application.call
 import io.ktor.server.html.respondHtml
-import io.ktor.server.http.content.resources
-import io.ktor.server.http.content.static
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import kotlinx.html.BODY
@@ -22,17 +21,9 @@ import kotlinx.html.script
 import kotlinx.html.style
 
 fun Routing.webUi() {
-    static("/css") {
-        resources("css")
-    }
-
-    static("/js") {
-        resources("js")
-    }
-
-    static("/assets") {
-        resources("assets")
-    }
+    staticResources("/css", "css")
+    staticResources("/js", "js")
+    staticResources("/assets", "assets")
 
     get("/") {
         call.respondHtml {
