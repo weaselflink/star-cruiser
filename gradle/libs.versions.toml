@@ -1,7 +1,7 @@
 [versions]
 java = "21"
-kotlin = "1.9.25"
-kotlin-serialization = "1.6.3"
+kotlin = "2.1.10"
+kotlin-serialization = "1.8.0"
 kotlin-coroutine = "1.8.1"
 kotlin-datetime = "0.6.2"
 ktor = "2.3.10"
@@ -13,7 +13,7 @@ serialization = "1.9.23"
 jbox2d = "2.2.1.1"
 junit = "5.12.0"
 strikt = "0.35.1"
-mockk = "1.13.10"
+mockk = "1.13.16"
 ktlint = "10.3.0"
 test-logger = "4.0.0"
 
@@ -76,7 +76,7 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
 version-filter = { id = "se.ascp.gradle.gradle-versions-filter", version.ref = "versions-filter" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serialization" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 test-logger = { id = "com.adarshr.test-logger", version.ref = "test-logger" }

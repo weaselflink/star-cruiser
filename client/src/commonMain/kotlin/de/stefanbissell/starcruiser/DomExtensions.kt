@@ -32,7 +32,7 @@ var HTMLElement.display: Display
 val HTMLElement.canvas: HTMLCanvasElement
     get() = querySelector("canvas") as HTMLCanvasElement
 
-inline fun Document.getHtmlElementById(id: String): HTMLElement =
+fun Document.getHtmlElementById(id: String): HTMLElement =
     getElementById(id)!! as HTMLElement
 
 inline fun <reified ElementType : Element> Document.byQuery(query: String): ElementType =

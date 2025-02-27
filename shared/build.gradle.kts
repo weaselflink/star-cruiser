@@ -1,5 +1,5 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -16,10 +16,8 @@ kotlin {
     }
 
     jvm {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = libs.versions.java.get()
-            }
+        compilerOptions {
+            jvmTarget.set(JvmTarget.fromTarget(libs.versions.java.get()))
         }
 
         compilations["main"].defaultSourceSet {
@@ -43,16 +41,10 @@ kotlin {
 }
 
 tasks {
-    withType<KotlinCompile<*>>().all {
-        kotlinOptions {
-            freeCompilerArgs += listOf("-opt-in=kotlin.ExperimentalUnsignedTypes")
-            freeCompilerArgs += listOf("-opt-in=kotlinx.serialization.ExperimentalSerializationApi")
-        }
-    }
-
-    withType<KotlinJvmCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = libs.versions.java.get()
+    withType<KotlinCompilationTask<*>>().all {
+        compilerOptions {
+            optIn.add("kotlin.ExperimentalUnsignedTypes")
+            optIn.add("kotlinx.serialization.ExperimentalSerializationApi")
         }
     }
 
