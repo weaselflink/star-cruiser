@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.jbox2d)
 
     testImplementation(libs.bundles.test.base)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(libs.bundles.test.ktor)
 }
 
