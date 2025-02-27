@@ -1,5 +1,5 @@
 [versions]
-java = "17"
+java = "21"
 kotlin = "1.9.23"
 kotlin-serialization = "1.6.3"
 kotlin-coroutine = "1.8.0"
