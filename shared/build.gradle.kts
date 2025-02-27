@@ -31,6 +31,7 @@ kotlin {
         compilations["test"].defaultSourceSet {
             dependencies {
                 implementation(libs.bundles.test.base)
+                runtimeOnly("org.junit.platform:junit-platform-launcher")
             }
         }
     }
