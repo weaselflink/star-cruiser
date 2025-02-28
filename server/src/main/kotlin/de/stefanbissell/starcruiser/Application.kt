@@ -7,7 +7,6 @@ import de.stefanbissell.starcruiser.client.StatisticsSnapshot
 import de.stefanbissell.starcruiser.client.statisticsActor
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
-import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.application.log
 import io.ktor.server.netty.EngineMain
@@ -25,7 +24,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaDuration
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
@@ -52,8 +50,8 @@ fun Application.module() {
     }
 
     install(WebSockets) {
-        pingPeriod = 15.seconds.toJavaDuration()
-        timeout = 15.seconds.toJavaDuration()
+        pingPeriod = 15.seconds
+        timeout = 15.seconds
         maxFrameSize = Long.MAX_VALUE
         masking = false
     }

@@ -36,6 +36,9 @@ class ApplicationTest {
         uri: String,
         block: suspend (HttpResponse) -> Unit
     ) = testApplication {
+        application {
+            module()
+        }
         val response = client.get(uri)
         block(response)
     }
