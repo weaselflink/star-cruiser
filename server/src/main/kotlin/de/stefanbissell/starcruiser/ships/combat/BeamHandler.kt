@@ -48,7 +48,9 @@ class BeamHandler(
                         } else {
                             BeamStatus.Idle
                         }
-                    } else it
+                    } else {
+                        it
+                    }
                 }
             }
             is BeamStatus.Firing -> {
