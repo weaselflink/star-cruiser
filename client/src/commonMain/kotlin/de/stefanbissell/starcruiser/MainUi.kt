@@ -15,6 +15,8 @@ class MainUi {
     private val pointerEventDispatcher = PointerEventDispatcher(canvas)
 
     init {
+        canvas.updateSize()
+        stationUiSwitcher.resize()
         window.requestAnimationFrame { step() }
         window.onresize = {
             canvas.updateSize()
